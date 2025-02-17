@@ -22,22 +22,7 @@ while ($true) {
         $url = $urls[$i]
         $savePath = $savePaths[$i]
 
-        try {
-            Write-Host "Starting to download webpage content: $($url)"
-            # Use Invoke-WebRequest to download webpage content
-            $content = Invoke-WebRequest -Uri $url -UseBasicParsing
-
-            # Save webpage content to file (using UTF8 encoding)
-            $content.Content | Out-File -FilePath $savePath -Encoding UTF8
-
-            Write-Host "Webpage content downloaded successfully, saved to $($savePath)"
-
-        } catch {
-            # If download fails, catch the error message
-            Write-Warning "Failed to download webpage content: $($url) - $_"
-            Write-Warning "Skipping Git operations for this URL"
-            continue # Skip Git operations for the current URL and proceed to the next URL
-        }
+        curl.exe $url -o $savePath
     } # End of for loop (URLs iteration completed)
 
     # Check if any webpage was downloaded successfully (simplified handling: Git is executed if the loop didn't completely fail)
