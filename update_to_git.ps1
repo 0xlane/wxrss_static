@@ -1,63 +1,63 @@
-# PowerShell 脚本，每隔 10 分钟下载多个网页内容到 Git 并提交
+# PowerShell script to save webpage content to Git and commit every 10 minutes
 
-# 设置要下载的网页 URLs (使用数组)
+# Set the URLs to download (using an array)
 $urls = @(
     "http://localhost:8080"
     "http://localhost:8080/rss.xml"
 )
 
-# 设置保存文件的路径和文件名 (使用数组，与 URLs 对应)
+# Set the save paths and filenames (using an array, corresponding to URLs)
 $savePaths = @(
-    "index.html"
-    "rss.xml"
+    ".\index.html"
+    ".\rss.xml"
 )
 
-# 循环执行，直到脚本被手动停止
+# Loop indefinitely until the script is manually stopped
 while ($true) {
     Write-Host "----------------------------------"
-    Write-Host "开始新一轮下载和 Git 操作..."
+    Write-Host "Starting a new round of download and Git operations..."
 
-    # 循环遍历 URLs 和 SavePaths 数组
+    # Loop through URLs and SavePaths arrays
     for ($i = 0; $i -lt $urls.Count; $i++) {
         $url = $urls[$i]
         $savePath = $savePaths[$i]
 
         try {
-            Write-Host "开始下载网页内容: $($url)"
-            # 使用 Invoke-WebRequest 下载网页内容
+            Write-Host "Starting to download webpage content: $($url)"
+            # Use Invoke-WebRequest to download webpage content
             $content = Invoke-WebRequest -Uri $url -UseBasicParsing
 
-            # 将网页内容保存到文件 (使用 UTF8 编码)
+            # Save webpage content to file (using UTF8 encoding)
             $content.Content | Out-File -FilePath $savePath -Encoding UTF8
 
-            Write-Host "网页内容下载成功，保存到 $($savePath)"
+            Write-Host "Webpage content downloaded successfully, saved to $($savePath)"
 
         } catch {
-            # 如果下载失败，捕获错误信息
-            Write-Warning "下载网页内容失败: $($url) - $_"
-            Write-Warning "跳过此 URL 的 Git 操作"
-            continue # 跳过当前 URL 的后续 Git 操作，继续下一个 URL
+            # If download fails, catch the error message
+            Write-Warning "Failed to download webpage content: $($url) - $_"
+            Write-Warning "Skipping Git operations for this URL"
+            continue # Skip Git operations for the current URL and proceed to the next URL
         }
-    } # for 循环结束 (URLs 遍历完成)
+    } # End of for loop (URLs iteration completed)
 
-    # 检查是否有任何网页下载成功 (这里简化处理，只要循环没有完全失败就执行 Git)
-    # 更严谨的判断可以记录下载成功次数，如果至少成功一次再执行 Git
+    # Check if any webpage was downloaded successfully (simplified handling: Git is executed if the loop didn't completely fail)
+    # For more robust handling, you can track successful downloads and execute Git only if at least one download succeeded.
 
-    Write-Host "执行 git add, commit, push..."
+    Write-Host "Executing git add, commit, push..."
 
-    # 假设脚本在 Git 项目的根目录下运行，直接执行 Git 命令
+    # Assuming the script is run from the Git project root directory, execute Git commands directly
     git add .
     git commit -m "update"
     git push
 
-    Write-Host "Git 操作完成"
+    Write-Host "Git operations completed"
     Write-Host "----------------------------------"
 
 
-    # 等待 10 分钟 (600 秒)
-    Write-Host "等待 10 分钟..."
+    # Wait for 10 minutes (600 seconds)
+    Write-Host "Waiting for 10 minutes..."
     Start-Sleep -Seconds 600
-    Write-Host "10 分钟已过，准备下一次下载"
+    Write-Host "10 minutes passed, preparing for the next download"
 }
 
-Write-Host "脚本已启动，每 10 分钟运行一次。按 Ctrl+C 停止脚本。"
+Write-Host "Script started, running every 10 minutes. Press Ctrl+C to stop the script."
