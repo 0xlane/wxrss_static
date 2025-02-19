@@ -15,13 +15,13 @@ while ($true) {
     git push
 
     Write-Host "Git operations completed"
+	Get-Date
     Write-Host "----------------------------------"
 
 
     # Wait for 10 minutes (600 seconds)
     Write-Host "Waiting for 10 minutes..."
     Start-Sleep -Seconds 600
-	Get-Date
     Write-Host "10 minutes passed, preparing for the next download"
 }
 
