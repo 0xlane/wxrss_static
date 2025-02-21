@@ -4,6 +4,8 @@
 while ($true) {
     Write-Host "----------------------------------"
     Write-Host "Starting git operations..."
+	
+	Remove-Item -Force .\.git\index.lock -ErrorAction Ignore
 
     # For more robust handling, you can track successful downloads and execute Git only if at least one download succeeded.
 
