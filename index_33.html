@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455889901&amp;idx=2&amp;sn=95421d379c752d38e6513006671ac9d7&amp;chksm=8dcd73208977d16483c2e9704535bec5fcf1a35ffbe0a2951e5a53f4e5e3242a4ac7baea94c1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZlRDTUTfb35sgphn402TBddbndwuOusBk14V18nVS8dlwJcpHLLAB8TpPgKibb7Rx2ZXiajgOuVyiaw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455889901&amp;idx=2&amp;sn=95421d379c752d38e6513006671ac9d7&amp;chksm=8dcd73208977d16483c2e9704535bec5fcf1a35ffbe0a2951e5a53f4e5e3242a4ac7baea94c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">承认吧，我们都活在看脸的世界里</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-07-31 12:10:02">发布日期：2025-07-31 12:10:02</time></div><p class="article-description">承认吧，我们都活在看脸的世界里。但你是否给予了它应有的权重？你有没有过，感觉自己像个透明人？尤其是在一些轻社交的场合。最近就围观了一场大型社会实验。在一个几百人的陌生人微信群里，大家玩游戏，输了的发一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455889901&amp;idx=2&amp;sn=95421d379c752d38e6513006671ac9d7&amp;chksm=8dcd73208977d16483c2e9704535bec5fcf1a35ffbe0a2951e5a53f4e5e3242a4ac7baea94c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=1&amp;sn=4c87eaaee7b8274826a365d30b76dd7c&amp;chksm=8156cbb80baa801d8a850c041b184cf94d12378b5e136911bad2e4ef6b3672388e1de912d7d0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCffhmWoQibQBbgteM24Z5Ld8G8lnMmskYsv58S4icT5CLewbmdbnDWYW7w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=1&amp;sn=4c87eaaee7b8274826a365d30b76dd7c&amp;chksm=8156cbb80baa801d8a850c041b184cf94d12378b5e136911bad2e4ef6b3672388e1de912d7d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">暴雨涉水后警惕这些健康隐患！请收好这份健康指南！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">最近北京遭遇极端强降雨，大家在关注救援的同时，暴雨过后的健康防护同样不容忽视 ，今天就为大家整理暴雨后必备的健康指南，希望能帮到在北京的宝子们！👇👇👇一暴雨后四类高发健康问题，防护要点请记牢暴雨过后，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=1&amp;sn=4c87eaaee7b8274826a365d30b76dd7c&amp;chksm=8156cbb80baa801d8a850c041b184cf94d12378b5e136911bad2e4ef6b3672388e1de912d7d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=2&amp;sn=b99612afbbe6fc6e47b7080061cb5fce&amp;chksm=8199b252cbbbea88896fd454d8dce27e8a293674e27c9db07be8d43e143c03ace97b3973bf5a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCfy5icuNibbQubndKwticjtmibK1Pwax2yx3doT0mvBDFTC0bmRUHWtpLXicA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=2&amp;sn=b99612afbbe6fc6e47b7080061cb5fce&amp;chksm=8199b252cbbbea88896fd454d8dce27e8a293674e27c9db07be8d43e143c03ace97b3973bf5a&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025年北京演唱会排期表（最新更新）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">点击↑上方蓝字，速戳底部菜单栏【微信办事】【景区预约】【中考|补贴】获取你想看的内容生活忙碌要及时给自己的身心放个假去听一场演唱会就是不错的选择~北京的演唱会时间表持续上新中哦今年北京还有哪些演唱会快</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=2&amp;sn=b99612afbbe6fc6e47b7080061cb5fce&amp;chksm=8199b252cbbbea88896fd454d8dce27e8a293674e27c9db07be8d43e143c03ace97b3973bf5a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=3&amp;sn=16318340f5dd3bdaf8768344c0261176&amp;chksm=817ac51f08302d27be5670fc685465abb81e7006b92edd04d90e0d2c4e0dba5b4f0265a5838f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCfZkr1h9GIXSqEXfHaUD456xvs0a2o8deTtvB7hkC0MaicDFe8zzoF7zQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=3&amp;sn=16318340f5dd3bdaf8768344c0261176&amp;chksm=817ac51f08302d27be5670fc685465abb81e7006b92edd04d90e0d2c4e0dba5b4f0265a5838f&amp;scene=0&amp;xtrack=1#rd" target="_blank">北京新启用地铁口+1！涉及线路→</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">点击↑上方蓝字，速戳底部菜单栏【微信办事】【景区预约】【中考|高考】获取你想看的内容小伙伴们看过来小编又为大家带来北京地铁建设新消息啦北京6号线最新启用一地铁口！还有11号线最新建设消息一起来看~北京</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=3&amp;sn=16318340f5dd3bdaf8768344c0261176&amp;chksm=817ac51f08302d27be5670fc685465abb81e7006b92edd04d90e0d2c4e0dba5b4f0265a5838f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=4&amp;sn=2856e748318448bd42cc69db11036754&amp;chksm=81b9348f487364825f49dbba6c09f840df42c02166a70d5055c6e77c35daec3b10a530a449f4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCfjeNacxBbAKibgLmw4rfHx06rZnvv0hvtGfGrCtMm2I79c5yAG53gUicQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=4&amp;sn=2856e748318448bd42cc69db11036754&amp;chksm=81b9348f487364825f49dbba6c09f840df42c02166a70d5055c6e77c35daec3b10a530a449f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">今日填报！2025北京中招志愿征集录取学校名单一览</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">点击↑上方蓝字，速戳底部菜单栏【微信办事】【景区预约】【中考|补贴】获取你想看的内容考生集合！7月31日（今日）8:30-16:30北京中考征集志愿填报在哪里填报？何时查询志愿征集录取结果？来了解吧~</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=4&amp;sn=2856e748318448bd42cc69db11036754&amp;chksm=81b9348f487364825f49dbba6c09f840df42c02166a70d5055c6e77c35daec3b10a530a449f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=5&amp;sn=d10a1903c6666f76f9dc0a180d3d963c&amp;chksm=81852fc9562dd56ace032bda500e970d19f23ead5d687937aa97a4f02c0f16518b31db1c49b7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCficcrPGW6CJSUNKt3E4uxJSyHEmcal3FpOzvlfK4dZmR8TqlsvLkQyEA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=5&amp;sn=d10a1903c6666f76f9dc0a180d3d963c&amp;chksm=81852fc9562dd56ace032bda500e970d19f23ead5d687937aa97a4f02c0f16518b31db1c49b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">北京职称评审的“满5年”怎么算？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">点击↑上方蓝字，速戳底部菜单栏【微信办事】【景区预约】【中考|补贴】获取你想看的内容根据昨天的投票结果今天我们要讨论的是北京职称评审的“满5年”怎么算？赶紧来看看答案职称评审的“满5年”怎么算？看年份</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=5&amp;sn=d10a1903c6666f76f9dc0a180d3d963c&amp;chksm=81852fc9562dd56ace032bda500e970d19f23ead5d687937aa97a4f02c0f16518b31db1c49b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=6&amp;sn=33aaeba504203c3147602bf4efd286ae&amp;chksm=81387b7858aab695e136b9cfae0cdbc927489a9f620b81255ab929e7561e4ebb5e9b8655e14d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibX9tvM61XVu00j4CuEM15ggk23zLlvCfbthzmtdkp2OmUq9jaYvF1qTEKjEiapCU38fUdemAUTDkzBQOFNFDfMQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=6&amp;sn=33aaeba504203c3147602bf4efd286ae&amp;chksm=81387b7858aab695e136b9cfae0cdbc927489a9f620b81255ab929e7561e4ebb5e9b8655e14d&amp;scene=0&amp;xtrack=1#rd" target="_blank">国家育儿补贴方案公布！申请入口在哪里？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94a829401174200e024369473d5062c4/index.html">北京本地宝</a></span><time class="article-date" datetime="2025-07-31 12:05:21">发布日期：2025-07-31 12:05:21</time></div><p class="article-description">国家育儿补贴方案公布！申请入口和时间确定，详细操作来了！#育儿补贴申请入口#育儿补贴申领小程序#育儿补贴怎么领#国家育儿补贴小程序#全国育儿补贴系统#全国育儿补贴申领平台#2025年发放育儿补贴#育儿</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMDE1MTk3Nw==&amp;mid=2651449394&amp;idx=6&amp;sn=33aaeba504203c3147602bf4efd286ae&amp;chksm=81387b7858aab695e136b9cfae0cdbc927489a9f620b81255ab929e7561e4ebb5e9b8655e14d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=1&amp;sn=5e161d7e0f5ddec7b570bf83464f8b2a&amp;chksm=8a92a42a96bda9990c71932086cf58ea6d0dfee96c97ab8352e331e5846bc57dfad10341d2d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ocJVe9ojWg12KkJ6vGBXPCsb2TvqHhqvSrDj8KHW7ynN70WKTfYmtk1Dss1oxf2aMNhicicicmGQjA0iax5p3Qhbcg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=1&amp;sn=5e161d7e0f5ddec7b570bf83464f8b2a&amp;chksm=8a92a42a96bda9990c71932086cf58ea6d0dfee96c97ab8352e331e5846bc57dfad10341d2d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">朱华荣等：新长安成立，长安汽车的大机会来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15c8d5243e2e28b3b1ec4d9d20485512/index.html">中国汽车报</a></span><time class="article-date" datetime="2025-07-31 12:07:40">发布日期：2025-07-31 12:07:40</time></div><p class="article-description">两江交汇，气象万千，山城重庆再开新局！7月29日，中国长安汽车集团有限公司（以下简称“新长安”）在重庆正式挂牌，第100家央企由此诞生，中国汽车产业发展史揭开新的一页。“新长安面临的天地太广大了，我看</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=1&amp;sn=5e161d7e0f5ddec7b570bf83464f8b2a&amp;chksm=8a92a42a96bda9990c71932086cf58ea6d0dfee96c97ab8352e331e5846bc57dfad10341d2d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=2&amp;sn=e6c49fd875efa9b582ae08ee79d1c126&amp;chksm=8a91fea0695077fcaff8d1bae53efd6726b5e18443cd00a01cd03513de61419c3bf6337e0761&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ocJVe9ojWg12KkJ6vGBXPCsb2TvqHhqvADBM3Wut7YjmmR2iaFt1XjL6taUxibgOthmttcYj9OpHbWjMS8OM20Qw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=2&amp;sn=e6c49fd875efa9b582ae08ee79d1c126&amp;chksm=8a91fea0695077fcaff8d1bae53efd6726b5e18443cd00a01cd03513de61419c3bf6337e0761&amp;scene=0&amp;xtrack=1#rd" target="_blank">固守“阵地”的卡车经销商还能坚持多久</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15c8d5243e2e28b3b1ec4d9d20485512/index.html">中国汽车报</a></span><time class="article-date" datetime="2025-07-31 12:07:40">发布日期：2025-07-31 12:07:40</time></div><p class="article-description">“这几年行业变化太快了，身边同行要么扎进新能源赛道，要么转投其他行业，像我们这样坚守‘阵地’，一直专注于燃油卡车业务的已经不多了。”在山东济南一家卡车销售展厅内，经销商李建国望着稀稀拉拉的客流，向记者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652514088&amp;idx=2&amp;sn=e6c49fd875efa9b582ae08ee79d1c126&amp;chksm=8a91fea0695077fcaff8d1bae53efd6726b5e18443cd00a01cd03513de61419c3bf6337e0761&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659005877&amp;idx=1&amp;sn=572f74c2c3404e65d476febac7007905&amp;chksm=bc0ff6b43c1f10c4d675fa8e64153f45e0d4065c849435049ce9afe8fcbd703fed05f45ee4fc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUOFgKWtPF6PlOWP3Q1A1FqYGC0TVIFyQvYEZRJFphY0Ve8r2gnmgUSInXTvib6o5ITqOS0VNMA4hsw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659005877&amp;idx=1&amp;sn=572f74c2c3404e65d476febac7007905&amp;chksm=bc0ff6b43c1f10c4d675fa8e64153f45e0d4065c849435049ce9afe8fcbd703fed05f45ee4fc&amp;scene=0&amp;xtrack=1#rd" target="_blank">“靠石油吃石油”！袁光宇被开除党籍</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-07-31 12:01:16">发布日期：2025-07-31 12:01:16</time></div><p class="article-description">经中共中央批准，中央纪委国家监委对中国海洋石油集团有限公司原党组成员、副总经理袁光宇严重违纪违法问题进行了立案审查调查。经查，袁光宇丧失理想信念，背弃初心使命，对抗组织审查；无视中央八项规定精神，接受</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659005877&amp;idx=1&amp;sn=572f74c2c3404e65d476febac7007905&amp;chksm=bc0ff6b43c1f10c4d675fa8e64153f45e0d4065c849435049ce9afe8fcbd703fed05f45ee4fc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
