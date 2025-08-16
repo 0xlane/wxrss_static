@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODM0NDIxNQ==&amp;mid=2247494983&amp;idx=1&amp;sn=bf3e69885829caaa12b44881eaf5cbb4&amp;chksm=c22837ce600cee1316845f6865096919c459181997cf571922db6589e8afb2ecd9ba63247686&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/icZ1W9s2Jp2XUYkMGYCLMUcpQlxQpBL5DnG1MemYpc06Nibbd50niaS2QP5n81Pts2R30DcjeO7ibbRK6Hm9CbuVGA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODM0NDIxNQ==&amp;mid=2247494983&amp;idx=1&amp;sn=bf3e69885829caaa12b44881eaf5cbb4&amp;chksm=c22837ce600cee1316845f6865096919c459181997cf571922db6589e8afb2ecd9ba63247686&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rshell - 跨平台多协议C2框架</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c58a283e1a1a9dc1952d76faa9e46c02/index.html">夜组安全</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">免责声明由于传播、利用本公众号夜组安全所提供的信息而造成的任何直接或者间接的后果及损失，均由使用者本人负责，公众号夜组安全及作者不为此承担任何责任，一旦造成后果请自行承担！如有侵权烦请告知，我们会立即</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODM0NDIxNQ==&amp;mid=2247494983&amp;idx=1&amp;sn=bf3e69885829caaa12b44881eaf5cbb4&amp;chksm=c22837ce600cee1316845f6865096919c459181997cf571922db6589e8afb2ecd9ba63247686&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247499093&amp;idx=1&amp;sn=17cce0ed5b6581d8b7530d39513e89de&amp;chksm=eb980a3c292c47498a5a7a0de65eb9991582c30069dbe9da9bf80479ecac7e88457b08e881b2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicTZZ73pZsBAEam22ghf1Kwd0FPoxsaaSjEYOggC2YJDQeMicT0N3889paOicDJpL81RHDvS4ibEQjXw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247499093&amp;idx=1&amp;sn=17cce0ed5b6581d8b7530d39513e89de&amp;chksm=eb980a3c292c47498a5a7a0de65eb9991582c30069dbe9da9bf80479ecac7e88457b08e881b2&amp;scene=0&amp;xtrack=1#rd" target="_blank">从零开始做一个语义搜索引擎：基于LangChain与Qdrant的实战指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">在 AI 应用中，检索增强生成（RAG） 已成为提升大模型能力的核心手段。在进入 RAG 正式搭建之前，我们先来学一个基础但超有用的技能：语义搜索。与传统的关键词匹配不同，语义搜索会根据“意思”而不是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247499093&amp;idx=1&amp;sn=17cce0ed5b6581d8b7530d39513e89de&amp;chksm=eb980a3c292c47498a5a7a0de65eb9991582c30069dbe9da9bf80479ecac7e88457b08e881b2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3MTA0ODYyOA==&amp;mid=2651466111&amp;idx=1&amp;sn=c7f344126d885e0bb3c7ef9a87f7d4d8&amp;chksm=85ac849aa94ef7fa1a7726dc5acfe3159fd822973c424717fc99440a0ede3e1a020c8b28ae34&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/a1HupTryX2yVPicqbiao4ZGClaRhia8vic1SrbVJWlqY0Dr9xYRaOLsZVwuGzqQhmZ7NZAsPsZa2Tia7eFXf59XTZdA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3MTA0ODYyOA==&amp;mid=2651466111&amp;idx=1&amp;sn=c7f344126d885e0bb3c7ef9a87f7d4d8&amp;chksm=85ac849aa94ef7fa1a7726dc5acfe3159fd822973c424717fc99440a0ede3e1a020c8b28ae34&amp;scene=0&amp;xtrack=1#rd" target="_blank">Microsoft Edge 浏览器 iOS 端插件功能上线！安卓端插件生态持续壮大</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b1ca64c0a4d26547b0cec4dbaa1d8572/index.html">微软科技</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">在最新发布的 139 版本中，Microsoft Edge 浏览器 iOS 端正式支持插件功能！与此同时，Microsoft Edge 安卓端的插件数量已跃升至近 30 款。广告拦截、双语翻译、资源下</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3MTA0ODYyOA==&amp;mid=2651466111&amp;idx=1&amp;sn=c7f344126d885e0bb3c7ef9a87f7d4d8&amp;chksm=85ac849aa94ef7fa1a7726dc5acfe3159fd822973c424717fc99440a0ede3e1a020c8b28ae34&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=1&amp;sn=755c428639711d8bbc8c4dc06803e6aa&amp;chksm=c1e41b2aa3e757b01995c5ed81d009942cc154c94d2c2720cc0b24a6fa30f6ec8201446e02af&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7stTqD182SWkQicGXQxU4HCI7CtIibSR1joR7ia5G0AzD3ymyIIv41KJz9CO9Jph01ibiabT6cr1OZd3xwpNCajIicibQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=1&amp;sn=755c428639711d8bbc8c4dc06803e6aa&amp;chksm=c1e41b2aa3e757b01995c5ed81d009942cc154c94d2c2720cc0b24a6fa30f6ec8201446e02af&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞预警 | React Native Bottom Tabs代码执行漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb11b9d34e1afd43d3fdc4550f1307d/index.html">浅安安全</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">0x00 漏洞编号CVE-2025-545940x01 危险等级高危0x02 漏洞概述rеасt-nаtivе-bоttоm-tаbѕ是一个用于Rеасt Nаtivе的原生底部标签库。0x03 漏洞</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=1&amp;sn=755c428639711d8bbc8c4dc06803e6aa&amp;chksm=c1e41b2aa3e757b01995c5ed81d009942cc154c94d2c2720cc0b24a6fa30f6ec8201446e02af&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=2&amp;sn=76ddea96a15b00bcef931eb6d3c83a56&amp;chksm=c18f7cb06fa6f7e6eeaf78eba2fb6e8514b03df65cf9b1d28dd2ff4099fb7cebaefab81f8276&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7stTqD182SWkQicGXQxU4HCI7CtIibSR1jmH0KhOuiaGwU2zqmbqy016ZbhNRGxqbdSxZy2o5V4BhLZKwaHibhz73w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=2&amp;sn=76ddea96a15b00bcef931eb6d3c83a56&amp;chksm=c18f7cb06fa6f7e6eeaf78eba2fb6e8514b03df65cf9b1d28dd2ff4099fb7cebaefab81f8276&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞预警 | 金和OA SQL注入和XXE漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb11b9d34e1afd43d3fdc4550f1307d/index.html">浅安安全</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">0x00 漏洞编号暂无0x01 危险等级高危0x02 漏洞概述金和网络是专业信息化服务商,为城市监管部门提供了互联网+监管解决方案,为企事业单位提供组织协同OA系统开发平台,电子政务一体化平台,智慧电</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=2&amp;sn=76ddea96a15b00bcef931eb6d3c83a56&amp;chksm=c18f7cb06fa6f7e6eeaf78eba2fb6e8514b03df65cf9b1d28dd2ff4099fb7cebaefab81f8276&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=3&amp;sn=dd4f15bf034d1aec4c3324fef19f2100&amp;chksm=c13089b39646d357f95bc54487ee892a1e4cf9ad53a56774db24eb9b4dcf44cbbc3d0a18265d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7stTqD182SWkQicGXQxU4HCI7CtIibSR1jCia0iaQuf3JgP9eulWwgjJ3LkZbAgbLtM2cGCL7dcYyP8ibJCjUCsnVMQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=3&amp;sn=dd4f15bf034d1aec4c3324fef19f2100&amp;chksm=c13089b39646d357f95bc54487ee892a1e4cf9ad53a56774db24eb9b4dcf44cbbc3d0a18265d&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞预警 | 汉王e脸通智慧园区管理平台SQL注入漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb11b9d34e1afd43d3fdc4550f1307d/index.html">浅安安全</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">0x00 漏洞编号暂无0x01 危险等级高危0x02 漏洞概述汉王e脸通综合管理平台是一个集生物识别、大数据、NFC射频、计算机网络、自动控制等技术于一体，通过“人脸卡”及关联信息实现多种功能智能管理</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=3&amp;sn=dd4f15bf034d1aec4c3324fef19f2100&amp;chksm=c13089b39646d357f95bc54487ee892a1e4cf9ad53a56774db24eb9b4dcf44cbbc3d0a18265d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=4&amp;sn=f84830405be90b2d587b2663865e049c&amp;chksm=c1862eff9b9a8e6d7f9a0c4f07104ab6dc6cfb52ef6985a6449d2d4b07b037bdf739d53c9812&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7stTqD182SVwUbibXOKUTU7K1ajNK62iaeHtHwvw8iaSz0sGNzpH77p5zNELzxTHZPnc0gv8WOXjRHS627ka7eopA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=4&amp;sn=f84830405be90b2d587b2663865e049c&amp;chksm=c1862eff9b9a8e6d7f9a0c4f07104ab6dc6cfb52ef6985a6449d2d4b07b037bdf739d53c9812&amp;scene=0&amp;xtrack=1#rd" target="_blank">工具 | wazuh</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb11b9d34e1afd43d3fdc4550f1307d/index.html">浅安安全</a></span><time class="article-date" datetime="2025-08-15 08:00:00">发布日期：2025-08-15 08:00:00</time></div><p class="article-description">注：仅供安全研究与学习之用，若将工具做其他用途，由使用者承担全部法律及连带责任，作者及发布者不承担任何法律及连带责任。0x00 简介wazuh是一款实现对终端、云、容器统一监控的开源EDR与SIEM融</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494048&amp;idx=4&amp;sn=f84830405be90b2d587b2663865e049c&amp;chksm=c1862eff9b9a8e6d7f9a0c4f07104ab6dc6cfb52ef6985a6449d2d4b07b037bdf739d53c9812&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwNTgyODU3NQ==&amp;mid=2651134766&amp;idx=1&amp;sn=7fe9a67318cfadaee5f2a6535dd87f6f&amp;chksm=811f63abf4252229d3d283df67c66f587dd848693389297f7a87a24ff3c734bcd4c3c55ed8d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/vEkwp3V9UttdHZrzUfHFjbtxXq57hvX7bib4D1bh5ZmewPEBKqgoG4xQeBmXaNbibibyQhN5bTIcMp6viaZxryNjkA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwNTgyODU3NQ==&amp;mid=2651134766&amp;idx=1&amp;sn=7fe9a67318cfadaee5f2a6535dd87f6f&amp;chksm=811f63abf4252229d3d283df67c66f587dd848693389297f7a87a24ff3c734bcd4c3c55ed8d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">工信部预警BERT勒索软件风险！附官方防范指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cf3be7dab47e21af66834af2b85ffe0/index.html">威努特安全网络</a></span><time class="article-date" datetime="2025-08-15 07:59:00">发布日期：2025-08-15 07:59:00</time></div><p class="article-description">近日，工业和信息化部网络安全威胁和漏洞信息共享平台（CSTIS）发布关于防范BERT勒索软件的风险提示，CSTIS监测发现BERT勒索软件持续活跃，主要攻击目标为医疗健康、科技及活动服务等行业用户，可</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwNTgyODU3NQ==&amp;mid=2651134766&amp;idx=1&amp;sn=7fe9a67318cfadaee5f2a6535dd87f6f&amp;chksm=811f63abf4252229d3d283df67c66f587dd848693389297f7a87a24ff3c734bcd4c3c55ed8d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODkzNDE0MQ==&amp;mid=2651889540&amp;idx=1&amp;sn=d9e34d81130a7e9a3231d92a419f10ce&amp;chksm=bcd3b36943e89afb6318c661711d70b1f4c3b20cac7ce056298781123a88446a6bdf5fcfdf67&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/n79hJuXYrt6enE5IUp1ALsk6ardxFN3tHD39VCVBvkNkqxiamHTLudh8WzBYo2o9gD2qVia6gI9yuEc8rVgy1Ycg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODkzNDE0MQ==&amp;mid=2651889540&amp;idx=1&amp;sn=d9e34d81130a7e9a3231d92a419f10ce&amp;chksm=bcd3b36943e89afb6318c661711d70b1f4c3b20cac7ce056298781123a88446a6bdf5fcfdf67&amp;scene=0&amp;xtrack=1#rd" target="_blank">日军曾悬赏15万美元追杀这张照片的摄影师</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/78ab3fac8a181544db51ed29cf1c1006/index.html">中国摄影报</a></span><time class="article-date" datetime="2025-08-15 07:55:00">发布日期：2025-08-15 07:55:00</time></div><p class="article-description">中国娃娃1937年8月28日，日军对上海火车南站实施了猛烈轰炸，导致大量平民死伤，现场惨烈如同人间炼狱。时任美国赫斯特新闻社的摄影记者王小亭迅速赶赴现场，用相机捕捉了这一幕惨剧。照片中，年仅一岁的王家</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5ODkzNDE0MQ==&amp;mid=2651889540&amp;idx=1&amp;sn=d9e34d81130a7e9a3231d92a419f10ce&amp;chksm=bcd3b36943e89afb6318c661711d70b1f4c3b20cac7ce056298781123a88446a6bdf5fcfdf67&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjMwNDUxNg==&amp;mid=2247488609&amp;idx=1&amp;sn=567c9f0090b98da2d8e81effdf332d60&amp;chksm=c0d065c2e8ceaef5fdc4fa75fc7302627d96030236b412c4b9c84290afd3a269c4b9a5e065d7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/a1BOUvqnbrhUCeRjBlooZJLibEicCHnNLo5FQIUFib58wZl98YHhibPsRTCibkcUAZydNRKNpnz4apoib1Z4jFuv8mdw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjMwNDUxNg==&amp;mid=2247488609&amp;idx=1&amp;sn=567c9f0090b98da2d8e81effdf332d60&amp;chksm=c0d065c2e8ceaef5fdc4fa75fc7302627d96030236b412c4b9c84290afd3a269c4b9a5e065d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">什么漏洞是正常功能，什么功能是漏洞？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1ae641e738c7507d984da74cc965a177/index.html">进击的HACK</a></span><time class="article-date" datetime="2025-08-15 07:50:00">发布日期：2025-08-15 07:50:00</time></div><p class="article-description">声明：文中所涉及的技术、思路和工具仅供以安全为目的的学习交流使用，任何人不得将其用于非法用途给予盈利等目的，否则后果自行承担！如有侵权烦请告知，我会立即删除并致歉。谢谢！文章有疑问的，可以公众号发消息</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjMwNDUxNg==&amp;mid=2247488609&amp;idx=1&amp;sn=567c9f0090b98da2d8e81effdf332d60&amp;chksm=c0d065c2e8ceaef5fdc4fa75fc7302627d96030236b412c4b9c84290afd3a269c4b9a5e065d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
