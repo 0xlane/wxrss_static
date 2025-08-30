@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=7&amp;sn=507417ff406175206ca726149b982d85&amp;chksm=cf3acde36b59181e343ca5ba5365149a673968d4c9b2deb16b57c198a78af7459069ea617b7c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2eRDNo1vhHNeXaJj6qVPRBo1PLhvGIQYjMWdQ5UCkB36eGyrQh91hMH5pqHfZEaQfQSdsrsE7U78A/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=7&amp;sn=507417ff406175206ca726149b982d85&amp;chksm=cf3acde36b59181e343ca5ba5365149a673968d4c9b2deb16b57c198a78af7459069ea617b7c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Marvell股价暴跌</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-08-29 08:41:48">发布日期：2025-08-29 08:41:48</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：本文综合整理自网络信息。芯片制造商 Marvell Technology 周四预测第三季度营收将低于华尔街预期，因为经济不确定性和关税担忧影响了客户</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=7&amp;sn=507417ff406175206ca726149b982d85&amp;chksm=cf3acde36b59181e343ca5ba5365149a673968d4c9b2deb16b57c198a78af7459069ea617b7c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=8&amp;sn=b8abc4ec1a2e130458aa58d2f03071b0&amp;chksm=cf4c4e4839374535a363dd1a7aca09816c0879faa6ed282551df5754e1b31bf334a25d1e2f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2eRDNo1vhHNeXaJj6qVPRBo6XSTXoib7IgHYFerb5D9IycWGLnibmaz4vlCJDuW9AmsfpNsN2KSlTHw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=8&amp;sn=b8abc4ec1a2e130458aa58d2f03071b0&amp;chksm=cf4c4e4839374535a363dd1a7aca09816c0879faa6ed282551df5754e1b31bf334a25d1e2f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">日本2nm，后年量产</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-08-29 08:41:48">发布日期：2025-08-29 08:41:48</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：内容编译自techpowerup。 日本 Rapidus 已成功流片 2 纳米 GAA 测试芯片，计划于 2027 年实现量产。在 Hot Chip</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247793588&amp;idx=8&amp;sn=b8abc4ec1a2e130458aa58d2f03071b0&amp;chksm=cf4c4e4839374535a363dd1a7aca09816c0879faa6ed282551df5754e1b31bf334a25d1e2f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650973940&amp;idx=1&amp;sn=250f0f58ae7e312e92c436ed5e8434ed&amp;chksm=85bf555fdd3b64dd651b7b617ff1d2171482547be05d33ba9bea0e9443761af4356e474f9a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/nJmicCz2NYxNhzoQYsrCguicVSCrmsNjzBKIUvu3TNErRKUhFia82WW3r1zibKTL2m9K0RLbKUszHZh7TbCCaR2cWA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650973940&amp;idx=1&amp;sn=250f0f58ae7e312e92c436ed5e8434ed&amp;chksm=85bf555fdd3b64dd651b7b617ff1d2171482547be05d33ba9bea0e9443761af4356e474f9a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank">“AI+云安全”融合！天融信入编《多云环境安全能力构建技术指南（2025 版）》</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/564ec29bb87837a41a89621e1f4a21b6/index.html">天融信</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">TOPSEC在数字经济席卷全球的当下，中国市场对云计算需求旺盛，具备巨大的增长空间。据中国信通院数据统计与研究分析显示，2024年我国云计算市场规模达8288亿元，同比增长34.4%，保持较高增速，以</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650973940&amp;idx=1&amp;sn=250f0f58ae7e312e92c436ed5e8434ed&amp;chksm=85bf555fdd3b64dd651b7b617ff1d2171482547be05d33ba9bea0e9443761af4356e474f9a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247552656&amp;idx=1&amp;sn=7de8ae8919bc7fdd103a790f71418e16&amp;chksm=e81f56de6fb64e09d7009c86b5bea045899198bcb6ad389a96130695267f5f3436ff4c239158&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z6bicxIx5naIp3iaIq1yZ6DhPAl5VfDibcnocjZh6qY61632JJT65zYDLcTnicqh8BiaaVMicqyXrtABwO1S7aKVP3LA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247552656&amp;idx=1&amp;sn=7de8ae8919bc7fdd103a790f71418e16&amp;chksm=e81f56de6fb64e09d7009c86b5bea045899198bcb6ad389a96130695267f5f3436ff4c239158&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 深度拆解：一个顶级AI编程工具的核心架构</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15cb3cb3f3936c2b4ea943a483aecb84/index.html">阿里云开发者</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">一、Claude Code介绍ClaudeCode是由Anthropic开发的全新终端AI编程工具，旨在通过自然语言指令帮助开发者高效率地完成代码编写、调试和项目管理任务。它直接集成在开发者的工作环境</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247552656&amp;idx=1&amp;sn=7de8ae8919bc7fdd103a790f71418e16&amp;chksm=e81f56de6fb64e09d7009c86b5bea045899198bcb6ad389a96130695267f5f3436ff4c239158&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=1&amp;sn=4be5ea6c68dee037262cf025f006c4e4&amp;chksm=c3eb5dec359d2c787492d44ac3da729fab82f87e40cc292df7a3898cf60ee5335923b294169e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ua7rPK0FKpPJdvDPWayuCf8atIfY7cYRuckVmGuDj7icfS5jZvlD6rZunQV4h4OapeX0FfZxzG0XKuwUWYRslxg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=1&amp;sn=4be5ea6c68dee037262cf025f006c4e4&amp;chksm=c3eb5dec359d2c787492d44ac3da729fab82f87e40cc292df7a3898cf60ee5335923b294169e&amp;scene=0&amp;xtrack=1#rd" target="_blank">梗｜网络安全的七宗罪，你犯了几条？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b6df5051cdcbfdf4ba6a55a8d23fb8c8/index.html">安全喵喵站</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">最近又偶然看到这个关于“七宗罪”的经典梗图。如果从安全产品的角度来轻松解读一下这个梗，应该会很有趣。1. Gluttony暴食：安全技术的“自助餐狂魔”贪得无厌的吞噬欲，即便早已撑到极限。这个团队永远</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=1&amp;sn=4be5ea6c68dee037262cf025f006c4e4&amp;chksm=c3eb5dec359d2c787492d44ac3da729fab82f87e40cc292df7a3898cf60ee5335923b294169e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=2&amp;sn=a8a4074f47ffdd445a25e50e3dc3b0cf&amp;chksm=c3e1f97d0a486f830699377b89d2dd18eed7a193529aa082d7a0bd78c29c01eed88f9e9e7dbc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noopQFZ6xkWGldnJsNib6ac3nWdKHwfmMofLbpTWlTcr9RL9QvXJwIkX5iagVEJ05ZZYpxiaxDeYiaKvTbzuZHC4JQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=2&amp;sn=a8a4074f47ffdd445a25e50e3dc3b0cf&amp;chksm=c3e1f97d0a486f830699377b89d2dd18eed7a193529aa082d7a0bd78c29c01eed88f9e9e7dbc&amp;scene=0&amp;xtrack=1#rd" target="_blank">9.13 活动报名｜扬帆安全沙龙·2025·上海站</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b6df5051cdcbfdf4ba6a55a8d23fb8c8/index.html">安全喵喵站</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">在当今全球化的商业格局中，中国企业的出海征程正稳步推进。数字化时代，企业在海外市场面临着复杂多变的安全挑战，多维度的安全护航科技能力已成为保障业务持续发展的关键要素。作为中国专业聚焦的出海安全社区，扬</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzNjE5NjQ4Mw==&amp;mid=2247545129&amp;idx=2&amp;sn=a8a4074f47ffdd445a25e50e3dc3b0cf&amp;chksm=c3e1f97d0a486f830699377b89d2dd18eed7a193529aa082d7a0bd78c29c01eed88f9e9e7dbc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247507196&amp;idx=1&amp;sn=c1e6f6fca395cae563420ad8585b698b&amp;chksm=fda220862125322161304f248bd07da22cec9be1578138cafb6f6528d57794cb9756dc36548b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/9JPpNb7icHgFybCBhUNxrabR2E1311VV5G3LguvzNduQ1ib20YbDnrTO12NBugHQzb1PPXK9CgC2CLicr7AGgFzXQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247507196&amp;idx=1&amp;sn=c1e6f6fca395cae563420ad8585b698b&amp;chksm=fda220862125322161304f248bd07da22cec9be1578138cafb6f6528d57794cb9756dc36548b&amp;scene=0&amp;xtrack=1#rd" target="_blank">新型webshell免杀 | 哥斯拉 Websocket型 webshell</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6990ad1d3c34baf4314bae5b5ca2bc57/index.html">菜鸟学信安</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">介绍哥斯拉webshell管理工具的插件，用于连接websocket型webshell。WebSocket 型 WebShell 相比传统 WebShell（如基于 HTTP 的 POST/GET 请</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247507196&amp;idx=1&amp;sn=c1e6f6fca395cae563420ad8585b698b&amp;chksm=fda220862125322161304f248bd07da22cec9be1578138cafb6f6528d57794cb9756dc36548b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508536&amp;idx=1&amp;sn=c0ae7ec127bf7cb253b1495f34c63ca7&amp;chksm=ceef6e430de28fc5fe5ccb9873adc20fea5f9bf170c5f3fcd07cf425f572f45b4468e37eedaa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OmCbZ5JK30Eew860pias8IretJ5DIbjzmTlYKNdKyLyhdibdJKKmiaRDYyUJtsr9f4UficUmD6ZhzpWb6iagqOJTdSA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508536&amp;idx=1&amp;sn=c0ae7ec127bf7cb253b1495f34c63ca7&amp;chksm=ceef6e430de28fc5fe5ccb9873adc20fea5f9bf170c5f3fcd07cf425f572f45b4468e37eedaa&amp;scene=0&amp;xtrack=1#rd" target="_blank">从“数据拼凑”到“精准断案”：深度剖析RAG系统中信息完整性的关键作用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/bb2c31f2e600240096d4b6c619ccf775/index.html">阿里技术</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">这是2025年的第96篇文章（ 本文阅读时间：15分钟 ）最近在做智能缺陷查重的项目过程中，遇到一个有意思的问题，尽管采用了精心设计的Prompt和强大的LLM，模型在返回重复缺陷时，仍产生数据不一致</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508536&amp;idx=1&amp;sn=c0ae7ec127bf7cb253b1495f34c63ca7&amp;chksm=ceef6e430de28fc5fe5ccb9873adc20fea5f9bf170c5f3fcd07cf425f572f45b4468e37eedaa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=1&amp;sn=eeba44236001d17673fd39aceb2f8150&amp;chksm=9b8f32a867980a00c7765365519837a6d8a8ddb344f636d1ee72a0127551d6939960cc753477&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV2EQHuWvRVUcgibHZLVmgUZAhToNC8HhcVA9L9euWP7rLBwOL95FnyMg8MwgjiaYslPISnXflk5n88g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=1&amp;sn=eeba44236001d17673fd39aceb2f8150&amp;chksm=9b8f32a867980a00c7765365519837a6d8a8ddb344f636d1ee72a0127551d6939960cc753477&amp;scene=0&amp;xtrack=1#rd" target="_blank">沙人猪心</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=1&amp;sn=eeba44236001d17673fd39aceb2f8150&amp;chksm=9b8f32a867980a00c7765365519837a6d8a8ddb344f636d1ee72a0127551d6939960cc753477&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=2&amp;sn=38a71f2eacc3edbb80e375c32f8406a9&amp;chksm=9b7fb4f33f30a983c86a9ce19435629f3464613fcdaf0f440c5be65a44ecbf16fa1cc2b125c4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV2EQHuWvRVUcgibHZLVmgUZAwHlj0fFWxelz751lS1ibe2ibkUSEOO39GiavvpkxcZKVglAqIUMRbLtpw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=2&amp;sn=38a71f2eacc3edbb80e375c32f8406a9&amp;chksm=9b7fb4f33f30a983c86a9ce19435629f3464613fcdaf0f440c5be65a44ecbf16fa1cc2b125c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">SCI论文发表！保姆级全程投稿套餐！润色、选刊、投稿、返修，直至中刊！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2025-08-29 08:30:00">发布日期：2025-08-29 08:30:00</time></div><p class="article-description">提示：如需免费预约《“剖析2025年放榜结果”，揭秘“隐形”淘汰规则》国自然真实评审专题直播，请拉至文末！说到发论文的辛酸，相信老师和同学们都深有体会，发SCI真的是这个世界上最痛苦的事，没有之一！我</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247500211&amp;idx=2&amp;sn=38a71f2eacc3edbb80e375c32f8406a9&amp;chksm=9b7fb4f33f30a983c86a9ce19435629f3464613fcdaf0f440c5be65a44ecbf16fa1cc2b125c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
