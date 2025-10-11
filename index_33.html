@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=1&amp;sn=df8d433af7d3024bf41ef0f17368b321&amp;chksm=c09cf0a215c40e884bdfce4113c9ce448b0be13b3dad6f2bb96e8b5364d2cf8b3076a7aca8db&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/INYsicz2qhvZ1RicecstXc7yBkwxibneWwiaWmPCt3gqcq66vBypTuQmf27pKRNcyruPWepGjSYhicdHOL1lOEiaqhPw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=1&amp;sn=df8d433af7d3024bf41ef0f17368b321&amp;chksm=c09cf0a215c40e884bdfce4113c9ce448b0be13b3dad6f2bb96e8b5364d2cf8b3076a7aca8db&amp;scene=0&amp;xtrack=1#rd" target="_blank">企业数据安全的黑洞：AI聊天工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/66bd8d614abc8668527a9270fa3ff7f1/index.html">GoUpSec</a></span><time class="article-date" datetime="2025-10-10 12:16:13">发布日期：2025-10-10 12:16:13</time></div><p class="article-description">企业数据安全的“防火墙”正面临一场前所未有的考验。主角不是传统的黑客攻击，而是那些正在被员工广泛、甚至偷偷摸摸使用的AI聊天工具，尤其是ChatGPT（以及类似的AI聊天工具）。大量敏感数据在Chat</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=1&amp;sn=df8d433af7d3024bf41ef0f17368b321&amp;chksm=c09cf0a215c40e884bdfce4113c9ce448b0be13b3dad6f2bb96e8b5364d2cf8b3076a7aca8db&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=2&amp;sn=bb2b5f4b9819911eb51423f5bf365da5&amp;chksm=c02683ed546c3b4a4416a461b3eaf9ffc43bf3b643f0478202e74d5b6e59aa8c87c36b38a3f4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/INYsicz2qhvZ1RicecstXc7yBkwxibneWwiaB1MfbV2wBmGzsesEHz559pTMBL4LLOBAkum8N5gdQImkRk4xykVmQA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=2&amp;sn=bb2b5f4b9819911eb51423f5bf365da5&amp;chksm=c02683ed546c3b4a4416a461b3eaf9ffc43bf3b643f0478202e74d5b6e59aa8c87c36b38a3f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">英格兰银行：AI泡沫破裂将引发金融海啸</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/66bd8d614abc8668527a9270fa3ff7f1/index.html">GoUpSec</a></span><time class="article-date" datetime="2025-10-10 12:16:13">发布日期：2025-10-10 12:16:13</time></div><p class="article-description">最老牌的金融机构——英格兰银行的金融政策委员会近日发出警告，直指当前科技市场，尤其是人工智能板块的估值，已经膨胀到一个危险的临界点，甚至可与2000年的互联网泡沫高峰期相提并论。这不是一场温和的提醒，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNTI2MTI1NA==&amp;mid=2247504204&amp;idx=2&amp;sn=bb2b5f4b9819911eb51423f5bf365da5&amp;chksm=c02683ed546c3b4a4416a461b3eaf9ffc43bf3b643f0478202e74d5b6e59aa8c87c36b38a3f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=1&amp;sn=b88bfd54f7cf9659e8cc086940543fc8&amp;chksm=fa3b731218142182edcbd89c475a483a08b463e122acd1acfd466076fc354e5727738b5f6b0c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ZBjVrHIdkOkKU5fpNVtptQYOMfrffxMZ0SibIUs3oLAvwyrEw0V23BHAfc0dx6eY9xoeGicRmNoNufu3FRBQGsTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=1&amp;sn=b88bfd54f7cf9659e8cc086940543fc8&amp;chksm=fa3b731218142182edcbd89c475a483a08b463e122acd1acfd466076fc354e5727738b5f6b0c&amp;scene=0&amp;xtrack=1#rd" target="_blank">承认自己开源不行？转型“美国DeepSeek”后，两个谷歌研究员的AI初创公司融到20亿美元，估值暴涨15倍！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9e819167edcbe340ea81ad30bdd9f222/index.html">AI前线</a></span><time class="article-date" datetime="2025-10-10 12:15:00">发布日期：2025-10-10 12:15:00</time></div><p class="article-description">整理 | 褚杏娟	AI 创业公司 Reflection AI 由两位前 Google DeepMind 研究员在去年创立，仅仅一年时间就完成了最新一轮融资——筹集了 20 亿美元，公司估值达到 80</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=1&amp;sn=b88bfd54f7cf9659e8cc086940543fc8&amp;chksm=fa3b731218142182edcbd89c475a483a08b463e122acd1acfd466076fc354e5727738b5f6b0c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=2&amp;sn=2a159d1d6da7e87ccb51f604636b95c2&amp;chksm=fad037850d32846a057338c65d3a936833466ef9b789784ced5a068a2a914de63a8f1ed30af6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ZBjVrHIdkOkKU5fpNVtptQYOMfrffxMZC238Fwxyd3sMWOY6pC9PUiasSiarXPhbNPfTpibFdskRb7uhIfCeh1sicw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=2&amp;sn=2a159d1d6da7e87ccb51f604636b95c2&amp;chksm=fad037850d32846a057338c65d3a936833466ef9b789784ced5a068a2a914de63a8f1ed30af6&amp;scene=0&amp;xtrack=1#rd" target="_blank">知名机器人专家喊话：投人形机器人初创公司的数十亿美元，正在打水漂</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9e819167edcbe340ea81ad30bdd9f222/index.html">AI前线</a></span><time class="article-date" datetime="2025-10-10 12:15:00">发布日期：2025-10-10 12:15:00</time></div><p class="article-description">整理 | 华卫	知名机器人专家罗德尼・布鲁克斯（Rodney Brooks）是 iRobot 公司的联合创始人，曾在麻省理工学院（MIT）深耕数十年。他对特斯拉、以及备受关注的 AI 机器人公司 Fi</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247646186&amp;idx=2&amp;sn=2a159d1d6da7e87ccb51f604636b95c2&amp;chksm=fad037850d32846a057338c65d3a936833466ef9b789784ced5a068a2a914de63a8f1ed30af6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=1&amp;sn=4524843c71d1f07878ffeabefd602b23&amp;chksm=bc5d6e31aa74366caed9b4123958b71d9f6e12b4153c1df7eff807b19fcd9a0c11a3483940d2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic4euIR6AmmicxianS2tALLZZsJx0RGr4ibOvdqbzY6RortKd6f7QyPyXAQgn0elLyT4pNvFv0f2PCqA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=1&amp;sn=4524843c71d1f07878ffeabefd602b23&amp;chksm=bc5d6e31aa74366caed9b4123958b71d9f6e12b4153c1df7eff807b19fcd9a0c11a3483940d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">“中欧班列开通3个月，驻站派出所所长被查”，最新情况</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-10 12:10:47">发布日期：2025-10-10 12:10:47</time></div><p class="article-description">澎湃新闻记者 谭君黑龙江省明水县法院开庭审理的马科学、刘龙强迫交易案在横跨2个多月后，近日终于结束庭审。被告人马科学、刘龙分别为黑龙江佳木斯同江站派出所前所长和同江市交通警察辅警，二人被指控的是扰乱市</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=1&amp;sn=4524843c71d1f07878ffeabefd602b23&amp;chksm=bc5d6e31aa74366caed9b4123958b71d9f6e12b4153c1df7eff807b19fcd9a0c11a3483940d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=2&amp;sn=485a1368f4c9a698c153689357084b7f&amp;chksm=bcddfbe1bcaca61c20a6440f297656090425661117d84642fb77307e90dbcaf04e8b72dcb928&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic4euIR6AmmicxianS2tALLZZbXdAkYhjXqqD6Jc8G8kOytaLJSPdRKsGkia6iaVE74nDV9y1ibZC5ZTNw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=2&amp;sn=485a1368f4c9a698c153689357084b7f&amp;chksm=bcddfbe1bcaca61c20a6440f297656090425661117d84642fb77307e90dbcaf04e8b72dcb928&amp;scene=0&amp;xtrack=1#rd" target="_blank">马克龙“危机四伏”，两届总统任内辞职7位总理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-10 12:10:47">发布日期：2025-10-10 12:10:47</time></div><p class="article-description">澎湃新闻记者 朱润宇马克龙即将迎来其两届总统任期内的第八位总理，而法国已陷入了严重的政治危机。当地时间2025年10月8日，法国巴黎，法国电视二台直播节目中，电视屏幕显示即将卸任的法国总理塞巴斯蒂安·</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=2&amp;sn=485a1368f4c9a698c153689357084b7f&amp;chksm=bcddfbe1bcaca61c20a6440f297656090425661117d84642fb77307e90dbcaf04e8b72dcb928&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=3&amp;sn=c72ec29d40859ea205bab5bad55e141d&amp;chksm=bc9472958a82ee158d7036c1da1607eb9f51c3cd733eff139ee5f844737ab210549e2f9fab73&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic4euIR6AmmicxianS2tALLZZJm2vQabO6ucQmFUJhUIUicXibyw7IM5cMfXehjVpF8vTU3dgqp3TJjkg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=3&amp;sn=c72ec29d40859ea205bab5bad55e141d&amp;chksm=bc9472958a82ee158d7036c1da1607eb9f51c3cd733eff139ee5f844737ab210549e2f9fab73&amp;scene=0&amp;xtrack=1#rd" target="_blank">云冈石窟，来上海“出差”了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-10 12:10:47">发布日期：2025-10-10 12:10:47</time></div><p class="article-description">澎湃新闻高级记者 邹娟 实习记者 张云鹏10月9日，《云海相望——云冈石窟艺术特展》在位于上海滨港商业中心的趣看美术馆启幕。作为上海文旅2025年下半年重量级文博大展项目之一，该展览于10月10日面向</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652481794&amp;idx=3&amp;sn=c72ec29d40859ea205bab5bad55e141d&amp;chksm=bc9472958a82ee158d7036c1da1607eb9f51c3cd733eff139ee5f844737ab210549e2f9fab73&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=1&amp;sn=21fb4e8d84dc30583f9214fae16fd3d9&amp;chksm=8a87cd9b9012e3c95dae1c9babba3895734fac16c87398807166c24609ffad6a92cc161f282a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ocJVe9ojWg3Kib3rpHbsANY0qcdWekMYlehibrdh72Tk3u1xEfU54SGzdwolT8yps6KRSstCBJKhatibh9RFmbE2A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=1&amp;sn=21fb4e8d84dc30583f9214fae16fd3d9&amp;chksm=8a87cd9b9012e3c95dae1c9babba3895734fac16c87398807166c24609ffad6a92cc161f282a&amp;scene=0&amp;xtrack=1#rd" target="_blank">网络货运业被税收难题卡住了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15c8d5243e2e28b3b1ec4d9d20485512/index.html">中国汽车报</a></span><time class="article-date" datetime="2025-10-10 12:12:20">发布日期：2025-10-10 12:12:20</time></div><p class="article-description">近日，集装箱货运平台“一拼通”发布的一则新规，在货车司机群体中引发强烈反响。该规定明确：订单完成后，若司机无法为平台开具相应的物流服务发票，其所得运费的30％就必须用于在平台指定地点加油。这一被司机戏</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=1&amp;sn=21fb4e8d84dc30583f9214fae16fd3d9&amp;chksm=8a87cd9b9012e3c95dae1c9babba3895734fac16c87398807166c24609ffad6a92cc161f282a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=2&amp;sn=c2db33b85a74756595c86914937b79b2&amp;chksm=8a63df3bc36b3f65b782c1cfe565b9e873010a15b4e6a89123ada473717e5cebf9d4437dd7cb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ocJVe9ojWg3Kib3rpHbsANY0qcdWekMYlTPS5gTgflAjAAfOicX3tTKT6uIYrIPfXsqOK50600r8VbkkhSXibNiblQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=2&amp;sn=c2db33b85a74756595c86914937b79b2&amp;chksm=8a63df3bc36b3f65b782c1cfe565b9e873010a15b4e6a89123ada473717e5cebf9d4437dd7cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">行业热盼氢燃料汽车接续政策</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15c8d5243e2e28b3b1ec4d9d20485512/index.html">中国汽车报</a></span><time class="article-date" datetime="2025-10-10 12:12:20">发布日期：2025-10-10 12:12:20</time></div><p class="article-description">日前，中汽数据发布《氢能汽车蓝皮书：中国车用氢能产业发展报告（2024）》（以下简称《蓝皮书》），对相关产业进展、示范应用等作出总结。截至目前，氢燃料电池汽车示范城市群历经一轮示范后，下一步如何发展，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652517292&amp;idx=2&amp;sn=c2db33b85a74756595c86914937b79b2&amp;chksm=8a63df3bc36b3f65b782c1cfe565b9e873010a15b4e6a89123ada473717e5cebf9d4437dd7cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890822&amp;idx=1&amp;sn=7c442c023290e1b134c5913e87a7956f&amp;chksm=8dd05a964e1e8fca665513070d23489ce1324bb12c857288a708b8692602846881aeca47b91c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXbwvIBMCqjwLo6IuQdBQiahcm81JJoQs4wLjbPOGpCuBsZuxwdSTNaiaStAa6cTIRy7SKZpibfV7fUtg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890822&amp;idx=1&amp;sn=7c442c023290e1b134c5913e87a7956f&amp;chksm=8dd05a964e1e8fca665513070d23489ce1324bb12c857288a708b8692602846881aeca47b91c&amp;scene=0&amp;xtrack=1#rd" target="_blank">黄仁勋评AMD交易；Figure 03发布：家务全包，人形机器人前景被看好；Banana：超100案例展示AI图像魅力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-10-10 12:12:59">发布日期：2025-10-10 12:12:59</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-10-10 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890822&amp;idx=1&amp;sn=7c442c023290e1b134c5913e87a7956f&amp;chksm=8dd05a964e1e8fca665513070d23489ce1324bb12c857288a708b8692602846881aeca47b91c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
