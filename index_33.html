@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650976282&amp;idx=1&amp;sn=1cda7a2093184baa14d91fee27186450&amp;chksm=85e60cdb964f36f36c8ffe45347dd2f6f6a35a3384db6f1df89f645c66b2da05c9e0c2042c75&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/nJmicCz2NYxNYSs7HTibgbuicwW6lgnf07o2gu1uCBnP6wR0MdHrd9o3icrD2dAU8UuAmYlbwaIfCgib8zNgYiaibOZog/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650976282&amp;idx=1&amp;sn=1cda7a2093184baa14d91fee27186450&amp;chksm=85e60cdb964f36f36c8ffe45347dd2f6f6a35a3384db6f1df89f645c66b2da05c9e0c2042c75&amp;scene=0&amp;xtrack=1#rd" target="_blank">数千万终端的选择！天融信EDR助力破解“Windows10停服”困局</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/564ec29bb87837a41a89621e1f4a21b6/index.html">天融信</a></span><time class="article-date" datetime="2025-10-17 08:30:00">发布日期：2025-10-17 08:30:00</time></div><p class="article-description">Windows10停服不用慌！在数字化浪潮席卷全球的当下，终端设备作为企业业务开展的重要载体，其安全稳定运行直接关系到企业的核心利益与发展命脉。然而，随着微软宣布Windows10操作系统正式停止服务</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650976282&amp;idx=1&amp;sn=1cda7a2093184baa14d91fee27186450&amp;chksm=85e60cdb964f36f36c8ffe45347dd2f6f6a35a3384db6f1df89f645c66b2da05c9e0c2042c75&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247487162&amp;idx=1&amp;sn=b516e6ea712491fff9afb84dda499c30&amp;chksm=c0133690210d98e92db0655a73cdd1511673ee0c6b0dadf32e0bea49902e3fa56b35a2e2269a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/cFyO8U8jibpsYnV79Iz0XblrJJAwa1caAYAUAjb99deHbKlr8wMBay0mZsxrVHkIKm616UEcHwFkhjWUuvXgXyQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247487162&amp;idx=1&amp;sn=b516e6ea712491fff9afb84dda499c30&amp;chksm=c0133690210d98e92db0655a73cdd1511673ee0c6b0dadf32e0bea49902e3fa56b35a2e2269a&amp;scene=0&amp;xtrack=1#rd" target="_blank">种龟不是应该留着下蛋回本吗？为啥一堆人急着卖？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2b19ca3b0433e060b11e9522f8aa0c2c/index.html">龟语者</a></span><time class="article-date" datetime="2025-10-17 08:29:07">发布日期：2025-10-17 08:29:07</time></div><p class="article-description">某鱼、某拍、某线上好多标着‘种龟’的龟在卖，宣传写得天花乱坠，说什么‘一窝回本’‘年稳产20蛋’，其实想想，不是种龟应该自己留着下蛋才对吗？都稳产了怎么商家还出手？自己留着孵化不好吗？真正优质的种龟，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247487162&amp;idx=1&amp;sn=b516e6ea712491fff9afb84dda499c30&amp;chksm=c0133690210d98e92db0655a73cdd1511673ee0c6b0dadf32e0bea49902e3fa56b35a2e2269a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651063887&amp;idx=1&amp;sn=8f41a6339b16baba4bb0428ac2d7117a&amp;chksm=bc0c300cedc63dea34fbdf45a57fd1cb41e3280833584078919880a71c381a10253761618880&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ePTzepwoNWPvR3H2vSP6AHmAx7COk3aNZcbclruXKNia4rgarm0PiaFhPt6O76W7dpTxqwvnWSjfQ5uV5EQor4bw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651063887&amp;idx=1&amp;sn=8f41a6339b16baba4bb0428ac2d7117a&amp;chksm=bc0c300cedc63dea34fbdf45a57fd1cb41e3280833584078919880a71c381a10253761618880&amp;scene=0&amp;xtrack=1#rd" target="_blank">奥特曼回应ChatGPT成人内容争议/乔布斯登上1美元纪念币/首款国产eSIM手机发布</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a0f8061c9b19b2f9fefcca4a6b2377e1/index.html">APPSO</a></span><time class="article-date" datetime="2025-10-17 08:24:12">发布日期：2025-10-17 08:24:12</time></div><p class="article-description">👮奥特曼回应成人内容争议：我们不是世界道德警察📱4399 起，国内首款 eSIM 手机 OPPO Find X9 系列正式发布🌟Sora 2 更新：Pro 用户可用分镜板，视频时长上限提升至 25 秒</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651063887&amp;idx=1&amp;sn=8f41a6339b16baba4bb0428ac2d7117a&amp;chksm=bc0c300cedc63dea34fbdf45a57fd1cb41e3280833584078919880a71c381a10253761618880&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTM2OTYyNA==&amp;mid=2652731134&amp;idx=1&amp;sn=50aefe0f9b7d61ae752490aefced5a26&amp;chksm=85b6673d2d1529c96ffa05b21a989162c3ee5e9f9670a5a7672943055f02e1329f471c4374b6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/T0LsoxYJx9w5dCjHadsqSUfXvXZmeZu0llGibap4dkvkthg0LXKYibg2dsjEByicCmBVyzfLAkDhjRCkKbLSD90iaQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTM2OTYyNA==&amp;mid=2652731134&amp;idx=1&amp;sn=50aefe0f9b7d61ae752490aefced5a26&amp;chksm=85b6673d2d1529c96ffa05b21a989162c3ee5e9f9670a5a7672943055f02e1329f471c4374b6&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025第二届“街拍视界”全国街头摄影大展投稿精选（28）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/fb0cc1894e1085678a85b0a7fe82144e/index.html">中国摄影网</a></span><time class="article-date" datetime="2025-10-17 08:19:00">发布日期：2025-10-17 08:19:00</time></div><p class="article-description">图文合集导航签约摄影师312 名家影像 37  展览征稿818 获奖公布 1000  获奖公布② 287 摄影技巧 221  第五届“鸟瞰视界”航拍大赛29  图文合集导航&gt;&gt;&gt;☝点我浏览投稿细则街头</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NTM2OTYyNA==&amp;mid=2652731134&amp;idx=1&amp;sn=50aefe0f9b7d61ae752490aefced5a26&amp;chksm=85b6673d2d1529c96ffa05b21a989162c3ee5e9f9670a5a7672943055f02e1329f471c4374b6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzEwNTk5Mg==&amp;mid=2652179472&amp;idx=1&amp;sn=c215972443747ceeea3d9bcef5cca0fb&amp;chksm=857add13487b04055879ce3ced4a53c2c03ab655e39c209e563a45c0043745b20e18ca44b204&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/E97zlUoCq1koK256FlgXELvZmgeZUGUjPOTyXPU0iaHZd6SDmsJpZex4WcYMzE2Bia8RgEkibeROdOlmlo2zNib4bQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzEwNTk5Mg==&amp;mid=2652179472&amp;idx=1&amp;sn=c215972443747ceeea3d9bcef5cca0fb&amp;chksm=857add13487b04055879ce3ced4a53c2c03ab655e39c209e563a45c0043745b20e18ca44b204&amp;scene=0&amp;xtrack=1#rd" target="_blank">600万+！感谢每一个你，与我们温暖同行</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2e4076e2eabfbfb90d263ceecb09f5b6/index.html">河北人社</a></span><time class="article-date" datetime="2025-10-17 08:10:00">发布日期：2025-10-17 08:10:00</time></div><p class="article-description">“河北人社”微信公众号关注量突破6000000！这不是简单的数字叠加是600万颗与我们同频跳动的心是600万份沉甸甸的信任与选择感谢你们，选择相信，愿意停留河北人社 做您身边有用的人生旅伴从0到600</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzEwNTk5Mg==&amp;mid=2652179472&amp;idx=1&amp;sn=c215972443747ceeea3d9bcef5cca0fb&amp;chksm=857add13487b04055879ce3ced4a53c2c03ab655e39c209e563a45c0043745b20e18ca44b204&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0NzQzOTczOA==&amp;mid=2247519004&amp;idx=1&amp;sn=4ff6e43fef56554a6ba9fd40fc5fdd54&amp;chksm=c2f1a0be5bddd8767828726cdf9c4c54440abb387bdbc5fa7ef338addc20fb006c93c8cff2c9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OdmYSS49h7EDibExArDDett8ASKia2BMdib7goNxGTJMib8ToGRyjULDtPBpcKDibuSe24KIhsOHyLVzWicoiaJvxL1Qg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0NzQzOTczOA==&amp;mid=2247519004&amp;idx=1&amp;sn=4ff6e43fef56554a6ba9fd40fc5fdd54&amp;chksm=c2f1a0be5bddd8767828726cdf9c4c54440abb387bdbc5fa7ef338addc20fb006c93c8cff2c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">一个“关闭 AI”的按钮，成了史上点赞最多的帖子</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9beaf2a4bd50a9b997e6c3dec0b8544e/index.html">AI范儿</a></span><time class="article-date" datetime="2025-10-17 08:10:54">发布日期：2025-10-17 08:10:54</time></div><p class="article-description">从一条爆掉的推文说起。在 Twitter 上，一个粉丝不多的用户发了一条很简短的消息：“Pinterest 可以关闭 AI 图片了。”结果，意想不到的是，这条推文瞬间爆了。到现在已经有 2000 多万</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0NzQzOTczOA==&amp;mid=2247519004&amp;idx=1&amp;sn=4ff6e43fef56554a6ba9fd40fc5fdd54&amp;chksm=c2f1a0be5bddd8767828726cdf9c4c54440abb387bdbc5fa7ef338addc20fb006c93c8cff2c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=1&amp;sn=aaee825770172177c5328d159fc9ead8&amp;chksm=e91c481cd7ffffdfd9cdfae47adf3e81e08bf0a17b91ee070b04ee387301b5742b1b60cce8e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfageXiapPMf9XF0ug0uW5QLTGic22pBn9x0Pd39ia8Umoibod65S0Iibxn0hACrTZEcP4DSmjiaXzickDWg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=1&amp;sn=aaee825770172177c5328d159fc9ead8&amp;chksm=e91c481cd7ffffdfd9cdfae47adf3e81e08bf0a17b91ee070b04ee387301b5742b1b60cce8e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Skills 可能比 MCP更重要！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-10-17 08:10:53">发布日期：2025-10-17 08:10:53</time></div><p class="article-description">Claude Skills 是 Anthropic 最近推出的一种让 Claude 模型学习新能力的机制。从本质上来说Claude Skills就是Claude Code的SubAgents。不止于编</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=1&amp;sn=aaee825770172177c5328d159fc9ead8&amp;chksm=e91c481cd7ffffdfd9cdfae47adf3e81e08bf0a17b91ee070b04ee387301b5742b1b60cce8e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=2&amp;sn=f05c48dac3f8905115237bccc42f7b27&amp;chksm=e9bf5a5cb542012e838fbe2bfb57ef7cb461bf4fdc9f868630a831b4307a0e399e8d6854d1d8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfageXiapPMf9XF0ug0uW5QLVIVUdEyGY1eib935c9JNLq3oVzMiaJAibDpKF7QMNic55RNP9Qf6te1zMQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=2&amp;sn=f05c48dac3f8905115237bccc42f7b27&amp;chksm=e9bf5a5cb542012e838fbe2bfb57ef7cb461bf4fdc9f868630a831b4307a0e399e8d6854d1d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">Cline CLI发布！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-10-17 08:10:53">发布日期：2025-10-17 08:10:53</time></div><p class="article-description">Cline CLI 需要 Node.js 20 或更高版本，推荐使用 Node.js 22 以获得最佳体验。先用 node --version 检查当前版本，然后通过 npm install -g c</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247507258&amp;idx=2&amp;sn=f05c48dac3f8905115237bccc42f7b27&amp;chksm=e9bf5a5cb542012e838fbe2bfb57ef7cb461bf4fdc9f868630a831b4307a0e399e8d6854d1d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDA0MzcxNw==&amp;mid=2247492169&amp;idx=1&amp;sn=8b680e5db43ccdeacf2f7b6c496504aa&amp;chksm=c55747ccee39f6c4c3d37d6ed4d3633eb2546e3861f8034af8cf02f9257a9e5612bd2463a7b4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/E1DQUYfcS0IoBfrBFTd6nM9qxNPBfugCEOSs62IpESwqsE983PHvZEaYF4ia8fvUeFzxk26ly59CzsrYDLGHvtA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDA0MzcxNw==&amp;mid=2247492169&amp;idx=1&amp;sn=8b680e5db43ccdeacf2f7b6c496504aa&amp;chksm=c55747ccee39f6c4c3d37d6ed4d3633eb2546e3861f8034af8cf02f9257a9e5612bd2463a7b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">KV Cache直连：LLM协作的&quot;神经突触&quot;式通信革命</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1b2404787847886a08a2973c917b44e3/index.html">觉察流</a></span><time class="article-date" datetime="2025-10-17 08:10:00">发布日期：2025-10-17 08:10:00</time></div><p class="article-description">点击👇🏻可关注，文章来自🙋‍♂️ 想加入社群的朋友，可看文末方法，进群交流。“ 多LLM系统通常通过文本进行通信，导致语义损耗和效率低下。本文介绍Cache-to-Cache(C2C)技术，展示如何让</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDA0MzcxNw==&amp;mid=2247492169&amp;idx=1&amp;sn=8b680e5db43ccdeacf2f7b6c496504aa&amp;chksm=c55747ccee39f6c4c3d37d6ed4d3633eb2546e3861f8034af8cf02f9257a9e5612bd2463a7b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661147437&amp;idx=1&amp;sn=630844d2a91d71a73279b9f720972514&amp;chksm=bc5e580ba0330b7f24b6a3b28c86e97178941166685a9bb375be02edb496cf2a9e98babff425&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAheFhLEKOEJ80f6GcyQ5xQkF1ylibRFricR53PAs7BF54XClCmicGLPJzsa30dSviciaQiaQVy7vdwcDepg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661147437&amp;idx=1&amp;sn=630844d2a91d71a73279b9f720972514&amp;chksm=bc5e580ba0330b7f24b6a3b28c86e97178941166685a9bb375be02edb496cf2a9e98babff425&amp;scene=0&amp;xtrack=1#rd" target="_blank">车长超5米，轴距3米多，标配激光雷达，双大屏，360全景影像、64色氛围灯，选它还是选赛那？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-10-17 08:00:00">发布日期：2025-10-17 08:00:00</time></div><p class="article-description">10月15日，魏牌高山7上市发布会在保定哈弗技术中心举办，厂家正式公布了新车价格，28.58万元。和高山8以及高山9相比，刚刚上市的高山7定位更入门，车身长度和轴距要短一些，是一款主打家庭用户的7座M</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661147437&amp;idx=1&amp;sn=630844d2a91d71a73279b9f720972514&amp;chksm=bc5e580ba0330b7f24b6a3b28c86e97178941166685a9bb375be02edb496cf2a9e98babff425&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

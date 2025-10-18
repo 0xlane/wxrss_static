@@ -1,0 +1,300 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=5&amp;sn=105e0e6cc4ad23c7c47fa8add00b8d52&amp;chksm=cf1685906699f468b8c46c6656057edb526aca78ca4f28c5a83e371cd4fa6d170422a2c8a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2cxylwF3nynUiaVLSZiaXemBghxsqV59NWIAukeP8kHgDtAmnicWgI1cAj8G1WXdlR9kiaTuhsHj77HJw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=5&amp;sn=105e0e6cc4ad23c7c47fa8add00b8d52&amp;chksm=cf1685906699f468b8c46c6656057edb526aca78ca4f28c5a83e371cd4fa6d170422a2c8a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank">台积电惊人财报：暗藏玄机</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-10-17 09:09:24">发布日期：2025-10-17 09:09:24</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：内容编译自nextplatform。这家全球最大、或许也是最重要的芯片代工厂告诉华尔街，其人工智能相关业务的销售额已超预期。但该公司并未具体说明超预</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=5&amp;sn=105e0e6cc4ad23c7c47fa8add00b8d52&amp;chksm=cf1685906699f468b8c46c6656057edb526aca78ca4f28c5a83e371cd4fa6d170422a2c8a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=6&amp;sn=c5231a0ba1d5fad823dfd6c3f424399b&amp;chksm=cf171e047a6b7c01f3d16f04c5e616bf775aaa076b8573ee3124f52a3fedda1111a9759c0070&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2cxylwF3nynUiaVLSZiaXemBg0pDoR8BQEmexRJ8bRZViauZXq0otF8qlzRxk58ICVTbIggphyWsEYEQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=6&amp;sn=c5231a0ba1d5fad823dfd6c3f424399b&amp;chksm=cf171e047a6b7c01f3d16f04c5e616bf775aaa076b8573ee3124f52a3fedda1111a9759c0070&amp;scene=0&amp;xtrack=1#rd" target="_blank">安世被禁，欧洲车厂预警</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-10-17 09:09:24">发布日期：2025-10-17 09:09:24</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：内容来自半导体行业观察综合。一家鲜为人知的芯片供应商威胁要引发连锁反应，可能导致全球汽车生产线停止。上周，汽车制造商及其供应商收到芯片制造商 Nex</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=6&amp;sn=c5231a0ba1d5fad823dfd6c3f424399b&amp;chksm=cf171e047a6b7c01f3d16f04c5e616bf775aaa076b8573ee3124f52a3fedda1111a9759c0070&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=7&amp;sn=af0a674d5f3645cb7556f166067908ce&amp;chksm=cfd008e1800760064ec2774b9eb98cbf70f81c67dfb7806f4da4cdd26b9b4128205baadc0ffa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2cxylwF3nynUiaVLSZiaXemBgmI1ibjWjK5x1SvxeY5IqlM13JiaNFoM1g80eBXvPRbibSb03MzOLkfLHA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=7&amp;sn=af0a674d5f3645cb7556f166067908ce&amp;chksm=cfd008e1800760064ec2774b9eb98cbf70f81c67dfb7806f4da4cdd26b9b4128205baadc0ffa&amp;scene=0&amp;xtrack=1#rd" target="_blank">这颗芯片，又双叒叕延期了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-10-17 09:09:24">发布日期：2025-10-17 09:09:24</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：内容编译自tomshardware。Tachyum 周三打破沉默，宣布其用于AI 和 HPC 的 Prodigy 通用处理器将增加核心数量，以提升性</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=7&amp;sn=af0a674d5f3645cb7556f166067908ce&amp;chksm=cfd008e1800760064ec2774b9eb98cbf70f81c67dfb7806f4da4cdd26b9b4128205baadc0ffa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=8&amp;sn=a14d0cb467ffe6d4a69573af028dd91c&amp;chksm=cfd0dd26c4d027a1de630dff68835fc6566f725e125666f39cd087b7222aeb91e887128a2ddb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2cxylwF3nynUiaVLSZiaXemBgrNkIHkQKTTt0rK4EqSpvWu9ic9mVvJp48EVJFVQLoTvl1kP8vvZ9y8Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=8&amp;sn=a14d0cb467ffe6d4a69573af028dd91c&amp;chksm=cfd0dd26c4d027a1de630dff68835fc6566f725e125666f39cd087b7222aeb91e887128a2ddb&amp;scene=0&amp;xtrack=1#rd" target="_blank">一种冷却芯片的神奇方法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2025-10-17 09:09:24">发布日期：2025-10-17 09:09:24</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。来源：内容编译自IEEE。现代高性能芯片堪称工程奇迹，包含数百亿个晶体管。问题是，你无法同时使用它们。如果这样做，就会产生热点——高温集中在微小区域——功</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247798552&amp;idx=8&amp;sn=a14d0cb467ffe6d4a69573af028dd91c&amp;chksm=cfd0dd26c4d027a1de630dff68835fc6566f725e125666f39cd087b7222aeb91e887128a2ddb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650634180&amp;idx=1&amp;sn=1489eb04a0b2cb2742b47022963e0752&amp;chksm=bf8da37a6cf2dcc7f7b4c9cf547f9b7eca4a730312878ab30a214f82c1b00b6138c6963cb4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/icVz8RbowK3zmdeePq0KJgUkk4ibdhUXJ9qN3w9zueub2JbRKuARTzHUw8jXpkIPib88wj6XnfXcxzCaPTYrlvpGQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650634180&amp;idx=1&amp;sn=1489eb04a0b2cb2742b47022963e0752&amp;chksm=bf8da37a6cf2dcc7f7b4c9cf547f9b7eca4a730312878ab30a214f82c1b00b6138c6963cb4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">云山论剑！广州数字安全产业发布会在白云区举行</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/73b75d1fa4f1ec7b5028a7f79ceead33/index.html">安恒信息</a></span><time class="article-date" datetime="2025-10-17 09:06:47">发布日期：2025-10-17 09:06:47</time></div><p class="article-description">10月16日下午，云山论剑·广州数字安全产业发布会在广州白云国际会议中心国际会堂举行，通过“政策解读+技术推介+案例剖析+成果展示+项目落地”五位一体模式，全面展现数字安全产业实践创新，为数字经济高质</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650634180&amp;idx=1&amp;sn=1489eb04a0b2cb2742b47022963e0752&amp;chksm=bf8da37a6cf2dcc7f7b4c9cf547f9b7eca4a730312878ab30a214f82c1b00b6138c6963cb4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=1&amp;sn=56c9cfb65612fe231abde6ac5e898055&amp;chksm=968a2d3833b43acf9c25a28b8af752aa0fd989c350832ccb96389f440c7b101e53f37bbd2c1f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmecoa.qpic.cn/sz_mmecoa_jpg/s37uxK5D5wn0nIyYocGQicLEXtd9nw8ZgAKvoSNU23bPjlyQCArDUYXMHSmfjcU6CBXwjuHdzjPficADMeq9FwWQ/640?wxtype=jpeg&amp;wxfrom=10000" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=1&amp;sn=56c9cfb65612fe231abde6ac5e898055&amp;chksm=968a2d3833b43acf9c25a28b8af752aa0fd989c350832ccb96389f440c7b101e53f37bbd2c1f&amp;scene=0&amp;xtrack=1#rd" target="_blank">不等啦，iPhone Air 预购吧。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9f6290f4436e5a2351f12e03b6433c3c/index.html">Apple</a></span><time class="article-date" datetime="2025-10-17 09:02:44">发布日期：2025-10-17 09:02:44</time></div><p class="article-description">iPhone Air。 人民币七千九百九十九元起或人民币三百三十三元每月 (二十四期) 起，参见注释 1，还可折抵换购，参见注释 2。仅支持 eSIM，参见注释 3。点击按钮，前往相关页面立即预购。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=1&amp;sn=56c9cfb65612fe231abde6ac5e898055&amp;chksm=968a2d3833b43acf9c25a28b8af752aa0fd989c350832ccb96389f440c7b101e53f37bbd2c1f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=2&amp;sn=ced2d590dc94760661cf30f247ac66ea&amp;chksm=96bd90748ef0d412a651c5517b115cedc4d81e2591a66ec3d9549ac2a169ac3a63a1ee67c45d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmecoa.qpic.cn/sz_mmecoa_jpg/s37uxK5D5wn0nIyYocGQicLEXtd9nw8ZgqvVA7DsDmjdGQ0yRkalhoBPgTOuAPoE6HwoXhnLIia35soFGIugUw8g/300?wxtype=jpeg&amp;wxfrom=10000" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=2&amp;sn=ced2d590dc94760661cf30f247ac66ea&amp;chksm=96bd90748ef0d412a651c5517b115cedc4d81e2591a66ec3d9549ac2a169ac3a63a1ee67c45d&amp;scene=0&amp;xtrack=1#rd" target="_blank">直接上，三款 M5 新品预购一道来了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9f6290f4436e5a2351f12e03b6433c3c/index.html">Apple</a></span><time class="article-date" datetime="2025-10-17 09:02:44">发布日期：2025-10-17 09:02:44</time></div><p class="article-description">搭载 M5 芯片的三款新品：MacBook Pro 14 英寸、iPad Pro 和 Apple Vision Pro 将于十月二十二日发售，今天起，就可在 Apple 官网、Apple Store</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIwOTA2MzYwNA==&amp;mid=2247517986&amp;idx=2&amp;sn=ced2d590dc94760661cf30f247ac66ea&amp;chksm=96bd90748ef0d412a651c5517b115cedc4d81e2591a66ec3d9549ac2a169ac3a63a1ee67c45d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4ODg3NzIyMg==&amp;mid=2247554123&amp;idx=1&amp;sn=fc11de6bb46ffed28035999b694e2956&amp;chksm=fce307bb3f4042da0b2fb3cfbb720fc17e9777fc999c099929da6f82ab8fe4eb45044521ef06&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/6iazwnrKJz9tRgIJnJLrkrnrGePsh8tR8B75gpEAEeocvnmfXnGgHHa9CakWNz5bw0N2jl4UkoicOPzPnvnrvgMg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4ODg3NzIyMg==&amp;mid=2247554123&amp;idx=1&amp;sn=fc11de6bb46ffed28035999b694e2956&amp;chksm=fce307bb3f4042da0b2fb3cfbb720fc17e9777fc999c099929da6f82ab8fe4eb45044521ef06&amp;scene=0&amp;xtrack=1#rd" target="_blank">问界科技美学 | 秋日壁纸来袭，请全屏观看</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/02cb15331d29e41f71ba37980a886150/index.html">问界汽车</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4ODg3NzIyMg==&amp;mid=2247554123&amp;idx=1&amp;sn=fc11de6bb46ffed28035999b694e2956&amp;chksm=fce307bb3f4042da0b2fb3cfbb720fc17e9777fc999c099929da6f82ab8fe4eb45044521ef06&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506347&amp;idx=1&amp;sn=d984c037b66d2ef894997ce991b8e692&amp;chksm=9e648ecce7dd02f79ffe2b2884b847127af6d20ea459ae4ea8c099d822178b08aa8e597d53cd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlTD36Kr4OMkd5FJlibMWvHQwnhdIUKBuwr094B2svkzygLw4oyvWUn5zmPzeQRCpnX3zicYH3vm7DA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506347&amp;idx=1&amp;sn=d984c037b66d2ef894997ce991b8e692&amp;chksm=9e648ecce7dd02f79ffe2b2884b847127af6d20ea459ae4ea8c099d822178b08aa8e597d53cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">从原理到落地：MCP在Spring AI中的工程实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description">•  一、概述 •  1.1 背景 •  1.2 Function Call •  1.3 MCP •  二、原理 •  2.1 MCP架构 •  2.2 MCP调用过程 •  2.3 MCP抓包分析</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506347&amp;idx=1&amp;sn=d984c037b66d2ef894997ce991b8e692&amp;chksm=9e648ecce7dd02f79ffe2b2884b847127af6d20ea459ae4ea8c099d822178b08aa8e597d53cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247490215&amp;idx=1&amp;sn=c668843c040167885b95ec41ef35fdf1&amp;chksm=ce8a0bfc82fded8a7893c71c8c4c6e405463b341bd9da6e78c6cd5f6ff4c4579decb161bd15d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/mTA5icOvVGeeyWopLwN66IIeicToWnqWvQoJmia1IkNQYwic7MSibIo9wQu7jwKW8LpJutZo7ic1fIXQeDnhGVBicGCTA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247490215&amp;idx=1&amp;sn=c668843c040167885b95ec41ef35fdf1&amp;chksm=ce8a0bfc82fded8a7893c71c8c4c6e405463b341bd9da6e78c6cd5f6ff4c4579decb161bd15d&amp;scene=0&amp;xtrack=1#rd" target="_blank">某APK功能分析-窃取用户隐私行为解析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c71dcdb6f32612d220c7362a2742b49c/index.html">网络安全与取证研究</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247490215&amp;idx=1&amp;sn=c668843c040167885b95ec41ef35fdf1&amp;chksm=ce8a0bfc82fded8a7893c71c8c4c6e405463b341bd9da6e78c6cd5f6ff4c4579decb161bd15d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzA3Nzg2MA==&amp;mid=2649872675&amp;idx=1&amp;sn=ae5815dbe2817eae28ce7d917d4af768&amp;chksm=bf981711fc6838ab0503293b8c57454dfd0310e19dc0087d978e9a606a37ff7aed7b3640d37c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Oan15mBs7fMZWedugbd5ibBE4iaZ7R11FcQL54N6nXH6dvb0PH8movic1JrvXjHUSPPNgEyHw3Uia28EMcFcRT6dibw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzA3Nzg2MA==&amp;mid=2649872675&amp;idx=1&amp;sn=ae5815dbe2817eae28ce7d917d4af768&amp;chksm=bf981711fc6838ab0503293b8c57454dfd0310e19dc0087d978e9a606a37ff7aed7b3640d37c&amp;scene=0&amp;xtrack=1#rd" target="_blank">喜报！知道创宇荣获CNVD两项突出贡献奖！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/69c6280b6385c3efa709354400004fb8/index.html">知道创宇</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description">近期，国家信息安全漏洞共享平台（CNVD）完成2024年度技术组支撑单位的能力评价工作。知道创宇凭借出色的技术实力与完备的漏洞应急响应机制，获评“2024年度漏洞信息报送突出贡献单位”与“2024年度</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzA3Nzg2MA==&amp;mid=2649872675&amp;idx=1&amp;sn=ae5815dbe2817eae28ce7d917d4af768&amp;chksm=bf981711fc6838ab0503293b8c57454dfd0310e19dc0087d978e9a606a37ff7aed7b3640d37c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjA5OTY5Ng==&amp;mid=2247527524&amp;idx=1&amp;sn=a28cdebcded950832f1dd51df9d2417c&amp;chksm=9b09efe21ba28447abc5c0fd85e76a4b80b9b683b289a9a2fc53d412f687cdfbc898e0e08008&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/bMyibjv83iavxaibfN3D8WDicLZAI1VkVu4fFic93K5icpLIamkJelAshPOpRGIvWnC0GQfXh079cAMAJ99V2ydiadmQQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjA5OTY5Ng==&amp;mid=2247527524&amp;idx=1&amp;sn=a28cdebcded950832f1dd51df9d2417c&amp;chksm=9b09efe21ba28447abc5c0fd85e76a4b80b9b683b289a9a2fc53d412f687cdfbc898e0e08008&amp;scene=0&amp;xtrack=1#rd" target="_blank">一款开源免费的漏扫工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/569df4e935820c088a58a70152a9765e/index.html">乌雲安全</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description">介绍Sirius Scan是业内首款真正开源的通用漏洞扫描工具，靠信息安全社区的集体技术力，功能上有超越部分商业产品的潜力。它的核心框架含四大关键模块：漏洞数据库、网络扫描引擎、代理发现机制和自定义评</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjA5OTY5Ng==&amp;mid=2247527524&amp;idx=1&amp;sn=a28cdebcded950832f1dd51df9d2417c&amp;chksm=9b09efe21ba28447abc5c0fd85e76a4b80b9b683b289a9a2fc53d412f687cdfbc898e0e08008&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247497999&amp;idx=1&amp;sn=3c06964fd0de048d44cba9a88687cf5d&amp;chksm=c25964bf4817355646e67a5161d1c140f66a79c2a299ff44688555a5a4b8e1301d6ffc621c45&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/b7iaH1LtiaKWUpEJvwgTTydKw53iboicaDuVl3uX71zGkYPXqMwiamau6OAK2eZ3oFTppBiaDeibbFNXXAGxASM2Fdicng/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247497999&amp;idx=1&amp;sn=3c06964fd0de048d44cba9a88687cf5d&amp;chksm=c25964bf4817355646e67a5161d1c140f66a79c2a299ff44688555a5a4b8e1301d6ffc621c45&amp;scene=0&amp;xtrack=1#rd" target="_blank">EDUSRC挖洞神器一键自动化提取敏感信息</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a6375a478b25171601cbb604a806b580/index.html">神农Sec</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description">扫码加圈子获内部资料网络安全领域各种资源，EDUSRC证书站挖掘、红蓝攻防、渗透测试等优质文章，以及工具分享、前沿信息分享、POC、EXP分享。不定期分享各种好玩的项目及好用的工具，欢迎关注。加内部圈</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247497999&amp;idx=1&amp;sn=3c06964fd0de048d44cba9a88687cf5d&amp;chksm=c25964bf4817355646e67a5161d1c140f66a79c2a299ff44688555a5a4b8e1301d6ffc621c45&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI0MTE4ODY3Nw==&amp;mid=2247492803&amp;idx=1&amp;sn=51a43ea8ff912ebd23475eb17af47f8c&amp;chksm=e8a530915471dfa8b1e642f1e6c292ee946d127d487e302233410633c0413f0a52a7e3bcffc3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/NpPydsaAMINeYG0xg4btBInpvgswiaLDvMezqC0jzMYgNaiagu4ktmbPMeMNPegmKe7JaecHMuibo8tvBd5w2ZUOw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI0MTE4ODY3Nw==&amp;mid=2247492803&amp;idx=1&amp;sn=51a43ea8ff912ebd23475eb17af47f8c&amp;chksm=e8a530915471dfa8b1e642f1e6c292ee946d127d487e302233410633c0413f0a52a7e3bcffc3&amp;scene=0&amp;xtrack=1#rd" target="_blank">中亚地区新兴APT组织Silent Lynx的攻击活动分析——每周威胁情报动态第242期（10.10-10.16）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/176d5f5f98c474e66de215356c02cdbb/index.html">白泽安全实验室</a></span><time class="article-date" datetime="2025-10-17 09:00:00">发布日期：2025-10-17 09:00:00</time></div><p class="article-description">APT攻击中亚地区新兴APT组织Silent Lynx的攻击活动分析Lunar Spider（APT38）黑客组织复杂的攻击活动深度分析攻击活动加拿大航空巨头WestJet航空公司遭遇精准网络攻击数据</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI0MTE4ODY3Nw==&amp;mid=2247492803&amp;idx=1&amp;sn=51a43ea8ff912ebd23475eb17af47f8c&amp;chksm=e8a530915471dfa8b1e642f1e6c292ee946d127d487e302233410633c0413f0a52a7e3bcffc3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=1&amp;sn=d905dc66d442b312179fcb453e1a5912&amp;chksm=968588e686a6999f25f5c40d6367fe7f138bfb84e1bd5d3fb5c9a4d28ff502c270db7cd74288&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7XAvvlbibo1TJ6cmobicUCtZIgQv8MWQibLIQX5ibCicFnygX6hI8wX4fVFKjyK1NmEz2ITXp9KiaFTzVbyZ5dTCwK2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=1&amp;sn=d905dc66d442b312179fcb453e1a5912&amp;chksm=968588e686a6999f25f5c40d6367fe7f138bfb84e1bd5d3fb5c9a4d28ff502c270db7cd74288&amp;scene=0&amp;xtrack=1#rd" target="_blank">LingJing（灵境）公测：新一代本地桌面级网络安全靶场平台，一键安装靶机，秒级启动</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1c3bee8be6e8966c420547b52a2b9e6f/index.html">阿乐你好</a></span><time class="article-date" datetime="2025-10-17 08:55:41">发布日期：2025-10-17 08:55:41</time></div><p class="article-description">免责声明本平台仅供网络安全研究与教育用途，旨在提供给具备专业技能的白帽渗透测试人员进行合法的渗透测试和安全评估。非相关人员切勿随意使用或滥用。任何未经授权的网络渗透、入侵或对他人网络的破坏行为均违反法</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=1&amp;sn=d905dc66d442b312179fcb453e1a5912&amp;chksm=968588e686a6999f25f5c40d6367fe7f138bfb84e1bd5d3fb5c9a4d28ff502c270db7cd74288&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=2&amp;sn=6190b76a5b35af7dd127829f06aee09a&amp;chksm=963b4b89bdd4f25c8104dd9900a7eb5fe1f049cb7571e6fd24eae870c0f7386375eedc9adb5c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/1YZ2S4ZAEF56KP2WnQGvjqklteKtibcr7M3gM3iahSWkiaibBz17o110ic24zXayGJkYiazsKoo7dwtW0eJkBKbcwPJQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=2&amp;sn=6190b76a5b35af7dd127829f06aee09a&amp;chksm=963b4b89bdd4f25c8104dd9900a7eb5fe1f049cb7571e6fd24eae870c0f7386375eedc9adb5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">LingJing（灵境）本地桌面级网络安全靶场平台更新（0.2.9)—新增灵眼模块(含态势感知、全流量分析)</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1c3bee8be6e8966c420547b52a2b9e6f/index.html">阿乐你好</a></span><time class="article-date" datetime="2025-10-17 08:55:41">发布日期：2025-10-17 08:55:41</time></div><p class="article-description">免责声明本平台仅供网络安全研究与教育用途，旨在提供给具备专业技能的白帽渗透测试人员进行合法的渗透测试和安全评估。非相关人员切勿随意使用或滥用。任何未经授权的网络渗透、入侵或对他人网络的破坏行为均违反法</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIxNTIzNTExMQ==&amp;mid=2247492309&amp;idx=2&amp;sn=6190b76a5b35af7dd127829f06aee09a&amp;chksm=963b4b89bdd4f25c8104dd9900a7eb5fe1f049cb7571e6fd24eae870c0f7386375eedc9adb5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=1&amp;sn=5f779d66e779cdc8471eb7becc556241&amp;chksm=bcf731fbd6385cb952287d0e84d12685c81b46f5dcb18391542ecf999d49337fa1d78e2ca93a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sib2WEYBWKibQIEnrmic5w8JvPocYFp6xcuicg7PiaFSLCV72Xvb2Uic7SuRL8PEevISvPichVqEVRwQSASQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=1&amp;sn=5f779d66e779cdc8471eb7becc556241&amp;chksm=bcf731fbd6385cb952287d0e84d12685c81b46f5dcb18391542ecf999d49337fa1d78e2ca93a&amp;scene=0&amp;xtrack=1#rd" target="_blank">“人去世了朋友圈会消失吗”？微信最新回应</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-17 08:50:42">发布日期：2025-10-17 08:50:42</time></div><p class="article-description">王丰/@新华社近日，话题“人去世了微信朋友圈会消失吗”在网上引发关注。记者16日从微信确认，从今年9月开始，微信对长时间不使用的微信账号已不再进行回收处理，不活跃账号的朋友圈内容同样不会清理。针对朋友</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=1&amp;sn=5f779d66e779cdc8471eb7becc556241&amp;chksm=bcf731fbd6385cb952287d0e84d12685c81b46f5dcb18391542ecf999d49337fa1d78e2ca93a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=2&amp;sn=864834670a5ff62b6c25427063f929ed&amp;chksm=bc65a9b31d62bd6fbe9643f27a846ca69dec4010f9d0639c68563c85b836a4a82aeb0aff01d7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic2LGQ3rIWibibzibZDmWWQ21x0lwZ9aaSBzSYEPibrHa0sibOQFcGWxeyibdUfXiazSYxszZDUKRP2ia9JtA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=2&amp;sn=864834670a5ff62b6c25427063f929ed&amp;chksm=bc65a9b31d62bd6fbe9643f27a846ca69dec4010f9d0639c68563c85b836a4a82aeb0aff01d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">多名学生呕吐腹泻，官方通报</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-17 08:50:42">发布日期：2025-10-17 08:50:42</time></div><p class="article-description">@新华社山东滨州市联合工作组10月17日发布情况通报：10月14日，滨州职业学院发现陆续有学生出现呕吐、腹泻等情况，学校及时组织学生送医就诊，疾控部门第一时间赶赴现场流调采样。经实验室检测，在病例粪便</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=2&amp;sn=864834670a5ff62b6c25427063f929ed&amp;chksm=bc65a9b31d62bd6fbe9643f27a846ca69dec4010f9d0639c68563c85b836a4a82aeb0aff01d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=3&amp;sn=28f30a8e8662b952cd784546606a8502&amp;chksm=bc9a479fa8ab7520700a3aa52dfd6a5bcec319e8226fa0f6a60a351ef61c44716c0714e84893&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic2LGQ3rIWibibzibZDmWWQ21xialER0r2cAIkqweSCtibUibcVVJ5B7hWia6KyOTmW2Nh2eDxv5kwMiae6cw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=3&amp;sn=28f30a8e8662b952cd784546606a8502&amp;chksm=bc9a479fa8ab7520700a3aa52dfd6a5bcec319e8226fa0f6a60a351ef61c44716c0714e84893&amp;scene=0&amp;xtrack=1#rd" target="_blank">人民日报对话郭晶晶：为啥巅峰期退役？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-17 08:50:42">发布日期：2025-10-17 08:50:42</time></div><p class="article-description">李霞/人民日报【开栏的话】习近平总书记指出：“国运兴则体育兴、国家强则体育强。”体育强国建设需要全民参与，竞技体育和群众体育相辅相成，我国竞技体育硕果累累，一些闪耀的身影奋勇拼搏、超越自我，书写了难以</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=3&amp;sn=28f30a8e8662b952cd784546606a8502&amp;chksm=bc9a479fa8ab7520700a3aa52dfd6a5bcec319e8226fa0f6a60a351ef61c44716c0714e84893&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=4&amp;sn=159ddb00bb9d5aa04dfcc9e0f8b81549&amp;chksm=bc6f7a3db5f9d1ac31bb13106bde52df51e8e08d1db8f68e2de8c47c8709ea9f72fe736297d3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sic2LGQ3rIWibibzibZDmWWQ21xlwM6bvItYXPDd7RF6LasquLZDxngupfPeQr4L7uDovZibz3VqsVUw3Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=4&amp;sn=159ddb00bb9d5aa04dfcc9e0f8b81549&amp;chksm=bc6f7a3db5f9d1ac31bb13106bde52df51e8e08d1db8f68e2de8c47c8709ea9f72fe736297d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">宗馥莉的“大女主”之路，还能走多远</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-10-17 08:50:42">发布日期：2025-10-17 08:50:42</time></div><p class="article-description">澎湃新闻记者 伍银芳 卫瑶 蔡琳 晁嘉笙实习生 施雨沁 杨洋14岁赴美，28岁执掌宏胜，42岁接任娃哈哈，宗馥莉一路高光。辞职后，“娃”家族接连登场，心腹岗位“待定”，宗馥莉的“大女主”之路将如何续写</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652483391&amp;idx=4&amp;sn=159ddb00bb9d5aa04dfcc9e0f8b81549&amp;chksm=bc6f7a3db5f9d1ac31bb13106bde52df51e8e08d1db8f68e2de8c47c8709ea9f72fe736297d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247738688&amp;idx=1&amp;sn=d0ec1c6ffa5a0486e0026505790a3558&amp;chksm=e95ba8187c006f829fd6b964d5b5228bbd5985fabadd2ff336538c001cb98db0e1d243fe8670&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/6eM73d5W4yfD0uSJFbRYX55m2icRLeZ2jsYsHxNWUUQuJGoiaHNREJEG7loxEemgia4RAJEbEGyHw33BmRV3A7k8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247738688&amp;idx=1&amp;sn=d0ec1c6ffa5a0486e0026505790a3558&amp;chksm=e95ba8187c006f829fd6b964d5b5228bbd5985fabadd2ff336538c001cb98db0e1d243fe8670&amp;scene=0&amp;xtrack=1#rd" target="_blank">“约10分钟无人制止”，台北车站性侵案震惊香港</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3bf08611d16b3ce50663949c58e37503/index.html">北京时间</a></span><time class="article-date" datetime="2025-10-17 08:42:50">发布日期：2025-10-17 08:42:50</time></div><p class="article-description">据台湾联合新闻网10月16日报道，台湾地区台北车站大厅近日发生性侵案，其间人潮穿梭却无人制止，受害者是一名香港女游客，引起香港媒体注意。香港网友纷纷表示愤怒，“竟然没有人帮忙”“台湾人自夸的人情味还在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247738688&amp;idx=1&amp;sn=d0ec1c6ffa5a0486e0026505790a3558&amp;chksm=e95ba8187c006f829fd6b964d5b5228bbd5985fabadd2ff336538c001cb98db0e1d243fe8670&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692472&amp;idx=1&amp;sn=cbf5b36233420bc938b8cb03e3d27dfc&amp;chksm=eb673f8123eabcdf34a1564d1fdc30a69fcf9c2310fde328714d0d6d907d37de556cf6afa427&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692472&amp;idx=1&amp;sn=cbf5b36233420bc938b8cb03e3d27dfc&amp;chksm=eb673f8123eabcdf34a1564d1fdc30a69fcf9c2310fde328714d0d6d907d37de556cf6afa427&amp;scene=0&amp;xtrack=1#rd" target="_blank">如此编程20年
+
+
+                                  
+
+ 
+1. 工具次之，问题为王。先准确定义问题，再选合适技术；别为工具改造问题。
+
+2. 代码写给人看。命名清晰、结构稳定，照顾新人和未来的你。
+
+3. 协作胜于个人英雄。公开沟通、共享决策依据，以身作则让追随者变成合作者。
+
+4. 分治与低耦合。单元测+集成测，既测常态也测边界与极端。
+
+5. 别把自我与代码绑定。可交接、可延续，才能抽身成长。
+
+6. 安全是分层风控，取舍因业务而异：银行先安全，游戏先性能。
+
+7. 代码有寿命：核心/必要/增值，学会放手与归档。
+
+8. 技术债像快餐：偶尔放任可以，积累就会三高。
+
+9. 取舍排序：安全＞可用性＞可维护＞简单＞简洁＞性能。括弧，视情况而定。
+
+10. Ctrl C+V前先审计，Bug藏在复杂性后。
+
+11. 异常要写“为什么、如何检测、如何恢复”。输入尽早校验，能失败就早失败。
+
+12. 远离炒作驱动开发，保持好奇心与多语言/多文化输入，持续分享。
+
+13. 彻底了解问题前不写代码，不为不存在的问题设计架构，扩展性在真需求出现后再做。
+
+14. 社区让开发更有趣：倾听、启发、复用与回馈。腾讯云开发者社区就很棒棒！
+
+17. AI是加速器：方向错会更快撞墙。先定需求、验算与评测，再让AI上车。
+
+18. 以评测驱动开发（E2E/Eval）：为模型与检索链路设离线/在线对齐指标与回归集。
+
+19. 设计可控的不确定：对LLM设温度/重试/超时/缓存/工具调用白名单，边界内随机、接口外确定。
+
+20. 当某些子任务可以用确定性的方式完成时，永远优先使用确定性的方法，而不是依赖“智能”
+
+21. RAG＞死记硬背：先让知识可被检索与更新，再让模型会引用与标注。
+
+22. 成本/时延是功能的一部分：把token、延迟、并发当非功能需求管理。
+
+23. 模型是依赖：版本化、灰度、回滚、提示词与系统提示同等纳管。
+
+24. 让AI产出可审计：要求“证据+步骤”，必要时用程序化校验而非人肉信任。
+
+25. 能被提示词解决的，就别开新的评审会。
+
+26. 保住工作不容易，提升自己是ROI更高的防御式编程。
+ 
+问题来了，按照这些原则编程，你能干20年吗？留言分享，我们将抽取一条评论送出社区周边一份。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-10-17 08:45:00">发布日期：2025-10-17 08:45:00</time></div><p class="article-description">如此编程20年
+
+
+                                  
+
+ 
+1. 工具次之，问题为王。先准确定义问题，再选合适技术；别为工具改造问题。
+
+2. 代码写给人看。命名清</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692472&amp;idx=1&amp;sn=cbf5b36233420bc938b8cb03e3d27dfc&amp;chksm=eb673f8123eabcdf34a1564d1fdc30a69fcf9c2310fde328714d0d6d907d37de556cf6afa427&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651686623&amp;idx=1&amp;sn=6df510270a2ad37b403e68e4b8044837&amp;chksm=bc9cc41cd68fc00b45f45ad7196b75732204c87ede7cee8f56a0d9ffb10603d9050f242f1f57&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6egRBZbdNX92vaSKDfD8n6wxjibjQnxKdkyTXjotEdMJFCfj2gicJOtDLgko18xhVfibsTDGFxZGH4j7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651686623&amp;idx=1&amp;sn=6df510270a2ad37b403e68e4b8044837&amp;chksm=bc9cc41cd68fc00b45f45ad7196b75732204c87ede7cee8f56a0d9ffb10603d9050f242f1f57&amp;scene=0&amp;xtrack=1#rd" target="_blank">美军B-52轰炸机已出动</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2025-10-17 08:40:00">发布日期：2025-10-17 08:40:00</time></div><p class="article-description">据@CCTV国际时讯 援引美国哥伦比亚广播公司当地时间10月16日报道称，美国空军全球打击司令部发言人及一名美国官员透露，当地时间10月15日，美军派出3架B-52轰炸机在委内瑞拉沿海附近“执行任务”</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651686623&amp;idx=1&amp;sn=6df510270a2ad37b403e68e4b8044837&amp;chksm=bc9cc41cd68fc00b45f45ad7196b75732204c87ede7cee8f56a0d9ffb10603d9050f242f1f57&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIwMzIyMjYzNA==&amp;mid=2247520176&amp;idx=1&amp;sn=cd1baf42620353d428f0adcd00158e91&amp;chksm=97fe04ed03d3d14b256f252bf7fbf8644d8b6a76eb04c4b551953e05bc0c8c5036b85379e17a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/GzdTGmQpRic0h4uGxn0NM96dXR5QxUlvO7I7MgtBW0qXALB2S204SFXibvxoxwYUdnwRNsJyxG0LzcJhXOLOM3yw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIwMzIyMjYzNA==&amp;mid=2247520176&amp;idx=1&amp;sn=cd1baf42620353d428f0adcd00158e91&amp;chksm=97fe04ed03d3d14b256f252bf7fbf8644d8b6a76eb04c4b551953e05bc0c8c5036b85379e17a&amp;scene=0&amp;xtrack=1#rd" target="_blank">记一次Android 恶意软件逆向及Frida动态分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b6ab89b7f7e26616014fc10786a28abb/index.html">HACK之道</a></span><time class="article-date" datetime="2025-10-17 08:38:00">发布日期：2025-10-17 08:38:00</time></div><p class="article-description">文章作者：奇安信攻防社区（xiaoyu007）参考来源：https://forum.butian.net/share/4563本文记录了一次Android 恶意软件逆向及Frida动态分析的实战过程，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIwMzIyMjYzNA==&amp;mid=2247520176&amp;idx=1&amp;sn=cd1baf42620353d428f0adcd00158e91&amp;chksm=97fe04ed03d3d14b256f252bf7fbf8644d8b6a76eb04c4b551953e05bc0c8c5036b85379e17a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=1&amp;sn=cccb7679f5a75c84b07cd1ed4e0582ad&amp;chksm=bcc9561b4ebfb6df0babc314653f8ab7375f977ed7f5170101f09a885caf7b6abce8b6e8a268&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUPia4s9DctVeII68zE6jQkNW4rwfoGRnuKnzUJWibQtWaTvDlkOdZicmwWX0WF1xJSmWdPCybTIYCYqg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=1&amp;sn=cccb7679f5a75c84b07cd1ed4e0582ad&amp;chksm=bcc9561b4ebfb6df0babc314653f8ab7375f977ed7f5170101f09a885caf7b6abce8b6e8a268&amp;scene=0&amp;xtrack=1#rd" target="_blank">人去世了朋友圈会消失吗？微信明确回应！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-10-17 08:33:33">发布日期：2025-10-17 08:33:33</time></div><p class="article-description">微信确认：人去世账号不回收、朋友圈不清理近日，话题“人去世了微信朋友圈会消失吗”在网上引发关注。记者16日从微信确认，从今年9月开始，微信对长时间不使用的微信账号已不再进行回收处理，不活跃账号的朋友圈</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=1&amp;sn=cccb7679f5a75c84b07cd1ed4e0582ad&amp;chksm=bcc9561b4ebfb6df0babc314653f8ab7375f977ed7f5170101f09a885caf7b6abce8b6e8a268&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=2&amp;sn=e908659b821a02c97c2bba37ae59304d&amp;chksm=bc2af6cd014fea703992412a0dbd737d347625ff4e399d4f075739c804731f95c22b592db84e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUPia4s9DctVeII68zE6jQkNWkGBgWmGWIdoY95iaforpsojichYY0ukwMCjsoibN2lnvKf3WM3vrZhtOg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=2&amp;sn=e908659b821a02c97c2bba37ae59304d&amp;chksm=bc2af6cd014fea703992412a0dbd737d347625ff4e399d4f075739c804731f95c22b592db84e&amp;scene=0&amp;xtrack=1#rd" target="_blank">12327，来了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-10-17 08:33:33">发布日期：2025-10-17 08:33:33</time></div><p class="article-description">12327全国铁路监督热线正式开通运行公告为进一步贯彻落实以人民为中心的发展思想，拓展群众诉求反映渠道，回应社会公众关切，切实履行行业监管职责，提升铁路公共服务水平，国家铁路局于2025年10月16日</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659015600&amp;idx=2&amp;sn=e908659b821a02c97c2bba37ae59304d&amp;chksm=bc2af6cd014fea703992412a0dbd737d347625ff4e399d4f075739c804731f95c22b592db84e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDEzNzE2OA==&amp;mid=2455863498&amp;idx=1&amp;sn=3eadee67122b32b71e92fbdfab7528d7&amp;chksm=b0ac635c21a108a9c7a14117adcb0063bd6387566390baccd4f2ac43225c954ca6bd2edfd58d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/wmtiaGAic9PXXe1xduLO4Io5eHOcFAtTGxzthplaHRs346YPaCO7s7QbPicQalxvsflTDiaBz0TibxUkiaNpnduY6weQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDEzNzE2OA==&amp;mid=2455863498&amp;idx=1&amp;sn=3eadee67122b32b71e92fbdfab7528d7&amp;chksm=b0ac635c21a108a9c7a14117adcb0063bd6387566390baccd4f2ac43225c954ca6bd2edfd58d&amp;scene=0&amp;xtrack=1#rd" target="_blank">华硕正式发布搭载AMD芯片的NUC</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c05052f37c35d34ef88e5bd9fa2535bd/index.html">topcpu</a></span><time class="article-date" datetime="2025-10-17 08:34:12">发布日期：2025-10-17 08:34:12</time></div><p class="article-description">华硕正式发布了全新的 ROG NUC 9 迷你电脑，这是该公司首款搭载 AMD 处理器的 NUC 产品，标志着这一系列从英特尔独占平台迈向多架构时代的新阶段。新机采用 AMD Ryzen 9 9955</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDEzNzE2OA==&amp;mid=2455863498&amp;idx=1&amp;sn=3eadee67122b32b71e92fbdfab7528d7&amp;chksm=b0ac635c21a108a9c7a14117adcb0063bd6387566390baccd4f2ac43225c954ca6bd2edfd58d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553898&amp;idx=1&amp;sn=01beae24939b500244b38fc7563dc68d&amp;chksm=e82fd5535300c85ba4f89923ef8b093a20e777d79695d4ee6355c15fff71661212c89c5d6b5e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z6bicxIx5naKkuDtee0OYXVUEjQ11Yaowbll43Khmgvf62RU1Svc2uNrwQJ4skV9Z1SECYiaSSmsgxIWiblOhYORg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553898&amp;idx=1&amp;sn=01beae24939b500244b38fc7563dc68d&amp;chksm=e82fd5535300c85ba4f89923ef8b093a20e777d79695d4ee6355c15fff71661212c89c5d6b5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">【智造】AI应用实战：6个agent搞定复杂指令和工具膨胀</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15cb3cb3f3936c2b4ea943a483aecb84/index.html">阿里云开发者</a></span><time class="article-date" datetime="2025-10-17 08:30:00">发布日期：2025-10-17 08:30:00</time></div><p class="article-description">引言首先需要说明一下，标题中智造特指联调中的造数，是的，就是联调造数这么一个特定的场景下，我们采用了多个agent协同完成。联调造数是一个非常典型的AI应用场景，其背后是用户丰富的语言表达、复杂的业务</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553898&amp;idx=1&amp;sn=01beae24939b500244b38fc7563dc68d&amp;chksm=e82fd5535300c85ba4f89923ef8b093a20e777d79695d4ee6355c15fff71661212c89c5d6b5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=1&amp;sn=87d6507695c6cba045838c1f82ecd28c&amp;chksm=cece7934c3be4f72f354514c199e51dd627698b114abf6f2562bb2034cf34e2ab7c149b2d895&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OmCbZ5JK30FEzllyicTEMC4m2APSKCRea9SPPsJetD9Dj35VJZCu3ZJRNbe0dSjXsZ2xGNicE5BY1xiaPpoESAKMw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=1&amp;sn=87d6507695c6cba045838c1f82ecd28c&amp;chksm=cece7934c3be4f72f354514c199e51dd627698b114abf6f2562bb2034cf34e2ab7c149b2d895&amp;scene=0&amp;xtrack=1#rd" target="_blank">Spring AI Alibaba实践｜后台定时Agent</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/bb2c31f2e600240096d4b6c619ccf775/index.html">阿里技术</a></span><time class="article-date" datetime="2025-10-17 08:30:00">发布日期：2025-10-17 08:30:00</time></div><p class="article-description">这是2025年的第116篇文章（ 本文阅读时间：15分钟 ）参考Langchain的这篇文章[1]，面对目前我们常见Chat模式的Agent形态以外，还可以充分发挥Agent新的运行形态：自主持续运行</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=1&amp;sn=87d6507695c6cba045838c1f82ecd28c&amp;chksm=cece7934c3be4f72f354514c199e51dd627698b114abf6f2562bb2034cf34e2ab7c149b2d895&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=2&amp;sn=5813230b041d34229b9c86a2944c93b8&amp;chksm=ce51c64970e7409a2f45923256d66121f341f68c2637de4b0b16299dee26f1ebf5d22b329a5f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OmCbZ5JK30FEzllyicTEMC4m2APSKCReaeVQfOLO4FbWnwXbJTRtHkmocbNoowMumlD0bHjevSrtoeBvJRDAu3g/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=2&amp;sn=5813230b041d34229b9c86a2944c93b8&amp;chksm=ce51c64970e7409a2f45923256d66121f341f68c2637de4b0b16299dee26f1ebf5d22b329a5f&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI算法开源｜Logics-Parsing：攻克PDF复杂文档端到端结构化处理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/bb2c31f2e600240096d4b6c619ccf775/index.html">阿里技术</a></span><time class="article-date" datetime="2025-10-17 08:30:00">发布日期：2025-10-17 08:30:00</time></div><p class="article-description">在工作学习中，我们时常有要将图片或PDF内容提取出来的诉求，而当前各工具的提取结果难以令人满意，例如：· 手写的错题整理成电子笔记· 参考资料中表格放进汇报PPT· 化学等专业领域论文编辑使用当资料中</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508871&amp;idx=2&amp;sn=5813230b041d34229b9c86a2944c93b8&amp;chksm=ce51c64970e7409a2f45923256d66121f341f68c2637de4b0b16299dee26f1ebf5d22b329a5f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_31.html" class="pagination-button pagination-prev">上一页</a><a href="index_33.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

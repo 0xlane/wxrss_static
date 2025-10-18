@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>威胁猎人Threat Hunter</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499277&amp;idx=1&amp;sn=303de0dad54a05eae98fbeab46f6918d&amp;chksm=ea9c0b2ff605cb3f18057fa175dbb6a1fa429bc0fdd9901a86d046a97c64879bb17b4e73d196&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqHIQkUAJmTRaQjj1KSuOn2Xs1p8BoqfZLlqwOw9vfWzZJjOia3GnCD21rSSaV9e6Iv9ibKtjWIrdjPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499277&amp;idx=1&amp;sn=303de0dad54a05eae98fbeab46f6918d&amp;chksm=ea9c0b2ff605cb3f18057fa175dbb6a1fa429bc0fdd9901a86d046a97c64879bb17b4e73d196&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人黑话词典｜打击欺诈行为，快速了解黑灰产黑话（电信诈骗篇）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-04-29 11:29:09">发布日期：2025-04-29 11:29:09</time></div><p class="article-description">“黑话”最早兴起于中国封建社会时期，指由民间各个帮派、团体创制的一套复杂的隐语体系，其目的是方便内部沟通而不被外人发现。随着黑灰产业的发展，犯罪团伙为了规避审查，创造了黑灰产团伙之间的“黑话”，且不同</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499277&amp;idx=1&amp;sn=303de0dad54a05eae98fbeab46f6918d&amp;chksm=ea9c0b2ff605cb3f18057fa175dbb6a1fa429bc0fdd9901a86d046a97c64879bb17b4e73d196&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499276&amp;idx=1&amp;sn=0f0fb72f8cbc2daa3265780167b1bc9b&amp;chksm=ea8422f754847b819dca503ddff7c237c137b810749439b66b827d8701f4263ba78f15da0a6a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqE5CeLWMWXCZ5ov2GeBX0UUOMdZuqT6YTU66nCqXnhzS5Qf61EldKfIpdNy1PPlziaMzTZDVvMiaE5A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499276&amp;idx=1&amp;sn=0f0fb72f8cbc2daa3265780167b1bc9b&amp;chksm=ea8422f754847b819dca503ddff7c237c137b810749439b66b827d8701f4263ba78f15da0a6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">【信贷欺诈】车贷欺诈产业链之“免抵车”欺诈手法揭秘</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-04-24 11:41:13">发布日期：2025-04-24 11:41:13</time></div><p class="article-description">威胁猎人基于对汽车贷款欺诈产业链的深入研究发现，黑产团伙招募背债人进行“融车”套现的活动愈发猖獗。所谓“融车”，即买车套现，是指黑产与背债人勾结，通过银行或金融机构贷款购车，提车后立刻抵押或出售套现。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499276&amp;idx=1&amp;sn=0f0fb72f8cbc2daa3265780167b1bc9b&amp;chksm=ea8422f754847b819dca503ddff7c237c137b810749439b66b827d8701f4263ba78f15da0a6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499249&amp;idx=1&amp;sn=0b2725daef52f72786abc59fae7d48f1&amp;chksm=eabfcd2a0dd3338a7f53555829fc57e709884d4c0c25ce86b99e40dfe637afbd7744ef1bd0f1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqGTTY1r9gIFYryjj2NxibbecWwDbQh0bfFJZtWJtR9Y0Wo9mTkQoicHttaa86aInd2G8HGVMXpoZ99w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499249&amp;idx=1&amp;sn=0b2725daef52f72786abc59fae7d48f1&amp;chksm=eabfcd2a0dd3338a7f53555829fc57e709884d4c0c25ce86b99e40dfe637afbd7744ef1bd0f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">攻防演练备战指南：特权账号「全面排雷」服务限时开放</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-04-22 11:51:03">发布日期：2025-04-22 11:51:03</time></div><p class="article-description">在2024年网络攻防演练前夕，一家公司的安全负责人接到了一份情报：黑市暗网中正在公然兜售他们公司的内部账号！一份泄露数据清单显示，数十个员工账号和大量用户账号被人在暗网中明码标价交易。距离正式演练只剩</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499249&amp;idx=1&amp;sn=0b2725daef52f72786abc59fae7d48f1&amp;chksm=eabfcd2a0dd3338a7f53555829fc57e709884d4c0c25ce86b99e40dfe637afbd7744ef1bd0f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499232&amp;idx=1&amp;sn=93e4572b3c80ba0770f3567295e39d0f&amp;chksm=ea87d3278eaf7edfbbe397cbd224746eb815e32c89d406d9bb58983355c208ecb7a5f5ff544b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqEeM8tEJtxNiaP3KsSvlTJxwEFichesszpaJvLCpSRvAFQ6R7ibxwxUO4SyEibqHh3yVloteI9a8FOBYw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499232&amp;idx=1&amp;sn=93e4572b3c80ba0770f3567295e39d0f&amp;chksm=ea87d3278eaf7edfbbe397cbd224746eb815e32c89d406d9bb58983355c208ecb7a5f5ff544b&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人2025年3月安全情报和产品升级汇总</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-04-08 11:49:22">发布日期：2025-04-08 11:49:22</time></div><p class="article-description">为应对黑灰产日益复杂且多变的威胁环境与技术手段，保障客户业务与数据安全，威胁猎人持续优化产品能力，通过收集客户反馈，针对性升级改进产品，并引入大语言模型技术，提升风险检测与响应能力，同时增强产品易用性</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499232&amp;idx=1&amp;sn=93e4572b3c80ba0770f3567295e39d0f&amp;chksm=ea87d3278eaf7edfbbe397cbd224746eb815e32c89d406d9bb58983355c208ecb7a5f5ff544b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499177&amp;idx=1&amp;sn=b541ebeef5876dc0a50cdb1fc75f29a3&amp;chksm=eab6f8367eae7ede5b37c9509d1080890722a062f3bcc80962a2562be042a92a8fb365e38523&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqEloZoUwfiasuriaxUSVayYEfg63qVjI4hicXWFQPT0I9xbhRsQ4QdKyAJtxWGyiavQ6vByDI3CU6VZXw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499177&amp;idx=1&amp;sn=b541ebeef5876dc0a50cdb1fc75f29a3&amp;chksm=eab6f8367eae7ede5b37c9509d1080890722a062f3bcc80962a2562be042a92a8fb365e38523&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人黑话词典｜“开盒”背后的非法数据交易中使用的黑话，你了解多少？（数据泄露篇）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-03-27 12:15:42">发布日期：2025-03-27 12:15:42</time></div><p class="article-description">近年来，各类数据泄露事件频发，其中“开盒”这一网络黑灰产术语近期进入公众视野。黑灰产交易犯罪团伙为了规避审查，创造了黑灰产团伙之间的“黑话”，这些“黑话”构成了数据黑市的交易语言，且不同作恶场景的黑话</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499177&amp;idx=1&amp;sn=b541ebeef5876dc0a50cdb1fc75f29a3&amp;chksm=eab6f8367eae7ede5b37c9509d1080890722a062f3bcc80962a2562be042a92a8fb365e38523&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499165&amp;idx=1&amp;sn=b774e155b13e042c8529c06dcb5cd096&amp;chksm=eac04ae4891b5e2261ea958989b2fac3bfc4f8854cd2e64f732ad28c02540da6b0dfb8655196&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqFLMGICZu1GYKbxT4AgOD64kH7vGwTDw1SLlf0vy7u3sk8uTDtvpKJCYHiacOSQs0QNWe9s8GbLlvg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499165&amp;idx=1&amp;sn=b774e155b13e042c8529c06dcb5cd096&amp;chksm=eac04ae4891b5e2261ea958989b2fac3bfc4f8854cd2e64f732ad28c02540da6b0dfb8655196&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人黑话词典｜打击欺诈行为，快速了解黑灰产黑话（信贷欺诈篇）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-03-20 11:45:46">发布日期：2025-03-20 11:45:46</time></div><p class="article-description">“黑话”最早兴起于中国封建社会时期，指由民间各个帮派、团体创制的一套复杂的隐语体系，其目的是方便内部沟通而不被外人发现。随着黑灰产业的发展，犯罪团伙为了规避审查，创造了黑灰产团伙之间的“黑话”，且不同</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499165&amp;idx=1&amp;sn=b774e155b13e042c8529c06dcb5cd096&amp;chksm=eac04ae4891b5e2261ea958989b2fac3bfc4f8854cd2e64f732ad28c02540da6b0dfb8655196&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499128&amp;idx=1&amp;sn=b5b1ad3fe61dff2d71061118637664ae&amp;chksm=ea61f8a688076d00a0f7625a07abc707cf4bf282a60d357885b0c2bb738b3cabfd57a94ea5ac&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqGFQnkJahUNjRfTsmOUBediaTMn8Wls2QbZibU0DhkGGmkJNdBAQ6RcTiauOCiasPJkgsHDjRXTEs7Zww/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499128&amp;idx=1&amp;sn=b5b1ad3fe61dff2d71061118637664ae&amp;chksm=ea61f8a688076d00a0f7625a07abc707cf4bf282a60d357885b0c2bb738b3cabfd57a94ea5ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">【信贷欺诈】揭露金融领域非法“代理维权”背后的黑色产业</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-03-17 11:40:00">发布日期：2025-03-17 11:40:00</time></div><p class="article-description">金融行业的费率、会员费、服务费以及债务问题的处理，一直是金融机构与客户之间协商沟通的重要内容。金融机构为妥善处理客户投诉与债务协商，普遍设立了专门的客服部门，力求与客户达成共识，实现问题的妥善解决。然</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499128&amp;idx=1&amp;sn=b5b1ad3fe61dff2d71061118637664ae&amp;chksm=ea61f8a688076d00a0f7625a07abc707cf4bf282a60d357885b0c2bb738b3cabfd57a94ea5ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499107&amp;idx=1&amp;sn=df7f55710954cee9a33d89fde2ad172d&amp;chksm=ead3d06e8c2038b6f5bb2e29d2a54ef9747052073b38ff6bf3481764a086828036f345f19e1f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqGh6qFOxVElFibfanDIMSFicDmmIYjo5TJc2bL89v9OqJPIgibaeibGxOeib1uwthdOx0u9xPV0a87Pib2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499107&amp;idx=1&amp;sn=df7f55710954cee9a33d89fde2ad172d&amp;chksm=ead3d06e8c2038b6f5bb2e29d2a54ef9747052073b38ff6bf3481764a086828036f345f19e1f&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人2025年2月安全情报和产品升级汇总</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-03-13 11:40:50">发布日期：2025-03-13 11:40:50</time></div><p class="article-description">威胁猎人基于对互联网黑灰产的持续监测、研究以及对客户需求的关注，不断升级产品能力和服务体验，同时整理输出专业报告，从情报维度帮助各行各业企业提升对黑灰产的认知，进一步完善风控策略。01｜2025年2月</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499107&amp;idx=1&amp;sn=df7f55710954cee9a33d89fde2ad172d&amp;chksm=ead3d06e8c2038b6f5bb2e29d2a54ef9747052073b38ff6bf3481764a086828036f345f19e1f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499105&amp;idx=1&amp;sn=d1efebb070eee4d426f21d1eb54edff8&amp;chksm=eabf5b7011d3663c6bd7b05d5c72bccd0a32cece29a8cd45a689ed71987c970a29075ec589bf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqEdrDA0laP6uV9fPMlBk8RLy5RNSM3bbRrOlACJrv1L0dCr3KJLRPTcTleRSUzazGScic7h2SrpOiaA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499105&amp;idx=1&amp;sn=d1efebb070eee4d426f21d1eb54edff8&amp;chksm=eabf5b7011d3663c6bd7b05d5c72bccd0a32cece29a8cd45a689ed71987c970a29075ec589bf&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁猎人黑话词典｜打击欺诈行为，快速了解黑灰产黑话（营销欺诈篇）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-03-11 11:40:00">发布日期：2025-03-11 11:40:00</time></div><p class="article-description">“黑话”最早兴起于中国封建社会时期，指由民间各个帮派、团体创制的一套复杂的隐语体系，其目的是方便内部沟通而不被外人发现。随着黑灰产业的发展，犯罪团伙为了规避审查，创造了黑灰产团伙之间的“黑话”，且不同</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499105&amp;idx=1&amp;sn=d1efebb070eee4d426f21d1eb54edff8&amp;chksm=eabf5b7011d3663c6bd7b05d5c72bccd0a32cece29a8cd45a689ed71987c970a29075ec589bf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499035&amp;idx=1&amp;sn=d11ef99e520f528479f5c5aae50f06e4&amp;chksm=eae1d0abacd92b7d0b5dc78e1c250f28ccbcca91e8d26b5b8e33cdd4279fe612a0a3839e8ce1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4mAgZtBianqEJ2f0FibeYxRz5XVkeq8uU4yTwEmQGV3ek2DXgNYqTxE5XzDM4TetrQUeSHGfLGgESNb2xbU9Hz2w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499035&amp;idx=1&amp;sn=d11ef99e520f528479f5c5aae50f06e4&amp;chksm=eae1d0abacd92b7d0b5dc78e1c250f28ccbcca91e8d26b5b8e33cdd4279fe612a0a3839e8ce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">【信贷欺诈】“公积金伪造”骗贷手法分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3c4e60997748da42694370789eae8dcf/index.html">威胁猎人Threat Hunter</a></span><time class="article-date" datetime="2025-02-27 11:41:23">发布日期：2025-02-27 11:41:23</time></div><p class="article-description">近年来，尽管监管部门加大了对金融贷款虚假材料、违规人员的打击力度，但仍有不法团伙背地里给一些资质不足且有资金需求的客户“包装公积金资质”以骗取金融机构贷款，严重扰乱了金融管理秩序。公积金伪造：本文也指</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDY3NDUxNg==&amp;mid=2247499035&amp;idx=1&amp;sn=d11ef99e520f528479f5c5aae50f06e4&amp;chksm=eae1d0abacd92b7d0b5dc78e1c250f28ccbcca91e8d26b5b8e33cdd4279fe612a0a3839e8ce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
