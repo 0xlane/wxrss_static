@@ -1,0 +1,246 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=1&amp;sn=c16c6125b75cd8e1d5cfad71311118d0&amp;chksm=9ad30f97de477bd821265e82c2bf3b372201afc23259e36edd317025a01daa18045389cd45ae&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/vML07fExwAeFT7dhHChKm3R61nQloJ06rGzXteGoaJADJ3zKTEWV0z77OiaHaJicbJdReEjVmiceXIQMfRvy4kuDw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=1&amp;sn=c16c6125b75cd8e1d5cfad71311118d0&amp;chksm=9ad30f97de477bd821265e82c2bf3b372201afc23259e36edd317025a01daa18045389cd45ae&amp;scene=0&amp;xtrack=1#rd" target="_blank">网安原创文章推荐【2025/11/13】</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94ff62bc4172e22ccabb48f6fd42c2c6/index.html">洞见网安</a></span><time class="article-date" datetime="2025-11-14 08:07:48">发布日期：2025-11-14 08:07:48</time></div><p class="article-description">2025-11-13 微信公众号精选安全技术文章总览洞见网安 2025-11-13
+
+0x1 一种CET绕过方法信安学习 2025-11-13 22:51:42
+
+本文介绍了在OffensiveCo</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=1&amp;sn=c16c6125b75cd8e1d5cfad71311118d0&amp;chksm=9ad30f97de477bd821265e82c2bf3b372201afc23259e36edd317025a01daa18045389cd45ae&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=2&amp;sn=9e359b8cf19781c62e15b22d71993470&amp;chksm=9a364e473f1508f5b7ab9a1676b7e47d29b191d4c35d151838dea625a825b48e1c527899b4e7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/vML07fExwAfu3zNYkO8ibsrQjZOtJ1UmK2qySUINLDnR5cVXjRMmZJSbZQZmYicDC8ibfmZQsMiar99ibU38G3n26Rw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=2&amp;sn=9e359b8cf19781c62e15b22d71993470&amp;chksm=9a364e473f1508f5b7ab9a1676b7e47d29b191d4c35d151838dea625a825b48e1c527899b4e7&amp;scene=0&amp;xtrack=1#rd" target="_blank">网安原创文章推荐【2025/11/12】</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94ff62bc4172e22ccabb48f6fd42c2c6/index.html">洞见网安</a></span><time class="article-date" datetime="2025-11-14 08:07:48">发布日期：2025-11-14 08:07:48</time></div><p class="article-description">2025-11-12 微信公众号精选安全技术文章总览洞见网安 2025-11-12
+
+0x1 渗透测试JS接口简单测试方法月的造梦星球 2025-11-12 22:28:13
+
+本文详细探讨了渗透测</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247491213&amp;idx=2&amp;sn=9e359b8cf19781c62e15b22d71993470&amp;chksm=9a364e473f1508f5b7ab9a1676b7e47d29b191d4c35d151838dea625a825b48e1c527899b4e7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=1&amp;sn=ac1a21b05b0482d355a0d9b4e98fdd23&amp;chksm=bc5aca2a0d8b929bffb0d17499e3085a80e1ca6ca285bb3a22a8597861aaa04e151a51c3d916&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAj8MzS6h5F9iaQhv0SKUBAwQm5YnxJySR7uINHxP5fqbvlN2No4eibj3A6pp0mzfcXjXiaMIewwZwibMA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=1&amp;sn=ac1a21b05b0482d355a0d9b4e98fdd23&amp;chksm=bc5aca2a0d8b929bffb0d17499e3085a80e1ca6ca285bb3a22a8597861aaa04e151a51c3d916&amp;scene=0&amp;xtrack=1#rd" target="_blank">号称中国史上最大纯电SUV？售价怒降10万等车半年？性能到底有没有跟着打折？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">全新一代蔚来ES8在上市后就获得了超高的关注度，究其原因自然就是那令人惊喜的价格了，整车购买售价区间为40.68-44.68万元，采用BaaS方案（租赁电池）起售价甚至不到30万，售价区间为29.88</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=1&amp;sn=ac1a21b05b0482d355a0d9b4e98fdd23&amp;chksm=bc5aca2a0d8b929bffb0d17499e3085a80e1ca6ca285bb3a22a8597861aaa04e151a51c3d916&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=2&amp;sn=d9055730335988fdc65c66628e0fd64d&amp;chksm=bcfb2f23612fa12782b0751e14d14458602f1b7add4ba8d6530d633ab2c39b018022d505b4c8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAj8MzS6h5F9iaQhv0SKUBAwQiaVhEudeGXjhlPg7pyFICSJRM64VxkiaHIiaDiaeR7FHicCPjK3fkKTqByQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=2&amp;sn=d9055730335988fdc65c66628e0fd64d&amp;chksm=bcfb2f23612fa12782b0751e14d14458602f1b7add4ba8d6530d633ab2c39b018022d505b4c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">限时7.10万起！三种动力可选，人民的五菱上新了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">11月12日，我们从上汽通用五菱官方了解到，旗下全新紧凑型MPV——星光730正式上市，共推出4款配置，售价区间为7.30-10.98万元，置换补贴价7.10-10.58万起。全新车型基于原生天舆架构</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=2&amp;sn=d9055730335988fdc65c66628e0fd64d&amp;chksm=bcfb2f23612fa12782b0751e14d14458602f1b7add4ba8d6530d633ab2c39b018022d505b4c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=3&amp;sn=49692eeb4db980fe1a6331505b47d0e4&amp;chksm=bc2c06f6b446961c5b8866b184365523c5966643bb09a84cc2f91a9ea73543c5a8afed5fe287&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAj8MzS6h5F9iaQhv0SKUBAwQsBxUybR4B2ibRAeOSUfQQ0XJxw21xTP1oMXMzNtCXU3MQqGSQhrvqtg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=3&amp;sn=49692eeb4db980fe1a6331505b47d0e4&amp;chksm=bc2c06f6b446961c5b8866b184365523c5966643bb09a84cc2f91a9ea73543c5a8afed5fe287&amp;scene=0&amp;xtrack=1#rd" target="_blank">1.5T+单电机插混，轴距2900mm，18英寸大轮圈，这车百公里才5个多油！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">日前，我们从官方获悉，东风风行游艇PHEV正式上市，新车共推出2款车型，售价分别为15.49和15.99万元。风行游艇PHEV依旧定位中型MPV，其将搭载1.5T发动机与电机的组合，WLTC纯电续航为</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=3&amp;sn=49692eeb4db980fe1a6331505b47d0e4&amp;chksm=bc2c06f6b446961c5b8866b184365523c5966643bb09a84cc2f91a9ea73543c5a8afed5fe287&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=4&amp;sn=e420eb7d03736a6988ed907b9a61b6fc&amp;chksm=bc0607a68a03f85cf0b7e4fd5cf7e2dc40eaea7115e467c5415d8e20804770cb491a67a5ebaa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAj8MzS6h5F9iaQhv0SKUBAwQGDHF9JSLG9E1U72EJ1xGkhbYTvTQ6sCyNCK1QEYyJnJT7kchxvwJGw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=4&amp;sn=e420eb7d03736a6988ed907b9a61b6fc&amp;chksm=bc0607a68a03f85cf0b7e4fd5cf7e2dc40eaea7115e467c5415d8e20804770cb491a67a5ebaa&amp;scene=0&amp;xtrack=1#rd" target="_blank">1.6T、四驱，增加插混版，方正格栅风格硬朗，买SUV的看看这辆！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">日前，我们从相关渠道获悉，全新一代起亚Seltos（国内赛图斯）将于12月10日正式发布，该车将会针对外观、内饰以及动力系统进行全面升级，将会提供燃油版以及插电混动版车型。据悉，在发布之后，该车计划于</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=4&amp;sn=e420eb7d03736a6988ed907b9a61b6fc&amp;chksm=bc0607a68a03f85cf0b7e4fd5cf7e2dc40eaea7115e467c5415d8e20804770cb491a67a5ebaa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=5&amp;sn=26e1cdd2ffc25d3d7152757724e01900&amp;chksm=bc28b59f820aedf6c306911c9a2e509bbc33fc9bc760f4b2303b202a49ec8d30dec211d739ea&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7Ac0icgm9WAj8MzS6h5F9iaQhv0SKUBAwQiak1B13yBypoojo4iaQjf0veLYVLhtz3os6XN9MKaF0WPnBQic6Z5n2qQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=5&amp;sn=26e1cdd2ffc25d3d7152757724e01900&amp;chksm=bc28b59f820aedf6c306911c9a2e509bbc33fc9bc760f4b2303b202a49ec8d30dec211d739ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">奇瑞风云X3L天门山景区挑战测试发生意外 官方致歉并检讨事故原因</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6fa6c81295937f7a7078ddeee4bd5c2a/index.html">汽车之家</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">日前，奇瑞汽车就奇瑞风云X3L在湖南张家界天门山景区挑战测试中发生意外，致使景区护栏受损致歉，发生事故的原因系测试装置的安全防护绳固定点卸扣意外脱落，进而导致防护绳缠绕右侧车轮，动力输出受阻，车辆下滑</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzA0NDM0MA==&amp;mid=2661149755&amp;idx=5&amp;sn=26e1cdd2ffc25d3d7152757724e01900&amp;chksm=bc28b59f820aedf6c306911c9a2e509bbc33fc9bc760f4b2303b202a49ec8d30dec211d739ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=1&amp;sn=e62db91183b542137281a035adb9fdd1&amp;chksm=ebf4db47c5d7fe5fa2c55945c9d522b4a68e99742d073c2940b38c4cb2a0d5c09fd4c882535b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/XPuxCqAicMPPgSLkLK1iaG1bAQmMBYVROia6eNOqFKqvnPap2dW4YepYYPttHZGice7j8BtKo9pK0aXpnXzXC37WMg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=1&amp;sn=e62db91183b542137281a035adb9fdd1&amp;chksm=ebf4db47c5d7fe5fa2c55945c9d522b4a68e99742d073c2940b38c4cb2a0d5c09fd4c882535b&amp;scene=0&amp;xtrack=1#rd" target="_blank">刚刚，沙利文发布 AI 白皮书，126页藏着 3 个技术密码</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b81b208de51a310f82db963523b590ab/index.html">IT有个圈儿</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">解读《AI 赋能千行百业白皮书》沙利文联合头豹研究院最新发布的《AI 赋能千行百业白皮书》【文末附资源免费下载方式】震撼出炉，126 页的厚重内容背后，隐藏着推动人工智能从技术概念走向产业落地的三大核</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=1&amp;sn=e62db91183b542137281a035adb9fdd1&amp;chksm=ebf4db47c5d7fe5fa2c55945c9d522b4a68e99742d073c2940b38c4cb2a0d5c09fd4c882535b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=2&amp;sn=00d949e3e67967366bf0aefc4dd2f257&amp;chksm=eb7fe71fe8cdfbf1ec75f29cf660535a39e76a17aa38cc18ac6ca9fe70536bcf1de952372a91&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/XPuxCqAicMPPgSLkLK1iaG1bAQmMBYVROiaF5AIWgxV5GtAZ5ibia1icHA7GA6VfOgu1z2PaRd5Ah2k9agP9X2HqyVhA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=2&amp;sn=00d949e3e67967366bf0aefc4dd2f257&amp;chksm=eb7fe71fe8cdfbf1ec75f29cf660535a39e76a17aa38cc18ac6ca9fe70536bcf1de952372a91&amp;scene=0&amp;xtrack=1#rd" target="_blank">从 1.18 万亿到 3.2 万亿，All in AIOT</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b81b208de51a310f82db963523b590ab/index.html">IT有个圈儿</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">智能物联网的黄金跃迁当清晨的第一缕阳光透过智能窗帘洒进房间，你的智能手表已经监测完夜间睡眠质量，厨房里的智能咖啡机开始工作 —— 这不是科幻电影，而是当下中国 4.5 亿智能物联网用户的日常生活。根据</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDkzMTc4Mg==&amp;mid=2247510712&amp;idx=2&amp;sn=00d949e3e67967366bf0aefc4dd2f257&amp;chksm=eb7fe71fe8cdfbf1ec75f29cf660535a39e76a17aa38cc18ac6ca9fe70536bcf1de952372a91&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494974&amp;idx=1&amp;sn=1b03a1a8e4b604b3dc0cd6236e540a82&amp;chksm=c1edc3d394dec05b5dadff79e8bf195069af32a40bb9f40de35edacee1e0acfd385448c39e16&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/7stTqD182SW7BBSqE7f81iblgmNPeOAc8nianC1UNicwBjLnQLrAfH4PPLQO299icamqBemKic4wRiaf1bXicy0h7Dd8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494974&amp;idx=1&amp;sn=1b03a1a8e4b604b3dc0cd6236e540a82&amp;chksm=c1edc3d394dec05b5dadff79e8bf195069af32a40bb9f40de35edacee1e0acfd385448c39e16&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞预警 | XWiki SQL注入漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb11b9d34e1afd43d3fdc4550f1307d/index.html">浅安安全</a></span><time class="article-date" datetime="2025-11-14 08:00:00">发布日期：2025-11-14 08:00:00</time></div><p class="article-description">0x00 漏洞编号CVE-2025-524720x01 危险等级高危0x02 漏洞概述XWiki Platform是一款基于Java的企业级开源Wiki与知识管理平台，支持结构化数据、脚本编写、权限管</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwMTQ0NDA1NQ==&amp;mid=2247494974&amp;idx=1&amp;sn=1b03a1a8e4b604b3dc0cd6236e540a82&amp;chksm=c1edc3d394dec05b5dadff79e8bf195069af32a40bb9f40de35edacee1e0acfd385448c39e16&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
