@@ -1,0 +1,282 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwOTE5MDY5NA==&amp;mid=2247508334&amp;idx=1&amp;sn=9f0b41c770d64312fd0745621ce7d134&amp;chksm=c0c4db6bf0df4d01667dbb5dcb632573e5fdd9551c0a6adca7772604223e08c45df642961e13&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/vBZcZNVQERF10r0cDkFMxUMI6iakXrcQxAW0jo8w90TI89ZkopvsEtic276srL41LTYPxiaf6yh2yka0JyTWL5H0g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwOTE5MDY5NA==&amp;mid=2247508334&amp;idx=1&amp;sn=9f0b41c770d64312fd0745621ce7d134&amp;chksm=c0c4db6bf0df4d01667dbb5dcb632573e5fdd9551c0a6adca7772604223e08c45df642961e13&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 年每个初学者都能发现的 P4 漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b53f1efd537df8e65515b8d0b3e10623/index.html">安全狗的自我修养</a></span><time class="article-date" datetime="2025-11-21 11:53:49">发布日期：2025-11-21 11:53:49</time></div><p class="article-description">官网：http://securitytech.cc/当人们谈论漏洞赏金时，通常聚光灯会落在大而炫的漏洞上——远程代码执行（RCE）、SQL 注入、完全账号接管等。但事实是，大多数成功的赏金猎人靠 P4</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwOTE5MDY5NA==&amp;mid=2247508334&amp;idx=1&amp;sn=9f0b41c770d64312fd0745621ce7d134&amp;chksm=c0c4db6bf0df4d01667dbb5dcb632573e5fdd9551c0a6adca7772604223e08c45df642961e13&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488708&amp;idx=1&amp;sn=76081289ec9556a0bcb469f30718d8c3&amp;chksm=c0a5674c5c5dc4cede8b4f878f8373ec6aa68d7befc3b1a38110c30b9b1f8aebc600b279fb92&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488708&amp;idx=1&amp;sn=76081289ec9556a0bcb469f30718d8c3&amp;chksm=c0a5674c5c5dc4cede8b4f878f8373ec6aa68d7befc3b1a38110c30b9b1f8aebc600b279fb92&amp;scene=0&amp;xtrack=1#rd" target="_blank">Nano Banana Pro 好玩。
+
+这几天，奥特曼的日子可能不太好过，专业角度客观分析一下Gemini3 和 Nano Banana Pro。
+
+先说 Nano Banana Pro 把，生成的图好看是基本，分辨率4K。
+
+但这玩意他是一个披着画画的推理模型。
+
+画之前，会先思考。 比如说物理模拟，光从哪来，影子怎么投，人物动作。
+
+已经不是过去靠概率拼像素的时代了，先预演，在把照片拍给你。
+
+所以我们可以看到了，各种，完美处理多格漫画， 非常的连续，把气泡里的英文翻译成中文，还能完美地填回去。
+
+还有一个被所有人低估的一个功能， Grounding with Search。
+
+说白了，就是可以先搜索，把实时的数据，放在预演里边。
+
+谷歌本身掌握着全球最大的实时知识库（Search），又有最强多模态模型，还有硬件，这似乎有点恐怖，3季度巴菲特都开始买谷歌了。
+
+从Gemini3 ，来看 Scaling law， 为什么这玩意又行了？
+
+从Gemini开发大佬的twitter说的，就是暴力 Scaling Up。Scaling Law 根本没失效，失效的只是你们数据不够了。
+
+马斯克在搞grok wiki，就是因为xAI的数据太脏了，洗不出来。而Google有全球最庞大的高质量私有数据。
+
+Gemini 3 Pro 在预训练和后训练阶段都拉满了 Scaling。虽然感觉复杂代码上似乎还比不上Anthropic，通用认知，世界模型，已经利用数据优势构筑了护城河。
+
+Unseen, Unknown.
+
+最后说个实用的。Nano Banana Pro 的 Prompt 逻辑也变了。
+
+Google 的产品经理 Bea Alessio 给了一套公式： 主体 + 构图 + 动作 + 场景 + 风格 + 编辑指令
+
+它允许你像剪辑视频一样，输入14张图，保持角色一致，然后随意调整光影、角度。
+
+Google 在告诉世界：通往 AGI 的路，必须是原生多模态。
+
+一个能看、能听、能查搜索、还能逻辑自洽的模型，才配叫 AGI。
+
+这才是 AI Native 该有的样子。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-11-21 11:52:18">发布日期：2025-11-21 11:52:18</time></div><p class="article-description">Nano Banana Pro 好玩。
+
+这几天，奥特曼的日子可能不太好过，专业角度客观分析一下Gemini3 和 Nano Banana Pro。
+
+先说 Nano Banana Pro 把，生成的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488708&amp;idx=1&amp;sn=76081289ec9556a0bcb469f30718d8c3&amp;chksm=c0a5674c5c5dc4cede8b4f878f8373ec6aa68d7befc3b1a38110c30b9b1f8aebc600b279fb92&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693917&amp;idx=1&amp;sn=66a1bfdff7afb4cb065c343246153a68&amp;chksm=bcb4aeb58373a5eb450eed95f512d6d32ab04ae2ba6c2f7914cd9511df2973daf9929a3d139c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6ejeTvAEDX1heqsibK2NtmDrASx9MM38H8WJDJv9LangFCyZQ6XUwia4RLRtxA9Z5W2mHLK5b5Ouic5GA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693917&amp;idx=1&amp;sn=66a1bfdff7afb4cb065c343246153a68&amp;chksm=bcb4aeb58373a5eb450eed95f512d6d32ab04ae2ba6c2f7914cd9511df2973daf9929a3d139c&amp;scene=0&amp;xtrack=1#rd" target="_blank">沦为“矿奴”、“被上吊”、“被车祸”，官方紧急提醒</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2025-11-21 11:50:17">发布日期：2025-11-21 11:50:17</time></div><p class="article-description">中国驻中非使馆领事部11月20日发布关于我公民在中非从事黄金采掘业面临重大安全风险的重要提醒。近年来，我馆常接到中非政府司法案件通报或我公民紧急领事求助，内容均涉及中国公民因在当地涉足黄金采掘行业而遭</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693917&amp;idx=1&amp;sn=66a1bfdff7afb4cb065c343246153a68&amp;chksm=bcb4aeb58373a5eb450eed95f512d6d32ab04ae2ba6c2f7914cd9511df2973daf9929a3d139c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=1&amp;sn=a4c65fde9cec9e9b8638725c9aee01e7&amp;chksm=9b6aa35024da011f7edbde779505ac55ad2914e0fb2db4c0957b28d297573965d4098efd5a42&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV3ibHo6Syh9nV1WSPdp9muxKUhaE8IRrU9XrvDpO3xMNWgibpougCGtQmZjBpyd9f0zpqH8eDXqWk4Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=1&amp;sn=a4c65fde9cec9e9b8638725c9aee01e7&amp;chksm=9b6aa35024da011f7edbde779505ac55ad2914e0fb2db4c0957b28d297573965d4098efd5a42&amp;scene=0&amp;xtrack=1#rd" target="_blank">抓得好</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2025-11-21 11:43:52">发布日期：2025-11-21 11:43:52</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=1&amp;sn=a4c65fde9cec9e9b8638725c9aee01e7&amp;chksm=9b6aa35024da011f7edbde779505ac55ad2914e0fb2db4c0957b28d297573965d4098efd5a42&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=2&amp;sn=c0e1318b5e0f45f94a158b7c83249711&amp;chksm=9be5e53d2b4875dc60b2b91fd60c966ad9e68661bb3f2dbe0ce81355c32996b859a992110fb9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV3sT9ZpQ1AtLdC9iaPnzIibcLicXR85mkMVErNs0u052QzTSH8CuTTxypbesBKTG8f0lWh0yVGRiahdqQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=2&amp;sn=c0e1318b5e0f45f94a158b7c83249711&amp;chksm=9be5e53d2b4875dc60b2b91fd60c966ad9e68661bb3f2dbe0ce81355c32996b859a992110fb9&amp;scene=0&amp;xtrack=1#rd" target="_blank">论文一直投不中？被退稿十几次之后，我终于找到发论文的捷径，半年连发3篇！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2025-11-21 11:43:52">发布日期：2025-11-21 11:43:52</time></div><p class="article-description">在经历过十几次退稿之后，我真心建议需要发表sci论文的老师和同学：不要死磕论文内容！去思考，去找捷径，去找套路！只要找对了方法，发sci论文一点都不难！很多人以为，我把论文写完了，最重要的工作就结束了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247503521&amp;idx=2&amp;sn=c0e1318b5e0f45f94a158b7c83249711&amp;chksm=9be5e53d2b4875dc60b2b91fd60c966ad9e68661bb3f2dbe0ce81355c32996b859a992110fb9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248651035&amp;idx=1&amp;sn=5abc6aa08af5d492b433893b035869c8&amp;chksm=95be5fc7b033225db9decfc41e3555c9481bb7c11a361edf20d13267618b385e53e22f9efea6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/G6wL1LqZmbibvfKZmUNwsyXIwNzssl1YmbbGtO5EuETvVM1ZGwTGibriaeM05s1ZjpHq5WjDZZzaSnAmhHoeotqTg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248651035&amp;idx=1&amp;sn=5abc6aa08af5d492b433893b035869c8&amp;chksm=95be5fc7b033225db9decfc41e3555c9481bb7c11a361edf20d13267618b385e53e22f9efea6&amp;scene=0&amp;xtrack=1#rd" target="_blank">精美绝伦！来副中心看18世纪世界爆款~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7ad3c39bf618a17d507ad48455542179/index.html">北京通州发布</a></span><time class="article-date" datetime="2025-11-21 11:43:05">发布日期：2025-11-21 11:43:05</time></div><p class="article-description">北京通州发布（bjtzfb）北京城市副中心官方微信通州小布（北京通州发布：bjtzfb）了解到：象征中国历史的传统瓷器与代表西方文化的家族纹章，于北京大运河博物馆交汇。日前，“帆海融光——天津博物馆藏</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248651035&amp;idx=1&amp;sn=5abc6aa08af5d492b433893b035869c8&amp;chksm=95be5fc7b033225db9decfc41e3555c9481bb7c11a361edf20d13267618b385e53e22f9efea6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDU3NDMxNA==&amp;mid=2247567164&amp;idx=1&amp;sn=882a460a968af0f7029afa1d8168e68e&amp;chksm=ce8e32179e9fadca13f3edbdce1863d2fbda314fc73fa10b5337d7cc10769ef227a3fb5f2a42&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/tPKNd9hIo0FkNmQchxun20w15yyZuDN6Ziagm3RfM1vYDcMnKRLPmXBYiaRwL3UoWQUlibiadyRWNV3JWvUR2NfrAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDU3NDMxNA==&amp;mid=2247567164&amp;idx=1&amp;sn=882a460a968af0f7029afa1d8168e68e&amp;chksm=ce8e32179e9fadca13f3edbdce1863d2fbda314fc73fa10b5337d7cc10769ef227a3fb5f2a42&amp;scene=0&amp;xtrack=1#rd" target="_blank">共创坦克300极地版全球限量300台，开启预订！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4fc33a464490b49083acc6e54a4405e1/index.html">坦克SUV</a></span><time class="article-date" datetime="2025-11-21 11:40:09">发布日期：2025-11-21 11:40:09</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDU3NDMxNA==&amp;mid=2247567164&amp;idx=1&amp;sn=882a460a968af0f7029afa1d8168e68e&amp;chksm=ce8e32179e9fadca13f3edbdce1863d2fbda314fc73fa10b5337d7cc10769ef227a3fb5f2a42&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4OTkwNDQ2NQ==&amp;mid=2247512618&amp;idx=1&amp;sn=a7edf5c0f6d70b002b1a7990ec12803f&amp;chksm=ce313f0108a500495a9fa465675a8e7bffe4f2cc41a30542636068ea5364e8d778bcf8530eaf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/KpvhZwGyk4xL38eicTWvrbguo3PcaQoVNJHdNdhQ9M3fE7EHRwvJ1pxMt95BrW86B6royjLWF5RJmp5WxT0dLiaA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4OTkwNDQ2NQ==&amp;mid=2247512618&amp;idx=1&amp;sn=a7edf5c0f6d70b002b1a7990ec12803f&amp;chksm=ce313f0108a500495a9fa465675a8e7bffe4f2cc41a30542636068ea5364e8d778bcf8530eaf&amp;scene=0&amp;xtrack=1#rd" target="_blank">百度“文心导师”计划招募！500+顶尖专家同行，共筑AI能力新高度</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d8c56f942780cbd206ed5c91ee97e109/index.html">百度文心一言</a></span><time class="article-date" datetime="2025-11-21 11:36:46">发布日期：2025-11-21 11:36:46</time></div><p class="article-description">“文心导师”计划是由百度文心大模型团队发起的面向行业与学界的专家共创计划，旨在携手千行百业的领域菁英与高校顶级学者，在知识传授、质量评定、专业校准方面对大模型进行指导，为用户提供更具深度和广度的支持。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4OTkwNDQ2NQ==&amp;mid=2247512618&amp;idx=1&amp;sn=a7edf5c0f6d70b002b1a7990ec12803f&amp;chksm=ce313f0108a500495a9fa465675a8e7bffe4f2cc41a30542636068ea5364e8d778bcf8530eaf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=1&amp;sn=9673cc74fe00b901c3fb1a289f8184d1&amp;chksm=bc289fef2e736a4ff26473097bd358fe017711bac58232367294537027d0b1e28ea8583acb6e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUMzaNOLdFjD1KYaZ6KeUXQZ8NNRouD6rfk1TSYTdtWxepbgbONdRhmibibmR4NKo2icZWNYBBmz98Gew/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=1&amp;sn=9673cc74fe00b901c3fb1a289f8184d1&amp;chksm=bc289fef2e736a4ff26473097bd358fe017711bac58232367294537027d0b1e28ea8583acb6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">苏炳添，不说再见！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-11-21 11:33:47">发布日期：2025-11-21 11:33:47</time></div><p class="article-description">“这四年对我来说非常困难，但是我坚持下来了，就是希望回到赛场，和大家说一声再见。”11月20日晚，在十五运会田径男子4×100米接力比赛结束后，广东队老将、“亚洲飞人”苏炳添面向全场4万多名观众深深鞠</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=1&amp;sn=9673cc74fe00b901c3fb1a289f8184d1&amp;chksm=bc289fef2e736a4ff26473097bd358fe017711bac58232367294537027d0b1e28ea8583acb6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=2&amp;sn=5493369f8ecc8ae95fdd66eb37b5843a&amp;chksm=bcd9344aaef55e4dc9f315a261b19285034a337f9377df21a4536fbdf525819ee772fe8655cd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUMzaNOLdFjD1KYaZ6KeUXQZ0r5V5Tqx9rjjD94a7eYGpkVDuFzGWprZfxjckhTrFibeAe7qyjqIVCQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=2&amp;sn=5493369f8ecc8ae95fdd66eb37b5843a&amp;chksm=bcd9344aaef55e4dc9f315a261b19285034a337f9377df21a4536fbdf525819ee772fe8655cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">四大名桥，上线了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-11-21 11:33:47">发布日期：2025-11-21 11:33:47</time></div><p class="article-description">古桥神韵千姿百态是古人匠心智慧的结晶横跨千年的匠心与前沿科技碰撞会勾勒出怎样的惊艳画境？11月21日10时，灵境·人民艺术馆限量发行“长虹横卧”四大名桥数字作品，以中国古代四大名桥为原型，结合AI创作</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659019940&amp;idx=2&amp;sn=5493369f8ecc8ae95fdd66eb37b5843a&amp;chksm=bcd9344aaef55e4dc9f315a261b19285034a337f9377df21a4536fbdf525819ee772fe8655cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=1&amp;sn=41f3f49b147355b31b7897b83d213bc4&amp;chksm=bcc7a0170870a01b7f1ab68101421d95a997676dad6dd996f35d93336481c1cbd4d44a70b495&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3S8ZdHGAhy0QxYJ6PflfxqNEibvHufHEsNf6Nadm0UYbseGvOWIicRNOpHichVWUDgfFVbleb93wqYf5g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=1&amp;sn=41f3f49b147355b31b7897b83d213bc4&amp;chksm=bcc7a0170870a01b7f1ab68101421d95a997676dad6dd996f35d93336481c1cbd4d44a70b495&amp;scene=0&amp;xtrack=1#rd" target="_blank">“纠结女友以往性经历，持续辱骂致其自杀身亡”，最高法披露</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-11-21 11:29:01">发布日期：2025-11-21 11:29:01</time></div><p class="article-description">澎湃新闻记者 林平 精神暴力也是家庭暴力。11月21日，最高人民法院发布8起涉家暴典型案例。在一起虐待案中，施暴者持续采取凌辱、贬损人格等手段，对家庭成员实施精神摧残、折磨，被法院以虐待罪论处。同时，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=1&amp;sn=41f3f49b147355b31b7897b83d213bc4&amp;chksm=bcc7a0170870a01b7f1ab68101421d95a997676dad6dd996f35d93336481c1cbd4d44a70b495&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=2&amp;sn=d884a555d72018bf13ff3c79d874857d&amp;chksm=bc6649ab048d1d920cdec98dceb4cb2cc677314b1c7d9877ad8be67c4dcb7e84b1067521d6d8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3S8ZdHGAhy0QxYJ6PflfxqNEfaFSRvRIiaZPIEFqYBoSwuFm7KocUEI0kLlhjQzfV3NpW3F8GcJLw4A/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=2&amp;sn=d884a555d72018bf13ff3c79d874857d&amp;chksm=bc6649ab048d1d920cdec98dceb4cb2cc677314b1c7d9877ad8be67c4dcb7e84b1067521d6d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">韩媒：中日韩会议“突然取消”，韩方接到通知</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-11-21 11:29:01">发布日期：2025-11-21 11:29:01</time></div><p class="article-description">“参考消息”微信公号据韩联社11月20日报道，在日本首相高市早苗涉台言论加剧中日两国矛盾升级的情况下，定于本月举行的韩中日文化部长会议突然被取消。韩国文化体育观光部20日表示，中国文化和旅游部18日向</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=2&amp;sn=d884a555d72018bf13ff3c79d874857d&amp;chksm=bc6649ab048d1d920cdec98dceb4cb2cc677314b1c7d9877ad8be67c4dcb7e84b1067521d6d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=3&amp;sn=14d230b6880fcaa617a2b59a272bee97&amp;chksm=bc87a9c6fb8d98fb3bb99f487a780b4d4cd63ab70e9d4754e353fe56bb8617e3d0c65b0c9112&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3S8ZdHGAhy0QxYJ6PflfxqNEvPxkCVplM56jicFJGz1bO3BSd0WzZJJPicAibFaicrDOSsmc2WYsSewEIA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=3&amp;sn=14d230b6880fcaa617a2b59a272bee97&amp;chksm=bc87a9c6fb8d98fb3bb99f487a780b4d4cd63ab70e9d4754e353fe56bb8617e3d0c65b0c9112&amp;scene=0&amp;xtrack=1#rd" target="_blank">迈克尔·乔丹，当选中国科学院外籍院士</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-11-21 11:29:01">发布日期：2025-11-21 11:29:01</time></div><p class="article-description">澎湃新闻记者 岳怀让11月21日，2025年两院院士增选结果正式揭晓，共有144人当选。其中，共选举产生中国科学院院士73人，选举产生中国工程院院士71人。在新当选两院院士中，女性科学家共13人。此外</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652492146&amp;idx=3&amp;sn=14d230b6880fcaa617a2b59a272bee97&amp;chksm=bc87a9c6fb8d98fb3bb99f487a780b4d4cd63ab70e9d4754e353fe56bb8617e3d0c65b0c9112&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2Mzc4ODc1NQ==&amp;mid=2247489897&amp;idx=1&amp;sn=72298165aaf94fd86b427bcc14641404&amp;chksm=eb87a6d9814fd7ab3dc61059ec34d7374596e64b27a63d81fd5d006d6c27799153f09f08076c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/58uPQHj2AmnyeZgzpTSVXJgG8qxRVwbSS3Mcl1yPqLkHdDL67iaqOT5oic1BWIwiaKM3KKXnBkDhyR7QJmXMsX0Iw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2Mzc4ODc1NQ==&amp;mid=2247489897&amp;idx=1&amp;sn=72298165aaf94fd86b427bcc14641404&amp;chksm=eb87a6d9814fd7ab3dc61059ec34d7374596e64b27a63d81fd5d006d6c27799153f09f08076c&amp;scene=0&amp;xtrack=1#rd" target="_blank">火热报名中！11月22日，平安SRC白帽子安全沙龙深圳站，探索攻防新篇！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f97c5a03d69be6fff4857f99e764e079/index.html">Theloner安全团队</a></span><time class="article-date" datetime="2025-11-21 11:25:04">发布日期：2025-11-21 11:25:04</time></div><p class="article-description">当前大模型、智能体等新兴技术加速落地并深度融入企业业务场景，推动数字化转型步伐持续加快，但网络安全攻防态势也随之愈发复杂 —— 传统防护手段在应对隐蔽性新型威胁、突破测试效率瓶颈上逐渐乏力。AI凭借其</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2Mzc4ODc1NQ==&amp;mid=2247489897&amp;idx=1&amp;sn=72298165aaf94fd86b427bcc14641404&amp;chksm=eb87a6d9814fd7ab3dc61059ec34d7374596e64b27a63d81fd5d006d6c27799153f09f08076c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=1&amp;sn=5955c9e4066693cba628457266ad523f&amp;chksm=e917f48e7afb1baae9a638a1dc6a396fc4e736269b7242e1e60cc2e5053a9ca11c327e4c2f37&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/22O5ysVEhFbVuO7zj0wChFgNda4F72LjO9EaQ3oB23RUcoYXtBhOKEa0591of8Mq4zIOWRgePicx80IdGl4476A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=1&amp;sn=5955c9e4066693cba628457266ad523f&amp;chksm=e917f48e7afb1baae9a638a1dc6a396fc4e736269b7242e1e60cc2e5053a9ca11c327e4c2f37&amp;scene=0&amp;xtrack=1#rd" target="_blank">领克Z20 | 曜红登场，上新限时价10.99万元起</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/68ac0e9898c77c327169cdbfe18b943b/index.html">领克汽车LYNKCO</a></span><time class="article-date" datetime="2025-11-21 11:23:12">发布日期：2025-11-21 11:23:12</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=1&amp;sn=5955c9e4066693cba628457266ad523f&amp;chksm=e917f48e7afb1baae9a638a1dc6a396fc4e736269b7242e1e60cc2e5053a9ca11c327e4c2f37&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=2&amp;sn=85307a90cfd866ce1119639d3376ccfe&amp;chksm=e908cfaddd81c0ddb8c19b96fd564af59520e0a298483bc5f5141d7db444f8e8edcfd094474d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/22O5ysVEhFbVuO7zj0wChFgNda4F72Lj4BAw0iaNib0yu8KOefmXZzE34fe8E64iciaze7r0kFOcPr9hTBchGOUhzQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=2&amp;sn=85307a90cfd866ce1119639d3376ccfe&amp;chksm=e908cfaddd81c0ddb8c19b96fd564af59520e0a298483bc5f5141d7db444f8e8edcfd094474d&amp;scene=0&amp;xtrack=1#rd" target="_blank">领克Z20 | 曜红登场，一图看懂配置选择</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/68ac0e9898c77c327169cdbfe18b943b/index.html">领克汽车LYNKCO</a></span><time class="article-date" datetime="2025-11-21 11:23:12">发布日期：2025-11-21 11:23:12</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=2&amp;sn=85307a90cfd866ce1119639d3376ccfe&amp;chksm=e908cfaddd81c0ddb8c19b96fd564af59520e0a298483bc5f5141d7db444f8e8edcfd094474d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=3&amp;sn=bbdd2f3306860137c40b2058567f0467&amp;chksm=e9993e2c4c79fd215ea821e3cc3bdda7f17bbed51d49a0ea4fdc752d3950dda8cdb101755fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/22O5ysVEhFbVuO7zj0wChFgNda4F72LjhlxokFYGrdXEGztibEhd3eibp0NCQdyWtX7aHwT8311PyDrETb4TAibsQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=3&amp;sn=bbdd2f3306860137c40b2058567f0467&amp;chksm=e9993e2c4c79fd215ea821e3cc3bdda7f17bbed51d49a0ea4fdc752d3950dda8cdb101755fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">领克双11购车节限时返场｜兑现热爱 礼遇全开</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/68ac0e9898c77c327169cdbfe18b943b/index.html">领克汽车LYNKCO</a></span><time class="article-date" datetime="2025-11-21 11:23:12">发布日期：2025-11-21 11:23:12</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=3&amp;sn=bbdd2f3306860137c40b2058567f0467&amp;chksm=e9993e2c4c79fd215ea821e3cc3bdda7f17bbed51d49a0ea4fdc752d3950dda8cdb101755fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=4&amp;sn=efa2fcdde770d996512beca83c817faf&amp;chksm=e9a413465f6acdb5a5e2ec5fb80b82e728590dd50c5ef50665ea94170ddb1c0f250c00c8abf1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/22O5ysVEhFaxob94ibgQVQHic3BRbBVsMl8k9savIjjhm9M4bAUOx7fMDpFEvGu7AWaExRdP8gWo54BEKyx75ZBQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=4&amp;sn=efa2fcdde770d996512beca83c817faf&amp;chksm=e9a413465f6acdb5a5e2ec5fb80b82e728590dd50c5ef50665ea94170ddb1c0f250c00c8abf1&amp;scene=0&amp;xtrack=1#rd" target="_blank">广州车展｜领克发布汽车运动新战略，产品力持续进阶</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/68ac0e9898c77c327169cdbfe18b943b/index.html">领克汽车LYNKCO</a></span><time class="article-date" datetime="2025-11-21 11:23:12">发布日期：2025-11-21 11:23:12</time></div><p class="article-description">2025广州车展，领克以“全能”阵容登场，并发布Z20曜红版，上新限时价14.49万元，开启全新的产品表达；旗舰领克900交付突破五万台，延续强劲增长；与此同时，发布汽车运动未来规划。TCR七年九冠荣</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMjk2OTYwMA==&amp;mid=2247771488&amp;idx=4&amp;sn=efa2fcdde770d996512beca83c817faf&amp;chksm=e9a413465f6acdb5a5e2ec5fb80b82e728590dd50c5ef50665ea94170ddb1c0f250c00c8abf1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=1&amp;sn=7327402fcc9bbee8522c9e8ac77bb51c&amp;chksm=ea17d709e624a08892a0e0c92dd86d22e7837243b5f117800ffa3ea4d526ed3e9941ee184969&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknka3x9KRbjXafk5lekXCRq0zQicfdDQub61BB2eLTfhS2DWhJy38ByWicx8v556RsRwaGIWFYo8hyQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=1&amp;sn=7327402fcc9bbee8522c9e8ac77bb51c&amp;chksm=ea17d709e624a08892a0e0c92dd86d22e7837243b5f117800ffa3ea4d526ed3e9941ee184969&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度｜“新手简单，高手可控”，这款短剧Al Agent，让创作不再妥协</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-11-21 11:12:16">发布日期：2025-11-21 11:12:16</time></div><p class="article-description">导语AI做短视频早已普及，但用AI生成精品短剧却门槛极高：一个2-3分钟的成片需要3-5天制作，调用七八种AI工具，每种工具都需要创作者几十小时的学习时间，还需要依赖创作者自身强大的叙事技巧和美术功底</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=1&amp;sn=7327402fcc9bbee8522c9e8ac77bb51c&amp;chksm=ea17d709e624a08892a0e0c92dd86d22e7837243b5f117800ffa3ea4d526ed3e9941ee184969&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=2&amp;sn=a3fa1df25f902e5358bc8a0781fd3824&amp;chksm=ead618eb6c8470bde64d0414284f91ac9f0f1ab214e839af4ef2fec02c31ced5ecef9374edd2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknka3x9KRbjXafk5lekXCRqYlFm6icWlicVBNwmKK8Pyr3n80MTqwsqfhErrvdvdT0vqgO2ymL1ZX5w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=2&amp;sn=a3fa1df25f902e5358bc8a0781fd3824&amp;chksm=ead618eb6c8470bde64d0414284f91ac9f0f1ab214e839af4ef2fec02c31ced5ecef9374edd2&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递 ｜ 打破Instagram与Snapchat增长纪录：Agnes揭示AI时代真正的增长来自未被服务的99.5%</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-11-21 11:12:16">发布日期：2025-11-21 11:12:16</time></div><p class="article-description">在全球AI竞技场被中美主导的当下，一家来自新加坡的初创公司却在悄然书写属于自己的传奇。Agnes AI，由新加坡国立大学在读博士Bruce Yang创办，7月上线PC，9月推出移动App。最新记录是仅</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=2&amp;sn=a3fa1df25f902e5358bc8a0781fd3824&amp;chksm=ead618eb6c8470bde64d0414284f91ac9f0f1ab214e839af4ef2fec02c31ced5ecef9374edd2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=3&amp;sn=1b5b7460d19fa0c0eb65119140bd97ff&amp;chksm=ea2dce4ce14988555f45e7736f7c00bbdd70ebcf4c3e96b8c2f80a32e10426122c30bcbbf4f6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkmh3KauGDhiauWicp6Tbmd3TK4B8IibyZOEZg7U1pvEoxw6ec0x5u9EnIoxWrBHS3Q27QsTtuaPBGGPg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=3&amp;sn=1b5b7460d19fa0c0eb65119140bd97ff&amp;chksm=ea2dce4ce14988555f45e7736f7c00bbdd70ebcf4c3e96b8c2f80a32e10426122c30bcbbf4f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">Z Event｜本周日ZP团队现场对话明星AI硬件公司，嘉宾完整名单揭晓，我们未来与AI共生</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-11-21 11:12:16">发布日期：2025-11-21 11:12:16</time></div><p class="article-description">获得限量免费赠票，打开“虎嗅FM创新节”小程序，输入兑换码“ZP1123”,即兑换可入场</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=3&amp;sn=1b5b7460d19fa0c0eb65119140bd97ff&amp;chksm=ea2dce4ce14988555f45e7736f7c00bbdd70ebcf4c3e96b8c2f80a32e10426122c30bcbbf4f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=4&amp;sn=a4ec6c2b0ed2da87834f52976d4e36a0&amp;chksm=ea63f690172c11ab4f5f1414dcedcfbb12c5505a5f9d29f38fa201c1cfbe4cd8174ac283c8a7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknka3x9KRbjXafk5lekXCRqbNaRQb0XZ5KNtv5kicaiaWeLbjmIiaxhT2FU7sr2liaLXsAbqgOUuQlrrA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=4&amp;sn=a4ec6c2b0ed2da87834f52976d4e36a0&amp;chksm=ea63f690172c11ab4f5f1414dcedcfbb12c5505a5f9d29f38fa201c1cfbe4cd8174ac283c8a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜从芯片到机架：OpenAI与富士康合作，深入掌控AI硬件供应链</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-11-21 11:12:16">发布日期：2025-11-21 11:12:16</time></div><p class="article-description">图片来源：bloombergOpenAI 正与鸿海精密工业合作设计生产数据中心硬件，这是这家 ChatGPT 制造商为满足其支撑人工智能系统激增的基础设施需求所采取的最新举措。鸿海集团（又名富士康）将</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247511423&amp;idx=4&amp;sn=a4ec6c2b0ed2da87834f52976d4e36a0&amp;chksm=ea63f690172c11ab4f5f1414dcedcfbb12c5505a5f9d29f38fa201c1cfbe4cd8174ac283c8a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=1&amp;sn=0c923a8da502feb02d1bb43125c8ffd9&amp;chksm=bc88840cfc3f65d7ef816b694694edc21b3df605bec995d05812bd7874a75057d7195eafd5ee&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6ejeTvAEDX1heqsibK2NtmDrAZsiaxAhic5r6ZYAurXWp42LrhAtwpqe6UjPOGUpjy2uvu3bUcBHICm7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=1&amp;sn=0c923a8da502feb02d1bb43125c8ffd9&amp;chksm=bc88840cfc3f65d7ef816b694694edc21b3df605bec995d05812bd7874a75057d7195eafd5ee&amp;scene=0&amp;xtrack=1#rd" target="_blank">千万粉丝网红道歉</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2025-11-21 11:10:54">发布日期：2025-11-21 11:10:54</time></div><p class="article-description">近日，在《罗永浩的十字路口》第十一期的访谈中，知名博主何同学作为节目嘉宾，当被问及公司今年盈利情况，何同学表示：“我们今年可能亏个一两百万。当然我们今年亏钱，主要还是因为我发了一条微博影响比较大。”“</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=1&amp;sn=0c923a8da502feb02d1bb43125c8ffd9&amp;chksm=bc88840cfc3f65d7ef816b694694edc21b3df605bec995d05812bd7874a75057d7195eafd5ee&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=2&amp;sn=b715a58ee6bd8cebae350297e5b60cf5&amp;chksm=bc1755b1741160602efb42aa5e96043d8da9f8a16032935f7164a5f163968a4d59b84c26db79&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6egIDA0lLC0j3FRmnoPIF8pWhBhdjEbVw4tWcBtgvbBhOvggJh8Jd7dy6xicAbw4bol2icM43bW5sQ1A/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=2&amp;sn=b715a58ee6bd8cebae350297e5b60cf5&amp;chksm=bc1755b1741160602efb42aa5e96043d8da9f8a16032935f7164a5f163968a4d59b84c26db79&amp;scene=0&amp;xtrack=1#rd" target="_blank">云南咖啡，已经好喝成这样了吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2025-11-21 11:10:54">发布日期：2025-11-21 11:10:54</time></div><p class="article-description">一杯咖啡，是现代人的清醒仪式，它让唇齿留香，更令身心受益。最近云南的咖啡果都热红了，正处黄金风味期的咖啡豆，喝上一口醇厚香气瞬间在嘴里炸开～作为咖啡豆生长的“乌托邦”——云南，还是众多咖啡品牌的原料主</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651693904&amp;idx=2&amp;sn=b715a58ee6bd8cebae350297e5b60cf5&amp;chksm=bc1755b1741160602efb42aa5e96043d8da9f8a16032935f7164a5f163968a4d59b84c26db79&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=1&amp;sn=e1dbbf4348cde93679b6b1ba5b0b6915&amp;chksm=cfdc39f8d9a2c32f7d3bec3dcbc6e00eae112ef61b8b9e943420779b1fa194072cd564477f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/agt09uccicf9xPOwo4A0lVU4Gz3fpOFZwush9Rr4gHXE2IDNfHEs5J2jzMsXofWoFyRHjubwW16NuibSMMUwCibPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=1&amp;sn=e1dbbf4348cde93679b6b1ba5b0b6915&amp;chksm=cfdc39f8d9a2c32f7d3bec3dcbc6e00eae112ef61b8b9e943420779b1fa194072cd564477f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">岚图梦想家山河正式上市！售价70.99万元</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/8a57ec275f26fecdabbf5ff65c7f8134/index.html">岚图汽车VOYAH</a></span><time class="article-date" datetime="2025-11-21 11:10:37">发布日期：2025-11-21 11:10:37</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=1&amp;sn=e1dbbf4348cde93679b6b1ba5b0b6915&amp;chksm=cfdc39f8d9a2c32f7d3bec3dcbc6e00eae112ef61b8b9e943420779b1fa194072cd564477f4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=2&amp;sn=47443830cf4512570ba7cad094c3d628&amp;chksm=cfd97ed686d5b2a9fa5c27da1edbab731311506ff0b0f0f16e3c22fb14e09da1815cd1102827&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/agt09uccicf9xPOwo4A0lVU4Gz3fpOFZwIKammDKZib9J2AXz45uvyZzia6zwmY2ugm3kwmY9pUjVQvrUSiaRzHXpg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=2&amp;sn=47443830cf4512570ba7cad094c3d628&amp;chksm=cfd97ed686d5b2a9fa5c27da1edbab731311506ff0b0f0f16e3c22fb14e09da1815cd1102827&amp;scene=0&amp;xtrack=1#rd" target="_blank">岚图梦想家山河上市权益指南，请查收！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/8a57ec275f26fecdabbf5ff65c7f8134/index.html">岚图汽车VOYAH</a></span><time class="article-date" datetime="2025-11-21 11:10:37">发布日期：2025-11-21 11:10:37</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=2&amp;sn=47443830cf4512570ba7cad094c3d628&amp;chksm=cfd97ed686d5b2a9fa5c27da1edbab731311506ff0b0f0f16e3c22fb14e09da1815cd1102827&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=3&amp;sn=77a1f3d1a03530755f47f44b6550069c&amp;chksm=cf1eebe9c3db15f140b0aac073b993e9235632bebf70697fb699e61e85e51bed74ed9475f57b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/agt09uccicfic3Eqib4rnibCjjlZlF0WZ3y26sTA3dDYMy8aSIMey3fLzYrRYQicZecBWR4Rgm21eztpVJm3nLAWx0Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=3&amp;sn=77a1f3d1a03530755f47f44b6550069c&amp;chksm=cf1eebe9c3db15f140b0aac073b993e9235632bebf70697fb699e61e85e51bed74ed9475f57b&amp;scene=0&amp;xtrack=1#rd" target="_blank">岚图梦想家山河答网友热门问题（第一期）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/8a57ec275f26fecdabbf5ff65c7f8134/index.html">岚图汽车VOYAH</a></span><time class="article-date" datetime="2025-11-21 11:10:37">发布日期：2025-11-21 11:10:37</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NjgyMDE3OQ==&amp;mid=2247585514&amp;idx=3&amp;sn=77a1f3d1a03530755f47f44b6550069c&amp;chksm=cf1eebe9c3db15f140b0aac073b993e9235632bebf70697fb699e61e85e51bed74ed9475f57b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=1&amp;sn=2193b9edb9f6bf9cdc56d827041d997c&amp;chksm=97a6604fdad902ab2ebd2c618b6f0ecaf34c3db6578517fdbf680144c140ffbea6e2927500c7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/keV4LgFsRDsF0prgsQ8QVmKJjZibibywSG6ybKyMXx33xdz8DSOHX2WvfGoyYfogMv70MS2icNfqCSCGPgSuXZCKA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=1&amp;sn=2193b9edb9f6bf9cdc56d827041d997c&amp;chksm=97a6604fdad902ab2ebd2c618b6f0ecaf34c3db6578517fdbf680144c140ffbea6e2927500c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">重磅！2025年中国科学院、中国工程院院士增选名单公布！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-11-21 11:08:30">发布日期：2025-11-21 11:08:30</time></div><p class="article-description">中国科学院、中国工程院11月21日公布2025年院士增选名单。2025年分别选举产生中国科学院院士73人，中国工程院院士71人。以下为新当选中国科学院、中国工程院院士完整名单，值得注意的是AI领域大牛</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=1&amp;sn=2193b9edb9f6bf9cdc56d827041d997c&amp;chksm=97a6604fdad902ab2ebd2c618b6f0ecaf34c3db6578517fdbf680144c140ffbea6e2927500c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=2&amp;sn=df110c2b4e482bc22d528a0b7fca1743&amp;chksm=978e59850831fc658385f04a97a93dc2b06e417f0593f262136cb50643e7e6e72ff306592383&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/keV4LgFsRDsF0prgsQ8QVmKJjZibibywSGDia0CIOibibLMOrgVVTZQrsc8pr3kbxYmeKibsPZQV99rMibYllxkfK0iaJQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=2&amp;sn=df110c2b4e482bc22d528a0b7fca1743&amp;chksm=978e59850831fc658385f04a97a93dc2b06e417f0593f262136cb50643e7e6e72ff306592383&amp;scene=0&amp;xtrack=1#rd" target="_blank">黄仁勋手撕「AI泡沫」论！英伟达570亿铁拳暴击，显卡全断货</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-11-21 11:08:30">发布日期：2025-11-21 11:08:30</time></div><p class="article-description">新智元报道  编辑：定慧 KingHZ 【新智元导读】史上最强三季度财报出炉，可能没有之一。黄仁勋一边把GPU卖到断货，一边告诉世界「AI不是泡沫，是历史必然」。这场算力狂潮到底是科技变革，还是资</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=2&amp;sn=df110c2b4e482bc22d528a0b7fca1743&amp;chksm=978e59850831fc658385f04a97a93dc2b06e417f0593f262136cb50643e7e6e72ff306592383&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=3&amp;sn=e29bdfdf770334dc48ae18625db6f9c3&amp;chksm=9720a50c2d8c18b56249215910eea28c1869de78bd721378417d0faca16db130a5ba5a4c93f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/keV4LgFsRDsF0prgsQ8QVmKJjZibibywSGMBYgB7lc9pibH3o7axeY3GLibUwywOZ71kBnsaYC2YRdTTJf10oNzVrg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=3&amp;sn=e29bdfdf770334dc48ae18625db6f9c3&amp;chksm=9720a50c2d8c18b56249215910eea28c1869de78bd721378417d0faca16db130a5ba5a4c93f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025互联网大厂职级与薪资对照表！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-11-21 11:08:30">发布日期：2025-11-21 11:08:30</time></div><p class="article-description">转自 | 菜鸟教程在互联网行业，职级往往比职位更能体现个人价值。同样是高级工程师，在阿里是 P6，在字节是 2-1，在百度可能是 T5。不同公司的体系不一样，薪资差距也相当明显。以下是整理自多家大厂的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247520705&amp;idx=3&amp;sn=e29bdfdf770334dc48ae18625db6f9c3&amp;chksm=9720a50c2d8c18b56249215910eea28c1869de78bd721378417d0faca16db130a5ba5a4c93f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_28.html" class="pagination-button pagination-prev">上一页</a><a href="index_30.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

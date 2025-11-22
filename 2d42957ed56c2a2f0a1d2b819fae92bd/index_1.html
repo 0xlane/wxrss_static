@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>linux源码阅读</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485876&amp;idx=1&amp;sn=faca4ce6d8439c92290a475f98e7402d&amp;chksm=ea16b2fc18806e1a185d6bec27fa3c911e2e5cc5282e0a85f741cd9c08775a846b728212fb3e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6Nj5KWXBthXjmdxejLI0xl35Fmicp423ibJJ354l36RX12ksRHb0Ph9MxZf1DWajeOY1GnXEAbrkRvw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485876&amp;idx=1&amp;sn=faca4ce6d8439c92290a475f98e7402d&amp;chksm=ea16b2fc18806e1a185d6bec27fa3c911e2e5cc5282e0a85f741cd9c08775a846b728212fb3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">psutil：深入系统监控与性能分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-06-01 14:14:39">发布日期：2025-06-01 14:14:39</time></div><p class="article-description">传统端午临中夏01简介在软件开发中，了解应用程序运行时对系统资源的消耗情况对于优化程序性能、排查故障和进行有效的资源管理至关重要。Python提供了众多强大的库来帮助开发者实现这些目标，其中psuti</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485876&amp;idx=1&amp;sn=faca4ce6d8439c92290a475f98e7402d&amp;chksm=ea16b2fc18806e1a185d6bec27fa3c911e2e5cc5282e0a85f741cd9c08775a846b728212fb3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485861&amp;idx=1&amp;sn=0ad1652e733e27398b792ced79cd4105&amp;chksm=eafd73a9d4980b5f8927db453b15f67547eea20cb860d924c22f93f582448fb3c6b14fdc759d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6NZibW6zr62bDbZ4d1pibRJmtz8oiakoNkCdGf8GI1icJNibHeU4Y3PA3XvQyIZrDJia9aO1mMqHuRgaSvw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485861&amp;idx=1&amp;sn=0ad1652e733e27398b792ced79cd4105&amp;chksm=eafd73a9d4980b5f8927db453b15f67547eea20cb860d924c22f93f582448fb3c6b14fdc759d&amp;scene=0&amp;xtrack=1#rd" target="_blank">智能天气查询：利用星图云开放平台获取实时气象信息</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-30 00:01:00">发布日期：2025-05-30 00:01:00</time></div><p class="article-description">01前言在当今快速发展的科技时代，获取准确、及时的天气信息对于日常生活和工作变得至关重要。无论是规划周末出行还是为农业生产做准备，一个可靠的天气预报系统都是不可或缺的。本文将介绍如何使用星图云开放平台</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485861&amp;idx=1&amp;sn=0ad1652e733e27398b792ced79cd4105&amp;chksm=eafd73a9d4980b5f8927db453b15f67547eea20cb860d924c22f93f582448fb3c6b14fdc759d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485851&amp;idx=1&amp;sn=01b15faacf0c85321f10109490a96bb2&amp;chksm=ea2813ace52525084e024832875a22935bc9bd7d78793ca479065edae3c065f0586e5cccfaae&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6N2a2TiaMxZogD6Gl1y2F6Tq0l0ojeibDibXCLlztXTDDZubOl6cU5xEVick5xZKQlEbWiajibprrpTbUIg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485851&amp;idx=1&amp;sn=01b15faacf0c85321f10109490a96bb2&amp;chksm=ea2813ace52525084e024832875a22935bc9bd7d78793ca479065edae3c065f0586e5cccfaae&amp;scene=0&amp;xtrack=1#rd" target="_blank">推荐一个免费的视频下载网址，不用白不用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-29 00:25:30">发布日期：2025-05-29 00:25:30</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485851&amp;idx=1&amp;sn=01b15faacf0c85321f10109490a96bb2&amp;chksm=ea2813ace52525084e024832875a22935bc9bd7d78793ca479065edae3c065f0586e5cccfaae&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485844&amp;idx=1&amp;sn=e601b5c73e7f6decb52539077d1684ff&amp;chksm=ea7260d77bea884597a80c3abfe3e83ea776a752574a3b3f64be56297de4f02382894a0e228a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6MXW2gxJNuQHP0TOPJXMsbxtDUicOREyOkHzh3MTH26u8J3DZibI2a4eyuxnJ9Sz7MwNvaDceE2PCYQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485844&amp;idx=1&amp;sn=e601b5c73e7f6decb52539077d1684ff&amp;chksm=ea7260d77bea884597a80c3abfe3e83ea776a752574a3b3f64be56297de4f02382894a0e228a&amp;scene=0&amp;xtrack=1#rd" target="_blank">thingsboard-一款开源物联网平台</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-27 20:28:15">发布日期：2025-05-27 20:28:15</time></div><p class="article-description">01简介ThingsBoard是一款开源物联网平台，支持设备管理、数据采集、处理和可视化，适用于智能家居、工业监控、环境监测等多种场景。它兼容MQTT、CoAP、HTTP等协议，提供丰富的规则引擎和仪</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485844&amp;idx=1&amp;sn=e601b5c73e7f6decb52539077d1684ff&amp;chksm=ea7260d77bea884597a80c3abfe3e83ea776a752574a3b3f64be56297de4f02382894a0e228a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485823&amp;idx=1&amp;sn=1ca3568c922813ee241e5b3712bbae69&amp;chksm=eae2369c18ad99f3c1155be6c1ed095e2a8a8055009ae158223c57ba1423329d1c82638c5b7e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6NgSHg1nI13lTOEuiaVuicU00NQHzGCx7ZLc8kcibWLKzgVibXiavLoPKcyQOSO496OCcWMfbvTCibAibib3g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485823&amp;idx=1&amp;sn=1ca3568c922813ee241e5b3712bbae69&amp;chksm=eae2369c18ad99f3c1155be6c1ed095e2a8a8055009ae158223c57ba1423329d1c82638c5b7e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Linux RoadMap for Beginneers</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-25 22:54:10">发布日期：2025-05-25 22:54:10</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485823&amp;idx=1&amp;sn=1ca3568c922813ee241e5b3712bbae69&amp;chksm=eae2369c18ad99f3c1155be6c1ed095e2a8a8055009ae158223c57ba1423329d1c82638c5b7e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485818&amp;idx=1&amp;sn=040d48813095349e44ff2832aed6879e&amp;chksm=ea56d7b1a64ec87563d3d409179f8c80e374993036abe14705c6c36a588faf3984cb4a047bde&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6MPazDfau9aSm72bQhXatb3bPEKbb021gkUSSruvhSicO1xBc5icI7DficBcmYey2j9xHweY0V95m6kQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485818&amp;idx=1&amp;sn=040d48813095349e44ff2832aed6879e&amp;chksm=ea56d7b1a64ec87563d3d409179f8c80e374993036abe14705c6c36a588faf3984cb4a047bde&amp;scene=0&amp;xtrack=1#rd" target="_blank">探秘 GitHub 上的中国教材资源库-ChinaTextBook</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-24 08:57:43">发布日期：2025-05-24 08:57:43</time></div><p class="article-description">1ChinaTextbookGitHub 上的一个仓库——ChinaTextbook 吸引了不少关注。它由 TapXWorld 维护，汇集了从小学到大学的众多 PDF 教材资源。github:http</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485818&amp;idx=1&amp;sn=040d48813095349e44ff2832aed6879e&amp;chksm=ea56d7b1a64ec87563d3d409179f8c80e374993036abe14705c6c36a588faf3984cb4a047bde&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485809&amp;idx=1&amp;sn=8139383594303cc88be994dfcb983ad2&amp;chksm=eae043e3441714e3eb777da720b5ae77055f33e5ecdc12c0d3f5cd2e17e655bfb8b6d083f0fb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6PEmrI7EpOklRIcOZpqJOtxtwoib832NfAbW0AOPxeRyxtm8eic9pgzxMGsCHXdk9pyIsRycPic9IiaPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485809&amp;idx=1&amp;sn=8139383594303cc88be994dfcb983ad2&amp;chksm=eae043e3441714e3eb777da720b5ae77055f33e5ecdc12c0d3f5cd2e17e655bfb8b6d083f0fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">重温泰勒公式与拉格朗日中值定理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-10 20:20:12">发布日期：2025-05-10 20:20:12</time></div><p class="article-description">1. 泰勒公式定义泰勒公式（Taylor's Formula）是用多项式逼近函数的方法，通过某一点的高阶导数信息构建局部近似。应用场景函数逼近（如  \sin(x) 、e^x  的近似计算）物理学中的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485809&amp;idx=1&amp;sn=8139383594303cc88be994dfcb983ad2&amp;chksm=eae043e3441714e3eb777da720b5ae77055f33e5ecdc12c0d3f5cd2e17e655bfb8b6d083f0fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485796&amp;idx=1&amp;sn=8fe2abe85dc38fa5133a9d3bdbdca72b&amp;chksm=eacf60210ce8da58655dcc3b0c9233f033a253cdf721403ab27e3d92b3bcf3beda375d924050&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6MyX34rn5jZ0icOibLA9fw25q5ULcEEu7oSwAQ7qTM6SqwZa8SiaFEaDZMmM6aUU7hiaErib6EsdVE4VFw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485796&amp;idx=1&amp;sn=8fe2abe85dc38fa5133a9d3bdbdca72b&amp;chksm=eacf60210ce8da58655dcc3b0c9233f033a253cdf721403ab27e3d92b3bcf3beda375d924050&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenRouter简介 vs Ollama</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-05-07 20:25:27">发布日期：2025-05-07 20:25:27</time></div><p class="article-description">1OpenRouter 简介OpenRouter 是一个统一的 AI 模型聚合平台，旨在为开发者提供一站式访问多种大语言模型（LLM）的服务。它通过标准化的 API 接口，整合了 OpenAI、Ant</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485796&amp;idx=1&amp;sn=8fe2abe85dc38fa5133a9d3bdbdca72b&amp;chksm=eacf60210ce8da58655dcc3b0c9233f033a253cdf721403ab27e3d92b3bcf3beda375d924050&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485771&amp;idx=1&amp;sn=6bd4db99f5b5335a5386bbcc1adf311f&amp;chksm=ea173494a466dda95ee1f6c2e8b666a872ee6ec9a04b28d8a7d48c667c85b5a41252f6ccf67c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6P0tgdfYeBoCkPGLgGqnPtJET2MiahKmEicMzKficcymWQmj7mOFZdcVAlJsYG3cgFO5vafsmEF2khSA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485771&amp;idx=1&amp;sn=6bd4db99f5b5335a5386bbcc1adf311f&amp;chksm=ea173494a466dda95ee1f6c2e8b666a872ee6ec9a04b28d8a7d48c667c85b5a41252f6ccf67c&amp;scene=0&amp;xtrack=1#rd" target="_blank">新玩具-NVIDIA Orin Nano Super</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-04-08 23:00:01">发布日期：2025-04-08 23:00:01</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485771&amp;idx=1&amp;sn=6bd4db99f5b5335a5386bbcc1adf311f&amp;chksm=ea173494a466dda95ee1f6c2e8b666a872ee6ec9a04b28d8a7d48c667c85b5a41252f6ccf67c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485759&amp;idx=1&amp;sn=dfff6ae3ca06bed12c20ffbd0c22e55d&amp;chksm=eafdd03e50f66015bfd93d7da2bf1e346ff8b37ce4c7375c9782ce2e0f5a89ba397519b9e4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6NTd36fCt8zUtlv79zIo486tr78ZzzibhqDu9hib5WFV0rwr2UesBE9JbcJibCdPdYJkPvkOd1F6BOXg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485759&amp;idx=1&amp;sn=dfff6ae3ca06bed12c20ffbd0c22e55d&amp;chksm=eafdd03e50f66015bfd93d7da2bf1e346ff8b37ce4c7375c9782ce2e0f5a89ba397519b9e4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">撸会代码：手势识别</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-03-18 00:53:56">发布日期：2025-03-18 00:53:56</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485759&amp;idx=1&amp;sn=dfff6ae3ca06bed12c20ffbd0c22e55d&amp;chksm=eafdd03e50f66015bfd93d7da2bf1e346ff8b37ce4c7375c9782ce2e0f5a89ba397519b9e4e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485744&amp;idx=1&amp;sn=cc437bea91a849f1c63800da1602c579&amp;chksm=eafe186127ac50b1a868d3c7030d878784b837628cc8ec29a364f4e1263b3024229a5c23b84c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6OLhNJA4S7qlHdw0iaqnM9ToaJ9mXdGnH8nKicaXQDrf4rs0mU1QzdicxSrFVtkn2Cxic3ELSgYfaLGpQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485744&amp;idx=1&amp;sn=cc437bea91a849f1c63800da1602c579&amp;chksm=eafe186127ac50b1a868d3c7030d878784b837628cc8ec29a364f4e1263b3024229a5c23b84c&amp;scene=0&amp;xtrack=1#rd" target="_blank">通俗易通理解双目成像原理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-03-09 14:50:50">发布日期：2025-03-09 14:50:50</time></div><p class="article-description">01双目成像原理想象一下，当你用两只眼睛看同一只杯子时，左右眼看到的画面会有一点差异（就像看3D电影时的效果）。这种差异叫做视差，大脑正是通过这种差异来判断物体的距离。双目相机模仿了人类的这一机制——</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485744&amp;idx=1&amp;sn=cc437bea91a849f1c63800da1602c579&amp;chksm=eafe186127ac50b1a868d3c7030d878784b837628cc8ec29a364f4e1263b3024229a5c23b84c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485733&amp;idx=1&amp;sn=a5e953830f03c4b9e8214a7acf58f9a7&amp;chksm=ea480255f3b8a47a89a96917b85599040715c5729b348b3226f89b65ff2d135bc71422af8852&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iaDiabnN4Yz6O4NkDHiapptp8qREqiadwibI9umlL2GjOiam9KKrceMNWs6E9MaUEaWeBG3Exkh8kGLmywDOSkcdsNicQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485733&amp;idx=1&amp;sn=a5e953830f03c4b9e8214a7acf58f9a7&amp;chksm=ea480255f3b8a47a89a96917b85599040715c5729b348b3226f89b65ff2d135bc71422af8852&amp;scene=0&amp;xtrack=1#rd" target="_blank">Windows上Open-WebUI与DeepSeek本地知识库搭建全攻略</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d42957ed56c2a2f0a1d2b819fae92bd/index.html">linux源码阅读</a></span><time class="article-date" datetime="2025-03-02 17:19:26">发布日期：2025-03-02 17:19:26</time></div><p class="article-description">01Web-OpenUI 简介Web-OpenUI 是一个开源项目，旨在帮助开发者通过简单的指令快速生成前端网页界面。它基于现代Web技术如HTML5、CSS3和ES6，并且可以与React或Vue等</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NDczNDM4MQ==&amp;mid=2247485733&amp;idx=1&amp;sn=a5e953830f03c4b9e8214a7acf58f9a7&amp;chksm=ea480255f3b8a47a89a96917b85599040715c5729b348b3226f89b65ff2d135bc71422af8852&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

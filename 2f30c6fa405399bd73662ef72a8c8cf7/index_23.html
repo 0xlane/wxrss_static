@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Z Potentials</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=3&amp;sn=21ce84aa24ae77c59d7d3ee9a9b53ad1&amp;chksm=ea4ac863d8850e6d2eb014fb20307aab4bf1768103957e55c8572932d425e629ae9a103c34e2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkljwsicjReN4uIvpGBF1cEJL0Dwpzfroicn9JJhI5PNQYRVYuwqbI33uCAUhx9uKBpbtPbToo5Vlib5g/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=3&amp;sn=21ce84aa24ae77c59d7d3ee9a9b53ad1&amp;chksm=ea4ac863d8850e6d2eb014fb20307aab4bf1768103957e55c8572932d425e629ae9a103c34e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜将2D照片转化为3D视频，新模型能否解决Stability AI商业困境</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-19 10:30:00">发布日期：2025-03-19 10:30:00</time></div><p class="article-description">图片来源：Stability AIStability AI 发布了一款新 AI 模型——Stable Virtual Camera，该公司宣称该模型能将 2D 图像转化为，具有真实深度和视角的“沉浸式</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=3&amp;sn=21ce84aa24ae77c59d7d3ee9a9b53ad1&amp;chksm=ea4ac863d8850e6d2eb014fb20307aab4bf1768103957e55c8572932d425e629ae9a103c34e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=4&amp;sn=873ce65145ed790a051e027d559c6bfe&amp;chksm=ea8c26873977edc25b747eeb4eea82897e7a4df99aa6d82ab6fb1317cb02c055743eecd7f6de&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkljwsicjReN4uIvpGBF1cEJLXWbbFgPzfEbE7KDyibxlibS9Xib9veGqkYJjTEzwRGhicnHdVMMgKRGqSw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=4&amp;sn=873ce65145ed790a051e027d559c6bfe&amp;chksm=ea8c26873977edc25b747eeb4eea82897e7a4df99aa6d82ab6fb1317cb02c055743eecd7f6de&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜从GPU渗透到AI汽车工厂，英伟达与通用汽车共筑“物理AI时代”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-19 10:30:00">发布日期：2025-03-19 10:30:00</time></div><p class="article-description">图片来源：Nvidia通用汽车正与 Nvidia 深化合作，借助其技术将人工智能引入现实世界，这一合作旨在触及汽车制造商业务的方方面面，包括工厂、机器人和自动驾驶汽车。Nvidia 创始人兼首席执行官</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506162&amp;idx=4&amp;sn=873ce65145ed790a051e027d559c6bfe&amp;chksm=ea8c26873977edc25b747eeb4eea82897e7a4df99aa6d82ab6fb1317cb02c055743eecd7f6de&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=1&amp;sn=7cf4faaaefc90fbe31fea4c2385f883d&amp;chksm=ea9d9503667274707e85404beea5c507d449cbe14adc6133e71af040ae9af489552cf946f936&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkm4ccDxkoJMpGAPucVZvyvA0BOaKInqnZMM1wtialfsxXficPdvfC6VqxSM2ibcet6WxNKPqaQoqjpdg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=1&amp;sn=7cf4faaaefc90fbe31fea4c2385f883d&amp;chksm=ea9d9503667274707e85404beea5c507d449cbe14adc6133e71af040ae9af489552cf946f936&amp;scene=0&amp;xtrack=1#rd" target="_blank">独家｜朱啸虎和锦秋联手押注：00后如何用AI Agent撬动万亿级营销市场？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-18 15:25:32">发布日期：2025-03-18 15:25:32</time></div><p class="article-description">图片来源：Aha官网截图当全球科技圈还在为MCP是否代表未来争论不休、中国媒体又热议Manus时，一场属于Agent的浪潮已悄然兴起。在这场变革风暴中，一个独特的投资动向浮出水面——曾主导移动互联网时</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=1&amp;sn=7cf4faaaefc90fbe31fea4c2385f883d&amp;chksm=ea9d9503667274707e85404beea5c507d449cbe14adc6133e71af040ae9af489552cf946f936&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=2&amp;sn=8316917940900e651969cc8562682243&amp;chksm=eaab42780c4d344c7d0afcc5ed0d835bd1e225b2694c215eb8213355424d46f3371ee0e44e7f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQklKVickebzuotVm13Nds74ZTbLumHbU4baTZBaN8icXib48mGSzEUE5HxMbibRicxqjyrUBFfUrfde56xw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=2&amp;sn=8316917940900e651969cc8562682243&amp;chksm=eaab42780c4d344c7d0afcc5ed0d835bd1e225b2694c215eb8213355424d46f3371ee0e44e7f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Z Event｜在硅谷与DCM和CRV一起，探索多模态如何重塑艺术、视频与娱乐？Luma、Fal、OpenArt等明星AI创始人</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-18 15:25:32">发布日期：2025-03-18 15:25:32</time></div><p class="article-description">你是否想深入了解人工智能如何重塑娱乐行业的未来？机会来了！由 Z Potentials、CRV 和 DCM 联合主办的 “创意 AI：多模态如何改变艺术、视频和娱乐” 活动即将举行，诚邀你一同探索 A</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=2&amp;sn=8316917940900e651969cc8562682243&amp;chksm=eaab42780c4d344c7d0afcc5ed0d835bd1e225b2694c215eb8213355424d46f3371ee0e44e7f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=3&amp;sn=7252a2a673995f5dca917b41720dd3ca&amp;chksm=ea119f38301896ed7ba384e51da4af1702128d9969beb11b62c4265ea9d0013b94a63c78206f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkmoVYoaMj0Jib3u9GTm0T6UCb6pa6joTHecHM7f7LE4KqDhf5vO19IXN64zftvpfx2vX8Lm8ELOs6Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=3&amp;sn=7252a2a673995f5dca917b41720dd3ca&amp;chksm=ea119f38301896ed7ba384e51da4af1702128d9969beb11b62c4265ea9d0013b94a63c78206f&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜马斯克收购Hotshot剑指视频生成赛道，短期内Grok Video或加速面世</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-18 15:25:32">发布日期：2025-03-18 15:25:32</time></div><p class="article-description">图片来源：Hotshot根据 Hotshot 的CEO兼联合创始人 Aakash Sastry 在 X 上发布的帖子，Elon Musk 的 xAI 已收购了文本转视频初创公司 Hotshot。自 2</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=3&amp;sn=7252a2a673995f5dca917b41720dd3ca&amp;chksm=ea119f38301896ed7ba384e51da4af1702128d9969beb11b62c4265ea9d0013b94a63c78206f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=4&amp;sn=08cf929de81a8431ccdb250fdbe904fb&amp;chksm=ea4949b7077c5ebb4418461b814e5ca1e664cc407ad73f2c4ff9bba3e44d8a3044d3db297813&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkmoVYoaMj0Jib3u9GTm0T6UCBYrQRTicbghWAh4YQu9icTKrGNPUc3DRNuAmEcSe83hSUNA2MXSibR5uQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=4&amp;sn=08cf929de81a8431ccdb250fdbe904fb&amp;chksm=ea4949b7077c5ebb4418461b814e5ca1e664cc407ad73f2c4ff9bba3e44d8a3044d3db297813&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜Google借联发科降价30%，博通数百亿订单告急</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-18 15:25:32">发布日期：2025-03-18 15:25:32</time></div><p class="article-description">图片来源：MediaTekGoogle 计划与一家新公司合作，帮助设计和生产其部分人工智能芯片：联发科技（MediaTek）。与这家中国台湾公司合作开发下一代芯片，即 Tensor Processin</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=4&amp;sn=08cf929de81a8431ccdb250fdbe904fb&amp;chksm=ea4949b7077c5ebb4418461b814e5ca1e664cc407ad73f2c4ff9bba3e44d8a3044d3db297813&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=5&amp;sn=383a299e7367015810d04acd723fc67b&amp;chksm=ea2307705dce4042b889c8aacb8fbbb1405d7448b01ae4a407053461e99526abfaee7cf759b5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkmoVYoaMj0Jib3u9GTm0T6UChxFFeg4GroY6jyZgn6bOTY5XXwztLkroTtJypfT9bY2NQNA3zMThsA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=5&amp;sn=383a299e7367015810d04acd723fc67b&amp;chksm=ea2307705dce4042b889c8aacb8fbbb1405d7448b01ae4a407053461e99526abfaee7cf759b5&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜300亿美元，Alphabet史上最贵收购重启，云安全独角兽Wiz5亿ARR撬动谷歌豪赌</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-18 15:25:32">发布日期：2025-03-18 15:25:32</time></div><p class="article-description">图片来源：Wiz谷歌母公司 Alphabet 再次就收购云网络安全初创公司 Wiz 进行深入谈判。2024年夏天，两家公司曾接近以 230 亿美元的估值达成交易，但最终未能实现。这次讨论的价格更高，该</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506128&amp;idx=5&amp;sn=383a299e7367015810d04acd723fc67b&amp;chksm=ea2307705dce4042b889c8aacb8fbbb1405d7448b01ae4a407053461e99526abfaee7cf759b5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=1&amp;sn=60cf2970b9f8a51a69ebe53bbc778dc0&amp;chksm=ea1c31da8911b44e6cc5b537265295fbb6b9c87656c16f0f47b134a41a63fda1e7023213acf0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknOjkpwpV8iaeygq8qkPT6HDWjdPJmjMhqmmsRInSUvxppD3uMtFWjiaUgQvqEk6StVam4XdNRDXv6Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=1&amp;sn=60cf2970b9f8a51a69ebe53bbc778dc0&amp;chksm=ea1c31da8911b44e6cc5b537265295fbb6b9c87656c16f0f47b134a41a63fda1e7023213acf0&amp;scene=0&amp;xtrack=1#rd" target="_blank">喝点VC｜a16z 2025百强GenAI C端应用，DeepSeek、SeaArt等越来越多华人AI应用跻身全球前列</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-17 21:14:51">发布日期：2025-03-17 21:14:51</time></div><p class="article-description">图片来源：a16zZ Highlights用户量 ≠ 变现能力，AI 应用商业模式逐渐成熟。MAU 和收入最高的 50 款移动 AI 应用仅 40% 交叉，部分低用户量应用反而变现能力更强。语言学习、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=1&amp;sn=60cf2970b9f8a51a69ebe53bbc778dc0&amp;chksm=ea1c31da8911b44e6cc5b537265295fbb6b9c87656c16f0f47b134a41a63fda1e7023213acf0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=2&amp;sn=695e2eef54072e193f1c98fdd854852f&amp;chksm=ead961a18067a3ff318884012ed8356ae6df6b36d610c6d8876c9111c5e195ac95aaf50da2b3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQklKVickebzuotVm13Nds74ZTDo0YrjeSphvzEuVM8iaficyYjbtgWSxjG8rO3IFBofDLVbXekBdnIcLA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=2&amp;sn=695e2eef54072e193f1c98fdd854852f&amp;chksm=ead961a18067a3ff318884012ed8356ae6df6b36d610c6d8876c9111c5e195ac95aaf50da2b3&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度｜2个18岁高中生，做出一款ARR超千万美金的AI应用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-17 21:14:51">发布日期：2025-03-17 21:14:51</time></div><p class="article-description">图片来源：Cal AI在一个充满“编程氛围”的世界里，Cal AI 的青少年创始人Yadegari显得奇怪和传统。讽刺的是，Yadegari 和他的联合创始人 Henry Langmack 都只有 1</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=2&amp;sn=695e2eef54072e193f1c98fdd854852f&amp;chksm=ead961a18067a3ff318884012ed8356ae6df6b36d610c6d8876c9111c5e195ac95aaf50da2b3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=3&amp;sn=51192a32a507e69879dc95187f23c636&amp;chksm=ea7787648ecb179e22a2bfb06273bc7e743f09eaa8fb8447ab96faef52c91ea502e07aaae2ac&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQklKVickebzuotVm13Nds74ZTicn3lZ82m8AbvuKNibYDAZpABBWYdxy0o2hPza8iaiaM9x25BTbmp558TQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=3&amp;sn=51192a32a507e69879dc95187f23c636&amp;chksm=ea7787648ecb179e22a2bfb06273bc7e743f09eaa8fb8447ab96faef52c91ea502e07aaae2ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜英伟达正在构建AI帝国，从GPU霸主到初创企业收割机</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-17 21:14:51">发布日期：2025-03-17 21:14:51</time></div><p class="article-description">图片来源：英伟达没有哪家公司比 Nvidia 更戏剧性地抓住了 AI 革命的机遇。自两年前 ChatGPT 推出以来，以及随后众多竞争性生成式 AI 服务的涌现，Nvidia 的收入、盈利能力和现金储</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=3&amp;sn=51192a32a507e69879dc95187f23c636&amp;chksm=ea7787648ecb179e22a2bfb06273bc7e743f09eaa8fb8447ab96faef52c91ea502e07aaae2ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=4&amp;sn=9b9a2240e429dcea95a95118b1efd06a&amp;chksm=ea04593a89579c85481d4ce867543387ab846f3b9cdd1cbc14b44b2fe273f7236e1b6225af23&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQklKVickebzuotVm13Nds74ZTFTkHxWkkOpmialUsxuTibd4lQKlgHtflAbonrdnkHibKAc4azrr8DN1ag/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=4&amp;sn=9b9a2240e429dcea95a95118b1efd06a&amp;chksm=ea04593a89579c85481d4ce867543387ab846f3b9cdd1cbc14b44b2fe273f7236e1b6225af23&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜Salesforce能否靠“按量付费”模式转型困局？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-17 21:14:51">发布日期：2025-03-17 21:14:51</time></div><p class="article-description">图片来源：SalesforceSalesforce 的CEO马克·贝尼奥夫上个月宣布 2025 年为“Agentforce 的绝对之年”，这是这家软件公司去年秋天推出的一款产品，旨在帮助客户实现客户服</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506109&amp;idx=4&amp;sn=9b9a2240e429dcea95a95118b1efd06a&amp;chksm=ea04593a89579c85481d4ce867543387ab846f3b9cdd1cbc14b44b2fe273f7236e1b6225af23&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=1&amp;sn=32873a2931e17036981667e27fa8ef44&amp;chksm=ea408ae8c4ffc294adbf4ae1021b430932356be85ee9719da221e847eae7346c3824ab7d8a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknOjkpwpV8iaeygq8qkPT6HDX43Aq0eu2t9XzmZTep77UW3hvWNYmNbBPicSYzxPAibhpkz5Sgo4pB0g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=1&amp;sn=32873a2931e17036981667e27fa8ef44&amp;chksm=ea408ae8c4ffc294adbf4ae1021b430932356be85ee9719da221e847eae7346c3824ab7d8a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Z Product｜人工客服消失？YC支持的AI客服如何用AI重新定义物流管理，答复效率100%，提效4倍以上</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-16 11:54:20">发布日期：2025-03-16 11:54:20</time></div><p class="article-description">图片来源：happyrobot.aiZ Highlights 货物运营代理市场规模达260亿美元，作为货运代理，经纪人和承运商每天需要对接大量的供应商和零售商的信息，并进行针对性匹配和派单。这种简单重</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=1&amp;sn=32873a2931e17036981667e27fa8ef44&amp;chksm=ea408ae8c4ffc294adbf4ae1021b430932356be85ee9719da221e847eae7346c3824ab7d8a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=2&amp;sn=68df1320389c0d9198225de97dc055b1&amp;chksm=ea60919a7e31311fe38f73bc7fc615946bef158fa5e6a624cf3f60bc99202c674d7611d427be&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknOjkpwpV8iaeygq8qkPT6HDXe0icXlQUSYqasEzJ8pk21t5vGvWXZT4AERrFJZjNMgbHM0icqrZCSGg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=2&amp;sn=68df1320389c0d9198225de97dc055b1&amp;chksm=ea60919a7e31311fe38f73bc7fc615946bef158fa5e6a624cf3f60bc99202c674d7611d427be&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度｜Google首席科学家Jeff Dean对话Transformer发明者：基于自回归的下一词预测方式并非人类学习的最佳模拟</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-16 11:54:20">发布日期：2025-03-16 11:54:20</time></div><p class="article-description">图片来源：Dwarkesh PatelZ Highlights从这一代模型到下一代模型的改进，往往是由硬件和更大规模驱动的，但同样甚至更多是由重大的算法改进和模型架构的重大变化、训练数据组合等因素驱动</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=2&amp;sn=68df1320389c0d9198225de97dc055b1&amp;chksm=ea60919a7e31311fe38f73bc7fc615946bef158fa5e6a624cf3f60bc99202c674d7611d427be&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=3&amp;sn=054c1afb4448300adc300d9b246add40&amp;chksm=ea6cba90541d33dda85404ada073f0f259f21ce13faacd557ae7a4b6f59f8ff7b1ea35f1fea7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkkaSRaVejWaialYomibNN2XibyRL929x20EKeea4yh1qKGDyL8WCvEodLhhyt0b7UncOjyg4TEM8ibyGA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=3&amp;sn=054c1afb4448300adc300d9b246add40&amp;chksm=ea6cba90541d33dda85404ada073f0f259f21ce13faacd557ae7a4b6f59f8ff7b1ea35f1fea7&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜软银以3000亿估值联手OpenAI，打造日本AI数据中心</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-16 11:54:20">发布日期：2025-03-16 11:54:20</time></div><p class="article-description">图片来源：软银软银正凭借自身力量以及与 OpenAI 等公司的战略合作，积极推进在日本本土市场建立大型人工智能业务的雄心。今年 3 月 7 日，这家科技公司确认将支付 6.76 亿美元，购买夏普此前用</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=3&amp;sn=054c1afb4448300adc300d9b246add40&amp;chksm=ea6cba90541d33dda85404ada073f0f259f21ce13faacd557ae7a4b6f59f8ff7b1ea35f1fea7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=4&amp;sn=bb9fdd2a6d39c7c3dbac838d6a68c7f5&amp;chksm=ea21f5b7efbcb9f5a6c7c817fbfc03b20f2231ca08394a07013afa59541ffcd66cb655d98c08&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkkaSRaVejWaialYomibNN2XibyicOkWub77Iy43eFDPbBsCoDjUvR5OposvQVAXb4fCtz1XibezoTSjZZw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=4&amp;sn=bb9fdd2a6d39c7c3dbac838d6a68c7f5&amp;chksm=ea21f5b7efbcb9f5a6c7c817fbfc03b20f2231ca08394a07013afa59541ffcd66cb655d98c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜百度推理模型X1上线，开源Ernie 4.5，正面迎战DeepSeek</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-16 11:54:20">发布日期：2025-03-16 11:54:20</time></div><p class="article-description">图片来源：百度Baidu 发布了一款能够阐明其推理过程的新AI模型，与 DeepSeek 等新兴竞争对手形成竞争。百度还将其旗舰基础模型升级至 Ernie 4.5。它随即向聊天机器人用户免费开放了所有</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506076&amp;idx=4&amp;sn=bb9fdd2a6d39c7c3dbac838d6a68c7f5&amp;chksm=ea21f5b7efbcb9f5a6c7c817fbfc03b20f2231ca08394a07013afa59541ffcd66cb655d98c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=1&amp;sn=22ca8cf46f6e7e662ee55ec3458a2f0c&amp;chksm=eaf2c9b1be56558415342b4fa9005a4fe8e280b4f4b7f0816ea24c09c47fadf038d21ff0f112&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQkk8kAs2HibKYsH56k9icxqjiatXGk1dBALS7qEhFcz1XYSlvhRKib2mnOgiaVlcXe0wnQRZajl2TLuYvwA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=1&amp;sn=22ca8cf46f6e7e662ee55ec3458a2f0c&amp;chksm=eaf2c9b1be56558415342b4fa9005a4fe8e280b4f4b7f0816ea24c09c47fadf038d21ff0f112&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度｜李飞飞对谈微软高管：在AI前沿时刻保持好奇心，在职业十字路口坚持热爱的方向</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-15 11:39:42">发布日期：2025-03-15 11:39:42</time></div><p class="article-description">图片来源：MicrosoftZ Highlights自由与好奇心是学术研究最宝贵的特质，正是对未知的执着探索，才能孕育改变世界的创新。计算机视觉领域正经历一场新的革命。Transformer、扩散模型</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=1&amp;sn=22ca8cf46f6e7e662ee55ec3458a2f0c&amp;chksm=eaf2c9b1be56558415342b4fa9005a4fe8e280b4f4b7f0816ea24c09c47fadf038d21ff0f112&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=2&amp;sn=becf0373396f94e70265f96756ae1ac2&amp;chksm=eafdcd70cda5f67b579668a85fe405478b90740312bdf92e56c8182ba87fce2c85716b78147f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknOjkpwpV8iaeygq8qkPT6HD5LuyqR3W0L5aNoQ7R2DTfjC7mrmL5HbBvyKKo59q3RYrvhZvvAX1JQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=2&amp;sn=becf0373396f94e70265f96756ae1ac2&amp;chksm=eafdcd70cda5f67b579668a85fe405478b90740312bdf92e56c8182ba87fce2c85716b78147f&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜谷歌Gemini接入搜索历史，或引发AI反垄断争议</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-15 11:39:42">发布日期：2025-03-15 11:39:42</time></div><p class="article-description">图片来源：UnsplashGoogle 近期宣布了一项实验性功能，通过将 Gemini 聊天机器人与用户的 Google 搜索历史连接，为用户提供更定制化的回复和个性化推荐。用户目前需要选择启用该功能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=2&amp;sn=becf0373396f94e70265f96756ae1ac2&amp;chksm=eafdcd70cda5f67b579668a85fe405478b90740312bdf92e56c8182ba87fce2c85716b78147f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=3&amp;sn=9c7c0387bd0c559664ae48c94818395e&amp;chksm=eabcb8c4d1e2f99d90df0050630e1edaaf31d71cdb9e6e4dc9f0d11a117a20ef256a1d015b58&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Z300vPwLQknOjkpwpV8iaeygq8qkPT6HDMMAyDwZM6FOufW5sJOjicf73A6Dg1Ds2ia36arXkiboqMcJIU6yncsiayg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=3&amp;sn=9c7c0387bd0c559664ae48c94818395e&amp;chksm=eabcb8c4d1e2f99d90df0050630e1edaaf31d71cdb9e6e4dc9f0d11a117a20ef256a1d015b58&amp;scene=0&amp;xtrack=1#rd" target="_blank">速递｜Tern AI低成本打造革命性导航，挑战传统GPS霸权</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2f30c6fa405399bd73662ef72a8c8cf7/index.html">Z Potentials</a></span><time class="article-date" datetime="2025-03-15 11:39:42">发布日期：2025-03-15 11:39:42</time></div><p class="article-description">图片来源：Tern AITern AI 团队正在开发一种低成本的 GPS 替代方案，他们表示这是因为当前技术依赖于卫星定位而存在局限性。我们都经历过那种挫败时刻，当 GPS 出现故障，导致你在高速公路</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI4NTgxMDk1NA==&amp;mid=2247506046&amp;idx=3&amp;sn=9c7c0387bd0c559664ae48c94818395e&amp;chksm=eabcb8c4d1e2f99d90df0050630e1edaaf31d71cdb9e6e4dc9f0d11a117a20ef256a1d015b58&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_22.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
