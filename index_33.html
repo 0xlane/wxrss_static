@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5NTk1MDMxMg==&amp;mid=2653112589&amp;idx=2&amp;sn=5abf2c24f4583fa8c5148727c72902e2&amp;chksm=8ae12017cf3e0a9eee1e4245a4b74d92cdc9d4382a0f78fe05c730335959085495f44be740c3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/03UUuUr98GKgoZyq73ASB77xLnxwD6icoFl0Riby8eehHctzMtV6jFSLcx8EhGaiaYzZ8NX1O70ibJG2iaY2KYlluqQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5NTk1MDMxMg==&amp;mid=2653112589&amp;idx=2&amp;sn=5abf2c24f4583fa8c5148727c72902e2&amp;chksm=8ae12017cf3e0a9eee1e4245a4b74d92cdc9d4382a0f78fe05c730335959085495f44be740c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">我国首次完成 10 兆帕高压氢气管道全尺寸放空试验</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3084ce81fa95ea342faae666133ef6ff/index.html">科普中国</a></span><time class="article-date" datetime="2025-12-12 07:30:00">发布日期：2025-12-12 07:30:00</time></div><p class="article-description">近日，国内首次10兆帕高压力氢气管道全尺寸放空试验成功实施，这项试验如同氢气管道的“安全模拟考”，填补了我国在该领域的技术空白，标志着我国氢气管道安全技术迈上新台阶。要实现氢能广泛应用，必须确保氢气长</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5NTk1MDMxMg==&amp;mid=2653112589&amp;idx=2&amp;sn=5abf2c24f4583fa8c5148727c72902e2&amp;chksm=8ae12017cf3e0a9eee1e4245a4b74d92cdc9d4382a0f78fe05c730335959085495f44be740c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzUzNjk5MjAyMQ==&amp;mid=2247493703&amp;idx=1&amp;sn=e8be4263ccac4ada99a24cf2b3c35683&amp;chksm=fb8c7b1f3a770a05aa6f9bbeffb075cf1e70d9619a4a3b6f39542b9ed3d8707096f0f3d1a565&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/YU3vdRIFQ5SLHo9ibc2dap75PTNkE37m1uNNhlbOcjxfhWFC0P47MUUT9o7Ga91xgXibgT0iadt38jhWnia4WSdHAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzUzNjk5MjAyMQ==&amp;mid=2247493703&amp;idx=1&amp;sn=e8be4263ccac4ada99a24cf2b3c35683&amp;chksm=fb8c7b1f3a770a05aa6f9bbeffb075cf1e70d9619a4a3b6f39542b9ed3d8707096f0f3d1a565&amp;scene=0&amp;xtrack=1#rd" target="_blank">广东钓友运气炸裂！小鱼竿硬刚 227 斤中华马鲛鱼王，2.6 米体长需 5 人抬，网友：这得值多少钱？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/01051dbf286e24f17cf0a45867091e97/index.html">眼斑公社</a></span><time class="article-date" datetime="2025-12-12 07:30:00">发布日期：2025-12-12 07:30:00</time></div><p class="article-description">2025 年 11 月 29 日，珠海庙湾海域上演震撼一幕：一男子在此海钓时，意外钓起一条体长 2.6 米、重达 227.2 斤的中华马鲛鱼，堪称 “海洋巨物”。看着这条大鱼被拉上船的画面，钓鱼爱好者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzUzNjk5MjAyMQ==&amp;mid=2247493703&amp;idx=1&amp;sn=e8be4263ccac4ada99a24cf2b3c35683&amp;chksm=fb8c7b1f3a770a05aa6f9bbeffb075cf1e70d9619a4a3b6f39542b9ed3d8707096f0f3d1a565&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=1&amp;sn=b10b2860a39ec2c145f9bf23fa97054b&amp;chksm=f025ed90c19a6d5d4da66352ea0c32b204490a4be69a2929ed55f77ad37d47276609e05e81cc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UicQ7HgWiaUb3FvsialdW2kDNq2kxbq7CXCY3PPqYy7rySWpUKGIZ5aUkfaTe6HDY6IXFGmicb7jZCsXOzoiaeKLXwA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=1&amp;sn=b10b2860a39ec2c145f9bf23fa97054b&amp;chksm=f025ed90c19a6d5d4da66352ea0c32b204490a4be69a2929ed55f77ad37d47276609e05e81cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT-5.2来了！首个「专家级」AI复仇成功，牛马打工人终于得救了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/82849ba848e3cfa0340a5f775b1aa735/index.html">新智元</a></span><time class="article-date" datetime="2025-12-12 07:15:19">发布日期：2025-12-12 07:15:19</time></div><p class="article-description">新智元报道  编辑：编辑部【新智元导读】OpenAI十周年，那个地表最强的AI，又回来了！新一代GPT-5.2「全家桶」直接把谷歌Gemini 3 Pro踩在脚下，专业实力更是堪比人类专家。刚刚，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=1&amp;sn=b10b2860a39ec2c145f9bf23fa97054b&amp;chksm=f025ed90c19a6d5d4da66352ea0c32b204490a4be69a2929ed55f77ad37d47276609e05e81cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=2&amp;sn=a1f28059f76d7537f5fc751290cae50d&amp;chksm=f09cfd16d0bc34201140a5c5caca8df760b9f780f1cf49eb49bb1fd79c6219a673b9814ae042&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UicQ7HgWiaUb3FvsialdW2kDNq2kxbq7CXC23MPniaCEe0mG9WrLebtQY7tLQkbPpCU0GBeyGCuPibTLx1mMt9q5VZg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=2&amp;sn=a1f28059f76d7537f5fc751290cae50d&amp;chksm=f09cfd16d0bc34201140a5c5caca8df760b9f780f1cf49eb49bb1fd79c6219a673b9814ae042&amp;scene=0&amp;xtrack=1#rd" target="_blank">Meta版「甄嬛传」！28岁天才上位，掌管6千亿命脉，AI教父愤然出走</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/82849ba848e3cfa0340a5f775b1aa735/index.html">新智元</a></span><time class="article-date" datetime="2025-12-12 07:15:19">发布日期：2025-12-12 07:15:19</time></div><p class="article-description">新智元报道  编辑：KingHZ【新智元导读】小扎一手打造的AI王朝，被新旧势力撕开了口子。一个赌神性，一个要广告；一个砸钱如流水，一个被逼到离职。至于那传说中的「牛油果」，能不能救场？有人的地方</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=2&amp;sn=a1f28059f76d7537f5fc751290cae50d&amp;chksm=f09cfd16d0bc34201140a5c5caca8df760b9f780f1cf49eb49bb1fd79c6219a673b9814ae042&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=3&amp;sn=67adcd9736f97d8f3478dd14975cba0f&amp;chksm=f0ca5d86a86d8aa48c5def4b552220f0b62884dc3a471a2ecbb84af1a5d9f25cb8197470f470&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UicQ7HgWiaUb2riawcopzbrHwwAatkwJVqEianTibicttbvwiaibIpib8p66ibo7VfJWPxrUJosV1CVcePM0dKNN4FApHGyQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=3&amp;sn=67adcd9736f97d8f3478dd14975cba0f&amp;chksm=f0ca5d86a86d8aa48c5def4b552220f0b62884dc3a471a2ecbb84af1a5d9f25cb8197470f470&amp;scene=0&amp;xtrack=1#rd" target="_blank">别让米其林主厨削土豆！英伟达用「小脑指挥大脑」，重构AGI生产力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/82849ba848e3cfa0340a5f775b1aa735/index.html">新智元</a></span><time class="article-date" datetime="2025-12-12 07:15:19">发布日期：2025-12-12 07:15:19</time></div><p class="article-description">新智元报道  编辑：peter东【新智元导读】觉得大模型消耗的算力过大，英伟达推出的8B模型Orchestrator化身「拼好模」，通过组合工具降本增效，使用30%的预算，在HLE上拿下37.1%</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=3&amp;sn=67adcd9736f97d8f3478dd14975cba0f&amp;chksm=f0ca5d86a86d8aa48c5def4b552220f0b62884dc3a471a2ecbb84af1a5d9f25cb8197470f470&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=4&amp;sn=bcae80505f976fc31af4e07a7a843b75&amp;chksm=f03e48ee796a76143def0f791a184f126f008216a33a9d79db5176cf863ef7eeef5861130b34&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UicQ7HgWiaUb2o5iaAiaib0myY2c9Xrt7Kux47LywVDsNwv3WM9P3p17brfVUaoxNZAic7xPvYXe789e9jsWmuduzRxg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=4&amp;sn=bcae80505f976fc31af4e07a7a843b75&amp;chksm=f03e48ee796a76143def0f791a184f126f008216a33a9d79db5176cf863ef7eeef5861130b34&amp;scene=0&amp;xtrack=1#rd" target="_blank">新智元十年，上地AI家，邀你加入！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/82849ba848e3cfa0340a5f775b1aa735/index.html">新智元</a></span><time class="article-date" datetime="2025-12-12 07:15:19">发布日期：2025-12-12 07:15:19</time></div><p class="article-description">新智元报道  【新智元导读】2025年9月7日，新智元十周年！十年求索，奇点共盟。值此，新智元在上地AI家邀你加入，共同见证ASI降临。2015年9月7日—2025年9月7日，新智元星舰远航十年。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3MTA0MTk1MA==&amp;mid=2652653478&amp;idx=4&amp;sn=bcae80505f976fc31af4e07a7a843b75&amp;chksm=f03e48ee796a76143def0f791a184f126f008216a33a9d79db5176cf863ef7eeef5861130b34&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652521807&amp;idx=1&amp;sn=8e1dec3ca0e742ce45bca34cae9fa3c1&amp;chksm=8a1033a9ac603b75ce132441d75fc42e9229a1d6f66f050cd30a3dc26366153367c0b5a98297&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ocJVe9ojWg3ibXnymPy61HCjPLibtmVRLZ34LCo7B8X5o1BKiapS7tLem76uWMcx93MsfcKf0DbfGvGp0SQYJgcog/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652521807&amp;idx=1&amp;sn=8e1dec3ca0e742ce45bca34cae9fa3c1&amp;chksm=8a1033a9ac603b75ce132441d75fc42e9229a1d6f66f050cd30a3dc26366153367c0b5a98297&amp;scene=0&amp;xtrack=1#rd" target="_blank">汽车早餐 | 欧盟拟推迟燃油新车禁售令五年；上汽红岩重整方案高票通过；SK On与福特将终止美国合资架构</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15c8d5243e2e28b3b1ec4d9d20485512/index.html">中国汽车报</a></span><time class="article-date" datetime="2025-12-12 07:00:00">发布日期：2025-12-12 07:00:00</time></div><p class="article-description">国内新闻工业和信息化部召开制造业中试创新发展座谈会12月11日，工业和信息化部在辽宁省盘锦市召开制造业中试创新发展座谈会，会议强调，要立足“十四五”规划收官与“十五五”谋篇布局这一关键节点，系统推进制</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzIzMjIwNg==&amp;mid=2652521807&amp;idx=1&amp;sn=8e1dec3ca0e742ce45bca34cae9fa3c1&amp;chksm=8a1033a9ac603b75ce132441d75fc42e9229a1d6f66f050cd30a3dc26366153367c0b5a98297&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651698182&amp;idx=1&amp;sn=d32bc7d74e191670f33476b9cc8ca48b&amp;chksm=bc7f1fd973960d09120045f44619f8c12eb9c6f9bccd900361aa21808ada6bd334ef0dc9b36a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6eia2I0NJ0OvPlBRNWkK4yicovUllR6oDuR3v58kvnxunn1LyyJLAVo60nicgzib5n793DVxyajqYmD30A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651698182&amp;idx=1&amp;sn=d32bc7d74e191670f33476b9cc8ca48b&amp;chksm=bc7f1fd973960d09120045f44619f8c12eb9c6f9bccd900361aa21808ada6bd334ef0dc9b36a&amp;scene=0&amp;xtrack=1#rd" target="_blank">教师减负，有戏了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2025-12-12 07:00:00">发布日期：2025-12-12 07:00:00</time></div><p class="article-description">5分钟批完全班作业一个班级四五十人的作业，只需花两三分钟扫描录入，就可借助人工智能（AI）在十分钟内全部批改完成。“理科落地比较快，文科还在试点。”对于学校新引进的AI作业批改机，重庆市巴蜀中学语文教</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651698182&amp;idx=1&amp;sn=d32bc7d74e191670f33476b9cc8ca48b&amp;chksm=bc7f1fd973960d09120045f44619f8c12eb9c6f9bccd900361aa21808ada6bd334ef0dc9b36a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NjAxMzk4NA==&amp;mid=2247497222&amp;idx=1&amp;sn=0846de602fa98d23772efe4782793e29&amp;chksm=a7dc1e38dc92a9d70d2a124b6993e900cee15edd0be406e023a870cfa6e733eb52690f9b71d1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibZB59DVlC2DniaAsVib5cQFic7k0NBeSZEru4uQqOVGBibX9vYkqU8okntADUyicoPzQmIu6D1x0Uf1qfvFZibC855ZA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NjAxMzk4NA==&amp;mid=2247497222&amp;idx=1&amp;sn=0846de602fa98d23772efe4782793e29&amp;chksm=a7dc1e38dc92a9d70d2a124b6993e900cee15edd0be406e023a870cfa6e733eb52690f9b71d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">别再让新人背参数顺序了：用 Builder 把复杂对象交给“装修队长”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/81097369b716a0e1e1ae3c654900d8ae/index.html">everystep</a></span><time class="article-date" datetime="2025-12-12 07:00:00">发布日期：2025-12-12 07:00:00</time></div><p class="article-description">如果说抽象工厂是&quot;一整套家居套餐一起换皮&quot;， 那 Builder 更像是：请了个懂行的装修队长。户型早就定好了， 你只管说：墙怎么刷、灯怎么装、地板用什么材质。工厂帮你定户型， Builder 盯着装</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NjAxMzk4NA==&amp;mid=2247497222&amp;idx=1&amp;sn=0846de602fa98d23772efe4782793e29&amp;chksm=a7dc1e38dc92a9d70d2a124b6993e900cee15edd0be406e023a870cfa6e733eb52690f9b71d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MDY5NTgwNg==&amp;mid=2247556883&amp;idx=1&amp;sn=69f1405064014f52f049afa74085ee92&amp;chksm=cf94ada94772a278b88ceb166551682b29c67035b4bdb40b71658fec976a493c745062954eb2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/azKJhYeVXjOutYPzxLzxBEBxuWPGLS3rwIfwjqoDiblhPaPHZ5rfkbOhhngt4qTlzrIWxcj7WT5HpScI34198Lg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MDY5NTgwNg==&amp;mid=2247556883&amp;idx=1&amp;sn=69f1405064014f52f049afa74085ee92&amp;chksm=cf94ada94772a278b88ceb166551682b29c67035b4bdb40b71658fec976a493c745062954eb2&amp;scene=0&amp;xtrack=1#rd" target="_blank">特斯拉机器人当众诡异摔倒，却扯掉了人形机器人的皇帝新衣</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5acace6ef37b3881ad1bbc79d519207c/index.html">全球风口</a></span><time class="article-date" datetime="2025-12-12 06:39:00">发布日期：2025-12-12 06:39:00</time></div><p class="article-description">抓住风口本期要点：Optimus陷入“遥控门”，但更关键的是看清未来方向！你好，我是王煜全，这里是王煜全要闻评论。2025年末，Optimus的跌倒，或将成为人形机器人产业祛魅的起点。过去两三年里，我</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2MDY5NTgwNg==&amp;mid=2247556883&amp;idx=1&amp;sn=69f1405064014f52f049afa74085ee92&amp;chksm=cf94ada94772a278b88ceb166551682b29c67035b4bdb40b71658fec976a493c745062954eb2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
