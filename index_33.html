@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE2MTY5NA==&amp;mid=2651804978&amp;idx=2&amp;sn=275998f666ce4bd6dcfba786406390a0&amp;chksm=bc86e75685d7cf3f0a0ac60f7475d50637bef6093143bb59cde3c2ae9878cf7f51ce649c0f18&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/YgonOiaMaBrrs8mRTfCYibnWhb4SzsrFKAS9DUvjvlYMxqsYpiakO4f79ET1SVU1VLZZBUFGXiazyrDQjicEly0w9tg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE2MTY5NA==&amp;mid=2651804978&amp;idx=2&amp;sn=275998f666ce4bd6dcfba786406390a0&amp;chksm=bc86e75685d7cf3f0a0ac60f7475d50637bef6093143bb59cde3c2ae9878cf7f51ce649c0f18&amp;scene=0&amp;xtrack=1#rd" target="_blank">南城孩子，记忆开始的地方！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9dc515df04e824b0c689f2e49fa57f48/index.html">北京吃货</a></span><time class="article-date" datetime="2025-12-25 14:15:21">发布日期：2025-12-25 14:15:21</time></div><p class="article-description">由于从小在南城长大，尤其对虎坊桥附近日新月异的变化记忆深刻。今儿，小编我想和您聊聊虎坊桥这一带曾经记忆深刻的那些事。虎坊桥，位于珠市口西大街与骡马市大街东西相接、南新华街与虎坊路南北相通的十字路口附近</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTE2MTY5NA==&amp;mid=2651804978&amp;idx=2&amp;sn=275998f666ce4bd6dcfba786406390a0&amp;chksm=bc86e75685d7cf3f0a0ac60f7475d50637bef6093143bb59cde3c2ae9878cf7f51ce649c0f18&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMjAwNTY1Mg==&amp;mid=2659651339&amp;idx=1&amp;sn=b6c8a6d56cdd4047bbe27d8ddc4c162c&amp;chksm=8d742742bdcde4f24bdb2456d1be619517c6782e2a09a9e1788e1793539bde9d1a7550b6de3e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/0qZG5akAGyOOotkbfX3Oza4IJHOl4vzVKE0YaJlu1ibpKIBn06LqMws4bjYkA30QCKYnyCfzqWuMGwgROcrfaBQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMjAwNTY1Mg==&amp;mid=2659651339&amp;idx=1&amp;sn=b6c8a6d56cdd4047bbe27d8ddc4c162c&amp;chksm=8d742742bdcde4f24bdb2456d1be619517c6782e2a09a9e1788e1793539bde9d1a7550b6de3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">腾龙70-180mm F/2.8 Di III VC VXD G2：故宫拍摄中的新视角利器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c3c19dcbd19f6b3df2c7d9f7f7df59d0/index.html">影像新势力</a></span><time class="article-date" datetime="2025-12-25 14:12:30">发布日期：2025-12-25 14:12:30</time></div><p class="article-description">光圈：F5 快门：1/160秒 感光度：ISO 100作为一名深耕故宫拍摄多年的风光摄影师，我对镜头的画质、便携性与实用性有着极高的要求。而腾龙近期全新发布的尼康Z卡口版本70-180mm F/2.8</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIxMjAwNTY1Mg==&amp;mid=2659651339&amp;idx=1&amp;sn=b6c8a6d56cdd4047bbe27d8ddc4c162c&amp;chksm=8d742742bdcde4f24bdb2456d1be619517c6782e2a09a9e1788e1793539bde9d1a7550b6de3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=1&amp;sn=a50a8a734e3779d82457f5a114f58f8b&amp;chksm=85853b21133ee938187559c8d7dbfb0e2e26d75eea6060f5c4510d3dedbd30bfd138c13bcbd6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/nJmicCz2NYxPj3ic1mWWgOqiaHL79hh3ic49UAzWH9o8LmicsHdu5U3f63rpmndnX5VnTTJGkpR5jiaxv0prWsqOw3SQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=1&amp;sn=a50a8a734e3779d82457f5a114f58f8b&amp;chksm=85853b21133ee938187559c8d7dbfb0e2e26d75eea6060f5c4510d3dedbd30bfd138c13bcbd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">三项荣誉加冕！天融信连续十年登榜“综合实力百家企业”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/564ec29bb87837a41a89621e1f4a21b6/index.html">天融信</a></span><time class="article-date" datetime="2025-12-25 14:07:30">发布日期：2025-12-25 14:07:30</time></div><p class="article-description">近日，北京软件和信息服务业协会（以下简称“北京软协”）第十一届会员代表大会第三次会议暨2025企业服务年会在北京召开。会上集中发布了《2025北京软件和信息服务业企业社会责任治理水平评价结果》《202</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=1&amp;sn=a50a8a734e3779d82457f5a114f58f8b&amp;chksm=85853b21133ee938187559c8d7dbfb0e2e26d75eea6060f5c4510d3dedbd30bfd138c13bcbd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=2&amp;sn=b0fe44d9edfe6004303b3367a8b80026&amp;chksm=85f78448cc4c605245b099029eb5ec025f63a083d5c964322e6f811b9350943bd48533d6330f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/nJmicCz2NYxMG6lVFmVY880MyNUPwEOMKlB2zAhURxcQ5GqV84KlgzZTckCAXXAkxcCLTS0aBCUyCrPIt3Arwlw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=2&amp;sn=b0fe44d9edfe6004303b3367a8b80026&amp;chksm=85f78448cc4c605245b099029eb5ec025f63a083d5c964322e6f811b9350943bd48533d6330f&amp;scene=0&amp;xtrack=1#rd" target="_blank">天融信双方案获IDC推荐，为安全智能体加持下的私有云安全建设赋能</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/564ec29bb87837a41a89621e1f4a21b6/index.html">天融信</a></span><time class="article-date" datetime="2025-12-25 14:07:30">发布日期：2025-12-25 14:07:30</time></div><p class="article-description">近日，IDC正式发布《安全智能体加持下的中国私有云安全市场洞察，2025》报告，天融信私有云安全解决方案、天融信智算中心安全建设解决方案基于在多云安全、云安全运营、大模型安全等领域的突出表现，双双入选</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3OTMxNTcxNA==&amp;mid=2650981162&amp;idx=2&amp;sn=b0fe44d9edfe6004303b3367a8b80026&amp;chksm=85f78448cc4c605245b099029eb5ec025f63a083d5c964322e6f811b9350943bd48533d6330f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=1&amp;sn=58b91e745282dff5027060e4f5c71b34&amp;chksm=bcfe60c6894c0c6db82b1aeff8f5b414969e503c49fd5611103e4e9763f991f53e06e3da5633&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3SibZcUDuMFicNQkjCuBzZvPfHCILtU55qS9Ys2LXxt04ldNZ9BcGxmAWw8hlGZEwlWdE1QlBl948WuQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=1&amp;sn=58b91e745282dff5027060e4f5c71b34&amp;chksm=bcfe60c6894c0c6db82b1aeff8f5b414969e503c49fd5611103e4e9763f991f53e06e3da5633&amp;scene=0&amp;xtrack=1#rd" target="_blank">现场画面：金正恩指导核动力战略导弹潜艇建造工作</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-12-25 14:02:16">发布日期：2025-12-25 14:02:16</time></div><p class="article-description">董海涛/央视新闻总台记者当地时间25日获悉，朝鲜劳动党总书记、国务委员长金正恩现场指导了8700吨级核动力战略导弹潜艇建造工作。金正恩视察核潜艇建造现场，并听取了有关其进展情况的汇报。当天，金正恩还具</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=1&amp;sn=58b91e745282dff5027060e4f5c71b34&amp;chksm=bcfe60c6894c0c6db82b1aeff8f5b414969e503c49fd5611103e4e9763f991f53e06e3da5633&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=2&amp;sn=04945faa9a3f7f7d825fb005162bd1dc&amp;chksm=bc88ddaa2b0eff380b65c0d87f8bad21b6c8fb60a90a38c380c5ae43b7c1181d2ba7abe2c12c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3SibZcUDuMFicNQkjCuBzZvPfH0aOq5qicLtTxdgx5ZYA4OcKd53b3qDIvNZjiab0WeqjyFYjia9zfxuibQg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=2&amp;sn=04945faa9a3f7f7d825fb005162bd1dc&amp;chksm=bc88ddaa2b0eff380b65c0d87f8bad21b6c8fb60a90a38c380c5ae43b7c1181d2ba7abe2c12c&amp;scene=0&amp;xtrack=1#rd" target="_blank">“美术专业出身负责制假，2人专挑老旧市场换零”，一假币团伙被捣毁</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2025-12-25 14:02:16">发布日期：2025-12-25 14:02:16</time></div><p class="article-description">澎湃新闻记者 史凭近日，四川荣县公安成功破获一起伪造、持有、使用假币案件，查获总面额48500元假币及各类制假作案工具。该案缘起8月菜农收到假币报案，民警调查发现系流窜团伙作案。该团伙为亲戚关系，分工</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652500068&amp;idx=2&amp;sn=04945faa9a3f7f7d825fb005162bd1dc&amp;chksm=bc88ddaa2b0eff380b65c0d87f8bad21b6c8fb60a90a38c380c5ae43b7c1181d2ba7abe2c12c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=1&amp;sn=4e225aaf9c4919873448cfc2215d33c2&amp;chksm=bc9ec72fce4df56256535f6d8f87b3cb8d0cc930f7d06f747c77174a0fa4135b33386beec4d4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUNGeOnUNN6fIu0mQGQAicwibf1wTpfvC3lSRnHsgYyXyvJWkVQGq1H39CMb3sQjia85NoEvk1ufeuh2g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=1&amp;sn=4e225aaf9c4919873448cfc2215d33c2&amp;chksm=bc9ec72fce4df56256535f6d8f87b3cb8d0cc930f7d06f747c77174a0fa4135b33386beec4d4&amp;scene=0&amp;xtrack=1#rd" target="_blank">什么叫“0帧”起手？“贴脸”感受！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-12-25 14:02:58">发布日期：2025-12-25 14:02:58</time></div><p class="article-description">近日福建舰航母编队完成首次海上实兵训练福建舰的电磁弹射有多强？画面公开！记者带你近距离感受电磁弹射系统的爆发力福建舰弹射画面公开超近视角看“0帧”急停此次实兵训练任务中歼-35、歼-15T、歼-15D</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=1&amp;sn=4e225aaf9c4919873448cfc2215d33c2&amp;chksm=bc9ec72fce4df56256535f6d8f87b3cb8d0cc930f7d06f747c77174a0fa4135b33386beec4d4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=2&amp;sn=78cd38cc3bcb2631cabfbd53fe6c967d&amp;chksm=bcaa929b5883f74a22a18a5506a622885ac6f64384e977983a396dca093d27c625791a83ee62&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibQ2cXpBDzUNGeOnUNN6fIu0mQGQAicwibfHsGJ25Z1YMu74jMLo98wp9FlLeyoBhQKfukAleQ0JKDBXFPexGHrHQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=2&amp;sn=78cd38cc3bcb2631cabfbd53fe6c967d&amp;chksm=bcaa929b5883f74a22a18a5506a622885ac6f64384e977983a396dca093d27c625791a83ee62&amp;scene=0&amp;xtrack=1#rd" target="_blank">深新跨境数据验证平台上线试运行，微众银行助力打造国际数据安全流动新方案</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2025-12-25 14:02:58">发布日期：2025-12-25 14:02:58</time></div><p class="article-description">近期，广东—新加坡合作理事会第十五次会议在广州举行。会上，由微众银行作为总体方案设计及技术支持方参与共建的“深圳-新加坡跨境数据验证平台”宣布上线试运行。该平台是广东与新加坡之间落地的首个数据流通数字</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659024326&amp;idx=2&amp;sn=78cd38cc3bcb2631cabfbd53fe6c967d&amp;chksm=bcaa929b5883f74a22a18a5506a622885ac6f64384e977983a396dca093d27c625791a83ee62&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NjEwMjE2MA==&amp;mid=2247508876&amp;idx=1&amp;sn=4b4a28741523be46f94dca618e6c6cd3&amp;chksm=ce2b2ce64c4a866481e2c7846a6a2f4308a45143e2157397ae21a7c8d61e9f67ade45abdf45c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmecoa.qpic.cn/sz_mmecoa_jpg/ec6va27KT7yicXZalav1iceyGrm5lKZ9K8L3LA4qiamNeHV2knDia4Mx3GOq8NicbCI4lYlVgl4QvwAbxvFN2pSfTSg/640?wxtype=jpeg&amp;wxfrom=10000" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NjEwMjE2MA==&amp;mid=2247508876&amp;idx=1&amp;sn=4b4a28741523be46f94dca618e6c6cd3&amp;chksm=ce2b2ce64c4a866481e2c7846a6a2f4308a45143e2157397ae21a7c8d61e9f67ade45abdf45c&amp;scene=0&amp;xtrack=1#rd" target="_blank">有梗有福利！真我年终盛典来了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/84c89775d30a264de4c6c965aa3f53f7/index.html">真我手机</a></span><time class="article-date" datetime="2025-12-25 14:00:00">发布日期：2025-12-25 14:00:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4NjEwMjE2MA==&amp;mid=2247508876&amp;idx=1&amp;sn=4b4a28741523be46f94dca618e6c6cd3&amp;chksm=ce2b2ce64c4a866481e2c7846a6a2f4308a45143e2157397ae21a7c8d61e9f67ade45abdf45c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI0MDY1MDU4MQ==&amp;mid=2247586073&amp;idx=1&amp;sn=c503113625f6d7db249327a2ed1f42f5&amp;chksm=e872ca81eeb41b4bb96bbb1866c5c8f0e384f10c290c9f3ce6250da4e522148788c9f7a7b4d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/wpkib3J60o28Q4DSzHMEN9oMvOZzEyQib9AibPwPTyyqAyVAXLwDtPaexzbyhCVRKmpnkguLv5uRx8BLfEEAkYeWA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI0MDY1MDU4MQ==&amp;mid=2247586073&amp;idx=1&amp;sn=c503113625f6d7db249327a2ed1f42f5&amp;chksm=e872ca81eeb41b4bb96bbb1866c5c8f0e384f10c290c9f3ce6250da4e522148788c9f7a7b4d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">新型ConsentFix攻击：借助Azure CLI劫持微软账户</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/39a1ed8d391080d3483865b9f7443d18/index.html">嘶吼专业版</a></span><time class="article-date" datetime="2025-12-25 14:00:00">发布日期：2025-12-25 14:00:00</time></div><p class="article-description">近期，一种名为ConsentFix的ClickFix攻击新变种被发现，该攻击手法可滥用Azure CLI OAuth应用劫持微软账户，全程无需获取用户密码，也无需绕过多重身份验证机制。ClickFix</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI0MDY1MDU4MQ==&amp;mid=2247586073&amp;idx=1&amp;sn=c503113625f6d7db249327a2ed1f42f5&amp;chksm=e872ca81eeb41b4bb96bbb1866c5c8f0e384f10c290c9f3ce6250da4e522148788c9f7a7b4d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
