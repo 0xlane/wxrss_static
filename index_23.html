@@ -1,0 +1,302 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=4&amp;sn=990736cb56a06ab66c4e9f4e834ebe88&amp;chksm=cff69137c5b834315e79935882e0c17a59c20659eb6ba8e049b3cd6bcba38c032d9f829f6585&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2dvMRQx0aXtibcHdffvCdLkcJ8x6eaBqSE6TaQE1CPRkFEo1BrPOohvOeM9ZveEibs85k17zByjLia2w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=4&amp;sn=990736cb56a06ab66c4e9f4e834ebe88&amp;chksm=cff69137c5b834315e79935882e0c17a59c20659eb6ba8e049b3cd6bcba38c032d9f829f6585&amp;scene=0&amp;xtrack=1#rd" target="_blank">存储芯片双雄，巅峰之战</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2026-01-28 09:11:18">发布日期：2026-01-28 09:11:18</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。在三星电子和SK海力士漫长而又紧密交织的历史中，罕见地出现在同一天发布财报的情况，这标志着两家公司在人工智能存储芯片领域激烈竞争的最新进展。预计周四的两场</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=4&amp;sn=990736cb56a06ab66c4e9f4e834ebe88&amp;chksm=cff69137c5b834315e79935882e0c17a59c20659eb6ba8e049b3cd6bcba38c032d9f829f6585&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=5&amp;sn=7fb04981e1465d8679e623f8f20ff72b&amp;chksm=cf3eb2639b4df1b3ee5ecbbfbf45c1727048b75ced24ba453002b84e86c7ffb992748f8c1023&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2dvMRQx0aXtibcHdffvCdLkcHBrdzJTSc5IdkkibEvgC9mAnhkJn1ROjDto76xyDj5w7QgIUkZy9yTg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=5&amp;sn=7fb04981e1465d8679e623f8f20ff72b&amp;chksm=cf3eb2639b4df1b3ee5ecbbfbf45c1727048b75ced24ba453002b84e86c7ffb992748f8c1023&amp;scene=0&amp;xtrack=1#rd" target="_blank">TI盘后大涨，模拟芯片挺过来了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2026-01-28 09:11:18">发布日期：2026-01-28 09:11:18</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。德州仪器公司(Texas Instruments Inc.)股价在盘后交易中飙升，此前该公司发布了出人意料的强劲第一季度业绩预期，表明工业设备和车辆的需求</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=5&amp;sn=7fb04981e1465d8679e623f8f20ff72b&amp;chksm=cf3eb2639b4df1b3ee5ecbbfbf45c1727048b75ced24ba453002b84e86c7ffb992748f8c1023&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=6&amp;sn=6379650fff7fb19c8cc6ba1155ff5c1a&amp;chksm=cf8c562c58101dd2b1b35251ffd3a5bd187b510021d82e8f0f2a9d4abf88e2e8366e7451a024&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2dvMRQx0aXtibcHdffvCdLkckQ7IKicwR8icicLVHkZibYtia7StyZJpyqlae9Iqt6MOX2iaGk5jhTqib1qfQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=6&amp;sn=6379650fff7fb19c8cc6ba1155ff5c1a&amp;chksm=cf8c562c58101dd2b1b35251ffd3a5bd187b510021d82e8f0f2a9d4abf88e2e8366e7451a024&amp;scene=0&amp;xtrack=1#rd" target="_blank">美国威胁：100%芯片关税？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2026-01-28 09:11:18">发布日期：2026-01-28 09:11:18</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。美国商务部长霍华德·卢特尼克威胁要对外国存储芯片制造商——特别是韩国的三星电子和SK海力士——征收100%的关税，除非它们承诺在美国建设相关设施。业内人士</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=6&amp;sn=6379650fff7fb19c8cc6ba1155ff5c1a&amp;chksm=cf8c562c58101dd2b1b35251ffd3a5bd187b510021d82e8f0f2a9d4abf88e2e8366e7451a024&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=7&amp;sn=c154c98da4fd6bf790b0fd0685929d1a&amp;chksm=cfe25a32473819149e429d5f436b5147c465f64814763b1cde0e92f3890a22750de591f95af1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2dvMRQx0aXtibcHdffvCdLkc52PpkpsemnQ5UvARd9K8uJzlzxz9cU0QoPttxmTNPKq6VWzDUqyVUg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=7&amp;sn=c154c98da4fd6bf790b0fd0685929d1a&amp;chksm=cfe25a32473819149e429d5f436b5147c465f64814763b1cde0e92f3890a22750de591f95af1&amp;scene=0&amp;xtrack=1#rd" target="_blank">这家大厂，拒绝英伟达</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2026-01-28 09:11:18">发布日期：2026-01-28 09:11:18</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。去年十月诺基亚与英伟达达成的交易，在最严厉的批评者看来，无异于与魔鬼签订契约。英伟达如同魔鬼梅菲斯特一般，承诺以巨额财富换取这家芬兰芯片制造商的“灵魂”。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=7&amp;sn=c154c98da4fd6bf790b0fd0685929d1a&amp;chksm=cfe25a32473819149e429d5f436b5147c465f64814763b1cde0e92f3890a22750de591f95af1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=8&amp;sn=27a4d178f08c60a987942777f67474b7&amp;chksm=cf27ddf17f0f8e4cedb97ce8091c1e6eeecb22c1d707da5dbc5a359bcadea3eec747357a3a87&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CB90MLwUv2dvMRQx0aXtibcHdffvCdLkcrRbMC4LVo8S83vlwPjzQzhDwSmmlicqYGmQwXInMpS16Xyib5EYf09bw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=8&amp;sn=27a4d178f08c60a987942777f67474b7&amp;chksm=cf27ddf17f0f8e4cedb97ce8091c1e6eeecb22c1d707da5dbc5a359bcadea3eec747357a3a87&amp;scene=0&amp;xtrack=1#rd" target="_blank">光芯片，最新突破</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5514b06258fb2b13ae6cf885788fc213/index.html">半导体行业观察</a></span><time class="article-date" datetime="2026-01-28 09:11:18">发布日期：2026-01-28 09:11:18</time></div><p class="article-description">公众号记得加星标⭐️，第一时间看推送不会错过。日前，Lightmatter宣布了激光架构领域的一项突破性进展：超大规模光子学（VLSP：Very Large Scale Photonics ）。这项突</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2NDgzNTQ4MA==&amp;mid=2247808970&amp;idx=8&amp;sn=27a4d178f08c60a987942777f67474b7&amp;chksm=cf27ddf17f0f8e4cedb97ce8091c1e6eeecb22c1d707da5dbc5a359bcadea3eec747357a3a87&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=1&amp;sn=97d9dd97920457f032480af44f73acf2&amp;chksm=bf1a8016e5dc03d7b94c1e8f06fe224b59e059ac7ff0ab09942794d6fbe277af50898b334bf3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/icVz8RbowK3ywU2dbuk9sg800cSvqbCwCf0H97DVPEg1XiaFjvURyQ8u9HotN8XSib8fSd34ygrss8Eu8nkjr8zkQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=1&amp;sn=97d9dd97920457f032480af44f73acf2&amp;chksm=bf1a8016e5dc03d7b94c1e8f06fe224b59e059ac7ff0ab09942794d6fbe277af50898b334bf3&amp;scene=0&amp;xtrack=1#rd" target="_blank">官宣！安恒信息入选2027长春世界大学生冬季运动会首批意向官方合作伙伴</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/73b75d1fa4f1ec7b5028a7f79ceead33/index.html">安恒信息</a></span><time class="article-date" datetime="2026-01-28 09:10:54">发布日期：2026-01-28 09:10:54</time></div><p class="article-description">长春2027第33届世界大学生冬季运动会1月25日，长春2027第33届世界大学生冬季运动会意向官方合作伙伴发布活动在长春举行。大冬会工作专班市场开发部与首批意向官方合作伙伴——安恒信息、中国第一汽车</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=1&amp;sn=97d9dd97920457f032480af44f73acf2&amp;chksm=bf1a8016e5dc03d7b94c1e8f06fe224b59e059ac7ff0ab09942794d6fbe277af50898b334bf3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=2&amp;sn=edf08b0343d3ec57b6618de905d78e29&amp;chksm=bf1e3e8bc4e58fa33947cbf2166c25a829b425b2c804ff29f157f5d0a680257102c3d3a4aaf3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/icVz8RbowK3wV7K0pHXiaC9YSK6GcoQepib1pwdLPld22HaJfxkQkadicvfhJybX62bLmzpd500sKZu0mibD72H18Tw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=2&amp;sn=edf08b0343d3ec57b6618de905d78e29&amp;chksm=bf1e3e8bc4e58fa33947cbf2166c25a829b425b2c804ff29f157f5d0a680257102c3d3a4aaf3&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026医药AI钉峰会：杨勃详解医药大模型时代的AI安全防线</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/73b75d1fa4f1ec7b5028a7f79ceead33/index.html">安恒信息</a></span><time class="article-date" datetime="2026-01-28 09:10:54">发布日期：2026-01-28 09:10:54</time></div><p class="article-description">✎ 2026医药AI钉峰会暨E药经理人首届AI大会 随着人工智能技术向通用智能快速演进，大模型与智能体正深度重塑医药行业的研发、诊疗与运营范式。同时，数据安全、隐私保护、模型可信与伦理合规等问题也日益</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0MjQyMg==&amp;mid=2650645607&amp;idx=2&amp;sn=edf08b0343d3ec57b6618de905d78e29&amp;chksm=bf1e3e8bc4e58fa33947cbf2166c25a829b425b2c804ff29f157f5d0a680257102c3d3a4aaf3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=1&amp;sn=071b6c190b6277894a315aaae839bfc2&amp;chksm=bc93207fd7aa1552a1c1e5f4fcaaf0a40aa7111090493464133e6b2ff493144d4dd64d3377de&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sib1A3drzkUfTLR1kG0cfcz3FT8BJBsYKhVzZCqPYnvtCU7aW3ib2108Nxlia6Ndf6shh7B9licepxiaoA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=1&amp;sn=071b6c190b6277894a315aaae839bfc2&amp;chksm=bc93207fd7aa1552a1c1e5f4fcaaf0a40aa7111090493464133e6b2ff493144d4dd64d3377de&amp;scene=0&amp;xtrack=1#rd" target="_blank">英国首相时隔8年访华，有何意图</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2026-01-28 09:01:30">发布日期：2026-01-28 09:01:30</time></div><p class="article-description">澎湃新闻记者 杨文钦“中国作为全球第二大经济体，有诸多商业机遇，若一味回避、视而不见，显然并非明智之举。”1月26日，英国首相斯塔默在访问中国前做出如上表态。外交部发言人1月27日宣布：应国务院总理李</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=1&amp;sn=071b6c190b6277894a315aaae839bfc2&amp;chksm=bc93207fd7aa1552a1c1e5f4fcaaf0a40aa7111090493464133e6b2ff493144d4dd64d3377de&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=2&amp;sn=2ff1e3e18eb0adad81c82e3c51cc7553&amp;chksm=bc8ed07a9b2dcf162c0042fcb6a1d004be8a7987c1b9302fdf9df8e392968d9f4096e1b09637&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/yl6JkZAE3Sib1A3drzkUfTLR1kG0cfcz3monfhbWJZkXYtCXa0KhYicScNECJQnQVoH1icaz62Xya6lx0RicvWk6mw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=2&amp;sn=2ff1e3e18eb0adad81c82e3c51cc7553&amp;chksm=bc8ed07a9b2dcf162c0042fcb6a1d004be8a7987c1b9302fdf9df8e392968d9f4096e1b09637&amp;scene=0&amp;xtrack=1#rd" target="_blank">朝鲜试射大口径火箭炮，金正恩观摩</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2026-01-28 09:01:30">发布日期：2026-01-28 09:01:30</time></div><p class="article-description">董海涛/央视新闻朝鲜导弹总局1月27日试射大口径火箭炮，以验证采用新技术的更新型大口径火箭炮武器系统的效力。发射的四枚火箭炮弹命中距离发射地点358.5公里的海上目标。朝鲜劳动党总书记、国务委员长金正</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652507821&amp;idx=2&amp;sn=2ff1e3e18eb0adad81c82e3c51cc7553&amp;chksm=bc8ed07a9b2dcf162c0042fcb6a1d004be8a7987c1b9302fdf9df8e392968d9f4096e1b09637&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIyMzM2MzE1OQ==&amp;mid=2247485149&amp;idx=1&amp;sn=a3524b7b5a3360167a090abc10c4a8f2&amp;chksm=e982b26fbae61c8157cf6c3f13b178d666cc1008a41089ea259c797d88f6a4a4d7e111fbbd4f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/d7OsfYudM4ZCpPvTbe5JT8JicEcIu49DR6ibUznc5Ms241iajgtVRRQUtZKr1LPDzlGcjcDPH30wiaajoh9D6gU7Ig/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIyMzM2MzE1OQ==&amp;mid=2247485149&amp;idx=1&amp;sn=a3524b7b5a3360167a090abc10c4a8f2&amp;chksm=e982b26fbae61c8157cf6c3f13b178d666cc1008a41089ea259c797d88f6a4a4d7e111fbbd4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">仓库抢注：Docker Desktop官方仓库成恶意软件分发渠道</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/979179553e8aebe8e7aee2963efed5d1/index.html">云原生安全指北</a></span><time class="article-date" datetime="2026-01-28 09:08:19">发布日期：2026-01-28 09:08:19</time></div><p class="article-description">注：本文翻译自 GMO Cybersecurity 的文章《Revisiting GPUGate: Repo Squatting and OpenCL Deception to Deliver Hi</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIyMzM2MzE1OQ==&amp;mid=2247485149&amp;idx=1&amp;sn=a3524b7b5a3360167a090abc10c4a8f2&amp;chksm=e982b26fbae61c8157cf6c3f13b178d666cc1008a41089ea259c797d88f6a4a4d7e111fbbd4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707796&amp;idx=1&amp;sn=283a716f4751833f4e9789fb6e20c18a&amp;chksm=bcbc597a85631040c7dceda3be438f362045a72ee40925a0a2ecb8beafefdcd964a536e27ce0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6eiaOpuxNtbib8nou1CWXTLT3ebnlIw40U6PgrKhGuvdzgFnSuSHGGjebKEJD0qQOelJgljnC6Z8MGkA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707796&amp;idx=1&amp;sn=283a716f4751833f4e9789fb6e20c18a&amp;chksm=bcbc597a85631040c7dceda3be438f362045a72ee40925a0a2ecb8beafefdcd964a536e27ce0&amp;scene=0&amp;xtrack=1#rd" target="_blank">拜登、克林顿、奥巴马，痛批特朗普</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2026-01-28 09:00:19">发布日期：2026-01-28 09:00:19</time></div><p class="article-description">据美国福克斯新闻网等美媒报道，当地时间27日，美国前总统拜登公开反对美国政府在明尼苏达州明尼阿波利斯市的移民执法行动，称这“背叛了美国人最基本的价值观。”资料图：拜登。拜登在社交媒体上发文称，“我们不</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707796&amp;idx=1&amp;sn=283a716f4751833f4e9789fb6e20c18a&amp;chksm=bcbc597a85631040c7dceda3be438f362045a72ee40925a0a2ecb8beafefdcd964a536e27ce0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247491121&amp;idx=1&amp;sn=6bf9d9699963e0253d31041867a97b9b&amp;chksm=ce70f522ef011118c0bdc32e1253d27b29c791e0f559f49af54c0525d10870a6e98ddd7e01b5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/mTA5icOvVGefvTowCx92Haibr5dLgz2hz8no0a6ECTRZ6hBGo1CsfCZraWusXjZu3BF2GTwVS8FMfx8k6DAExICw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247491121&amp;idx=1&amp;sn=6bf9d9699963e0253d31041867a97b9b&amp;chksm=ce70f522ef011118c0bdc32e1253d27b29c791e0f559f49af54c0525d10870a6e98ddd7e01b5&amp;scene=0&amp;xtrack=1#rd" target="_blank">APK文件结构小解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c71dcdb6f32612d220c7362a2742b49c/index.html">网络安全与取证研究</a></span><time class="article-date" datetime="2026-01-28 09:00:00">发布日期：2026-01-28 09:00:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3NTU3NTY0Nw==&amp;mid=2247491121&amp;idx=1&amp;sn=6bf9d9699963e0253d31041867a97b9b&amp;chksm=ce70f522ef011118c0bdc32e1253d27b29c791e0f559f49af54c0525d10870a6e98ddd7e01b5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247502381&amp;idx=1&amp;sn=8fe34ec181f71c56464dcb92ea53c442&amp;chksm=c2e7c120ade5f43cb8df4ada8e4537c08c21a7080feb0982bceef5b11c820dc8932d53931707&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/b7iaH1LtiaKWWFw8dticED3JKq0dDejwgwZMY028WAs9cicDm3C19BRURCr0kQwYvoPCjb0ypCP8oNp9Ts2Db9aupw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247502381&amp;idx=1&amp;sn=8fe34ec181f71c56464dcb92ea53c442&amp;chksm=c2e7c120ade5f43cb8df4ada8e4537c08c21a7080feb0982bceef5b11c820dc8932d53931707&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文带你看懂从脆弱资产收集到SRC通杀案例技术分享</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a6375a478b25171601cbb604a806b580/index.html">神农Sec</a></span><time class="article-date" datetime="2026-01-28 09:00:00">发布日期：2026-01-28 09:00:00</time></div><p class="article-description">扫码加圈子获内部资料专注于SRC漏洞挖掘、红蓝对抗、渗透测试、代码审计JS逆向，CNVD和EDUSRC漏洞挖掘，以及工具分享、前沿信息分享、POC、EXP分享。不定期分享各种好玩的项目及好用的工具，欢</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Mzc1MTI2Nw==&amp;mid=2247502381&amp;idx=1&amp;sn=8fe34ec181f71c56464dcb92ea53c442&amp;chksm=c2e7c120ade5f43cb8df4ada8e4537c08c21a7080feb0982bceef5b11c820dc8932d53931707&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247492544&amp;idx=1&amp;sn=568176f745d404edb3aa0041b56d4db5&amp;chksm=9a5c97a32bab8f071de6e5bd7df52b94e0633e08cba0dcd3f25408e7e1e429899b3d5781150d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/vML07fExwAcMT0aq0ZITAmAJ8ta6HfiapRwpia4rXkPKqX2DdZbaTmcq7NDdUCOpYuicoDJPe2iaNy0b2cM6zm8YFg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247492544&amp;idx=1&amp;sn=568176f745d404edb3aa0041b56d4db5&amp;chksm=9a5c97a32bab8f071de6e5bd7df52b94e0633e08cba0dcd3f25408e7e1e429899b3d5781150d&amp;scene=0&amp;xtrack=1#rd" target="_blank">网安原创文章推荐【2026/1/27】</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94ff62bc4172e22ccabb48f6fd42c2c6/index.html">洞见网安</a></span><time class="article-date" datetime="2026-01-28 08:48:39">发布日期：2026-01-28 08:48:39</time></div><p class="article-description">2026-01-27 微信公众号精选安全技术文章总览洞见网安 2026-01-27
+
+0x1 【Java安全】Log4j2漏洞利用-JNDI注入内存马凌霜雁安全志 2026-01-27 23:41:</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNzg3NzMyNQ==&amp;mid=2247492544&amp;idx=1&amp;sn=568176f745d404edb3aa0041b56d4db5&amp;chksm=9a5c97a32bab8f071de6e5bd7df52b94e0633e08cba0dcd3f25408e7e1e429899b3d5781150d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIwMTU3NDE5OA==&amp;mid=2649498371&amp;idx=1&amp;sn=29becea3148f2a6f8d3d9ef16bee6606&amp;chksm=8fef03bb29eee43c9c0df8b1447adc7ccf96a64d61695c5e08a6e8694327409df55c713ce1aa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4niad8GuSiaVFiczs03X9tPEXIF1rQfNDbXbLXgiaa7a1DsCEhAmJbRhuxKlIApXGHgUOjV4WzRpialY1Fg2j24JTiaA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIwMTU3NDE5OA==&amp;mid=2649498371&amp;idx=1&amp;sn=29becea3148f2a6f8d3d9ef16bee6606&amp;chksm=8fef03bb29eee43c9c0df8b1447adc7ccf96a64d61695c5e08a6e8694327409df55c713ce1aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">英伟达黄仁勋连续三年“新年访华”，为何？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9381e3854885af4dd8bf39309e811da1/index.html">一见财经</a></span><time class="article-date" datetime="2026-01-28 08:41:11">发布日期：2026-01-28 08:41:11</time></div><p class="article-description">尽管英伟达去年在中国经历了一系列“风波”，但创始人黄仁勋还是坚持新年来华访问。1月26日，黄仁勋抵达北京，开启其本年度在华行程的第二站。此前，他已访问上海。这也是黄仁勋自2024年新年以来，连续三年在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIwMTU3NDE5OA==&amp;mid=2649498371&amp;idx=1&amp;sn=29becea3148f2a6f8d3d9ef16bee6606&amp;chksm=8fef03bb29eee43c9c0df8b1447adc7ccf96a64d61695c5e08a6e8694327409df55c713ce1aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=1&amp;sn=4103da540feb20b28ddfe861a5c233dc&amp;chksm=9b9ecde4eef70cd0f09bbcb3d6e177656f526b972c6a2ca99912e0d43c9584c19e7e5308f222&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV1tQVeKicI5IWDzdK2K8ydnRhrnckL1AvUWS49cU6f6D8WXe9ib8ZibESY1dcqLqjQ1j1WwKWzE23iaeg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=1&amp;sn=4103da540feb20b28ddfe861a5c233dc&amp;chksm=9b9ecde4eef70cd0f09bbcb3d6e177656f526b972c6a2ca99912e0d43c9584c19e7e5308f222&amp;scene=0&amp;xtrack=1#rd" target="_blank">还在买 Clawdbot AI ？保姆级 Clawdbot AI 部署教程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2026-01-28 08:33:00">发布日期：2026-01-28 08:33:00</time></div><p class="article-description">安装 Clawdbot在 mac 或者 liunx 环境curl -fsSL https://clawd.bot/install.sh | bashwindow （PowerShell）iwr -us</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=1&amp;sn=4103da540feb20b28ddfe861a5c233dc&amp;chksm=9b9ecde4eef70cd0f09bbcb3d6e177656f526b972c6a2ca99912e0d43c9584c19e7e5308f222&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=2&amp;sn=7f0288824a9a4c3231702a93b150b7da&amp;chksm=9bc77c659105748dad9fd240f10f393c2d97a0d07e0e20006ae59766367211b1a003f0965aec&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV1tQVeKicI5IWDzdK2K8ydnRTLjsFEK9IeocjbUgGLnlKcC1BV156XakBLWv63N3EpJNDancXSC1OQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=2&amp;sn=7f0288824a9a4c3231702a93b150b7da&amp;chksm=9bc77c659105748dad9fd240f10f393c2d97a0d07e0e20006ae59766367211b1a003f0965aec&amp;scene=0&amp;xtrack=1#rd" target="_blank">国自然中标真不难！内部数据显示，经真实评委打磨精修的国自然本子，中标率提升87.6%！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b593d292b6b58be3a86325a918192a11/index.html">Khan安全团队</a></span><time class="article-date" datetime="2026-01-28 08:33:00">发布日期：2026-01-28 08:33:00</time></div><p class="article-description">2026年国自然距离申报截止仅剩60天，除去过年时间所剩无几了！而申请书新模板的发布，让时间更加紧张！看似优化后的框架比之前简单，实则直指科研立项的本质核心。越简洁的模板，越考验表达的精准度，我们想要</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAwMjQ2NTQ4Mg==&amp;mid=2247507852&amp;idx=2&amp;sn=7f0288824a9a4c3231702a93b150b7da&amp;chksm=9bc77c659105748dad9fd240f10f393c2d97a0d07e0e20006ae59766367211b1a003f0965aec&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247751144&amp;idx=1&amp;sn=104b2e15abd842e1de8838ea36301aa3&amp;chksm=e9a67254c2ae910228c0558d6ce12f15b7dfc1e9865cf4d54bc9a2486aa90e709134fcf5766e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/6eM73d5W4ydHxjElFyU0KJQY7ZhtAtjPQjdvkFE7eI7q91RqYoNsfSjS0DFLahDcnhIwINR9s32O1lOeUtibCfw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247751144&amp;idx=1&amp;sn=104b2e15abd842e1de8838ea36301aa3&amp;chksm=e9a67254c2ae910228c0558d6ce12f15b7dfc1e9865cf4d54bc9a2486aa90e709134fcf5766e&amp;scene=0&amp;xtrack=1#rd" target="_blank">国家卫健委：2026年三级公立医院都要开设，这个门诊为啥这么重要？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3bf08611d16b3ce50663949c58e37503/index.html">北京时间</a></span><time class="article-date" datetime="2026-01-28 08:29:29">发布日期：2026-01-28 08:29:29</time></div><p class="article-description">1月5日-6日，2026年全国卫生健康工作会议在京召开。会上，国家卫生健康委确定2026年全系统为民服务十件实事。其中有一条是三级公立医院均提供健康体重管理门诊服务，降低慢性病对人群健康的危害。 全民</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIyNzM3NDkzNQ==&amp;mid=2247751144&amp;idx=1&amp;sn=104b2e15abd842e1de8838ea36301aa3&amp;chksm=e9a67254c2ae910228c0558d6ce12f15b7dfc1e9865cf4d54bc9a2486aa90e709134fcf5766e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247557989&amp;idx=1&amp;sn=3df011f66ccd6852d74b8e22a025b395&amp;chksm=e8271028193f2fcd733107cd7b90cb9d4af329a79bd605b1cb8a216bf8b12c6aea9169820c11&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z6bicxIx5naJK5voiaMqicVv6Lu6uichFfoDrfbiaAEjoFkVJibYheQlicqSQsQCGOUpYP2wuhABicnvILxoKvsicTbjs7w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247557989&amp;idx=1&amp;sn=3df011f66ccd6852d74b8e22a025b395&amp;chksm=e8271028193f2fcd733107cd7b90cb9d4af329a79bd605b1cb8a216bf8b12c6aea9169820c11&amp;scene=0&amp;xtrack=1#rd" target="_blank">模型训练篇｜多阶段ToolRL打造更可靠的AI导购助手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15cb3cb3f3936c2b4ea943a483aecb84/index.html">阿里云开发者</a></span><time class="article-date" datetime="2026-01-28 08:30:00">发布日期：2026-01-28 08:30:00</time></div><p class="article-description">精搜泛搜投教佳能 SX74南京2177，买了125区的票，想出图，有什么推荐的吗vivo x200 ultra拍摄指南前言：AI导购浪潮下，重塑芝麻租赁的场景化体验当前，AI导购已成为电商与服务平台竞</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247557989&amp;idx=1&amp;sn=3df011f66ccd6852d74b8e22a025b395&amp;chksm=e8271028193f2fcd733107cd7b90cb9d4af329a79bd605b1cb8a216bf8b12c6aea9169820c11&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247509292&amp;idx=1&amp;sn=1d5864ed920307b419ff8e150dab287c&amp;chksm=fd748bffbf566eeb4851d405cead226c025c7fb8589db07da066aa6cedfa209517728cfae8a2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/9JPpNb7icHgFmic90ZTg1pVL8y5Tibl3eNTUgQnYiaDrPicGTnuB4X6mAtfh8jCXiajC6Xzf0e4suwic6EDXiapKnNa1YQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247509292&amp;idx=1&amp;sn=1d5864ed920307b419ff8e150dab287c&amp;chksm=fd748bffbf566eeb4851d405cead226c025c7fb8589db07da066aa6cedfa209517728cfae8a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">一款超好用的应急分析溯源日志工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6990ad1d3c34baf4314bae5b5ca2bc57/index.html">菜鸟学信安</a></span><time class="article-date" datetime="2026-01-28 08:30:00">发布日期：2026-01-28 08:30:00</time></div><p class="article-description">什么是 SSlogs？SSlogs 是专为安全事件分析设计的日志工具，能帮你快速解析日志、检测攻击、分析威胁，还能生成直观报告，让应急溯源效率翻倍～它有哪些核心能力？智能解析日志：支持 Apache、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NzY5MzI5Ng==&amp;mid=2247509292&amp;idx=1&amp;sn=1d5864ed920307b419ff8e150dab287c&amp;chksm=fd748bffbf566eeb4851d405cead226c025c7fb8589db07da066aa6cedfa209517728cfae8a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651078613&amp;idx=1&amp;sn=734fe3a0f3f549fbc64a8ff0cd9a4391&amp;chksm=bc2bbb4171d5e27219554ef27f85acb312e2ea6c2212d604151d61687753133e086b2f9b1498&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ePTzepwoNWPia3c11nIcCEHIEwUtIVicsKzZDOtW1aibEmeI7ZbJwTF8FST2ggHmicozcShlVvuFXOzhQNnAwtd4RQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651078613&amp;idx=1&amp;sn=734fe3a0f3f549fbc64a8ff0cd9a4391&amp;chksm=bc2bbb4171d5e27219554ef27f85acb312e2ea6c2212d604151d61687753133e086b2f9b1498&amp;scene=0&amp;xtrack=1#rd" target="_blank">iPhone 18涨价难避免，苹果内存供应商报价曝光/搜狗输入法AI化支持一键去广告/我国将出台应对AI影响促就业文件</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a0f8061c9b19b2f9fefcca4a6b2377e1/index.html">APPSO</a></span><time class="article-date" datetime="2026-01-28 08:30:10">发布日期：2026-01-28 08:30:10</time></div><p class="article-description">🌜月之暗面推出最强开源 Agent 模型 Kimi K2.5⌨️搜狗输入法 20.0 发布：「全面 AI 化」，支持一键去广告📈苹果接受三星与海力士近 100% 涨价，iPhone 18 或迎更高成本</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MjAyNDUyMA==&amp;mid=2651078613&amp;idx=1&amp;sn=734fe3a0f3f549fbc64a8ff0cd9a4391&amp;chksm=bc2bbb4171d5e27219554ef27f85acb312e2ea6c2212d604151d61687753133e086b2f9b1498&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=1&amp;sn=49be5f53662fd6c420e8df1d7426f2f7&amp;chksm=91492ef9412b4f7e6f6834f22beafeeb32c928abb07bdef905042ab2023d24a25f34c0f7a41c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/oibWJqH5OVmX8iarZ1QeU2O3t74uY6bKl6HdqBdwBg5KD8VedksIQON9ZiaCANEkloFzufKhNibFgkZ7tNq4TTnRibg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=1&amp;sn=49be5f53662fd6c420e8df1d7426f2f7&amp;chksm=91492ef9412b4f7e6f6834f22beafeeb32c928abb07bdef905042ab2023d24a25f34c0f7a41c&amp;scene=0&amp;xtrack=1#rd" target="_blank">CNC APT组织最新攻击活动分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1022ef754ceb401bbe3be2ff7129c4dc/index.html">安全分析与研究</a></span><time class="article-date" datetime="2026-01-28 08:30:00">发布日期：2026-01-28 08:30:00</time></div><p class="article-description">安全分析与研究专注于全球恶意软件的分析与研究前言概述安全分析与研究，专注于全球恶意软件的分析与研究，深度追踪全球黑客组织攻击活动，欢迎大家关注，获取全球最新的黑客组织攻击事件威胁情报。APT是全球企业</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=1&amp;sn=49be5f53662fd6c420e8df1d7426f2f7&amp;chksm=91492ef9412b4f7e6f6834f22beafeeb32c928abb07bdef905042ab2023d24a25f34c0f7a41c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=2&amp;sn=3db68533fbdd1d389022a659759453e1&amp;chksm=91c6d47e98d9261ff47262cfc0a60a0ad519cd24a1a5723f92a24ae2b3792a1feea8a8cbe0f6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/oibWJqH5OVmU4GN3mEd1xiapnViaFqOgHUtIv81kdXMADc4qAhVxVqRTYGiaVpn3sznZE6xqIh3uAEibsNa9Yn3MzYw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=2&amp;sn=3db68533fbdd1d389022a659759453e1&amp;chksm=91c6d47e98d9261ff47262cfc0a60a0ad519cd24a1a5723f92a24ae2b3792a1feea8a8cbe0f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">伪装成WPS程序银狐黑产最新注入型攻击样本分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1022ef754ceb401bbe3be2ff7129c4dc/index.html">安全分析与研究</a></span><time class="article-date" datetime="2026-01-28 08:30:00">发布日期：2026-01-28 08:30:00</time></div><p class="article-description">安全分析与研究专注于全球恶意软件的分析与研究前言概述安全分析与研究，专注于全球恶意软件的分析与研究，深度追踪全球黑客组织攻击活动，欢迎大家关注，获取全球最新的黑客组织攻击事件威胁情报。最近几年银狐类黑</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4ODEyODA3MQ==&amp;mid=2247495526&amp;idx=2&amp;sn=3db68533fbdd1d389022a659759453e1&amp;chksm=91c6d47e98d9261ff47262cfc0a60a0ad519cd24a1a5723f92a24ae2b3792a1feea8a8cbe0f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506940&amp;idx=1&amp;sn=6d8c33f4d1c902e2ccdd3f36e8eb27a3&amp;chksm=9eac1571d40800f885b1a494c4579e894e4c9fe444441bb04abefad5ebcb9be5c7243a30f506&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506940&amp;idx=1&amp;sn=6d8c33f4d1c902e2ccdd3f36e8eb27a3&amp;chksm=9eac1571d40800f885b1a494c4579e894e4c9fe444441bb04abefad5ebcb9be5c7243a30f506&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025年中国互联网公司市值排名榜
+
+1、腾讯控股：7287亿美元
+地位：以绝对优势稳居榜首，是业内唯一的“超级巨头”
+表现：市值年内增长约45%，其游戏与社交生态的盈利“压舱石”作用稳固
+2、阿里巴巴：3516亿美元
+地位：位列第二，持续追赶腾讯
+表现：成为年度“增速黑马”，股价年内大涨77%，与腾讯的市值差距显著收窄
+3、拼多多：1616亿美元
+地位：锁定第三，站稳“电商第二极”
+表现：凭借Temu在跨境电商领域的爆发，市值稳定在1600亿美元以上，年内股价上涨17%
+4、小米集团：1315亿美元
+地位：跻身第二梯队头部，是榜单最大亮点
+表现：受益于汽车业务（SU7/YU7）成功开辟“第二曲线”，市值曾在年中冲至第三，全年市值增长显著
+5、网易：889亿美元
+地位：位列第五，年内名次上升一位
+表现：年内股价大涨62%，其游戏业务贡献了稳定且高毛利的收入
+6、美团：811亿美元
+地位：市值及排名有所下滑，位列第六
+表现：受即时零售行业竞争加剧影响，是前十中少数股价下跌的公司之一，年内股价下跌约32%
+7、携程集团：472亿美元
+地位：在300-500亿美元的第三梯队中相对领先，名次上升一位
+表现：依托旅游消费市场的稳健复苏，年内股价微涨6%，表现平稳
+8、百度：455亿美元
+地位：位列第八，名次同样上升一位
+表现：市场对其AI布局重新定价，年内股价大涨57%，但核心的在线营销业务仍面临压力
+9、京东：407亿美元
+地位：排名第九，较上年下滑两位
+表现：在持续行业价格战背景下，市值表现承压，是前十中另一家市值缩水的公司
+10、快手：355亿美元
+地位：锁定第十
+表现：市场看好其AI应用（如可灵AI）的商业化探索，年内股价大涨56
+
+2025年的中国互联网行业，已从过去的规模扩张竞赛，转向对增长质量、盈利确定性和创新效率的综合比拼。
+
+前十名公司阵容与上年保持一致，但超过一半的公司（6家）排名发生了变化，内部竞争激烈。
+
+最近想提升AI项目实战能力，或者最近找工作的小伙伴，都可以看看下面👇🏻的这个链接（或许能帮到你）:</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-28 08:30:00">发布日期：2026-01-28 08:30:00</time></div><p class="article-description">2025年中国互联网公司市值排名榜
+
+1、腾讯控股：7287亿美元
+地位：以绝对优势稳居榜首，是业内唯一的“超级巨头”
+表现：市值年内增长约45%，其游戏与社交生态的盈利“压舱石”作用稳固
+2、阿里巴</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506940&amp;idx=1&amp;sn=6d8c33f4d1c902e2ccdd3f36e8eb27a3&amp;chksm=9eac1571d40800f885b1a494c4579e894e4c9fe444441bb04abefad5ebcb9be5c7243a30f506&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAxNDM4MA==&amp;mid=2666996160&amp;idx=1&amp;sn=b81c2c168810e6e450ba2d9450f4bed1&amp;chksm=bc91a18572e7f0dae3c295f0b0f862b1ac623599fca5180d0c6b75bb95e298b13cd3bfb7167c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/xrFYciaHL08B8tc4a7a47lSjSNRJNyDFqtBia1KDQn6gFnrTbMGyZHwNMHwjg1aF6De5VdiamTOGA7Bic7ibe2S14Xg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MjAxNDM4MA==&amp;mid=2666996160&amp;idx=1&amp;sn=b81c2c168810e6e450ba2d9450f4bed1&amp;chksm=bc91a18572e7f0dae3c295f0b0f862b1ac623599fca5180d0c6b75bb95e298b13cd3bfb7167c&amp;scene=0&amp;xtrack=1#rd" target="_blank">中央考核巡查组专家，现场拆穿负责人狡辩</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/22b8714354a246d28c3feae73771cceb/index.html">人民日报</a></span><time class="article-date" datetime="2026-01-28 08:16:36">发布日期：2026-01-28 08:16:36</time></div><p class="article-description">中央安全生产考核巡查组第四组在湖北发现：某建筑施工现场脚手架“偷工减料” 有限空间作业管理混乱　　“施工方案明确要求管壁厚度为3.2毫米，现场却用2.5毫米厚度的钢管代替。支撑体系钢管壁薄了四分之一，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MjAxNDM4MA==&amp;mid=2666996160&amp;idx=1&amp;sn=b81c2c168810e6e450ba2d9450f4bed1&amp;chksm=bc91a18572e7f0dae3c295f0b0f862b1ac623599fca5180d0c6b75bb95e298b13cd3bfb7167c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247488823&amp;idx=1&amp;sn=cfa3d889bfc6caaf4bdfdf4a1d5afb80&amp;chksm=c0c9146e095756121e4343687aa9e70d962f1cb1dfb4056f80a9ef77ab30d49ce06979c6b5a7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/cFyO8U8jibpss9g7rP4g44vmWTw0wOYqxoI1sB1aKeoXDuWxT2INuPINcSMpr3LrQwqavRuJGhadCfMlhbialq7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247488823&amp;idx=1&amp;sn=cfa3d889bfc6caaf4bdfdf4a1d5afb80&amp;chksm=c0c9146e095756121e4343687aa9e70d962f1cb1dfb4056f80a9ef77ab30d49ce06979c6b5a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">买龟，那算是消费吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2b19ca3b0433e060b11e9522f8aa0c2c/index.html">龟语者</a></span><time class="article-date" datetime="2026-01-28 08:26:00">发布日期：2026-01-28 08:26:00</time></div><p class="article-description">在花鸟鱼虫市场的玻璃缸前驻足时，谁没这一幕勾过心？或许是草龟慢悠悠划动四肢的慵懒，或许是剃刀龟缩在隐蔽角落的机警，又或是黄缘闭壳龟背甲上刀刻纹路，像藏着一整个山林的危险。心头那点喜欢一旦冒头，便顺着指</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxOTgxMTMyNA==&amp;mid=2247488823&amp;idx=1&amp;sn=cfa3d889bfc6caaf4bdfdf4a1d5afb80&amp;chksm=c0c9146e095756121e4343687aa9e70d962f1cb1dfb4056f80a9ef77ab30d49ce06979c6b5a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247500615&amp;idx=1&amp;sn=bc055ec05d2fb758cd985b49be996594&amp;chksm=ebfc030e7fed35edd00d7bbe88d65a349f4a174cb340332e8fbf6287d870da2bd996e9292803&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9cXH2tAjIWrPxT9Z4gP4uic6kxwZRgTF1UJnpyNDyg4L7BXXEbnHe1tSnpeaWibhBBSJeummDeJHZg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247500615&amp;idx=1&amp;sn=bc055ec05d2fb758cd985b49be996594&amp;chksm=ebfc030e7fed35edd00d7bbe88d65a349f4a174cb340332e8fbf6287d870da2bd996e9292803&amp;scene=0&amp;xtrack=1#rd" target="_blank">Clawdbot的出现不是偶然，和MAC mini没关系</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2026-01-28 08:16:22">发布日期：2026-01-28 08:16:22</time></div><p class="article-description">刚学会了 Claude Code ，又说 OpenAI 的 Codex 更好，用了 Cowork，又还有 Skills，还有乱入的 Mac mini 。。。Clawdbot 不是普通的聊天机器人（Ch</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247500615&amp;idx=1&amp;sn=bc055ec05d2fb758cd985b49be996594&amp;chksm=ebfc030e7fed35edd00d7bbe88d65a349f4a174cb340332e8fbf6287d870da2bd996e9292803&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707788&amp;idx=1&amp;sn=3a9fbef9e5d92084def6675bc038ca8f&amp;chksm=bc799f59f190a33e428a0ad35b4253bf7e43414cfd567b71a54fb573620be66700c73576d9f7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Zibeuu43K6ehxAYLvK6FPo6PBeZ4y1bYfM6OInXoKWS7U6UuZ8IMDqBjKJw5rianAw5knn0x8xNxlKiayibQgicsmng/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707788&amp;idx=1&amp;sn=3a9fbef9e5d92084def6675bc038ca8f&amp;chksm=bc799f59f190a33e428a0ad35b4253bf7e43414cfd567b71a54fb573620be66700c73576d9f7&amp;scene=0&amp;xtrack=1#rd" target="_blank">突发！黄金、白银基金宣布暂停申购</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2026-01-28 08:15:07">发布日期：2026-01-28 08:15:07</time></div><p class="article-description">1月27日晚间，易方达黄金主题LOF（A类份额）、国投白银LOF（A类份额）发布暂停申购及定期定额投资业务的公告。业内人士提醒，黄金、白银经历前期较大涨幅之后，短期或面临回调压力。投资者需保持理性，防</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651707788&amp;idx=1&amp;sn=3a9fbef9e5d92084def6675bc038ca8f&amp;chksm=bc799f59f190a33e428a0ad35b4253bf7e43414cfd567b71a54fb573620be66700c73576d9f7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzYyNzQ0MQ==&amp;mid=2247523751&amp;idx=1&amp;sn=90c7a2cc272acec0fba9371bf6ff0a42&amp;chksm=91f8e899bf4d5fac66b938062f691ad63cf1c0dbc28c08007d2e26b01d9ec4235c1cd2cc14e2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/xBgIbW1vdNPFTP2VEWcFQN5WWlzeuyOe8nxsyiaEwGuPEn5SkjaUt8OmOq8AibicaJ4ibEDnUrw6CtEzkL5kEygVIw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MzYyNzQ0MQ==&amp;mid=2247523751&amp;idx=1&amp;sn=90c7a2cc272acec0fba9371bf6ff0a42&amp;chksm=91f8e899bf4d5fac66b938062f691ad63cf1c0dbc28c08007d2e26b01d9ec4235c1cd2cc14e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">《HelloGitHub》第 118 期</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1615d2b1def73f1809fc1e92645a73d6/index.html">HelloGitHub</a></span><time class="article-date" datetime="2026-01-28 08:15:00">发布日期：2026-01-28 08:15:00</time></div><p class="article-description">兴趣是最好的老师，HelloGitHub 让你对开源感兴趣！简介HelloGitHub 分享 GitHub 上有趣、入门级的开源项目。github.com/521xueweihan/HelloGitH</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MzYyNzQ0MQ==&amp;mid=2247523751&amp;idx=1&amp;sn=90c7a2cc272acec0fba9371bf6ff0a42&amp;chksm=91f8e899bf4d5fac66b938062f691ad63cf1c0dbc28c08007d2e26b01d9ec4235c1cd2cc14e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587539&amp;idx=1&amp;sn=871fe915fb1eaf95da88d62ae942a889&amp;chksm=81986aaf7c7069801b90460712f39bcc82e1833b5bf551813b44b7bdb1dab97ed889b8760d99&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587539&amp;idx=1&amp;sn=871fe915fb1eaf95da88d62ae942a889&amp;chksm=81986aaf7c7069801b90460712f39bcc82e1833b5bf551813b44b7bdb1dab97ed889b8760d99&amp;scene=0&amp;xtrack=1#rd" target="_blank">分享3个不起眼的暴利小项目，用Claude等AI编程工具可以快速复制落地。信息差都在这了，直接抄作业：
+
+1、AI头像表情包小程序
+
+单次付费3-9元，用户复购率极高。有人靠这个月流水30万+，成本就是服务器+API，用Claude写代码3天能落地。关键是蹭热点，哪个表情火就快速生成。
+
+2、小说聚合推广站
+
+不做内容，只做跳转。把各大平台热门小说聚合起来，用户点阅读自动跳转，返佣比例30%-50%。月UV 5万就能躺赚2-3万，用Claude写爬虫+建站一周搞定。
+
+3、会员制剪辑工具
+
+剪映太重，很多人只要简单剪辑。做个轻量级工具，月费19.9，专注字幕、配音、去水印几个功能。有同行做到8000付费会员，月入16万。
+
+核心就是：找刚需、做轻量、快速复制。项目本身不值钱，执行力才值钱。
+
+上面这些都只是冰山一角，我整理了《Claude变现指南：用AI赚钱的100种方案》，里面从0到1拆解了完整操作流程：</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-28 08:03:00">发布日期：2026-01-28 08:03:00</time></div><p class="article-description">分享3个不起眼的暴利小项目，用Claude等AI编程工具可以快速复制落地。信息差都在这了，直接抄作业：
+
+1、AI头像表情包小程序
+
+单次付费3-9元，用户复购率极高。有人靠这个月流水30万+，成本就</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587539&amp;idx=1&amp;sn=871fe915fb1eaf95da88d62ae942a889&amp;chksm=81986aaf7c7069801b90460712f39bcc82e1833b5bf551813b44b7bdb1dab97ed889b8760d99&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_22.html" class="pagination-button pagination-prev">上一页</a><a href="index_24.html" class="pagination-button pagination-prev">下一页</a></div></body></html>
