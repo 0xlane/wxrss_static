@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rust技术前沿</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484444&amp;idx=1&amp;sn=9e3d5e13d3810afcb85f788d198729c0&amp;chksm=c2ae7744ee57fcc0d48e5ff6a9e0121442c4931bd6675d056602e5a7079bfa1a1c2021934251&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JLLtOfic62caibbkMCBsibc4mdC7Zjic8srA5WdvB3sVkMj3V1IkCicGTj7W6HGA67khKdej3LYk741Lw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484444&amp;idx=1&amp;sn=9e3d5e13d3810afcb85f788d198729c0&amp;chksm=c2ae7744ee57fcc0d48e5ff6a9e0121442c4931bd6675d056602e5a7079bfa1a1c2021934251&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust为何备受青睐？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-03-04 17:09:00">发布日期：2025-03-04 17:09:00</time></div><p class="article-description">Rust编程语言是否真的名副其实？这股热潮是昙花一现还是持续繁荣？随着Rust在系统编程领域的崭露头角，它因为安全性、性能和并发支持的独特组合而在近年来获得了显著的关注。如果你正在考虑下一个项目的技术</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484444&amp;idx=1&amp;sn=9e3d5e13d3810afcb85f788d198729c0&amp;chksm=c2ae7744ee57fcc0d48e5ff6a9e0121442c4931bd6675d056602e5a7079bfa1a1c2021934251&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484443&amp;idx=1&amp;sn=f9002029c2b885bbae2ce6172a0d8790&amp;chksm=c27340429db0de393c0cf0983ed688699ee0201d04a9fdff759361c790d0dea0cb0fbfa4f5c9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JLLtOfic62caibbkMCBsibc4mbRT56MfphefJCCUMhBLDVM1q5uLJIM26GNibV0VjRTicYbynicHEGysvQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484443&amp;idx=1&amp;sn=f9002029c2b885bbae2ce6172a0d8790&amp;chksm=c27340429db0de393c0cf0983ed688699ee0201d04a9fdff759361c790d0dea0cb0fbfa4f5c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">提升 Rust 工作流—— Miri</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-03-03 17:12:00">发布日期：2025-03-03 17:12:00</time></div><p class="article-description">提升 Rust 工作流：借助 Miri 和其他工具接下来，深入探讨本期的特色文章——Miri，即 Rust 解释器，看看它是如何帮助发现代码中的未定义行为。深入理解 Miri: Rust 开发者不可或</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484443&amp;idx=1&amp;sn=f9002029c2b885bbae2ce6172a0d8790&amp;chksm=c27340429db0de393c0cf0983ed688699ee0201d04a9fdff759361c790d0dea0cb0fbfa4f5c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484442&amp;idx=1&amp;sn=6f7f1420917aaa2263bb55e9966e1f6d&amp;chksm=c24afe4eda9739b5e0a9cfa479cc1c1935b9e8ddacdd85cb681376e65c0206c685a04c190be5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JLLtOfic62caibbkMCBsibc4mGMoSEbiaBPILnB4qDlrHNMr8CrTodg8hmgTvYLBjsPXpaQhlqoM6yvw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484442&amp;idx=1&amp;sn=6f7f1420917aaa2263bb55e9966e1f6d&amp;chksm=c24afe4eda9739b5e0a9cfa479cc1c1935b9e8ddacdd85cb681376e65c0206c685a04c190be5&amp;scene=0&amp;xtrack=1#rd" target="_blank">C++ VS Rust：RAII对比分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-03-02 17:08:00">发布日期：2025-03-02 17:08:00</time></div><p class="article-description">本文较长，请耐心看完。不必认为对C++持有偏见。若无C++的贡献，Rust不可能有今天的成就。正如所有新技术和科学一样，Rust是在巨人的肩膀上建立起来的，而这些巨人中的许多都为C++做出了贡献。这道</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484442&amp;idx=1&amp;sn=6f7f1420917aaa2263bb55e9966e1f6d&amp;chksm=c24afe4eda9739b5e0a9cfa479cc1c1935b9e8ddacdd85cb681376e65c0206c685a04c190be5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484420&amp;idx=1&amp;sn=577a4a6f32c114e2c06a29152e60e7d1&amp;chksm=c2adffe7fb33882990b0a6d0bb4487bf5eed6f75172c0f2ddab4226f57348b5cee3d9c4bbd03&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JKnFZwARkrPr48ETjL1rGu7drvSNogGnnIAA3ktVyoicPa2GkGbqgFDV2ff5ictTFc2cTPo31gyWeg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484420&amp;idx=1&amp;sn=577a4a6f32c114e2c06a29152e60e7d1&amp;chksm=c2adffe7fb33882990b0a6d0bb4487bf5eed6f75172c0f2ddab4226f57348b5cee3d9c4bbd03&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust序列化性能革命：2.25倍加速的秘密</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-03-01 17:11:00">发布日期：2025-03-01 17:11:00</time></div><p class="article-description">在当今科技界，尽管JSON这种效率较低的纯文本格式仍然被广泛用于互联网上的数据传输，但我们不得不承认，业界在序列化和反序列化JSON上浪费了大量资源。不过，我们至少可以努力让这些操作尽可能高效！在这篇</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484420&amp;idx=1&amp;sn=577a4a6f32c114e2c06a29152e60e7d1&amp;chksm=c2adffe7fb33882990b0a6d0bb4487bf5eed6f75172c0f2ddab4226f57348b5cee3d9c4bbd03&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484419&amp;idx=1&amp;sn=7c778b63fcf95c4f35972d614dfd6bb6&amp;chksm=c23ce95b591c77daac553385daada22cb0f28c0ee72e1668c0d11e7430362fdad3d63935d128&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JKnFZwARkrPr48ETjL1rGunAO7pDsjcuMb4YfibIoa4J6vlgqdxlWlaKbXb2DbicWZ5LgtZZbe0V1A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484419&amp;idx=1&amp;sn=7c778b63fcf95c4f35972d614dfd6bb6&amp;chksm=c23ce95b591c77daac553385daada22cb0f28c0ee72e1668c0d11e7430362fdad3d63935d128&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何使用 Rust 构建博客网站</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-28 17:13:00">发布日期：2025-02-28 17:13:00</time></div><p class="article-description">开始行动要开始用Rust构建新的博客，你需要先确保系统上安装了Rust，然后运行 cargo new awesome-blog 创建项目。进入新创建的目录 cd awesome-blog，打开 Car</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484419&amp;idx=1&amp;sn=7c778b63fcf95c4f35972d614dfd6bb6&amp;chksm=c23ce95b591c77daac553385daada22cb0f28c0ee72e1668c0d11e7430362fdad3d63935d128&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484418&amp;idx=1&amp;sn=2f7d693909bb2e19641ac95d52b9bcc9&amp;chksm=c2d57d947c881784dbb37334494f9ac78be3c407f6113aa814b159beebac33166858587027b0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JKnFZwARkrPr48ETjL1rGutyDERQ8afgyScsuSTmAoP7hCs25dktbhJDUCOYCIsMyxRQtCEP3CKQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484418&amp;idx=1&amp;sn=2f7d693909bb2e19641ac95d52b9bcc9&amp;chksm=c2d57d947c881784dbb37334494f9ac78be3c407f6113aa814b159beebac33166858587027b0&amp;scene=0&amp;xtrack=1#rd" target="_blank">单次遍历递归在 Rust 中的应用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-27 17:11:00">发布日期：2025-02-27 17:11:00</time></div><p class="article-description">单次遍历递归在 Rust 中的应用在这篇文章中，我们将探讨如何将这两个操作结合起来——即同时进行结构的展开和折叠，在一次遍历中完成这两项操作。通过这种方式，我们可以编写任意递归函数来处理传统的盒指针递</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484418&amp;idx=1&amp;sn=2f7d693909bb2e19641ac95d52b9bcc9&amp;chksm=c2d57d947c881784dbb37334494f9ac78be3c407f6113aa814b159beebac33166858587027b0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484417&amp;idx=1&amp;sn=caf17c185ade4c16752308457fcdf73f&amp;chksm=c2f0aa5cf737e7a39fb92b495ef470f29738d8c823d6cfbfbe1fe46588efd8add5e1848f386f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JKnFZwARkrPr48ETjL1rGuqjxOlQDUyWhJgL4icaR0N9GVqHaBySFNmY394hxkIFu67DtibhaJjzVw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484417&amp;idx=1&amp;sn=caf17c185ade4c16752308457fcdf73f&amp;chksm=c2f0aa5cf737e7a39fb92b495ef470f29738d8c823d6cfbfbe1fe46588efd8add5e1848f386f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust在机器学习中的独特优势</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-26 17:18:00">发布日期：2025-02-26 17:18:00</time></div><p class="article-description">机器学习：改变行业的力量机器学习（ML）正如同一股清流，在医疗、金融、制造业和技术领域掀起了一场变革风暴。从图像识别到自然语言处理，再到推荐系统，这些应用已经成为了现代科技不可或缺的一部分。随着算法对</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484417&amp;idx=1&amp;sn=caf17c185ade4c16752308457fcdf73f&amp;chksm=c2f0aa5cf737e7a39fb92b495ef470f29738d8c823d6cfbfbe1fe46588efd8add5e1848f386f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484374&amp;idx=1&amp;sn=b25edf8a8fce9b197693699554af104e&amp;chksm=c211d232b46fa885299d2f1028f0dfab548fa00c845ae4493d13b7b67bb86b6bb2704222d19d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8JKnFZwARkrPr48ETjL1rGu8bc4VXqOUrIjiaQECKic4qCRNMA6JEbiasRmvUThDQiaZulSmeF88ye60Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484374&amp;idx=1&amp;sn=b25edf8a8fce9b197693699554af104e&amp;chksm=c211d232b46fa885299d2f1028f0dfab548fa00c845ae4493d13b7b67bb86b6bb2704222d19d&amp;scene=0&amp;xtrack=1#rd" target="_blank">令人敬畏的rust框架和库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-25 17:12:00">发布日期：2025-02-25 17:12:00</time></div><p class="article-description">随着Rust编程语言在开发者社区中的日益流行，这门专注于性能、安全性和并发性的语言，以及其丰富的库生态系统，吸引了越来越多的支持者。本文将为读者提供一份关于一些值得关注的Rust库的简要概述，这些库的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484374&amp;idx=1&amp;sn=b25edf8a8fce9b197693699554af104e&amp;chksm=c211d232b46fa885299d2f1028f0dfab548fa00c845ae4493d13b7b67bb86b6bb2704222d19d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484359&amp;idx=1&amp;sn=021a4bdcdd634788ee6a75987449afb0&amp;chksm=c2318dab846bd5b41eff1790b475d974c48832eaa8281003355ca811eb8b44cc20e9c498850a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8IbZc2qRX1HOsJUtkicQvbHRicNN2eCLNJvT62l4n3abINXKTmoaSzqDyAfxibANku43AcxvV3WkicCqw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484359&amp;idx=1&amp;sn=021a4bdcdd634788ee6a75987449afb0&amp;chksm=c2318dab846bd5b41eff1790b475d974c48832eaa8281003355ca811eb8b44cc20e9c498850a&amp;scene=0&amp;xtrack=1#rd" target="_blank">在Rust中使用德式字符串</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-24 17:11:00">发布日期：2025-02-24 17:11:00</time></div><p class="article-description">优化无法在Rust中实现？事实并非如此！一篇文章中提到的一个观点： 这种字符串实现还允许进行极为重要的“短字符串优化”：如果字符串足够短，则可以直接“就地”存储，即设置容量字段中的特定位，其余容量、大</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484359&amp;idx=1&amp;sn=021a4bdcdd634788ee6a75987449afb0&amp;chksm=c2318dab846bd5b41eff1790b475d974c48832eaa8281003355ca811eb8b44cc20e9c498850a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484358&amp;idx=1&amp;sn=68f29d01cf1260e839e7ddc04f2cb89b&amp;chksm=c27a9208ab3a72a3b267a5665aca5b8b392209d4bf0aaa759781e5bcf5eb6ff944417520993a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8IbZc2qRX1HOsJUtkicQvbHRkibq0xPMAyXIaic1hgupCucEOp6jubm0vcGu8VNM2utDg2NzO5UBDMWg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484358&amp;idx=1&amp;sn=68f29d01cf1260e839e7ddc04f2cb89b&amp;chksm=c27a9208ab3a72a3b267a5665aca5b8b392209d4bf0aaa759781e5bcf5eb6ff944417520993a&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust 的边界检查究竟有多大的开销？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-23 17:02:00">发布日期：2025-02-23 17:02:00</time></div><p class="article-description">Rust 的边界检查究竟有多大的开销？最近，OpenSSL 项目中曝出了一对漏洞。不出所料，这两个漏洞的根本原因都是缓冲区溢出，攻击者可以通过恶意负载触发这些问题，导致系统崩溃和拒绝服务。自然而然地，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484358&amp;idx=1&amp;sn=68f29d01cf1260e839e7ddc04f2cb89b&amp;chksm=c27a9208ab3a72a3b267a5665aca5b8b392209d4bf0aaa759781e5bcf5eb6ff944417520993a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484357&amp;idx=1&amp;sn=3fbeccb6d7894c9d07776aea4e6886a4&amp;chksm=c202335d3d113014e73ccfc87542e212e93e0ace4ff7929c975b77cfa828a13b6ef66b2a4402&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8IbZc2qRX1HOsJUtkicQvbHRxuJhNbDwnCoS2HUvBO1adhSIoEQfXguNSUEIibXqHabIicQmmTdkEyNw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484357&amp;idx=1&amp;sn=3fbeccb6d7894c9d07776aea4e6886a4&amp;chksm=c202335d3d113014e73ccfc87542e212e93e0ace4ff7929c975b77cfa828a13b6ef66b2a4402&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust中如何编写字符串驻留器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-22 17:13:00">发布日期：2025-02-22 17:13:00</time></div><p class="article-description">一篇文章介绍了在Rust中编写字符串驻留器（Interner）的一种简洁技术，这种技术此前未曾被记录过。字符串驻留是处理大量重复字符串时的经典优化手段，比如在一个编译器中，程序中的大多数标识符会多次出</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484357&amp;idx=1&amp;sn=3fbeccb6d7894c9d07776aea4e6886a4&amp;chksm=c202335d3d113014e73ccfc87542e212e93e0ace4ff7929c975b77cfa828a13b6ef66b2a4402&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484343&amp;idx=1&amp;sn=1b23dcd16ead2fe367997640652d1249&amp;chksm=c2874647ec89568dfea59786d484da568e6003da3c4aed935f9dea5205ccc11130dcfdfcf112&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8IbZc2qRX1HOsJUtkicQvbHRVXlQyLNib4TnjlcJGIs4KJsMgaKptzOETJkkbNqFQH4ibA5zpyjYE9iag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484343&amp;idx=1&amp;sn=1b23dcd16ead2fe367997640652d1249&amp;chksm=c2874647ec89568dfea59786d484da568e6003da3c4aed935f9dea5205ccc11130dcfdfcf112&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何编写快速的Rust代码</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-21 17:40:49">发布日期：2025-02-21 17:40:49</time></div><p class="article-description">如何编写快速的Rust代码 对于Rust新手来说，我们最终优化了代码库，使其超越了Java和Common Lisp实现。现在，让我们聚焦于Rust以及Rust程序员可以采取哪些措施来提升代码的速度。快</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484343&amp;idx=1&amp;sn=1b23dcd16ead2fe367997640652d1249&amp;chksm=c2874647ec89568dfea59786d484da568e6003da3c4aed935f9dea5205ccc11130dcfdfcf112&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484339&amp;idx=1&amp;sn=59fd879cc2f97718e232c2555774ba70&amp;chksm=c236218cc32dddeb98500f94f964f82c55312dc7342e902ef152cad47cc38b2b61fe32ae32f5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8KjAHz8E7q4O1AMlBTpSN2ibiatQE5XM22luw4x6rSP2xicE3naVxDf2NNfXKcHtWDx2111K91ibtWiaicA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484339&amp;idx=1&amp;sn=59fd879cc2f97718e232c2555774ba70&amp;chksm=c236218cc32dddeb98500f94f964f82c55312dc7342e902ef152cad47cc38b2b61fe32ae32f5&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust并行编程新高度：如何巧妙利用Rayon实现高效任务调度</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-20 17:18:00">发布日期：2025-02-20 17:18:00</time></div><p class="article-description">在编程、优化和性能分析的博客中，曾经讨论过如何并行处理文件数据可能根据工作负载和设备能力的不同，对性能产生正面或负面的影响。当涉及到复杂程序时，这些程序混合了不同类型的任务，并使用不同的物理资源，如C</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484339&amp;idx=1&amp;sn=59fd879cc2f97718e232c2555774ba70&amp;chksm=c236218cc32dddeb98500f94f964f82c55312dc7342e902ef152cad47cc38b2b61fe32ae32f5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484335&amp;idx=1&amp;sn=af0652f3b79690b20f475fc02280718c&amp;chksm=c2f176711bd02871f7a3babbdacf05af12b12d64df4cdc178c6f174a4cd4107ccdb632b63189&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8KjAHz8E7q4O1AMlBTpSN2ibveDvqbrPU4u0Pqpn0hdlIq85VpCtfeia9DdIl5jV7GLXD23fStkfMibA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484335&amp;idx=1&amp;sn=af0652f3b79690b20f475fc02280718c&amp;chksm=c2f176711bd02871f7a3babbdacf05af12b12d64df4cdc178c6f174a4cd4107ccdb632b63189&amp;scene=0&amp;xtrack=1#rd" target="_blank">解读 unwrap 的使用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-02-19 17:18:00">发布日期：2025-02-19 17:18:00</time></div><p class="article-description">解读 unwrap 的使用在 Rust 编程中，unwrap 方法可能会让初学者感到困惑。以下是一些建议：可以使用 expect(&amp;str) 而不是 unwrap() 来提供更具体的错误信息。将 un</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247484335&amp;idx=1&amp;sn=af0652f3b79690b20f475fc02280718c&amp;chksm=c2f176711bd02871f7a3babbdacf05af12b12d64df4cdc178c6f174a4cd4107ccdb632b63189&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_4.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>千问大模型</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484562&amp;idx=1&amp;sn=77af47b98803bbd555fb019195e6d4f2&amp;chksm=c209fa120c69038422ca7c5cda3844ebc3ff02c8d23fc1e55b53f3e9c65bb5ba86ca85ef4992&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ5Phv3MkrDqOy5eRWU5aCfT9v4t7n932w3fQibkDT6Vgq7SibkjRLrqATD0xB9egT7LM4YcDia8GGQqg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484562&amp;idx=1&amp;sn=77af47b98803bbd555fb019195e6d4f2&amp;chksm=c209fa120c69038422ca7c5cda3844ebc3ff02c8d23fc1e55b53f3e9c65bb5ba86ca85ef4992&amp;scene=0&amp;xtrack=1#rd" target="_blank">又又又拿下一个冠军🏆，全球开源视觉模型第一</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-04-11 17:46:27">发布日期：2025-04-11 17:46:27</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484562&amp;idx=1&amp;sn=77af47b98803bbd555fb019195e6d4f2&amp;chksm=c209fa120c69038422ca7c5cda3844ebc3ff02c8d23fc1e55b53f3e9c65bb5ba86ca85ef4992&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484550&amp;idx=1&amp;sn=2a638624e54a00a0560c82e9f2db47f2&amp;chksm=c2e73cdc3ac27d6bebdbaf66fc58ec7b4c82c44c5c64e8fcccd10a4a790f5fe39f2ef6eb8865&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ6qY9SwM2OJMOwh8TTiaIT0hgLBUMn23RIKHtB9Ic6t1IVHGt04jX1msyQta69WhvZ91QfERDiblvww/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484550&amp;idx=1&amp;sn=2a638624e54a00a0560c82e9f2db47f2&amp;chksm=c2e73cdc3ac27d6bebdbaf66fc58ec7b4c82c44c5c64e8fcccd10a4a790f5fe39f2ef6eb8865&amp;scene=0&amp;xtrack=1#rd" target="_blank">Qwen2.5-Omni-7B 荣登全球开源趋势榜🎉</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-04-02 18:30:00">发布日期：2025-04-02 18:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484550&amp;idx=1&amp;sn=2a638624e54a00a0560c82e9f2db47f2&amp;chksm=c2e73cdc3ac27d6bebdbaf66fc58ec7b4c82c44c5c64e8fcccd10a4a790f5fe39f2ef6eb8865&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484537&amp;idx=1&amp;sn=a931a11f4dc56bf10bfca1c1969de55b&amp;chksm=c27d41dcebbf2c95860b855c76dfe9a017b0a61a72fa59cc9ff058664cf04df7f1bb79f0d5f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ4FUG3wFrXJqFqhPjczYspwMDa66nqCictIqTSsiaRHiahjMFulSzKjAEXGXLicibOSyeLl4eYVSURx9Ag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484537&amp;idx=1&amp;sn=a931a11f4dc56bf10bfca1c1969de55b&amp;chksm=c27d41dcebbf2c95860b855c76dfe9a017b0a61a72fa59cc9ff058664cf04df7f1bb79f0d5f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">当大模型来到科研前线：青年科学家眼中的 QwQ-32B</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-31 17:30:00">发布日期：2025-03-31 17:30:00</time></div><p class="article-description">向大家分享一个好消息。近期，中国科学院国家天文台、中国科学院青藏高原研究所、中国科学院南海海洋研究所等多个科研项目相继接入阿里通义千问开源模型 QwQ-32B。点击卡片 了解QwQ-32B青藏高原孕育</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484537&amp;idx=1&amp;sn=a931a11f4dc56bf10bfca1c1969de55b&amp;chksm=c27d41dcebbf2c95860b855c76dfe9a017b0a61a72fa59cc9ff058664cf04df7f1bb79f0d5f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484521&amp;idx=1&amp;sn=a09ba8ed5787b0652d326a49ae76ec8d&amp;chksm=c2dfbbe3f390cf46f1df9643d411d3f87b59c4c07469961f363dc005dad42ac18674c5a098a7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ4iaibXeUCaoXm9A7cE21H8QFhEcGicefXtNZOps4YKIf5Cdb5ltiaTGUkCxBlgxIYaDdmfGtvBPRPMXQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484521&amp;idx=1&amp;sn=a09ba8ed5787b0652d326a49ae76ec8d&amp;chksm=c2dfbbe3f390cf46f1df9643d411d3f87b59c4c07469961f363dc005dad42ac18674c5a098a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">视觉理解QVQ-Max: 有眼力，更有脑力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-28 13:02:33">发布日期：2025-03-28 13:02:33</time></div><p class="article-description">去年12月，我们推出了 QVQ-72B-Preview, 作为一个探索模型，它存在一些不足之处。今天，我们正式推出 QVQ-Max 视觉推理模型的第一版。这一新版本的模型具备强大的多模态处理能力，它不</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484521&amp;idx=1&amp;sn=a09ba8ed5787b0652d326a49ae76ec8d&amp;chksm=c2dfbbe3f390cf46f1df9643d411d3f87b59c4c07469961f363dc005dad42ac18674c5a098a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484495&amp;idx=1&amp;sn=8e641238f954b396b27b07bcecf61b60&amp;chksm=c29285ceea86ae6435b96bc5723db5f2732105ba5b0383517f063f22817fb82e21b35bda770a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ4knvlEfsuoXmYIA6aC3RaOP3tx4m5LaKibPhPJ4h08aOKAichMLRJaYEPaznK4CZCEFCu0ibJlghPyg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484495&amp;idx=1&amp;sn=8e641238f954b396b27b07bcecf61b60&amp;chksm=c29285ceea86ae6435b96bc5723db5f2732105ba5b0383517f063f22817fb82e21b35bda770a&amp;scene=0&amp;xtrack=1#rd" target="_blank">Qwen2.5-Omni：看，听，说，写，样样精通！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-27 02:32:49">发布日期：2025-03-27 02:32:49</time></div><p class="article-description">今天，我们发布了 Qwen2.5-Omni，Qwen 模型家族中新一代端到端多模态旗舰模型。该模型专为全方位多模态感知设计，能够无缝处理文本、图像、音频和视频等多种输入形式，并通过实时流式响应同时生成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484495&amp;idx=1&amp;sn=8e641238f954b396b27b07bcecf61b60&amp;chksm=c29285ceea86ae6435b96bc5723db5f2732105ba5b0383517f063f22817fb82e21b35bda770a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484459&amp;idx=1&amp;sn=5300a7eb3f1d0e7dd72e209867dca1d2&amp;chksm=c247567b525d92869deb5666c02e08941c5bdbd576072eb02fa49ba847b223db44e1ce0e2188&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ4knvlEfsuoXmYIA6aC3RaOOMNEIvniaynCugIRCnPeiaqY2AGzHKJPruGPv5P3KTYDJY2akFKRQvTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484459&amp;idx=1&amp;sn=5300a7eb3f1d0e7dd72e209867dca1d2&amp;chksm=c247567b525d92869deb5666c02e08941c5bdbd576072eb02fa49ba847b223db44e1ce0e2188&amp;scene=0&amp;xtrack=1#rd" target="_blank">通义千问Qwen上车啦！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-26 13:25:29">发布日期：2025-03-26 13:25:29</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484459&amp;idx=1&amp;sn=5300a7eb3f1d0e7dd72e209867dca1d2&amp;chksm=c247567b525d92869deb5666c02e08941c5bdbd576072eb02fa49ba847b223db44e1ce0e2188&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484452&amp;idx=1&amp;sn=5c5d6ee0e593d441b1df0592ab03708a&amp;chksm=c2305814ec6f6c540704095dc47c0d3746cb4d25bb03ccd73af8526ab88b0c810495de5b6026&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ7WeH6ibEWDf7xPibEdt2Y6yP7qP3EibJwGuvCIVQ88ILusRrPFTCwgbqPtbbdic7lsdHXQUbKFEgtlcQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484452&amp;idx=1&amp;sn=5c5d6ee0e593d441b1df0592ab03708a&amp;chksm=c2305814ec6f6c540704095dc47c0d3746cb4d25bb03ccd73af8526ab88b0c810495de5b6026&amp;scene=0&amp;xtrack=1#rd" target="_blank">支持本地部署，更聪明的视觉理解大模型来咯！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-25 13:03:44">发布日期：2025-03-25 13:03:44</time></div><p class="article-description">今年一月底，我们推出了 Qwen2.5-VL 系列模型，获得了社区的广泛关注和积极反馈。在 Qwen2.5-VL 系列的基础上，我们使用强化学习持续优化模型，并使用 Apache 2.0 协议开源 3</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484452&amp;idx=1&amp;sn=5c5d6ee0e593d441b1df0592ab03708a&amp;chksm=c2305814ec6f6c540704095dc47c0d3746cb4d25bb03ccd73af8526ab88b0c810495de5b6026&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484427&amp;idx=1&amp;sn=73b2df1d1ff1ccbfe25978aff95b1e14&amp;chksm=c2e7cbd70643d1b660cd0425b6e5aa821e57876163384e4e1556d3863bf3af57546cc68fb4c4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ55dyVw50KgICeYsIAianH8lICeeZqWFGYXoDm9b1Niblc0qDH6EVSu9LwO1LwEZRwAyRxTQUPv55xA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484427&amp;idx=1&amp;sn=73b2df1d1ff1ccbfe25978aff95b1e14&amp;chksm=c2e7cbd70643d1b660cd0425b6e5aa821e57876163384e4e1556d3863bf3af57546cc68fb4c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">仅需2步，解锁 QwQ-32B 的 Function Call 超能力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-21 21:25:13">发布日期：2025-03-21 21:25:13</time></div><p class="article-description">前不久，我们发布了推理模型通义千问QwQ-32B，在 LiveBench 榜单上取得了开源模型的最佳成绩。在针对模型的 Agent 能力的 BFCL 评测中，千问 QwQ-32B 模型在工具调用准确率</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484427&amp;idx=1&amp;sn=73b2df1d1ff1ccbfe25978aff95b1e14&amp;chksm=c2e7cbd70643d1b660cd0425b6e5aa821e57876163384e4e1556d3863bf3af57546cc68fb4c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484415&amp;idx=1&amp;sn=1ae50f9beec7da7a6d9304d26668aff1&amp;chksm=c264879d1d73a389476816ccac30340cb429bd7218525950b3eab6a710760e35d25b4477679e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ4RZGCFyyaPnuKFrpeM69QYcXjpqKvic4FPg7NyDSUcWD9XPib9smKE9rM4eqpzsyO3EAZNPWPSBVnA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484415&amp;idx=1&amp;sn=1ae50f9beec7da7a6d9304d26668aff1&amp;chksm=c264879d1d73a389476816ccac30340cb429bd7218525950b3eab6a710760e35d25b4477679e&amp;scene=0&amp;xtrack=1#rd" target="_blank">「族谱」奉上！通义千问模型命名规则大揭秘</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-19 19:04:56">发布日期：2025-03-19 19:04:56</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484415&amp;idx=1&amp;sn=1ae50f9beec7da7a6d9304d26668aff1&amp;chksm=c264879d1d73a389476816ccac30340cb429bd7218525950b3eab6a710760e35d25b4477679e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484393&amp;idx=1&amp;sn=d8a0d8ac5fc0bd25813682f075fcb978&amp;chksm=c23d39af694b735db7a4fc13f614dc221e3421e1f869e0c6ca5f6ca0f3e5b344a4011f858963&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ6cqqRpHoQpUZFPBjL0SGVbZn20O1DCQ2U2Qia9237W6WXg3oiacxWSicU6GHbMCYSgn9q4ia8ghxcQhg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484393&amp;idx=1&amp;sn=d8a0d8ac5fc0bd25813682f075fcb978&amp;chksm=c23d39af694b735db7a4fc13f614dc221e3421e1f869e0c6ca5f6ca0f3e5b344a4011f858963&amp;scene=0&amp;xtrack=1#rd" target="_blank">LiveBench放榜：QwQ-32B创开源模型新高🏆</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-17 15:30:00">发布日期：2025-03-17 15:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484393&amp;idx=1&amp;sn=d8a0d8ac5fc0bd25813682f075fcb978&amp;chksm=c23d39af694b735db7a4fc13f614dc221e3421e1f869e0c6ca5f6ca0f3e5b344a4011f858963&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484364&amp;idx=1&amp;sn=17ebb658fff15e9b004817e4a2b381f6&amp;chksm=c2ca6b6b87bca56bef5befaaf5674a6fdeb5df3da5a61f5f470098c3df4c7dbc3ee850b13bf1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OiaTkct8icKQ7R1QavJmu34iaI7mMYdAvYZKoRlm4VJQNibaEsJP3YJwiaHgribfb6jX77rJ6KCYpDYcbSSyXwjPhU9A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484364&amp;idx=1&amp;sn=17ebb658fff15e9b004817e4a2b381f6&amp;chksm=c2ca6b6b87bca56bef5befaaf5674a6fdeb5df3da5a61f5f470098c3df4c7dbc3ee850b13bf1&amp;scene=0&amp;xtrack=1#rd" target="_blank">QwQ-32B：更小尺寸，性能比肩全球最强开源推理模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c1d14753ecb1d59b5c05716914213988/index.html">通义千问Qwen</a></span><time class="article-date" datetime="2025-03-06 03:30:16">发布日期：2025-03-06 03:30:16</time></div><p class="article-description">近期的研究表明，强化学习可以显著提高模型的推理能力。例如，DeepSeek-R1 通过整合冷启动数据和多阶段训练，实现了最先进的性能，使其能够进行深度思考和复杂推理。这一次，我们探讨了大规模强化学习（</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0ODg4NDI5NA==&amp;mid=2247484364&amp;idx=1&amp;sn=17ebb658fff15e9b004817e4a2b381f6&amp;chksm=c2ca6b6b87bca56bef5befaaf5674a6fdeb5df3da5a61f5f470098c3df4c7dbc3ee850b13bf1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_2.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

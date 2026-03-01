@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>字节笔记本</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513151&amp;idx=1&amp;sn=d96b98252d7fc9d31bf61715acfb7847&amp;chksm=e96855a7aa6f4c9c66163d94a3f3d3f144120c2b7dd758a0cf78229918594bb8ca0a2998a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513151&amp;idx=1&amp;sn=d96b98252d7fc9d31bf61715acfb7847&amp;chksm=e96855a7aa6f4c9c66163d94a3f3d3f144120c2b7dd758a0cf78229918594bb8ca0a2998a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank">Kimi K2.5 免费一周！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-28 11:29:14">发布日期：2026-01-28 11:29:14</time></div><p class="article-description">最新的国产开源Kimi K2现在通过插件的形式免费使用一周。
+
+VS Code Kilo插件下载地址：
+
+https://link.bytenote.net/jCMoK2
+
+下载扩展后，注册一个免费账</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513151&amp;idx=1&amp;sn=d96b98252d7fc9d31bf61715acfb7847&amp;chksm=e96855a7aa6f4c9c66163d94a3f3d3f144120c2b7dd758a0cf78229918594bb8ca0a2998a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513150&amp;idx=1&amp;sn=35ba6fcd812fab3c17313567fdd38549&amp;chksm=e99654e31bda035251cca2bfa2f60425ee64ed72287ee6e4772c29043e507b1a85d753938ff0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQeLTTR6fbmZZ1UmRY07SsicYQO07ZXqPwekeTNxxf1U2uhpTmicCiaz9XHOyibRvTXxGgku3Qvfplkm5g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513150&amp;idx=1&amp;sn=35ba6fcd812fab3c17313567fdd38549&amp;chksm=e99654e31bda035251cca2bfa2f60425ee64ed72287ee6e4772c29043e507b1a85d753938ff0&amp;scene=0&amp;xtrack=1#rd" target="_blank">扒掉Clawdbot的底裤！用Claude Code分分钟实现</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-27 11:23:10">发布日期：2026-01-27 11:23:10</time></div><p class="article-description">其实在Clawdbot爆火之前，我很早就提出过这种概念：其实一台VPS就是最好的 Claude Agent Container一台VPS或者是Mac就是 AI Agent最好的运行容器。而且我给出的方</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513150&amp;idx=1&amp;sn=35ba6fcd812fab3c17313567fdd38549&amp;chksm=e99654e31bda035251cca2bfa2f60425ee64ed72287ee6e4772c29043e507b1a85d753938ff0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513139&amp;idx=1&amp;sn=204b11adaff623da03fd0bd258414d91&amp;chksm=e9f9d42227f0be32485959a547279c1ed0bb48fe769d6134f72592c16ff01c2bc5b1afbb3c68&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe1B4kuHT3DGzeMSIIibibiandkDRxxmvQ2BnEeEzyb3YYPmC8A8sOwbMZhIx58q3YkiarMoLWKv6AItg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513139&amp;idx=1&amp;sn=204b11adaff623da03fd0bd258414d91&amp;chksm=e9f9d42227f0be32485959a547279c1ed0bb48fe769d6134f72592c16ff01c2bc5b1afbb3c68&amp;scene=0&amp;xtrack=1#rd" target="_blank">把Claude Code Agent Skills制作成桌面端应用！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-26 11:54:57">发布日期：2026-01-26 11:54:57</time></div><p class="article-description">之所以要把Claude Code Agent Skills制作成桌面应用是因为我在使用Skills遇到几个非常难受的痛点问题。以基于Claude Agent Skills 的Obsidian 个人数字</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513139&amp;idx=1&amp;sn=204b11adaff623da03fd0bd258414d91&amp;chksm=e9f9d42227f0be32485959a547279c1ed0bb48fe769d6134f72592c16ff01c2bc5b1afbb3c68&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513131&amp;idx=1&amp;sn=981ba532ede6de61bcb11e59d1dd90ec&amp;chksm=e9a5393c3850a8f8052e6d956a055355acbd7ab23e494ae50fc30a388072f4d5892552ac6722&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQezcReobw7Q22Qwibf6GEIxFtdmb5sHY9vXRsCl9qhK5WKJVdWibX5WrtSaqeVSFOiaC66R5FsrVMRHQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513131&amp;idx=1&amp;sn=981ba532ede6de61bcb11e59d1dd90ec&amp;chksm=e9a5393c3850a8f8052e6d956a055355acbd7ab23e494ae50fc30a388072f4d5892552ac6722&amp;scene=0&amp;xtrack=1#rd" target="_blank">爆款AI产品Pencil的新模式！如何将Claude Code制作成桌面应用？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-25 21:22:24">发布日期：2026-01-25 21:22:24</time></div><p class="article-description">2026年开年最火爆产品当属Pencil.dev了。Pencil直接把Figma塞进了VS Code，实现了一个无限矢量设计画布。告别旧的手工作坊时代，现在使用自然语言就可以完成从设计到代码，代码到设</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513131&amp;idx=1&amp;sn=981ba532ede6de61bcb11e59d1dd90ec&amp;chksm=e9a5393c3850a8f8052e6d956a055355acbd7ab23e494ae50fc30a388072f4d5892552ac6722&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513119&amp;idx=1&amp;sn=b76fe7b51c8dfb9f3b1d681426bb6bac&amp;chksm=e98387d6ce20633c9586a42d7bf3c6d5e739ff38503dd9888fc538a852da634575b34d291191&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfE9iar0cqhBTZibDhe87N4I9AYht28MPpVxeoibGNfwu37f47eP0kDnoGXkibZHS4x4YBu1y5qZGX0Eg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513119&amp;idx=1&amp;sn=b76fe7b51c8dfb9f3b1d681426bb6bac&amp;chksm=e98387d6ce20633c9586a42d7bf3c6d5e739ff38503dd9888fc538a852da634575b34d291191&amp;scene=0&amp;xtrack=1#rd" target="_blank">GLM Coding Plan 太扣了！重写了一个联网搜索Skill</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-24 09:29:04">发布日期：2026-01-24 09:29:04</time></div><p class="article-description">GLM Coding Plan Lite 套餐提供了联网搜索功能，但是每个月才一百次，合计每天就3次，完全不够用！而且只能是以MCP的方式使用，本着能用Skills来写的，最后都会用Skills来写！</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513119&amp;idx=1&amp;sn=b76fe7b51c8dfb9f3b1d681426bb6bac&amp;chksm=e98387d6ce20633c9586a42d7bf3c6d5e739ff38503dd9888fc538a852da634575b34d291191&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513109&amp;idx=1&amp;sn=ecdb2175bc3b55a8afc18e3d0e0637a2&amp;chksm=e9d1365d331b6d386e5088072a7d431f2bf4c2fa9611c2ba49be1dbe2612ec300eb990d39e99&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQecMQF6UH3SKob8RopZuwhySEJfDKKs5ru3xibGbYVY6rmZ73EVWzccwzJ9fnPIn3aW904B66mZECw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513109&amp;idx=1&amp;sn=ecdb2175bc3b55a8afc18e3d0e0637a2&amp;chksm=e9d1365d331b6d386e5088072a7d431f2bf4c2fa9611c2ba49be1dbe2612ec300eb990d39e99&amp;scene=0&amp;xtrack=1#rd" target="_blank">用了3个月近百个Skills，最后只剩下这些！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-23 12:29:50">发布日期：2026-01-23 12:29:50</time></div><p class="article-description">用了3个月近百种Skills，最后常用的只剩下这些了。以下都是我本人本地使用的Skills，部分的Skill仅仅是作为这类的通用代表，可以再结合自己实际做衍生拓展，仅供参考。01 文章自动配图一图胜千</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513109&amp;idx=1&amp;sn=ecdb2175bc3b55a8afc18e3d0e0637a2&amp;chksm=e9d1365d331b6d386e5088072a7d431f2bf4c2fa9611c2ba49be1dbe2612ec300eb990d39e99&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513094&amp;idx=1&amp;sn=6cae4f1c484c373d3aeb36862c70b6b6&amp;chksm=e998142a89e8b197333a653e0adceb5693cadb586fcdb092d27721983867d47618d2c7217056&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcQkrhcYKt5NktdZnKGmlYOhwbn6A7c9PLRHTuFabcicI3Xpo5HgK5mb3CmrOLedTNRG1M6aSIAgBw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513094&amp;idx=1&amp;sn=6cae4f1c484c373d3aeb36862c70b6b6&amp;chksm=e998142a89e8b197333a653e0adceb5693cadb586fcdb092d27721983867d47618d2c7217056&amp;scene=0&amp;xtrack=1#rd" target="_blank">既然都在吹Skills，那我就来泼一泼凉水吧！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-22 11:18:04">发布日期：2026-01-22 11:18:04</time></div><p class="article-description">2026年开年，Skills“突然”就火了。其实大概是从去年10月份Skills刚出来的时候，我就在开始吹Skills。Claude Skills 可能比 MCP更重要！直到现在，看着逐渐被妖魔化微商</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513094&amp;idx=1&amp;sn=6cae4f1c484c373d3aeb36862c70b6b6&amp;chksm=e998142a89e8b197333a653e0adceb5693cadb586fcdb092d27721983867d47618d2c7217056&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513076&amp;idx=1&amp;sn=54c204e0bd255ddea087f7a0f1697b25&amp;chksm=e93e4bda2ed3e6977ebf4c1494db7cc39a511bcba0a2b24bcd32c8eca36c1cfc168200cade60&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513076&amp;idx=1&amp;sn=54c204e0bd255ddea087f7a0f1697b25&amp;chksm=e93e4bda2ed3e6977ebf4c1494db7cc39a511bcba0a2b24bcd32c8eca36c1cfc168200cade60&amp;scene=0&amp;xtrack=1#rd" target="_blank">skills.sh 的Vercel官网上线！
+
+除了比较常见的skill技能列表之外，还有24小时skills的排行榜，可以实时查看，跟踪比较热门的技能。
+
+Vercel这个Skills网站还提供了集成的命令行工具，可以在几乎所有的客户端里面一键安装这些skill。
+
+地址：skills.sh</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-21 09:35:47">发布日期：2026-01-21 09:35:47</time></div><p class="article-description">skills.sh 的Vercel官网上线！
+
+除了比较常见的skill技能列表之外，还有24小时skills的排行榜，可以实时查看，跟踪比较热门的技能。
+
+Vercel这个Skills网站还提供了集</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513076&amp;idx=1&amp;sn=54c204e0bd255ddea087f7a0f1697b25&amp;chksm=e93e4bda2ed3e6977ebf4c1494db7cc39a511bcba0a2b24bcd32c8eca36c1cfc168200cade60&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513032&amp;idx=1&amp;sn=1576d670a19a36a98305e15cf0cfa8f4&amp;chksm=e93302ecaea92961644339b2591b5729b04060720dc769a606512ff197932dd00bf329594555&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfe0EztSbtDPq412JiaWx8uvJqde00VSc9XpeoibuTLSjazKlWQbXWjJNcMh35IQlUq3TLzg83jPKzQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513032&amp;idx=1&amp;sn=1576d670a19a36a98305e15cf0cfa8f4&amp;chksm=e93302ecaea92961644339b2591b5729b04060720dc769a606512ff197932dd00bf329594555&amp;scene=0&amp;xtrack=1#rd" target="_blank">手搓了一个AI小编!我用Claude + Nano Banana Pro，让文章自动配图！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-20 07:36:31">发布日期：2026-01-20 07:36:31</time></div><p class="article-description">写方案最痛苦的不是写文字，是配图！一张清晰的架构图胜过千言万语，但画图太费时间，找网图又不贴切，还担心版权风险，用线上AI工具吧还要考虑一致性得来回复制粘贴。为了解决上面的这个问题，手搓了一个AI小编</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247513032&amp;idx=1&amp;sn=1576d670a19a36a98305e15cf0cfa8f4&amp;chksm=e93302ecaea92961644339b2591b5729b04060720dc769a606512ff197932dd00bf329594555&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512966&amp;idx=1&amp;sn=8710d1a9b38ee58628f9363314a5817d&amp;chksm=e90e169e7c144a2ec068e6c52a5c409aa63606fb2750f0f8e94b389db1e5c3c9fdd119361762&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdo9VYwpwhNF6FXzCrmdTpg1icibG0Or1JcD51VVuc7KXv1eltujIhYVe8vehO1rwKnKXKQWkMEmicDw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512966&amp;idx=1&amp;sn=8710d1a9b38ee58628f9363314a5817d&amp;chksm=e90e169e7c144a2ec068e6c52a5c409aa63606fb2750f0f8e94b389db1e5c3c9fdd119361762&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 自由了？Ollama正式适配Anthropic API！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-19 08:37:55">发布日期：2026-01-19 08:37:55</time></div><p class="article-description">Ollama 现在正式适配 Anthropic 的 API 接口。也就是说我们可以使用本地运行的模型接入到Claude Code中使用了。目前需要你更新到Ollama v0.14.0 及更高版本。下载</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512966&amp;idx=1&amp;sn=8710d1a9b38ee58628f9363314a5817d&amp;chksm=e90e169e7c144a2ec068e6c52a5c409aa63606fb2750f0f8e94b389db1e5c3c9fdd119361762&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512941&amp;idx=1&amp;sn=e9b64229ca34b2fef5a72d2070db17a2&amp;chksm=e97f4f8eb9a2807058c04206f9b997e05765ac3fcc3002ebc41e9b0ccddcfa2d51ea6238c4ed&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfyB2KGQoicuvnoRcwXauZV2yHY8cCvXbg2Mm5Og5aHrXdNmBnJN4lIcNxNTiaLWqmcIG91933Eqzug/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512941&amp;idx=1&amp;sn=e9b64229ca34b2fef5a72d2070db17a2&amp;chksm=e97f4f8eb9a2807058c04206f9b997e05765ac3fcc3002ebc41e9b0ccddcfa2d51ea6238c4ed&amp;scene=0&amp;xtrack=1#rd" target="_blank">用了一下Claude Cowork发现也没有那么神！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-18 10:10:12">发布日期：2026-01-18 10:10:12</time></div><p class="article-description">用Cowork来转录一下视频字幕，发现完全不可用，最后还是用本地的命令行来解决的，瞬间完成，而且根本不需要官方订阅，用国产的就可以。Claude Cowork 是 Anthropic 在 Claude</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512941&amp;idx=1&amp;sn=e9b64229ca34b2fef5a72d2070db17a2&amp;chksm=e97f4f8eb9a2807058c04206f9b997e05765ac3fcc3002ebc41e9b0ccddcfa2d51ea6238c4ed&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512897&amp;idx=1&amp;sn=753ec4bcacb82bb753f9be239b3bd0b9&amp;chksm=e9b4538cc41eee89a4fa95abe901a601653a418df38c491795002be281d8dd0bc19df0809531&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfe0EztSbtDPq412JiaWx8uvUTtRibn0TZUcm4FnYULlrcH2LyWyhuOoFzUfTreVf3fQpQznBzwrTCg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512897&amp;idx=1&amp;sn=753ec4bcacb82bb753f9be239b3bd0b9&amp;chksm=e9b4538cc41eee89a4fa95abe901a601653a418df38c491795002be281d8dd0bc19df0809531&amp;scene=0&amp;xtrack=1#rd" target="_blank">ChatGPT推出每月8刀青春版订阅/Claude Cowork Pro用户可用！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-17 08:39:50">发布日期：2026-01-17 08:39:50</time></div><p class="article-description">OpenAI正式在全球推出了每月8美元的ChatGPT Go订阅服务，同时宣布将在美国开启广告测试。ChatGPT Go可以把它理解为ChatGPT的青春版，在美国市场价格为 8 美元/月，大约折合人</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512897&amp;idx=1&amp;sn=753ec4bcacb82bb753f9be239b3bd0b9&amp;chksm=e9b4538cc41eee89a4fa95abe901a601653a418df38c491795002be281d8dd0bc19df0809531&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512860&amp;idx=1&amp;sn=17a22eba6b7c1c164ce4e9bccaa74853&amp;chksm=e9d92838b34119d7beb9146325f57c02a1d9f9829035f5327582a3b371325a61cc14d6a7875d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfSgreAIHoPKLrtwHMXZ7Z6s2kyA0rtT20R2GZepN4gia8sgx4pNWVHLL8lMYyicyNjONAhYuU9jLIQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512860&amp;idx=1&amp;sn=17a22eba6b7c1c164ce4e9bccaa74853&amp;chksm=e9d92838b34119d7beb9146325f57c02a1d9f9829035f5327582a3b371325a61cc14d6a7875d&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Skills 管理更方便了！SkillsLM技能再升级</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-16 08:34:17">发布日期：2026-01-16 08:34:17</time></div><p class="article-description">上次我发布了一个新站直接抄！41,454+ 案例的SkillsLM 上线不仅提供了大量使用的Skill技能，还包括了超详情的对新手友好的Skills入门和使用教程。发布初期这个网站除了展示Skills</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512860&amp;idx=1&amp;sn=17a22eba6b7c1c164ce4e9bccaa74853&amp;chksm=e9d92838b34119d7beb9146325f57c02a1d9f9829035f5327582a3b371325a61cc14d6a7875d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512804&amp;idx=1&amp;sn=2cb7fb273e4bb8dd5d7cb86789903c60&amp;chksm=e940e4c952c1c8045371423fb8b91a23b8af850f217d0891d7fc3beac873abdedcf9817c57f0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512804&amp;idx=1&amp;sn=2cb7fb273e4bb8dd5d7cb86789903c60&amp;chksm=e940e4c952c1c8045371423fb8b91a23b8af850f217d0891d7fc3beac873abdedcf9817c57f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">​MCP死了么？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-15 07:56:06">发布日期：2026-01-15 07:56:06</time></div><p class="article-description">任何工具的诞生，都是为了解决一个特定的问题。
+
+MCP也不例外。
+
+它最开始为给大模型提供了一个接口，通过这个接口，我们希望MCP能够抹平各类SDK和API调用的差异，让AI模型接入万物，实现接口的标</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512804&amp;idx=1&amp;sn=2cb7fb273e4bb8dd5d7cb86789903c60&amp;chksm=e940e4c952c1c8045371423fb8b91a23b8af850f217d0891d7fc3beac873abdedcf9817c57f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512781&amp;idx=1&amp;sn=7ee77a2965824c5bdc6e2acc46531359&amp;chksm=e970fcb1aa85a305ae7ba3e69992d64a2f9ddf07f9f14f0f088a35abbf9f1f216294fde784da&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe4lh4eDwCKfcuoRyhPYP4KTNT9tXqqSPNzYZnKRWhF1eU7XSUcHRx5KyQkYcMZXPOibOHXw9RcO9g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512781&amp;idx=1&amp;sn=7ee77a2965824c5bdc6e2acc46531359&amp;chksm=e970fcb1aa85a305ae7ba3e69992d64a2f9ddf07f9f14f0f088a35abbf9f1f216294fde784da&amp;scene=0&amp;xtrack=1#rd" target="_blank">Google Antigravity宣布原生支持Agent Skills</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-14 10:19:28">发布日期：2026-01-14 10:19:28</time></div><p class="article-description">Google Antigravity的最新版本宣布原生支持Agent Skills。目前主流Agent平台已经全员支持Agent Skills。AI时代真的是瞬息万变，昨天发的内容也直接失效没用了。全</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512781&amp;idx=1&amp;sn=7ee77a2965824c5bdc6e2acc46531359&amp;chksm=e970fcb1aa85a305ae7ba3e69992d64a2f9ddf07f9f14f0f088a35abbf9f1f216294fde784da&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512747&amp;idx=1&amp;sn=80dfc024f28538e4307f86ebce861046&amp;chksm=e9262f22b1ec709b5a39704db83062bc86c4ad9edda91cc2c52755194ab8efa9819dd61518ea&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512747&amp;idx=1&amp;sn=80dfc024f28538e4307f86ebce861046&amp;chksm=e9262f22b1ec709b5a39704db83062bc86c4ad9edda91cc2c52755194ab8efa9819dd61518ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Cowork 是迈向通用型Agent的关键一步</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-13 08:26:52">发布日期：2026-01-13 08:26:52</time></div><p class="article-description">Claude Code 是好用，Skills非常的强，但是对于普通的用户而言，上手难度可谓登天。
+
+估计有的人一辈子都没有打开过命令行，甚至都不知道命令行是什么东西。
+
+Cowork的出现可谓扭转乾坤</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512747&amp;idx=1&amp;sn=80dfc024f28538e4307f86ebce861046&amp;chksm=e9262f22b1ec709b5a39704db83062bc86c4ad9edda91cc2c52755194ab8efa9819dd61518ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512686&amp;idx=1&amp;sn=1b01299e090570101ba7e70c3fcecfe1&amp;chksm=e9af86a0db831dbfce76d11f53bf82034c1930be22a82c62a4bb5520ed6ae23f51a8b7839a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512686&amp;idx=1&amp;sn=1b01299e090570101ba7e70c3fcecfe1&amp;chksm=e9af86a0db831dbfce76d11f53bf82034c1930be22a82c62a4bb5520ed6ae23f51a8b7839a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank">非常适合于非程序员小白入门的Claude Code官方教程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-12 08:43:42">发布日期：2026-01-12 08:43:42</time></div><p class="article-description">Claude官方推出的Claude Code in Action教程非常适合于小白快速入门掌握Claude Code的基础知识。
+
+课程共分21小节，有图、有视频、有直接下载可运行案例，还有课程小测验</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512686&amp;idx=1&amp;sn=1b01299e090570101ba7e70c3fcecfe1&amp;chksm=e9af86a0db831dbfce76d11f53bf82034c1930be22a82c62a4bb5520ed6ae23f51a8b7839a8c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512661&amp;idx=1&amp;sn=ef796864d376997f85d76c7460223947&amp;chksm=e97dbb8fbd5b83e2f0420b26e8b01f169c5eb59fa537e734ce80de487d949ada033fe3793d5e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512661&amp;idx=1&amp;sn=ef796864d376997f85d76c7460223947&amp;chksm=e97dbb8fbd5b83e2f0420b26e8b01f169c5eb59fa537e734ce80de487d949ada033fe3793d5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">能用Skills来写的，最后都会用Skills来写！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-11 08:56:31">发布日期：2026-01-11 08:56:31</time></div><p class="article-description">Claude Code CLI 2.17又更新了，这次Skills来到了绝对的C位。
+
+斜杠命令正式被挪为Skills用，之前困扰我们的如何激活查找Skills问题， 现在迎刃而解了，只需要输入斜杠，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512661&amp;idx=1&amp;sn=ef796864d376997f85d76c7460223947&amp;chksm=e97dbb8fbd5b83e2f0420b26e8b01f169c5eb59fa537e734ce80de487d949ada033fe3793d5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512543&amp;idx=1&amp;sn=44b9237e3f85eddda8e9b365bef609e5&amp;chksm=e9cd4bf656f4c93746b8bfbca0657de81e6c192d185f7765c0e21abd8ed33875da37405d5c08&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQf2bsfJMsOl2723jVXoH7TTezoPQ2KZPm6CMVbzJxqKjfiabNDgrVb2M3wBrSbRbicdKCgPE4uiaHqcQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512543&amp;idx=1&amp;sn=44b9237e3f85eddda8e9b365bef609e5&amp;chksm=e9cd4bf656f4c93746b8bfbca0657de81e6c192d185f7765c0e21abd8ed33875da37405d5c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">对Claude Code官方的祛魅！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-10 10:29:29">发布日期：2026-01-10 10:29:29</time></div><p class="article-description">感觉现在的Anthropic压力有点大。先是在各种平台大量投放广告，接着是各种送会员、送额度，推特也是异常的活跃。（对比之下OpenAI已经一个月没有消息了）这也不奇怪，国产开源模型异军突起，国外Ge</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512543&amp;idx=1&amp;sn=44b9237e3f85eddda8e9b365bef609e5&amp;chksm=e9cd4bf656f4c93746b8bfbca0657de81e6c192d185f7765c0e21abd8ed33875da37405d5c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512522&amp;idx=1&amp;sn=2259b176a95d252cff53d84a860cac23&amp;chksm=e96caad35bb55d95f2a840d19b3118baef388ff9e790c7ebee8e06f28cd3ac9a85d63d1808b0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe6mN4sh23Qe2NvcqJccmg3GUgnT7V6boEZUzvSV2ibzSLTuY2TRdoEiba0SAujgSxs0ibUCicY5XicDqw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512522&amp;idx=1&amp;sn=2259b176a95d252cff53d84a860cac23&amp;chksm=e96caad35bb55d95f2a840d19b3118baef388ff9e790c7ebee8e06f28cd3ac9a85d63d1808b0&amp;scene=0&amp;xtrack=1#rd" target="_blank">齐活了！Gemini CLI 也原生支持Agent Skills</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-09 08:53:03">发布日期：2026-01-09 08:53:03</time></div><p class="article-description">Gemini CLI目前已全面支持Agent Skills。至此，三大顶级CLI Claude Code/Codex/Gemini已全部支持Skills。大一统！Codex正式全面支持Agent Sk</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512522&amp;idx=1&amp;sn=2259b176a95d252cff53d84a860cac23&amp;chksm=e96caad35bb55d95f2a840d19b3118baef388ff9e790c7ebee8e06f28cd3ac9a85d63d1808b0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512454&amp;idx=1&amp;sn=0e6b9721324793d721c97be44af1b757&amp;chksm=e95a7dd80f81bb1dd71559444a2e0b79eed2822ad97987302677c284168ee90a3d5adbff59a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe3gCK6hB6gicEz06xa295abZNQX1Y6OsAgvoJjKYFkTYVK2PiaxDGa9MzzibVlZm4Albld8TAdgOlyA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512454&amp;idx=1&amp;sn=0e6b9721324793d721c97be44af1b757&amp;chksm=e95a7dd80f81bb1dd71559444a2e0b79eed2822ad97987302677c284168ee90a3d5adbff59a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">Skills的热重载来了！Claude Code 2.1.0 版本更新日志</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-08 08:23:10">发布日期：2026-01-08 08:23:10</time></div><p class="article-description">Claude Code 来到了 2.1.0版本。Skills现支持热重载，无需重启会话了。之前我们下载安装一个Skills后需要脱离当前会话重新加载，现在之前复制完就可以使用，从这个版本开始编辑和修改</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512454&amp;idx=1&amp;sn=0e6b9721324793d721c97be44af1b757&amp;chksm=e95a7dd80f81bb1dd71559444a2e0b79eed2822ad97987302677c284168ee90a3d5adbff59a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512383&amp;idx=1&amp;sn=81c8529cb4f1f2ff8c5a4ebbc685a57c&amp;chksm=e940022118866d3df4a0b288f7ab87cb4a2c566b74fcdc6ad8a753f065c20a4f84ac128b9ee7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcyrPK0zct1gakiciaNy3FRzZ9moqSUYGojjfwiaGmlspKRUCSpWpiaMJBbfgb43hYzgKiaqsVQGC2tdvw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512383&amp;idx=1&amp;sn=81c8529cb4f1f2ff8c5a4ebbc685a57c&amp;chksm=e940022118866d3df4a0b288f7ab87cb4a2c566b74fcdc6ad8a753f065c20a4f84ac128b9ee7&amp;scene=0&amp;xtrack=1#rd" target="_blank">终于来了！Claude Code官方桌面端Code编码功能正式上线</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-07 08:17:08">发布日期：2026-01-07 08:17:08</time></div><p class="article-description">如果你想使用 Claude Code 但不喜欢终端界面，现在你可以从 Claude Desktop 使用本地 Claude Code 了！使用起来和Cursor等等三访插件没有区别下载 Claude</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512383&amp;idx=1&amp;sn=81c8529cb4f1f2ff8c5a4ebbc685a57c&amp;chksm=e940022118866d3df4a0b288f7ab87cb4a2c566b74fcdc6ad8a753f065c20a4f84ac128b9ee7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512328&amp;idx=1&amp;sn=7c6844b1d45da1612a5e4cb0935eed86&amp;chksm=e9f8cfe3f79da04d5d51fffaa51cd37bc2b16f7c24556a675bb31a60a681613f5217b0d66220&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQeOYHYYDO3icTHZKnkyu8b3VSv6kNXD7a7RnxkRSPVnmjhQ51BluOf4kE4AYSxfWGrEEEuz08rNrHw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512328&amp;idx=1&amp;sn=7c6844b1d45da1612a5e4cb0935eed86&amp;chksm=e9f8cfe3f79da04d5d51fffaa51cd37bc2b16f7c24556a675bb31a60a681613f5217b0d66220&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenCode迎来来了第N个受害者</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-06 08:36:12">发布日期：2026-01-06 08:36:12</time></div><p class="article-description">最近OpenCode大火，很多朋友留言说为什么不写一写？其实这玩意老早就用过，内置 LSP 支持，自由绑定厂商，还有一些免费的模型可用，功能乏善可陈，也只是抄了一圈 Claude Code而已，用起来</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512328&amp;idx=1&amp;sn=7c6844b1d45da1612a5e4cb0935eed86&amp;chksm=e9f8cfe3f79da04d5d51fffaa51cd37bc2b16f7c24556a675bb31a60a681613f5217b0d66220&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512276&amp;idx=1&amp;sn=0030207250a690cb647df714023d75e6&amp;chksm=e9ee8117b59f8697284ce04c3e4e8bc8e403c9ac27ece50daf9acb37881f0beee3537eaa4e0e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdnHsjvYePxfPC2yAsdiaQnBFTEzvJopqC9dVCKkxXYhAVD2n0nJ3eXK4eRtwL5LgiaaZMss3BiccpicQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512276&amp;idx=1&amp;sn=0030207250a690cb647df714023d75e6&amp;chksm=e9ee8117b59f8697284ce04c3e4e8bc8e403c9ac27ece50daf9acb37881f0beee3537eaa4e0e&amp;scene=0&amp;xtrack=1#rd" target="_blank">这大概就是Skills能够降维打击n8n的原因吧！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-05 08:27:53">发布日期：2026-01-05 08:27:53</time></div><p class="article-description">n8n其实还是之前低代码的那套逻辑。看似友好，实则依然在用流水线的逻辑，去解决新AI时代的问题。一旦业务逻辑复杂起来，你将面对的就是乱如麻的连线，不断地反复调试上一个节点的 Output，和无尽无聊的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512276&amp;idx=1&amp;sn=0030207250a690cb647df714023d75e6&amp;chksm=e9ee8117b59f8697284ce04c3e4e8bc8e403c9ac27ece50daf9acb37881f0beee3537eaa4e0e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512173&amp;idx=1&amp;sn=75abda0e4e84eaff31602765448cdc5e&amp;chksm=e9c02cc7f347487c88991881846eb6adb2221d9c7a941a1a06d39674555e63a38d3109f744d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQeFeVYr98kRpLXvr4fUcpTJLcgB63twq19vkicbsR0OUIvy0LLicBmOhzuJuOW3DPHWWJg2X9v0AA6Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512173&amp;idx=1&amp;sn=75abda0e4e84eaff31602765448cdc5e&amp;chksm=e9c02cc7f347487c88991881846eb6adb2221d9c7a941a1a06d39674555e63a38d3109f744d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">你的Claude Code缺一块仪表盘!</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-04 08:41:34">发布日期：2026-01-04 08:41:34</time></div><p class="article-description">最近好多朋友加我问的第一个问题都是怎么在Cursor当中使用Claude Code？说实话，Claude Code确实有点门槛，首当其冲的就是它的交互界面。没有象Cursor那样的直观，黑色命令行里面</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512173&amp;idx=1&amp;sn=75abda0e4e84eaff31602765448cdc5e&amp;chksm=e9c02cc7f347487c88991881846eb6adb2221d9c7a941a1a06d39674555e63a38d3109f744d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512148&amp;idx=1&amp;sn=82a2d3823112a9cee62c58180eda82df&amp;chksm=e93d65d7b925f9fe4fffe8e9c3eeb5e3fea2d3e362eacfbd82268e1fbdb85ae0aac6796ed623&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdwo6iaiaRlpNpkAwyEiaPsW0j8gl4qQsKxVGribKtPchYu9JqVJdmbvMIicCmF68iaMtRHC2P3ZuiaDB4UA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512148&amp;idx=1&amp;sn=82a2d3823112a9cee62c58180eda82df&amp;chksm=e93d65d7b925f9fe4fffe8e9c3eeb5e3fea2d3e362eacfbd82268e1fbdb85ae0aac6796ed623&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code之父分享的技巧有几点实在不敢苟同！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-03 09:30:27">发布日期：2026-01-03 09:30:27</time></div><p class="article-description">Boris Cherny 是 Claude Code的发明者，最近在X上分享他使用Claude Code的使用技巧。其中大部分和我的使用是一样的，但有几点实在是不敢苟同。第一点，开箱即用Borist开</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512148&amp;idx=1&amp;sn=82a2d3823112a9cee62c58180eda82df&amp;chksm=e93d65d7b925f9fe4fffe8e9c3eeb5e3fea2d3e362eacfbd82268e1fbdb85ae0aac6796ed623&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512096&amp;idx=1&amp;sn=70e69e58c097f7a48e4bb8b5047c7dd4&amp;chksm=e91882a73ff7c194f94c56fe2384ad3fb97e3da0caba7686e1735f5a8d3f7f78aca86fd7d52e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQctXiaP9LwnUEDmSicA6Zh1wfrJw88zX1kCIT39bnhTkcDCXsYTsCjRmI8OmnkXFKabzHI6Trd8DR9Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512096&amp;idx=1&amp;sn=70e69e58c097f7a48e4bb8b5047c7dd4&amp;chksm=e91882a73ff7c194f94c56fe2384ad3fb97e3da0caba7686e1735f5a8d3f7f78aca86fd7d52e&amp;scene=0&amp;xtrack=1#rd" target="_blank">AnyGen好用过Manus? 我不过馋的是它免费的Banana2</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-01-02 11:00:37">发布日期：2026-01-02 11:00:37</time></div><p class="article-description">实际体验下来你会发现不管是Manus还是AnyGen，它们其实都没有什么真正的护城河。数据搜索和深度挖掘，它们给 Gemini Deep Research 提鞋都不配，那是谷歌用整个互联网数据喂出来的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247512096&amp;idx=1&amp;sn=70e69e58c097f7a48e4bb8b5047c7dd4&amp;chksm=e91882a73ff7c194f94c56fe2384ad3fb97e3da0caba7686e1735f5a8d3f7f78aca86fd7d52e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511813&amp;idx=1&amp;sn=ff9409799232329b3a9fc57163527b9c&amp;chksm=e9b39d028b272bc8aa490440e7820a1e9be3e463a396e6210199f712b3d3744810a2c24226fb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcf1BY49n4de6vJkibbhhicvcD3GSKicoVaEvLWrpVkvg1HZCc9mJthLVUUjyTdMkgBhib2hM2ewIWnicg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511813&amp;idx=1&amp;sn=ff9409799232329b3a9fc57163527b9c&amp;chksm=e9b39d028b272bc8aa490440e7820a1e9be3e463a396e6210199f712b3d3744810a2c24226fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">把你和Claude Code 的所有缠绵变成一份精美可复用的实验报告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-12-30 08:42:24">发布日期：2025-12-30 08:42:24</time></div><p class="article-description">Python 圈的大神 Simon Willison 发布了一个新工具。claude code transcripts这个工具的作用只有两个两字：复盘历史对话记录太重要了，比如我们设计过的Prompt</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511813&amp;idx=1&amp;sn=ff9409799232329b3a9fc57163527b9c&amp;chksm=e9b39d028b272bc8aa490440e7820a1e9be3e463a396e6210199f712b3d3744810a2c24226fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511761&amp;idx=1&amp;sn=36963f6289248581148b9d62a67f7e2c&amp;chksm=e91dcbb07e914f10bf0f5fdfd712fd5c1b33b8bea1b753f33e235a475f16ca321c91dc965a12&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511761&amp;idx=1&amp;sn=36963f6289248581148b9d62a67f7e2c&amp;chksm=e91dcbb07e914f10bf0f5fdfd712fd5c1b33b8bea1b753f33e235a475f16ca321c91dc965a12&amp;scene=0&amp;xtrack=1#rd" target="_blank">一个PG数据库分析Skills</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-12-29 08:20:10">发布日期：2025-12-29 08:20:10</time></div><p class="article-description">MCP已死，Skill当立！A社大一统Agent Skill为行业标准规范！
+
+上次发了这篇之后，很多人还在纠结什么MCP到底要不要用，还在争论MCP和Skills的区别。
+
+其实技术无所谓好坏，能够</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511761&amp;idx=1&amp;sn=36963f6289248581148b9d62a67f7e2c&amp;chksm=e91dcbb07e914f10bf0f5fdfd712fd5c1b33b8bea1b753f33e235a475f16ca321c91dc965a12&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511752&amp;idx=1&amp;sn=1d681be49b7337a06a902814f722e28d&amp;chksm=e94eac358cf76dbde3db28c850cf3953aef086dd1d85f2d342de374be8d409f284a1ef58984f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQf5URqyZrqhtiaOnYslp4lJdfCF4esfKBtnD3xzBQlAWeyZ8mUsyd0J5pGIVLbYsNT9ySnp2VRJWyA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511752&amp;idx=1&amp;sn=1d681be49b7337a06a902814f722e28d&amp;chksm=e94eac358cf76dbde3db28c850cf3953aef086dd1d85f2d342de374be8d409f284a1ef58984f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Google的王牌拓展功能！使用Gemini CLI 的上下文驱动开发</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-12-28 12:11:04">发布日期：2025-12-28 12:11:04</time></div><p class="article-description">本文虽然是讲的上下文驱动开发，但是还不建议把Gemini CLI用作直接的编程工具，它更合适的场景是工作流。使用Gemini CLI打造企业级工作流目前，Gemini CLI完全下放了Gemini 3</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247511752&amp;idx=1&amp;sn=1d681be49b7337a06a902814f722e28d&amp;chksm=e94eac358cf76dbde3db28c850cf3953aef086dd1d85f2d342de374be8d409f284a1ef58984f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a><a href="index_2.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

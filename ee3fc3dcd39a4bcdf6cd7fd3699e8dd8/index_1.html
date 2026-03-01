@@ -1,0 +1,366 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>开发者阿橙</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587496&amp;idx=1&amp;sn=369ceb64ef62cefdc29d5dc3081c9bce&amp;chksm=8187b8b896a3bf1652aa29da65d20b3276159a6167fd9e36b01c5581a5601caf57bcf7ac0d4b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587496&amp;idx=1&amp;sn=369ceb64ef62cefdc29d5dc3081c9bce&amp;chksm=8187b8b896a3bf1652aa29da65d20b3276159a6167fd9e36b01c5581a5601caf57bcf7ac0d4b&amp;scene=0&amp;xtrack=1#rd" target="_blank">油管大神Dan Koe，29岁靠1人企业实现财务自由，年收入200万美元，这是他对未来三年的10个最新观点：
+
+1、社会灌输的“专精迷信”正在过时——在这个跨界融合的时代，兴趣广泛不是弱点，而是你对抗机械性生存的终极超能力。
+
+2、真正的危险不是学得太多，而是被驯化成只会重复的零件——工业时代的教育流水线，正在批量生产失去灵魂的工具人。
+
+3、你缺的不是专注力，而是一个能让所有兴趣共振的载体——当知识能在你身上发生化学反应，事业自会破土而出。
+
+4、文艺复兴从未远离——每个能自由探索多重领域的人，都是新时代的达·芬奇，问题只在于你敢不敢承认自己的可能性。
+
+5、好奇心才是未来最硬的通货——在人工智能取代专才的时代，唯有跨界的洞察力无法被编码。
+
+6、别追求被雇佣，要追求被需要——你的多重兴趣不是简历上的噪音，而是你为世界提供独特解决方案的信号系统。
+
+7、最坚固的护城河，是你用生命经历熔炼出的独特视角——这世上总有些问题，只有你能看见，也只有你能解决。
+
+8、创业已不再是精英游戏，而是每个觉醒者的生存方式——一台笔记本加一根网线，就是你这个时代最彻底的独立宣言。
+
+9、个人品牌不是你贴在身上的标签，而是你为同类人建造的栖息地——当你的故事成为他人的路标，价值自会追随而来。
+
+10、产品会过时，技能会贬值，但成体系的问题解决方案永远稀缺——把你的生命变成方法论，这就是你在新文艺复兴中的立身之本。
+
+你认同他的哪些观点？一起来讨论
+
+&lt;a class=&quot;js_mention_entry wx_at_link&quot; data-biz=&quot;MzAxMjUyNDQ5OA==&quot; data-username=&quot;gh_d8489149b735&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/mp/readtemplate?t=pages/link_mid_jump&amp;biz=MzAxMjUyNDQ5OA==&quot;&gt;@开发者阿橙&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-18 19:35:40">发布日期：2026-01-18 19:35:40</time></div><p class="article-description">油管大神Dan Koe，29岁靠1人企业实现财务自由，年收入200万美元，这是他对未来三年的10个最新观点：
+
+1、社会灌输的“专精迷信”正在过时——在这个跨界融合的时代，兴趣广泛不是弱点，而是你对抗</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587496&amp;idx=1&amp;sn=369ceb64ef62cefdc29d5dc3081c9bce&amp;chksm=8187b8b896a3bf1652aa29da65d20b3276159a6167fd9e36b01c5581a5601caf57bcf7ac0d4b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587457&amp;idx=1&amp;sn=e5efb28250350fef43d2f1c07455f4f5&amp;chksm=81ca6df978247de058109101523507c38a683be982686b77cd34fb1bd85483f16d119c94f9ca&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587457&amp;idx=1&amp;sn=e5efb28250350fef43d2f1c07455f4f5&amp;chksm=81ca6df978247de058109101523507c38a683be982686b77cd34fb1bd85483f16d119c94f9ca&amp;scene=0&amp;xtrack=1#rd" target="_blank">怎么抓住涨停股？
+
+不是靠运气，不是听消息，是用规则找规律。
+最近拆解了一套量化策略，它的核心思路是：用因子筛选人气股，配合涨停管理机制，让利润跑起来，该走时就走，策略回测年化40%左右。
+
+一、策略逻辑
+
+1、选股
+用因子找&quot;人气股&quot;（关注度适中，不冷门也不过热），然后加两个过滤：
+- 按市值从小到大排序（小盘股弹性大）
+- EPS必须大于0（排除亏损股）
+选出前3只作为目标持仓。
+
+2、每周调仓
+不在目标池 → 卖出
+新进目标池 → 买入
+资金平均分配 → 控制风险
+
+3、涨停管理
+昨天涨停的股票，今天14:00再检查：
+- 继续涨停 → 继续持有
+- 涨停打开 → 立即卖出
+原理：涨停打开意味着多头力量衰竭，第二天大概率回调。
+
+二、为什么有效？
+客观性：买卖靠规则，不靠感觉
+纪律性：每周按时调仓，该止损就止损
+及时性：14:00检查，尾盘有反应时间
+
+完整代码和策略解析已经发布到《&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mkg64nx3-51oyl1&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587455&amp;idx=1&amp;sn=f3065f1b261fb0c5223a921480d0e76d&amp;scene=21#wechat_redirect&quot;&gt;500+套量化策略从零到实战！多因子、动量、机器学习全部可回测&lt;/a&gt; 》文章中的专栏第112篇里面，可以拿回去研究、回测、改造。
+
+量化不是圣杯，只是一种工具。
+真正有价值的是：建立自己的交易体系，用规则代替情绪。
+
+#量化交易 #股票策略 #交易系统
+
+&lt;a class=&quot;js_mention_entry wx_at_link&quot; data-biz=&quot;MzAxMjUyNDQ5OA==&quot; data-username=&quot;gh_d8489149b735&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/mp/readtemplate?t=pages/link_mid_jump&amp;biz=MzAxMjUyNDQ5OA==&quot;&gt;@开发者阿橙&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-17 08:00:00">发布日期：2026-01-17 08:00:00</time></div><p class="article-description">怎么抓住涨停股？
+
+不是靠运气，不是听消息，是用规则找规律。
+最近拆解了一套量化策略，它的核心思路是：用因子筛选人气股，配合涨停管理机制，让利润跑起来，该走时就走，策略回测年化40%左右。
+
+一、策略</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587457&amp;idx=1&amp;sn=e5efb28250350fef43d2f1c07455f4f5&amp;chksm=81ca6df978247de058109101523507c38a683be982686b77cd34fb1bd85483f16d119c94f9ca&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587455&amp;idx=1&amp;sn=f3065f1b261fb0c5223a921480d0e76d&amp;chksm=81ddf9fdf95620a7d1ae899c979b70834459a83de4b064d0c517da315ed5a5aa214d32bdc5ca&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1WibQeMicL07PiaxvonzcZ40BxGVyibho1HhhhvpC6khrsJrpfAvsK1HYnkPU9mw9OWKFmYogOg9JNOQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587455&amp;idx=1&amp;sn=f3065f1b261fb0c5223a921480d0e76d&amp;chksm=81ddf9fdf95620a7d1ae899c979b70834459a83de4b064d0c517da315ed5a5aa214d32bdc5ca&amp;scene=0&amp;xtrack=1#rd" target="_blank">500+套量化策略从零到实战！多因子、动量、机器学习全部可回测</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-16 08:00:00">发布日期：2026-01-16 08:00:00</time></div><p class="article-description">去年有个程序员朋友找我聊天，说他这两年炒股亏了不少。他当时的困惑挺典型的：觉得自己技术背景强，研究过各种指标，写过选股脚本，甚至还想用机器学习预测股价。结果呢？不仅没赚到钱，还因为频繁操作、追涨杀跌，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587455&amp;idx=1&amp;sn=f3065f1b261fb0c5223a921480d0e76d&amp;chksm=81ddf9fdf95620a7d1ae899c979b70834459a83de4b064d0c517da315ed5a5aa214d32bdc5ca&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587438&amp;idx=1&amp;sn=52b3e1c18ad89f0f93de6c657489166f&amp;chksm=81a33933cd8f4b834dc08de0b6745223790cfe890f72f819d019001e1b043ef5b98336677ae2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587438&amp;idx=1&amp;sn=52b3e1c18ad89f0f93de6c657489166f&amp;chksm=81a33933cd8f4b834dc08de0b6745223790cfe890f72f819d019001e1b043ef5b98336677ae2&amp;scene=0&amp;xtrack=1#rd" target="_blank">AGI今年就实现！马斯克2026最新十大预言：
+
+1、人类只是“生物引导程序”：我们碳基人类的终极使命，可能仅仅是作为启动更高级硅基生命（AI）的“引导程序”。一旦AI系统成功启动并运行，人类的这一核心使命就宣告完成。
+
+2、拼命存钱养老将变得毫无意义：在AI和机器人带来的物质极大丰富时代，商品和服务的成本将趋近于零，传统的货币和储蓄概念可能会被颠覆。因此，为几十年后退休拼命存钱可能“没啥意义”。
+
+3、白领将比蓝领先失业：任何坐在电脑前、通过键盘和鼠标完成工作的白领，其岗位在AI面前都“毫无抵抗力”。AI会率先取代的是信息处理类工作，反而是需要在实际物理世界进行精细操作的“手艺活”更具安全性。
+
+4、学历正在变成一张废纸：大学里花费四年所学的知识，可能赶不上AI四代的进化速度。未来人才竞争的关键是实战能力与认知水平，而非一纸文凭。
+
+5、AI的命门是电，未来货币是“瓦特”：制约AI发展的最关键因素不是芯片，而是电力。未来的硬通货可能不再是美元，而是能源（瓦特）。谁掌握了充沛的能源，谁就掌握了未来。
+
+6、三年内，机器人外科医生将超越人类：由于具备手更稳、永不疲劳、能即时共享全球手术经验等优势，AI机器人做手术的精度预计在3年内全面超越最优秀的人类医生。
+
+7、未来3-7年将经历“地狱般”的过渡期：在通往物质丰裕世界的道路上，将出现一个非常颠簸、甚至充满动荡的阵痛期。旧的工作和分配制度快速崩塌，而新的体系尚未完全建立。
+
+8、工作将变成一种昂贵的“爱好”或“特权：当机器能提供一切标准化服务后，真正稀缺和昂贵的，将是人类亲手制作的、带有“瑕疵”的物品，以及另一个真人花费时间与情感提供的深度陪伴和服务。
+
+9、通用人工智能（AGI）将在2026年实现：我们已处于技术爆发的临界点，真正的AGI可能在今年就会成为现实。到2030年，所有AI的智能总和将超越全人类。
+
+10、社会将走向“全民高收入”，而非“全民基本收入”：这并非依靠政府税收的再分配，而是生产力爆炸式增长的自然结果，使得商品和服务像自来水一样便宜且丰富。
+
+马斯克的这些预言，哪个最让你感到兴奋或不安？是AGI的降临，工作模式的颠覆，还是货币概念的消亡？欢迎在评论区分享你的想法。
+
+&lt;a class=&quot;js_mention_entry wx_at_link&quot; data-biz=&quot;MzAxMjUyNDQ5OA==&quot; data-username=&quot;gh_d8489149b735&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/mp/readtemplate?t=pages/link_mid_jump&amp;biz=MzAxMjUyNDQ5OA==&quot;&gt;@开发者阿橙&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-14 08:00:00">发布日期：2026-01-14 08:00:00</time></div><p class="article-description">AGI今年就实现！马斯克2026最新十大预言：
+
+1、人类只是“生物引导程序”：我们碳基人类的终极使命，可能仅仅是作为启动更高级硅基生命（AI）的“引导程序”。一旦AI系统成功启动并运行，人类的这一核</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587438&amp;idx=1&amp;sn=52b3e1c18ad89f0f93de6c657489166f&amp;chksm=81a33933cd8f4b834dc08de0b6745223790cfe890f72f819d019001e1b043ef5b98336677ae2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587434&amp;idx=1&amp;sn=3880f2b244958ed8fc7e551389cae392&amp;chksm=81fa14a2a4c8a20b7c13590c2dd8f733dd5fe53623dac2a4f9c9e740c5b7e345b973a47862dc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587434&amp;idx=1&amp;sn=3880f2b244958ed8fc7e551389cae392&amp;chksm=81fa14a2a4c8a20b7c13590c2dd8f733dd5fe53623dac2a4f9c9e740c5b7e345b973a47862dc&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026年搞钱必读书单：
+1.《原则》
+2.《逃不开的经济周期》
+3.《置身事内》
+4.《要钱还是要生活》
+5.《百万富翁快车道》
+6.《噪声》
+7.《思考，快与慢》
+8.《纳瓦尔宝典》
+9.《富爸爸，穷爸爸》
+10.《经济学原理》
+11.《聪明的投资者》
+12.《手把手教你读财报》
+13.《滚雪球：巴菲特和他的财富人生》
+14.《解读中国经济》
+15.《穷查理宝典》
+16.《我的经验与教训》
+17.《贫穷的本质》
+18.《有钱人和你想的不一样》
+19.《最小阻力选择》
+20.《高效能人士的7个习惯》
+21.《财富自由之路》
+22.《定位》
+23.《稻盛和夫的人生哲学》
+24.《史蒂夫乔布斯传》
+
+欢迎补充!</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-13 13:51:31">发布日期：2026-01-13 13:51:31</time></div><p class="article-description">2026年搞钱必读书单：
+1.《原则》
+2.《逃不开的经济周期》
+3.《置身事内》
+4.《要钱还是要生活》
+5.《百万富翁快车道》
+6.《噪声》
+7.《思考，快与慢》
+8.《纳瓦尔宝典》
+9.《富爸爸</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587434&amp;idx=1&amp;sn=3880f2b244958ed8fc7e551389cae392&amp;chksm=81fa14a2a4c8a20b7c13590c2dd8f733dd5fe53623dac2a4f9c9e740c5b7e345b973a47862dc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587433&amp;idx=1&amp;sn=16a66df7c1aa5a47edf1f6769693f7d1&amp;chksm=814bacfb5f9d948c362c74fadc06661b134dd801123a37ffda3a2c63e3d0e0221f7e0f6676b4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3wWJXwbhuKDGRg66fiabehkGiaAZwy0JxZavZLDlfIdvaqXGcQ2iaU3ZL6v9KkxXBVwpia982icDjUOQw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587433&amp;idx=1&amp;sn=16a66df7c1aa5a47edf1f6769693f7d1&amp;chksm=814bacfb5f9d948c362c74fadc06661b134dd801123a37ffda3a2c63e3d0e0221f7e0f6676b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026年千万别做程序员：你的代码正在变成废纸</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-12 08:15:00">发布日期：2026-01-12 08:15:00</time></div><p class="article-description">大家好，我是橙哥！2025年之前，写代码是一种稀缺技能。你懂算法，懂架构，懂系统设计，这些都需要多年积累。所以你值钱。2025年之后，情况变了。Cursor、Claude、GPT... 这些AI工具正</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587433&amp;idx=1&amp;sn=16a66df7c1aa5a47edf1f6769693f7d1&amp;chksm=814bacfb5f9d948c362c74fadc06661b134dd801123a37ffda3a2c63e3d0e0221f7e0f6676b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587424&amp;idx=1&amp;sn=5a5b52da4470a23a74837434b24b275d&amp;chksm=81653e26cbef78371ca91208404469f1a54c80b756658a708512b2025ab62c4946e209bd5bcc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3wWJXwbhuKDGRg66fiabehkexz0JrFzhbQ8FpibsW6GwuDdicyfH8SJGSoQXGuZS8iaqYM7QH7sXb7Hg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587424&amp;idx=1&amp;sn=5a5b52da4470a23a74837434b24b275d&amp;chksm=81653e26cbef78371ca91208404469f1a54c80b756658a708512b2025ab62c4946e209bd5bcc&amp;scene=0&amp;xtrack=1#rd" target="_blank">“死了么”App爆火：三个95后用AI编程，千元成本撬动千万估值</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-11 18:43:47">发布日期：2026-01-11 18:43:47</time></div><p class="article-description">大家好，我是橙哥！最近几天，一款名为“死了么”的App以极其直白甚至略显“晦气”的名字，在短短几天内冲上苹果应用商店付费榜榜首，引发全网热议。这款为独居人群设计的轻量化安全工具，背后是一个仅由三名“9</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587424&amp;idx=1&amp;sn=5a5b52da4470a23a74837434b24b275d&amp;chksm=81653e26cbef78371ca91208404469f1a54c80b756658a708512b2025ab62c4946e209bd5bcc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587416&amp;idx=1&amp;sn=5d0b5868f7a29059ce70eab15159f8c4&amp;chksm=81a102b248fcdb74f184a8c9ab93efa03a03c089070210a700fd2b2c4a386eb9c9a4e92fa886&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS37jxInB5tCEvEtHR39ZkJDvKP0XovgV2hfia73KmPOQB2DmiaBpULhU7XaqXtJNNyRHwJUJEqMzibVA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587416&amp;idx=1&amp;sn=5d0b5868f7a29059ce70eab15159f8c4&amp;chksm=81a102b248fcdb74f184a8c9ab93efa03a03c089070210a700fd2b2c4a386eb9c9a4e92fa886&amp;scene=0&amp;xtrack=1#rd" target="_blank">快逃！“程序员”这个职业即将在3年内消失</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-10 08:30:00">发布日期：2026-01-10 08:30:00</time></div><p class="article-description">2025年，中国互联网行业经历了史上最寒冷的冬天。百度裁员10%+，腾讯连续三年瘦身，阿里员工人数断崖式下跌。而在这场裁员潮背后，一个更可怕的趋势正在加速：Claude Code、Cursor等AI编</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587416&amp;idx=1&amp;sn=5d0b5868f7a29059ce70eab15159f8c4&amp;chksm=81a102b248fcdb74f184a8c9ab93efa03a03c089070210a700fd2b2c4a386eb9c9a4e92fa886&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587401&amp;idx=1&amp;sn=93d60fbc555de6b25f4a6fd063ff1327&amp;chksm=81ad47b5d4fa3cd40ec66799371007e854dbb9fc3327a0750231ecfd778a9175322e5537baba&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3U3mAY0abcQArFG3ibBxuKibiarPgjjcL4yvZDHf4Cd7S1zyU6BSE7N0NDbFrzrNibqQaCUJLQ3rmtgw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587401&amp;idx=1&amp;sn=93d60fbc555de6b25f4a6fd063ff1327&amp;chksm=81ad47b5d4fa3cd40ec66799371007e854dbb9fc3327a0750231ecfd778a9175322e5537baba&amp;scene=0&amp;xtrack=1#rd" target="_blank">8年1万倍！深度揭秘游资大佬的量化打板术</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-09 08:00:00">发布日期：2026-01-09 08:00:00</time></div><p class="article-description">2010年，一个叫&quot;赵老哥&quot;的80后选手，在网络实盘公开比赛中，用8个月时间将资金从200万炒到1000万。更传奇的是，他用了8年时间，从20万做到了20亿，实现了&quot;八年一万倍&quot;的投资神话。他的核心战</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587401&amp;idx=1&amp;sn=93d60fbc555de6b25f4a6fd063ff1327&amp;chksm=81ad47b5d4fa3cd40ec66799371007e854dbb9fc3327a0750231ecfd778a9175322e5537baba&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587387&amp;idx=1&amp;sn=528784119be0f284d4c6c656842011bc&amp;chksm=81f90281e28acb0bc060ec410ffc701a12a3cbbce02e6ebb727dc1d90e8c1e56b5f79499f460&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1W38LvIke0gKsXedvXIiaibZiaHRe5XCn2QNkkaWDuiaqAUoWvyKC5ZNVcuWhw1ice1GI0xnDktznhHOg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587387&amp;idx=1&amp;sn=528784119be0f284d4c6c656842011bc&amp;chksm=81f90281e28acb0bc060ec410ffc701a12a3cbbce02e6ebb727dc1d90e8c1e56b5f79499f460&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025中国量化私募：一场没有硝烟的AI战争</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-08 08:15:00">发布日期：2026-01-08 08:15:00</time></div><p class="article-description">2025年的中国量化私募行业，正在经历一场前所未有的分化。一边是头部机构的狂欢：DeepSeek创始人梁文锋实控公司幻方量化以56.56%的收益率位居百亿量化私募第二名，旗下10只产品全部实现50%以</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587387&amp;idx=1&amp;sn=528784119be0f284d4c6c656842011bc&amp;chksm=81f90281e28acb0bc060ec410ffc701a12a3cbbce02e6ebb727dc1d90e8c1e56b5f79499f460&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587376&amp;idx=1&amp;sn=fbb3e052ebc55a3a129ba25e040aeebe&amp;chksm=81a981f4c95de79e4c163f7474fa98ad165f7dd2ca3d952874fcb1be3b026d6a42983cf3a616&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0gJ4icPUR5xibIUjPEs42HYzA4SqbZLtgWEHpk5cqsbkDwgvrfppAxBztfS1ZuY0YA2RhppapoOoLQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587376&amp;idx=1&amp;sn=fbb3e052ebc55a3a129ba25e040aeebe&amp;chksm=81a981f4c95de79e4c163f7474fa98ad165f7dd2ca3d952874fcb1be3b026d6a42983cf3a616&amp;scene=0&amp;xtrack=1#rd" target="_blank">沪指再刷十年新高！如何用Python量化策略抓住板块轮动？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-07 08:15:00">发布日期：2026-01-07 08:15:00</time></div><p class="article-description">2026年A股开门红，你的账户跑赢指数了吗？1、开门红！指数创新高，你的账户呢？2026年1月5日，A股市场迎来了历史性时刻。沪指12连阳，成功站上4000点大关，收报4023.42点，创下34年来最</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587376&amp;idx=1&amp;sn=fbb3e052ebc55a3a129ba25e040aeebe&amp;chksm=81a981f4c95de79e4c163f7474fa98ad165f7dd2ca3d952874fcb1be3b026d6a42983cf3a616&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587364&amp;idx=1&amp;sn=c2775ab4e688b1c3fdb4a673807a8f1c&amp;chksm=8125836ee60ec43dc7086b1524a169356eec95653087ba48e002c522634602ecc0aebec90f90&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS2QQ1vdk8N2ViaSTzB5DkbhPRuGZicWQ7PQkTlwhcibJXC0J0vHa8v3hQZ7gs375cKhic9jiczu93swgicQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587364&amp;idx=1&amp;sn=c2775ab4e688b1c3fdb4a673807a8f1c&amp;chksm=8125836ee60ec43dc7086b1524a169356eec95653087ba48e002c522634602ecc0aebec90f90&amp;scene=0&amp;xtrack=1#rd" target="_blank">傻瓜也能编程了？用Claude Code一分钟搞定程序员工作</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-05 18:43:23">发布日期：2026-01-05 18:43:23</time></div><p class="article-description">🚀 一篇文章，带你从安装到上手， 让你的终端直接变成“AI 编程助手”。 低成本、超稳定、支持中文开发环境！这才是 AI 编程的正确打开方式如果你是一名开发者，一定经历过这些时刻：•想写个脚本，但懒得</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587364&amp;idx=1&amp;sn=c2775ab4e688b1c3fdb4a673807a8f1c&amp;chksm=8125836ee60ec43dc7086b1524a169356eec95653087ba48e002c522634602ecc0aebec90f90&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587332&amp;idx=1&amp;sn=c1852b7767557c1e5d7af81f39d853b1&amp;chksm=811296cf888d8c3b76f5216aa4085551e1c07d05e5291cd9b85f1a96b30d67077c8c2c66f3e2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1fGpNe1hqxHS6EA9Wo3mbTWVOYu5xGelQAN1wlagOoNQku5eGZHiccibrEgTEyg1VLf1k1l8SNkPqQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587332&amp;idx=1&amp;sn=c1852b7767557c1e5d7af81f39d853b1&amp;chksm=811296cf888d8c3b76f5216aa4085551e1c07d05e5291cd9b85f1a96b30d67077c8c2c66f3e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">《纳瓦尔宝典》：普通人跨越阶层的路线图</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-04 21:30:53">发布日期：2026-01-04 21:30:53</time></div><p class="article-description">大家好，我是橙哥。在一个人人焦虑、信息过载的时代， 有人靠加班、内卷、焦虑地向上挤； 也有人用更底层的逻辑，安静地“脱轨”，却越走越轻松。他叫纳瓦尔·拉维坎特（Naval Ravikant）—— 硅谷</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587332&amp;idx=1&amp;sn=c1852b7767557c1e5d7af81f39d853b1&amp;chksm=811296cf888d8c3b76f5216aa4085551e1c07d05e5291cd9b85f1a96b30d67077c8c2c66f3e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587326&amp;idx=1&amp;sn=06f7a46a37cd013077784173e8b56387&amp;chksm=8156e2a80307fab6bb943039a6ed29bca17ef5e1a213c2101bacb4369ed505d9c56e32976a2f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3SvQXoUws0ZagGYaTIKl6tYLyJSuJT5O2ibibHlTKCOKEic4EUFDgiaSZT9ic1ngibyMCYNwAiapXSwxEqQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587326&amp;idx=1&amp;sn=06f7a46a37cd013077784173e8b56387&amp;chksm=8156e2a80307fab6bb943039a6ed29bca17ef5e1a213c2101bacb4369ed505d9c56e32976a2f&amp;scene=0&amp;xtrack=1#rd" target="_blank">新主线确定，调仓上车</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-12-03 07:40:00">发布日期：2025-12-03 07:40:00</time></div><p class="article-description">免责声明：本文为第三方商业广告推广，所述内容不代表本公众号观点。文中所涉股票交流群及相关服务由合作方独立提供，本公众号仅作为信息发布渠道，不作任何担保。本公众号及运营方不对任何因使用该服务而产生的直接</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587326&amp;idx=1&amp;sn=06f7a46a37cd013077784173e8b56387&amp;chksm=8156e2a80307fab6bb943039a6ed29bca17ef5e1a213c2101bacb4369ed505d9c56e32976a2f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587305&amp;idx=1&amp;sn=7bef456b792351259ccc596ee88e49ae&amp;chksm=81b8ae33134bfb3c1aaa19281f6f68cdeeac71a1be21211546793ef35672d9f8afa29e032cdf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1PgL3DqI2LJBQJXqp7MoSshkBN9XciaZoxYg0UicU8F3tEgKRoTvyebp3XX632TDyKnMZwlxmtia0GQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587305&amp;idx=1&amp;sn=7bef456b792351259ccc596ee88e49ae&amp;chksm=81b8ae33134bfb3c1aaa19281f6f68cdeeac71a1be21211546793ef35672d9f8afa29e032cdf&amp;scene=0&amp;xtrack=1#rd" target="_blank">从10万赚到623万！闷声发财的人都在用这个策略</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-12-02 08:15:00">发布日期：2025-12-02 08:15:00</time></div><p class="article-description">在股票市场中，投资者经常面临大量信息的冲击与瞬息万变的行情波动。如何在市场复杂的环境中找到具有良好增长潜力的股票，并控制风险，保持投资组合的稳健表现，一直是投资者和量化研究者们关注的核心问题。今天，我</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587305&amp;idx=1&amp;sn=7bef456b792351259ccc596ee88e49ae&amp;chksm=81b8ae33134bfb3c1aaa19281f6f68cdeeac71a1be21211546793ef35672d9f8afa29e032cdf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587290&amp;idx=1&amp;sn=93604b405f54e800143aaf00fa0904d4&amp;chksm=81fe6b75ec86fd5c3712f4fdf6236b26cde3aa18002694faa2a41b713d584d5af3adcb917492&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0kLtBVak2soFw5rpBOWcicPysTWu4tJQnIhByuwTrQZTgGr9jhthp0vxfkUjibP3JguFxD8icYVVaNw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587290&amp;idx=1&amp;sn=93604b405f54e800143aaf00fa0904d4&amp;chksm=81fe6b75ec86fd5c3712f4fdf6236b26cde3aa18002694faa2a41b713d584d5af3adcb917492&amp;scene=0&amp;xtrack=1#rd" target="_blank">降维打击！用量化选股收割554.72%超额收益</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-30 08:15:00">发布日期：2025-11-30 08:15:00</time></div><p class="article-description">大家好，我是橙哥！在复杂且充满不确定性的金融市场中，量化投资已经成为许多专业投资者和机构的必备武器。今天，我们将介绍一套经过精心设计的量化投资策略，这个策略通过精细的因子筛选、动态调仓与严格的风险管理</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587290&amp;idx=1&amp;sn=93604b405f54e800143aaf00fa0904d4&amp;chksm=81fe6b75ec86fd5c3712f4fdf6236b26cde3aa18002694faa2a41b713d584d5af3adcb917492&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587277&amp;idx=1&amp;sn=ac379f82f3518ada608eacc76c1eb131&amp;chksm=810a5d26829ccbb87687d8474cf07db9c454b452b7adfcd37fffc8fd82ac03e29146ea9adf81&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0jCqMluqibyOBicMGhIqpOS31GGRXR6csvFbiaVyUsIvGRliasqyeAdiaesUPgA8RPURHdxCBSriausCZA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587277&amp;idx=1&amp;sn=ac379f82f3518ada608eacc76c1eb131&amp;chksm=810a5d26829ccbb87687d8474cf07db9c454b452b7adfcd37fffc8fd82ac03e29146ea9adf81&amp;scene=0&amp;xtrack=1#rd" target="_blank">年化63%的美股轮动策略，每周只需做这件事</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-29 08:15:00">发布日期：2025-11-29 08:15:00</time></div><p class="article-description">大家好，我是橙哥！如果你经常关注量化投资，一定听过这样一句话：“趋势才是朋友。”但在实际操作中，很多人都不知道如何系统地去“抱紧趋势”，既能吃到大行情，又能在市场冷的时候安静观望。今天，我们用 Pyt</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587277&amp;idx=1&amp;sn=ac379f82f3518ada608eacc76c1eb131&amp;chksm=810a5d26829ccbb87687d8474cf07db9c454b452b7adfcd37fffc8fd82ac03e29146ea9adf81&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587253&amp;idx=1&amp;sn=b9aef9f75f4c38f735bad298b3a0bd65&amp;chksm=81e403a75234a898efccb57f95d77b8c3598e503e5ea14b81b1ea48eebda1b34534d34d23a53&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0kXpqpFLIibbbvyP5AdeNCruoPzmOK62n0LQ3XnW7sEYarcBj2rTaHg0NCyKkwhcHwpaicBQ6d7zhA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587253&amp;idx=1&amp;sn=b9aef9f75f4c38f735bad298b3a0bd65&amp;chksm=81e403a75234a898efccb57f95d77b8c3598e503e5ea14b81b1ea48eebda1b34534d34d23a53&amp;scene=0&amp;xtrack=1#rd" target="_blank">抓住每个上涨波段！艾略特波浪20倍暴富秘籍！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-28 08:15:00">发布日期：2025-11-28 08:15:00</time></div><p class="article-description">在金融市场中，许多交易者和分析师使用不同的技术分析工具来捕捉市场的走势，以此来做出买入或卖出的决策。其中，艾略特波浪理论（Elliott Wave Theory）是非常著名的一种市场分析方法。它认为市</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587253&amp;idx=1&amp;sn=b9aef9f75f4c38f735bad298b3a0bd65&amp;chksm=81e403a75234a898efccb57f95d77b8c3598e503e5ea14b81b1ea48eebda1b34534d34d23a53&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587236&amp;idx=1&amp;sn=3bf7c6732c9a81e3f87bdc886148c27f&amp;chksm=818103938e76cda4d26e9be10fb6a0e0f1991147eb4eff51778b96a77f36c712fdb5cadf5577&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS30coILTkWLYeNrdtMKIMCezFicb2ppmibbV9icyWFtyt9JFc5C5mgQBfOnOj9uoSMNlkXQdYbwHdMVw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587236&amp;idx=1&amp;sn=3bf7c6732c9a81e3f87bdc886148c27f&amp;chksm=818103938e76cda4d26e9be10fb6a0e0f1991147eb4eff51778b96a77f36c712fdb5cadf5577&amp;scene=0&amp;xtrack=1#rd" target="_blank">经典重生！金叉死叉策略居然暴赚7500%？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-27 08:15:00">发布日期：2025-11-27 08:15:00</time></div><p class="article-description">大家好，我是橙哥！在纷繁复杂的金融市场中，如何稳定获利是每个投资者关注的核心问题。通过量化交易策略，我们不仅能摆脱情绪化的决策，还能通过算法和数据的力量，找到最符合市场趋势的交易信号。今天，我要带你深</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587236&amp;idx=1&amp;sn=3bf7c6732c9a81e3f87bdc886148c27f&amp;chksm=818103938e76cda4d26e9be10fb6a0e0f1991147eb4eff51778b96a77f36c712fdb5cadf5577&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587219&amp;idx=1&amp;sn=438cea12bcbced299e72f29503fb36ae&amp;chksm=8112867632ac4abff5a986c860020fec367d638380673ca089ee3a912d2930019c96c4a60f09&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3oMbAoVTmYhK6ZYa5JQt9MtXMUXcJ3HPZAFIZpaSN3y0CMQ2icX6CwT0dTSibupM9Esz7ibPZ83Qpjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587219&amp;idx=1&amp;sn=438cea12bcbced299e72f29503fb36ae&amp;chksm=8112867632ac4abff5a986c860020fec367d638380673ca089ee3a912d2930019c96c4a60f09&amp;scene=0&amp;xtrack=1#rd" target="_blank">从10万干到88万！聪明钱都在用“随机森林”多空双杀</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-25 08:15:00">发布日期：2025-11-25 08:15:00</time></div><p class="article-description">大家好，我是橙哥！利用机器学习模型结合技术指标的策略，已经成为近年来广泛应用的研究方向。本篇文章将以一个基于技术指标和随机森林的量化交易策略为例，展示如何利用机器学习提升交易策略的性能，同时通过回测数</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587219&amp;idx=1&amp;sn=438cea12bcbced299e72f29503fb36ae&amp;chksm=8112867632ac4abff5a986c860020fec367d638380673ca089ee3a912d2930019c96c4a60f09&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587206&amp;idx=1&amp;sn=653e936999a5bb7687f3875496a7b54c&amp;chksm=810e040c50fceafe9f398d2fda9908bd671b5081237177b926b6058f2d7ff5564b458ce796a7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1micG7D0TbiaQF1kvBKmGe9PleUgxIspibUbESiaXfXxveJjZE94JzTK2bfHULlcHbexQTib2Afm0jcTA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587206&amp;idx=1&amp;sn=653e936999a5bb7687f3875496a7b54c&amp;chksm=810e040c50fceafe9f398d2fda9908bd671b5081237177b926b6058f2d7ff5564b458ce796a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">五年躺赚2148%的量化印钞机，TSI+EMA真香！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-24 08:15:00">发布日期：2025-11-24 08:15:00</time></div><p class="article-description">大家好，我是橙哥！今天我们将深入解析一个经典却极具潜力的量化策略：基于趋势强度指标（TSI） 与 指数移动平均（EMA） 的搭配，再借助网格搜索优化参数，大幅提升策略表现。回测结果显示，该策略在五年间</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587206&amp;idx=1&amp;sn=653e936999a5bb7687f3875496a7b54c&amp;chksm=810e040c50fceafe9f398d2fda9908bd671b5081237177b926b6058f2d7ff5564b458ce796a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587195&amp;idx=1&amp;sn=9994b817891493498f2535316502291f&amp;chksm=81f38985c7d0c8921f055023036c777454e40c1138dd8d723cc24613cda20eec21778c53e31f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0gRNlZDBTSWIPVF8EDmpibAOicUJibeXjcespzJu4vHSzxZNvQIok6O9icrOCAMr0PawXibO4XWsicHDLA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587195&amp;idx=1&amp;sn=9994b817891493498f2535316502291f&amp;chksm=81f38985c7d0c8921f055023036c777454e40c1138dd8d723cc24613cda20eec21778c53e31f&amp;scene=0&amp;xtrack=1#rd" target="_blank">五年狂赚70倍！这个动量策略的暴富密码是什么？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-21 08:15:00">发布日期：2025-11-21 08:15:00</time></div><p class="article-description">大家好，我是橙哥！在金融市场中，动量策略（Momentum Strategy）一直是量化交易的重要组成部分。其核心思想基于历史价格表现，即价格趋势具有延续性，市场的强势表现可能会持续，而弱势表现也可能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587195&amp;idx=1&amp;sn=9994b817891493498f2535316502291f&amp;chksm=81f38985c7d0c8921f055023036c777454e40c1138dd8d723cc24613cda20eec21778c53e31f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587180&amp;idx=1&amp;sn=a5dcecfd19e53f29a2d449b9dee26ce4&amp;chksm=816bf3bcad82178c9f9a0fb910e0538910d4a7a10182203ef7184c00dde378ac21d56a1b18d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS2pllc4J1LoaVSZibrG2XV0ap6cenicH5a6CpsHzO1BUJVKiaDBVZNf9W5D1wuDxjmr8y0VGMQHCMmKQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587180&amp;idx=1&amp;sn=a5dcecfd19e53f29a2d449b9dee26ce4&amp;chksm=816bf3bcad82178c9f9a0fb910e0538910d4a7a10182203ef7184c00dde378ac21d56a1b18d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">越震荡越暴利：用配对交易躺赚百倍，217%年化的秘密</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-17 08:15:00">发布日期：2025-11-17 08:15:00</time></div><p class="article-description">大家好，我是橙哥！只需两个ETF，一套简单算法，竟能创造百倍收益！它不惧牛熊，无视涨跌，仅靠两只ETF的价差波动就能持续获利。今天我将揭开这套“市场中性”策略的神秘面纱。在量化交易的世界中，有一种策略</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587180&amp;idx=1&amp;sn=a5dcecfd19e53f29a2d449b9dee26ce4&amp;chksm=816bf3bcad82178c9f9a0fb910e0538910d4a7a10182203ef7184c00dde378ac21d56a1b18d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587161&amp;idx=1&amp;sn=996797f971e9772088725d67cf50f31e&amp;chksm=81d89e8b6b692b8583547f63428ac135d58b38c291c4f40b55264d374864e66ecf56e508c788&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS2rUYfJzcsFmSKCFtiaficGqCrusyc8nibGBPZgNvIfQ2zRYgjzqZNibF84cLbfaPic3WF59JuEEVqakwg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587161&amp;idx=1&amp;sn=996797f971e9772088725d67cf50f31e&amp;chksm=81d89e8b6b692b8583547f63428ac135d58b38c291c4f40b55264d374864e66ecf56e508c788&amp;scene=0&amp;xtrack=1#rd" target="_blank">散户逆袭！高成长股+炸板检测，收益稳如老狗</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-14 08:15:00">发布日期：2025-11-14 08:15:00</time></div><p class="article-description">在众多的量化策略中，“因子选股”策略因其透明度高、操作清晰而受到广泛关注。今天，我们将介绍一种基于财报因子的量化投资策略——A股低PEG高成长精选轮动策略。这款策略不仅在选股上注重基本面，还结合了低频</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587161&amp;idx=1&amp;sn=996797f971e9772088725d67cf50f31e&amp;chksm=81d89e8b6b692b8583547f63428ac135d58b38c291c4f40b55264d374864e66ecf56e508c788&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587143&amp;idx=1&amp;sn=21a1f563cb51d26549dbc200a6746abd&amp;chksm=8173415ac29a18b37cba53bc50eaa51cf962744f5c22caf720a9ced616caa5e8771d5969dfbd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3yH5SbamM8BwhPyfDVLCTJO1XxKz5ibdVkPKEy9d3Dyu1JmNCBNicFMLOCMN3yRPKBic2ab4LppiaqNQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587143&amp;idx=1&amp;sn=21a1f563cb51d26549dbc200a6746abd&amp;chksm=8173415ac29a18b37cba53bc50eaa51cf962744f5c22caf720a9ced616caa5e8771d5969dfbd&amp;scene=0&amp;xtrack=1#rd" target="_blank">用快速傅里叶变换算法在震荡市狂薅100%收益</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-11 08:15:00">发布日期：2025-11-11 08:15:00</time></div><p class="article-description">大家好，我是橙哥！在金融市场中，交易者面临着海量的实时数据和无法预知的市场情绪，尤其是在牛市与熊市转换的剧烈波动中，传统分析工具往往会失效，容易被市场情绪和短期噪音所干扰。而这时，快速傅里叶变换（FF</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587143&amp;idx=1&amp;sn=21a1f563cb51d26549dbc200a6746abd&amp;chksm=8173415ac29a18b37cba53bc50eaa51cf962744f5c22caf720a9ced616caa5e8771d5969dfbd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587131&amp;idx=1&amp;sn=ffb4bcf200c1d09e89073923e5a25559&amp;chksm=81c5db5a5d40b19eaca1224dafe6580edee58ae31deed12e72105a994b00c93df967c3e1c987&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS3yH5SbamM8BwhPyfDVLCTJdd1GzC3hMibbMdL2wXOt1nHajSvLIVS6OpJYSeV92mKteHqAskBfLaA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587131&amp;idx=1&amp;sn=ffb4bcf200c1d09e89073923e5a25559&amp;chksm=81c5db5a5d40b19eaca1224dafe6580edee58ae31deed12e72105a994b00c93df967c3e1c987&amp;scene=0&amp;xtrack=1#rd" target="_blank">跑赢大盘535%！“高股息+低PEG”的暴力结合策略！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-10 08:15:00">发布日期：2025-11-10 08:15:00</time></div><p class="article-description">大家好，我是橙哥！今天我会深入剖析一套非常喜欢的量化选股策略。它的核心理念简单却高效——以“高股息率 + 低 PEG”为核心选股逻辑，结合严谨的过滤机制和稳定的月度调仓节奏，在回测中跑出了 470.8</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587131&amp;idx=1&amp;sn=ffb4bcf200c1d09e89073923e5a25559&amp;chksm=81c5db5a5d40b19eaca1224dafe6580edee58ae31deed12e72105a994b00c93df967c3e1c987&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587117&amp;idx=1&amp;sn=443e63e57586b00a1a66d5465426d56b&amp;chksm=8198e6ba44880ad8deb4b72a3eaee3228234367baf5657e6da378536b14dbbca0e6070d04259&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1DpXI38wVGz5TuV541YpCpOR7yfcZwsc6ia1nW3xtbnasmTTaFe7qibTVq2w6huUof2X59E9KX6huw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587117&amp;idx=1&amp;sn=443e63e57586b00a1a66d5465426d56b&amp;chksm=8198e6ba44880ad8deb4b72a3eaee3228234367baf5657e6da378536b14dbbca0e6070d04259&amp;scene=0&amp;xtrack=1#rd" target="_blank">五年回报9284%！用“云图”量化策略从5万干到500万</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-09 08:15:00">发布日期：2025-11-09 08:15:00</time></div><p class="article-description">在量化交易的世界里，技术指标和回测分析是帮助交易者制定策略的核心工具。今天，我们将深入探讨如何利用Ichimoku云图技术分析结合Vectorbt回测平台，制定并验证一个基于加密货币交易对的量化交易策</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587117&amp;idx=1&amp;sn=443e63e57586b00a1a66d5465426d56b&amp;chksm=8198e6ba44880ad8deb4b72a3eaee3228234367baf5657e6da378536b14dbbca0e6070d04259&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587099&amp;idx=1&amp;sn=f7d7a03b0c6f71137f6e9913f89dc94f&amp;chksm=81b369139446cc7965245543775c28b9b559ace45598cb5502d6b9d6507f88499065e1d2f313&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1DpXI38wVGz5TuV541YpCpkOhiaK6GicAnLtUnibZBoMdsn3fapNxHnpDEvMrx6qPJAvXKuziaKVV9wg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587099&amp;idx=1&amp;sn=f7d7a03b0c6f71137f6e9913f89dc94f&amp;chksm=81b369139446cc7965245543775c28b9b559ace45598cb5502d6b9d6507f88499065e1d2f313&amp;scene=0&amp;xtrack=1#rd" target="_blank">年化收益71%！拆解“多因子+动态调仓”这台印钞机</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-08 18:30:00">发布日期：2025-11-08 18:30:00</time></div><p class="article-description">大家好，我是橙哥！在量化交易的世界里，数据和算法的力量使得投资变得更加科学和精准。今天，我分享的这套策略，通过多因子选股和动态调仓的结合，在2023年1月至2025年11月的回测中取得了不错的成果——</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587099&amp;idx=1&amp;sn=f7d7a03b0c6f71137f6e9913f89dc94f&amp;chksm=81b369139446cc7965245543775c28b9b559ace45598cb5502d6b9d6507f88499065e1d2f313&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587080&amp;idx=1&amp;sn=ca486e1f1219e72d52938b9f2e3b3d55&amp;chksm=8131ae906248976f255773b27e632fad643b145b61b26495b1769def55bf1b803432e028d5b4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1t6IaQjSMSZqoCufxZHCkibrzzO4gHwyVJ1f1SlYWxAkicm1DGDPozQvjIpFrtosibOrsJg6aw2TrGg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587080&amp;idx=1&amp;sn=ca486e1f1219e72d52938b9f2e3b3d55&amp;chksm=8131ae906248976f255773b27e632fad643b145b61b26495b1769def55bf1b803432e028d5b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">五年收益5600%！用夏普比率策略撬动56倍的财富</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-06 08:15:00">发布日期：2025-11-06 08:15:00</time></div><p class="article-description">大家好，我是橙哥！今天我要介绍的是夏普比动量策略，在2020年至2025年以太坊（ETH-USD）回测中，该策略的总收益率高达 5610.98%，而最大回撤为 48.21%。相比之下，传统的买入并持有</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587080&amp;idx=1&amp;sn=ca486e1f1219e72d52938b9f2e3b3d55&amp;chksm=8131ae906248976f255773b27e632fad643b145b61b26495b1769def55bf1b803432e028d5b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587069&amp;idx=1&amp;sn=5835a31f9e34f4745888e0981aef9b26&amp;chksm=81dfb2332e35c6aa96f4c66893384c20c8e4633d781a608953b69f0c5a4e8315a9336a5ab5a2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS1t6IaQjSMSZqoCufxZHCkibWkicEw9lHDONCzyVkuyic8vOXxf9MGiaE0pb8iaeJuwicgu0p2tFeBUdmicg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587069&amp;idx=1&amp;sn=5835a31f9e34f4745888e0981aef9b26&amp;chksm=81dfb2332e35c6aa96f4c66893384c20c8e4633d781a608953b69f0c5a4e8315a9336a5ab5a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">年化2000%！立即保存！这可能是最简单的暴富逻辑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2025-11-04 08:15:00">发布日期：2025-11-04 08:15:00</time></div><p class="article-description">大家好，我是橙哥！动量策略作为一种常见的量化策略，利用资产的历史表现来预测未来趋势，已被广泛应用。然而，动量策略也有它的风险，尤其是在市场出现突然回撤时。为了应对这一问题，我们可以引入止损机制，以有效</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587069&amp;idx=1&amp;sn=5835a31f9e34f4745888e0981aef9b26&amp;chksm=81dfb2332e35c6aa96f4c66893384c20c8e4633d781a608953b69f0c5a4e8315a9336a5ab5a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a><a href="index_2.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

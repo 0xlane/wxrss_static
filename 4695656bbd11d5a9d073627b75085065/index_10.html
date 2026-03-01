@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Z2O安全攻防</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518797&amp;idx=2&amp;sn=7e316fe426ea722d5e2e968e86ca33c4&amp;chksm=cfc6955e613cc053e924d1103e7617421d881d32753539ffcf19ec5bde5e277264aa252400e1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518797&amp;idx=2&amp;sn=7e316fe426ea722d5e2e968e86ca33c4&amp;chksm=cfc6955e613cc053e924d1103e7617421d881d32753539ffcf19ec5bde5e277264aa252400e1&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-16 20:42:39">发布日期：2025-03-16 20:42:39</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518797&amp;idx=2&amp;sn=7e316fe426ea722d5e2e968e86ca33c4&amp;chksm=cfc6955e613cc053e924d1103e7617421d881d32753539ffcf19ec5bde5e277264aa252400e1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=1&amp;sn=69d24c7376c31310a9fde90ea4f4287d&amp;chksm=cf787f69d9a43c2d7d5ecb783f0b0b12e88d07ab90456751b4335c5a8a16a3edc73d8401157d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuYULLia3W3FHMfT4vlE0CZiaRQxstWdM81IW1bHfxcAft2X1U8MIB4UVwXvoF7J9yHPSd4U7MJLciclQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=1&amp;sn=69d24c7376c31310a9fde90ea4f4287d&amp;chksm=cf787f69d9a43c2d7d5ecb783f0b0b12e88d07ab90456751b4335c5a8a16a3edc73d8401157d&amp;scene=0&amp;xtrack=1#rd" target="_blank">实战|内网中vcenter集群攻击全程实录</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-14 00:01:00">发布日期：2025-03-14 00:01:00</time></div><p class="article-description">前言最近在做项目的时候，测到了一个部署在内网的存在漏洞的vCenter集群，这不巧了，正好最近在研究这vCenter、域这些集控类设备的打法，于是做了详细记录，有很多碰到的问题和解决办法，大佬勿喷哈</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=1&amp;sn=69d24c7376c31310a9fde90ea4f4287d&amp;chksm=cf787f69d9a43c2d7d5ecb783f0b0b12e88d07ab90456751b4335c5a8a16a3edc73d8401157d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=2&amp;sn=4b3337128e28a8532298a9158d5105cc&amp;chksm=cfe6ef9b9da6f710ec46d38a8ea5f44383a2df3590306d33744a90feb70096e9f64a4e7d5558&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=2&amp;sn=4b3337128e28a8532298a9158d5105cc&amp;chksm=cfe6ef9b9da6f710ec46d38a8ea5f44383a2df3590306d33744a90feb70096e9f64a4e7d5558&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-14 00:01:00">发布日期：2025-03-14 00:01:00</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518789&amp;idx=2&amp;sn=4b3337128e28a8532298a9158d5105cc&amp;chksm=cfe6ef9b9da6f710ec46d38a8ea5f44383a2df3590306d33744a90feb70096e9f64a4e7d5558&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518762&amp;idx=1&amp;sn=0ba0a31ae4a06c204d8f9870f329bbcc&amp;chksm=cf9119acccc666ea1969c0ed3d6a3813fc493085883add699a40d611389132652fb0e4b24a3e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518762&amp;idx=1&amp;sn=0ba0a31ae4a06c204d8f9870f329bbcc&amp;chksm=cf9119acccc666ea1969c0ed3d6a3813fc493085883add699a40d611389132652fb0e4b24a3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">我的评价是全是干货</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-09 21:51:22">发布日期：2025-03-09 21:51:22</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518762&amp;idx=1&amp;sn=0ba0a31ae4a06c204d8f9870f329bbcc&amp;chksm=cf9119acccc666ea1969c0ed3d6a3813fc493085883add699a40d611389132652fb0e4b24a3e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=1&amp;sn=35bad2a4e001558fb71fcbbba2a43c58&amp;chksm=cfa89738a1fa2bc6545d8c93936fd72ab7c491269c515f844f901c9eb101c77ab86f79bda0d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuaqjZJ8f6HurefxjB0RzVom0FrpuibqBnuMAAic8p7icKKJlbic8SYM3RDy7UeBpPLia5I6OPbQcT4Iwfw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=1&amp;sn=35bad2a4e001558fb71fcbbba2a43c58&amp;chksm=cfa89738a1fa2bc6545d8c93936fd72ab7c491269c515f844f901c9eb101c77ab86f79bda0d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">昨天抖音掉洞，今天商城捡洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-06 21:43:57">发布日期：2025-03-06 21:43:57</time></div><p class="article-description">No.0前言昨天刷抖音今天逛商城，玩的就是一个休闲娱乐，主打的就是个有手就行。No.1任意用户登录点击某小程序后，点击同意的瞬间开启抓包在{}中随意填上code值拦截返回包并来到修改返回包步骤mobi</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=1&amp;sn=35bad2a4e001558fb71fcbbba2a43c58&amp;chksm=cfa89738a1fa2bc6545d8c93936fd72ab7c491269c515f844f901c9eb101c77ab86f79bda0d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=2&amp;sn=8c949881da6d33fd2ba8410601699520&amp;chksm=cf50dab0caf2eede4f001092db2971cd5d35e94725303f78b9486f7f9ec04c189f349aaf4135&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=2&amp;sn=8c949881da6d33fd2ba8410601699520&amp;chksm=cf50dab0caf2eede4f001092db2971cd5d35e94725303f78b9486f7f9ec04c189f349aaf4135&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-06 21:43:57">发布日期：2025-03-06 21:43:57</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518660&amp;idx=2&amp;sn=8c949881da6d33fd2ba8410601699520&amp;chksm=cf50dab0caf2eede4f001092db2971cd5d35e94725303f78b9486f7f9ec04c189f349aaf4135&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=1&amp;sn=5d54e3f37a361330ea332ae49362cbd6&amp;chksm=cf2ed8bb8165dd6f28c59405645ddc64d0babd395734f7d881549b92e1296f5e9194add24806&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hZj512NN8jmibmWnFE3jBF2vTib4iaSiaNxVqZNW3cB744I5Ttr08jFIYyFOkc9FkYhACgibhq4Khuz2wewFia7nn6gA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=1&amp;sn=5d54e3f37a361330ea332ae49362cbd6&amp;chksm=cf2ed8bb8165dd6f28c59405645ddc64d0babd395734f7d881549b92e1296f5e9194add24806&amp;scene=0&amp;xtrack=1#rd" target="_blank">打造自己专属的漏洞赏金搜索引擎</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-04 21:30:25">发布日期：2025-03-04 21:30:25</time></div><p class="article-description">你是否想过使用 Google 和 Bing 来收获漏洞赏金？！你是否知道你也可以对这些大名鼎鼎的搜索引擎进行自定义？让它们只向你显示漏洞赏金的目标？那么今天就让我们来看看如何打造一款自己专属的漏洞赏金</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=1&amp;sn=5d54e3f37a361330ea332ae49362cbd6&amp;chksm=cf2ed8bb8165dd6f28c59405645ddc64d0babd395734f7d881549b92e1296f5e9194add24806&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=2&amp;sn=754d0fa34cd4de2c440697f838ed5403&amp;chksm=cf9c2a89176e205c1ebe96a7958573d5e3bdd5ff97bb995896ee489bd698f6a98b4b2cb8c04d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=2&amp;sn=754d0fa34cd4de2c440697f838ed5403&amp;chksm=cf9c2a89176e205c1ebe96a7958573d5e3bdd5ff97bb995896ee489bd698f6a98b4b2cb8c04d&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-04 21:30:25">发布日期：2025-03-04 21:30:25</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518656&amp;idx=2&amp;sn=754d0fa34cd4de2c440697f838ed5403&amp;chksm=cf9c2a89176e205c1ebe96a7958573d5e3bdd5ff97bb995896ee489bd698f6a98b4b2cb8c04d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518651&amp;idx=1&amp;sn=00c86e93bd2d17e4ee016da92c14d7a4&amp;chksm=cf2a0b01f727757f030e7cc5c14fe5559952bde5f55524814abebf53a08283ef6a96aa73777f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuZBMeGiafvkoy4P9g64ZLjahRlWpdyKNevz4tkd7a1hriauA46DPfvne3ZsiaHD4KCI00QJuEVvHlrSQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518651&amp;idx=1&amp;sn=00c86e93bd2d17e4ee016da92c14d7a4&amp;chksm=cf2a0b01f727757f030e7cc5c14fe5559952bde5f55524814abebf53a08283ef6a96aa73777f&amp;scene=0&amp;xtrack=1#rd" target="_blank">安全行业新风口，数据安全合规好入门吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-03-03 08:01:00">发布日期：2025-03-03 08:01:00</time></div><p class="article-description">🌟在数字化浪潮汹涌澎湃的今天，数据如同一座金矿，蕴含着无限的价值与机遇。然而，随之而来的数据合规问题，却如同隐藏在暗处的礁石，稍有不慎就可能让企业与个人陷入困境。数据合规领域正面临着巨大的人才缺口，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518651&amp;idx=1&amp;sn=00c86e93bd2d17e4ee016da92c14d7a4&amp;chksm=cf2a0b01f727757f030e7cc5c14fe5559952bde5f55524814abebf53a08283ef6a96aa73777f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=1&amp;sn=43680b9ff371197820e96908ec1bfd52&amp;chksm=cfb4d0d76ddcf4584c720aea6969d1fc0ff74539496b60391be885e0e2845c8bf175ef45245f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/CgXd9Hbb64mUOP3mawyqmIsZDSyB8rLBato3TzQ3S78eJwB4mwWiaW7KibJFOpLboS7j7ia113EMkDCQKP2KCu1EQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=1&amp;sn=43680b9ff371197820e96908ec1bfd52&amp;chksm=cfb4d0d76ddcf4584c720aea6969d1fc0ff74539496b60391be885e0e2845c8bf175ef45245f&amp;scene=0&amp;xtrack=1#rd" target="_blank">实战挖洞之任意用户名密码修改</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-26 20:49:16">发布日期：2025-02-26 20:49:16</time></div><p class="article-description">一 前言    漏洞逻辑比较简单，技术含量不高，主要分享下思路，如何从修改任意用户密码到想修改谁的密码就修改谁的二 发现过程    此漏洞是我玩的一款手游：忍者必须死3，漏洞已经修复，因为我手机号换了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=1&amp;sn=43680b9ff371197820e96908ec1bfd52&amp;chksm=cfb4d0d76ddcf4584c720aea6969d1fc0ff74539496b60391be885e0e2845c8bf175ef45245f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=2&amp;sn=441a0226852ecc8d13720b52a0340068&amp;chksm=cfe3c1c2e189505e8c5a21e007e0fc0779244d67112110f264da8785a712aede3ecb03687208&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=2&amp;sn=441a0226852ecc8d13720b52a0340068&amp;chksm=cfe3c1c2e189505e8c5a21e007e0fc0779244d67112110f264da8785a712aede3ecb03687208&amp;scene=0&amp;xtrack=1#rd" target="_blank">我的评价是全是干货</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-26 20:49:16">发布日期：2025-02-26 20:49:16</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518641&amp;idx=2&amp;sn=441a0226852ecc8d13720b52a0340068&amp;chksm=cfe3c1c2e189505e8c5a21e007e0fc0779244d67112110f264da8785a712aede3ecb03687208&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=1&amp;sn=6045c1dffaa09f03dfeac95c5cf02183&amp;chksm=cfe7255274668e698899d8bfd0f9c31d61514b476213a7e01dc3fee3d959b084904662528204&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FUKJN1fH76nKLPlJmaH82BgBNrnDM3UG6YVJqqR9c5KX2WFcvuHBCn90rLdEX5t05rlCKh2U5g7diciaObdzSn7g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=1&amp;sn=6045c1dffaa09f03dfeac95c5cf02183&amp;chksm=cfe7255274668e698899d8bfd0f9c31d61514b476213a7e01dc3fee3d959b084904662528204&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC中的重置密码漏洞及案例</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-25 21:11:45">发布日期：2025-02-25 21:11:45</time></div><p class="article-description">免责声明：文章所涉及内容，仅供安全研究与教学之用，由于传播、利用本文所提供的信息而造成的任何直接或者间接的后果及损失，均由使用者本人负责，作者及本公众号不为此承担任何责任。02文章正文1.密码重置链接</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=1&amp;sn=6045c1dffaa09f03dfeac95c5cf02183&amp;chksm=cfe7255274668e698899d8bfd0f9c31d61514b476213a7e01dc3fee3d959b084904662528204&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=2&amp;sn=10e4ca031b1beae9b738f4067f3560f9&amp;chksm=cf3b7a9124c986eefae90f5b52bc9f825e3c185f8f5b10d6095325282ecb97a868b519d40133&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=2&amp;sn=10e4ca031b1beae9b738f4067f3560f9&amp;chksm=cf3b7a9124c986eefae90f5b52bc9f825e3c185f8f5b10d6095325282ecb97a868b519d40133&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-25 21:11:45">发布日期：2025-02-25 21:11:45</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518639&amp;idx=2&amp;sn=10e4ca031b1beae9b738f4067f3560f9&amp;chksm=cf3b7a9124c986eefae90f5b52bc9f825e3c185f8f5b10d6095325282ecb97a868b519d40133&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518636&amp;idx=1&amp;sn=e47f358037ad2b62072d428b77fd3148&amp;chksm=cfcdd88538922b48c7e04070cc5e5dae2312e947b513af1c859fe67dc6d8d86480990a49053f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518636&amp;idx=1&amp;sn=e47f358037ad2b62072d428b77fd3148&amp;chksm=cfcdd88538922b48c7e04070cc5e5dae2312e947b513af1c859fe67dc6d8d86480990a49053f&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-23 21:44:54">发布日期：2025-02-23 21:44:54</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518636&amp;idx=1&amp;sn=e47f358037ad2b62072d428b77fd3148&amp;chksm=cfcdd88538922b48c7e04070cc5e5dae2312e947b513af1c859fe67dc6d8d86480990a49053f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=1&amp;sn=b90ce070c40759cf9df84832fe3cfb1b&amp;chksm=cf8adf9ac467df1d3f438dc9e99f1475f8c6aeceffce3fb1ec711817fafb93182c4b6e2639af&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gxdFmXz8aflpFE3pS8ZKMZfQjETOYFgpmw4BHTuhYE1t08E8hvtHZaQ9x3Vv77XTV8dfMoLfxA3MazBC2ZIOmA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=1&amp;sn=b90ce070c40759cf9df84832fe3cfb1b&amp;chksm=cf8adf9ac467df1d3f438dc9e99f1475f8c6aeceffce3fb1ec711817fafb93182c4b6e2639af&amp;scene=0&amp;xtrack=1#rd" target="_blank">从JS接口到拿下2k家学校的超管权限</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-22 20:32:48">发布日期：2025-02-22 20:32:48</time></div><p class="article-description">0x01 信息收集首先通过网站标题搞清楚了网站的性质，是一个某地的站群系统，集合管理着大量的子网站通过Wappalyzer了解使用的重点技术有：Java、Swagger-UI、Spring、Vue.j</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=1&amp;sn=b90ce070c40759cf9df84832fe3cfb1b&amp;chksm=cf8adf9ac467df1d3f438dc9e99f1475f8c6aeceffce3fb1ec711817fafb93182c4b6e2639af&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=2&amp;sn=a50fe7a5ac1c1f8568ead2f304af280b&amp;chksm=cf1dcc6e53cace55db582eb1962cbdc9ecc04fa59e05e60631920f13a92e315a3c81764affc8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=2&amp;sn=a50fe7a5ac1c1f8568ead2f304af280b&amp;chksm=cf1dcc6e53cace55db582eb1962cbdc9ecc04fa59e05e60631920f13a92e315a3c81764affc8&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-22 20:32:48">发布日期：2025-02-22 20:32:48</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518634&amp;idx=2&amp;sn=a50fe7a5ac1c1f8568ead2f304af280b&amp;chksm=cf1dcc6e53cace55db582eb1962cbdc9ecc04fa59e05e60631920f13a92e315a3c81764affc8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=1&amp;sn=e07dbed7c0c52952663773515cadee9b&amp;chksm=cf92e03faf6f0d75ca40e440e42c45e78bcce26abee256dbca9b079b2de3a242dab62e523590&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hZj512NN8jlAEQvMib7SqI7Eg3TgnibURbuVpIQB6apKyANp7jibDhsYcs5XECTS4YNQGKwG97gu9da7bWugJnW2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=1&amp;sn=e07dbed7c0c52952663773515cadee9b&amp;chksm=cf92e03faf6f0d75ca40e440e42c45e78bcce26abee256dbca9b079b2de3a242dab62e523590&amp;scene=0&amp;xtrack=1#rd" target="_blank">【赏金15000美元】通过监控调试模式实现 RCE</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-20 22:04:58">发布日期：2025-02-20 22:04:58</time></div><p class="article-description">你是否遇到过明知一个端点可能很容易受到攻击，但你又不太了解后端究竟发生了什么以及该如何利用它们？那么在本文中，将指导你完成一种将黑盒测试转变为半白盒测试的技术。这种方法发现了多个漏洞，并最终实现了系统</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=1&amp;sn=e07dbed7c0c52952663773515cadee9b&amp;chksm=cf92e03faf6f0d75ca40e440e42c45e78bcce26abee256dbca9b079b2de3a242dab62e523590&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=2&amp;sn=3fb6fd2d613585685e31ba0e37e8cc51&amp;chksm=cffaa7dfdd7e1cadb20b17bc9f9747694598bb11d16569e8c012175c14a3e99ba8159083e2e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuZWK7N1XrPg0FtRnvkc1o79oQZoAldkGGZtn4tzg8dibuMiaVI67aFjeSxS2FOvJCh3FmB786XaKStw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=2&amp;sn=3fb6fd2d613585685e31ba0e37e8cc51&amp;chksm=cffaa7dfdd7e1cadb20b17bc9f9747694598bb11d16569e8c012175c14a3e99ba8159083e2e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">红队安全攻防知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-20 22:04:58">发布日期：2025-02-20 22:04:58</time></div><p class="article-description">Z2O安全攻防高质量安全攻防星球社区，致力于红蓝对抗，实战攻防，星球不定时更新内外网攻防渗透技巧，未公开或部分公开POC，最新研究成果等。常态化更新最新安全动态。涉及方向包括Web渗透、免杀绕过、内网</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518632&amp;idx=2&amp;sn=3fb6fd2d613585685e31ba0e37e8cc51&amp;chksm=cffaa7dfdd7e1cadb20b17bc9f9747694598bb11d16569e8c012175c14a3e99ba8159083e2e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=1&amp;sn=699fa189a6aecb14570424e1f9522fb4&amp;chksm=cfe6755d1ae0c12462c4c275165e6d5055bc5750d73d8c6e04dd4ed69e1da499aba441343057&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuaNuKEQciaoMCCetJiaPMnSbHhyCnwzvcVuDb5BKsfVI9ZicgVLricJ2xjoq2OgkdotlXjYrjBtnX2oOQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=1&amp;sn=699fa189a6aecb14570424e1f9522fb4&amp;chksm=cfe6755d1ae0c12462c4c275165e6d5055bc5750d73d8c6e04dd4ed69e1da499aba441343057&amp;scene=0&amp;xtrack=1#rd" target="_blank">结合阿里云通义灵码辅助新手小白快速代码审计的最佳实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-19 20:49:34">发布日期：2025-02-19 20:49:34</time></div><p class="article-description">前言至于为什么要写这篇文章呢？说来也很巧，在比赛时，有一个靶机直接把我们零封了，全场没有一个人能getshell。该靶机采用的是一个开源框架，而且网上并没有任何公开可用的漏洞信息，且由于比赛是在局域</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=1&amp;sn=699fa189a6aecb14570424e1f9522fb4&amp;chksm=cfe6755d1ae0c12462c4c275165e6d5055bc5750d73d8c6e04dd4ed69e1da499aba441343057&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=2&amp;sn=0959e1b2d8c1632f6b953623d82a27f2&amp;chksm=cf992bfaef3424316fe2053f5a0a43a3e1f3bc3da42aeae0da1f0c8282f175c704b58174ac58&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=2&amp;sn=0959e1b2d8c1632f6b953623d82a27f2&amp;chksm=cf992bfaef3424316fe2053f5a0a43a3e1f3bc3da42aeae0da1f0c8282f175c704b58174ac58&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-19 20:49:34">发布日期：2025-02-19 20:49:34</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518630&amp;idx=2&amp;sn=0959e1b2d8c1632f6b953623d82a27f2&amp;chksm=cf992bfaef3424316fe2053f5a0a43a3e1f3bc3da42aeae0da1f0c8282f175c704b58174ac58&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=1&amp;sn=5f06af530c7a38f6cb9a4486c8e1588d&amp;chksm=cff03e007d0d9202804aaf6270551b72edafe4deea3aeb686896cf44d93685eea9f9a6200f48&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/JMH1pEQ7qP5zBOhplgtLPSeLtib6pe2JMLXkicBTEoMnRojhDBE8MXHjib7Cv1UOdQtkDic0oh2tkkNc5GU3VjibnNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=1&amp;sn=5f06af530c7a38f6cb9a4486c8e1588d&amp;chksm=cff03e007d0d9202804aaf6270551b72edafe4deea3aeb686896cf44d93685eea9f9a6200f48&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek本地化部署有风险！快来看看你中招了吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-18 20:25:45">发布日期：2025-02-18 20:25:45</time></div><p class="article-description">2025年伊始，AI领域迎来一个重要变革 - DeepSeek R1开源发布，凭借着低成本、性能出众的优势，这个模型在短短几周内就获得空前关注。由于官网服务经常繁忙，大家开始选择使用Ollama+Op</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=1&amp;sn=5f06af530c7a38f6cb9a4486c8e1588d&amp;chksm=cff03e007d0d9202804aaf6270551b72edafe4deea3aeb686896cf44d93685eea9f9a6200f48&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=2&amp;sn=047c56c3573a6a30f3e5ceeb8bcae850&amp;chksm=cf0d8062933b2bcbef05ec40a028276900d11834568981a2c7677c8a7c105529c5d9d31d0c17&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=2&amp;sn=047c56c3573a6a30f3e5ceeb8bcae850&amp;chksm=cf0d8062933b2bcbef05ec40a028276900d11834568981a2c7677c8a7c105529c5d9d31d0c17&amp;scene=0&amp;xtrack=1#rd" target="_blank">SRC专项知识库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-18 20:25:45">发布日期：2025-02-18 20:25:45</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518592&amp;idx=2&amp;sn=047c56c3573a6a30f3e5ceeb8bcae850&amp;chksm=cf0d8062933b2bcbef05ec40a028276900d11834568981a2c7677c8a7c105529c5d9d31d0c17&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518590&amp;idx=1&amp;sn=ec9c384eecb61d03eeff3755b485d16d&amp;chksm=cfa6dc79975ec21e71fe91687f87b561263e75420449019b122f0f2e2450cd1e1212c7a7bfd5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/h8P1KUHOKuY813zmiaXibeTuHFXd8WtJAOaYTP4msZv9DvcupUCzdN6iaV3p2sicXgjR5elSjvJad1t8dbdf3zmBAg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518590&amp;idx=1&amp;sn=ec9c384eecb61d03eeff3755b485d16d&amp;chksm=cfa6dc79975ec21e71fe91687f87b561263e75420449019b122f0f2e2450cd1e1212c7a7bfd5&amp;scene=0&amp;xtrack=1#rd" target="_blank">我的评价是全是干货</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-16 21:18:39">发布日期：2025-02-16 21:18:39</time></div><p class="article-description">建立了一个src专项圈子，内容包含src漏洞知识库、src挖掘技巧、src视频教程等，一起学习赚赏金技巧，以及专属微信群一起挖洞圈子专注于更新src相关：1、维护更新src专项漏洞知识库，包含原理、挖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518590&amp;idx=1&amp;sn=ec9c384eecb61d03eeff3755b485d16d&amp;chksm=cfa6dc79975ec21e71fe91687f87b561263e75420449019b122f0f2e2450cd1e1212c7a7bfd5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518588&amp;idx=1&amp;sn=288dfe68a78276c90a6c3a701e25d8ce&amp;chksm=cf6650ee3be1471ba82d6b2cbc94829d32142fe353653333602067c41b1d6a8af2e90243f366&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OAz0RNU450Bq7W8ZP4pIAxIWPFLiaZdsr1icUmACwvB7gMMGbZc0e9BViaUjS0OrAU2JdWWECIK8qlia8iaZwsJ7nibw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518588&amp;idx=1&amp;sn=288dfe68a78276c90a6c3a701e25d8ce&amp;chksm=cf6650ee3be1471ba82d6b2cbc94829d32142fe353653333602067c41b1d6a8af2e90243f366&amp;scene=0&amp;xtrack=1#rd" target="_blank">第113篇：俄乌网络战之一，沙虫APT组织致乌克兰第1次大停电事件复盘</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4695656bbd11d5a9d073627b75085065/index.html">Z2O安全攻防</a></span><time class="article-date" datetime="2025-02-15 21:01:07">发布日期：2025-02-15 21:01:07</time></div><p class="article-description">Part1 前言 结合当前俄乌战争题材，今天和大家分享俄乌网络战中的APT攻击事件导致乌克兰3次大停电的第一次事件。关于其中的技术细节，网上的各种文章说法不一，部分文章还有错误。这次ABC_123参</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg2ODYxMzY3OQ==&amp;mid=2247518588&amp;idx=1&amp;sn=288dfe68a78276c90a6c3a701e25d8ce&amp;chksm=cf6650ee3be1471ba82d6b2cbc94829d32142fe353653333602067c41b1d6a8af2e90243f366&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_9.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

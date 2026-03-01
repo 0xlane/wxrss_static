@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>字节笔记本</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506796&amp;idx=1&amp;sn=3451c115d1513662e6ef4ee5f90460ee&amp;chksm=e9fdee33f985d58b9163ffec8ffb8eca451d79ea1be71e0a98e0a9bf94744e7b7feff0974a7f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe9tsmYj325fOXxyic7UOAe4R9IHUowKE33ktpUNvG6fvo3eJolDBGOMCYkn6TibKAWSSibuTOn9ePsg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506796&amp;idx=1&amp;sn=3451c115d1513662e6ef4ee5f90460ee&amp;chksm=e9fdee33f985d58b9163ffec8ffb8eca451d79ea1be71e0a98e0a9bf94744e7b7feff0974a7f&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用Gemini CLI打造企业级工作流</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-25 08:18:52">发布日期：2025-09-25 08:18:52</time></div><p class="article-description">Gemini CLI 写代码还挺啰嗦的，而且经常抓不住重点。 但是，天生我才必有有，Gemini 2.5的超长上下文和多模态识别依然有着无法撼动的地位。经常听到有朋友文这个模型好不好用，好不好用不在于</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506796&amp;idx=1&amp;sn=3451c115d1513662e6ef4ee5f90460ee&amp;chksm=e9fdee33f985d58b9163ffec8ffb8eca451d79ea1be71e0a98e0a9bf94744e7b7feff0974a7f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506770&amp;idx=1&amp;sn=f97c129ae8038603f04e3df0f6359c2b&amp;chksm=e9b19391edf98cdc034b4d8b51cef5bee7c503ba323d88b08cf1df8ab6605c12c651edf1896f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506770&amp;idx=1&amp;sn=f97c129ae8038603f04e3df0f6359c2b&amp;chksm=e9b19391edf98cdc034b4d8b51cef5bee7c503ba323d88b08cf1df8ab6605c12c651edf1896f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Hacker News 每日播报</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-24 13:09:26">发布日期：2025-09-24 13:09:26</time></div><p class="article-description">一个基于 AI 的 Hacker News 中文播客项目，每天自动抓取 Hacker News 热门文章，通过 AI 生成中文总结并转换为播客内容，可以开车的时候听。
+
+https://hacker-</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506770&amp;idx=1&amp;sn=f97c129ae8038603f04e3df0f6359c2b&amp;chksm=e9b19391edf98cdc034b4d8b51cef5bee7c503ba323d88b08cf1df8ab6605c12c651edf1896f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506718&amp;idx=1&amp;sn=2df2d4252d60836713b3da36a0ac2b30&amp;chksm=e97761ebdab38e0e5dce2f793b896c9a64a03f0c3d455a77e417d6bfd3da2b7c74418f91407b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfvgefl84qhsdp0TvS1ZxcVMdF2HH3jVWRtvJJZwOXncsVIQUPS6Kic1AM1RiaOntVDNFBbj93RSH2g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506718&amp;idx=1&amp;sn=2df2d4252d60836713b3da36a0ac2b30&amp;chksm=e97761ebdab38e0e5dce2f793b896c9a64a03f0c3d455a77e417d6bfd3da2b7c74418f91407b&amp;scene=0&amp;xtrack=1#rd" target="_blank">没有亲传大弟子，更没有突发刚刚炸裂，做最纯粹的AI资讯播报，小报童专栏优惠最后一天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-23 08:26:46">发布日期：2025-09-23 08:26:46</time></div><p class="article-description">起小报童专栏的原因是公众号目前的推荐机制。这几个月在读者群里面交流的最大体验就是，他们问的一些问题其实都已经写过发过，但几乎都没有推送到。面对这样的一个黑盒，即使你关注了，发布的内容常常就石沉大海，再</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506718&amp;idx=1&amp;sn=2df2d4252d60836713b3da36a0ac2b30&amp;chksm=e97761ebdab38e0e5dce2f793b896c9a64a03f0c3d455a77e417d6bfd3da2b7c74418f91407b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506691&amp;idx=1&amp;sn=2a27a980a5cfc9f8f0166e1dd24e49c1&amp;chksm=e90ec291b43c5f4c0484e612a12a626dd97e6a9cb19a2e9d08b4d61da49ab9386a6c3aea484b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcsWLaNZCIGN2IgL8Ne2ZKdZc1wks1BQFzr6hcWuNVCiaC5Vic90ZEjFicuzM35huYkO5icy3cxcBJ2CQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506691&amp;idx=1&amp;sn=2a27a980a5cfc9f8f0166e1dd24e49c1&amp;chksm=e90ec291b43c5f4c0484e612a12a626dd97e6a9cb19a2e9d08b4d61da49ab9386a6c3aea484b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Google发布了长达 64 页的AI Agent权威指南白皮书</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-22 11:34:32">发布日期：2025-09-22 11:34:32</time></div><p class="article-description">Google发布了长达 64 页的AI Agent权威指南白皮书，PDF下载地址见留言区。文档详细介绍了 AI 代理的核心概念，包括选择 Gemini 等模型、使用 RAG技术进行接地，以确保事实准确</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506691&amp;idx=1&amp;sn=2a27a980a5cfc9f8f0166e1dd24e49c1&amp;chksm=e90ec291b43c5f4c0484e612a12a626dd97e6a9cb19a2e9d08b4d61da49ab9386a6c3aea484b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506660&amp;idx=1&amp;sn=48c7d5f1dacc303085246f53a7e9e9e9&amp;chksm=e9d8144b5b50d6aa901dbeb2beaa15fc7e0c75b4b70cb4ba2c58ec27a18fb066afa804119430&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfOz4k88JvquJh4iaYyxuXkJu7wwWStciabbRDTUib6HKud7n8w5fHw5ibuWySYeJwIqvJUGvWfROueNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506660&amp;idx=1&amp;sn=48c7d5f1dacc303085246f53a7e9e9e9&amp;chksm=e9d8144b5b50d6aa901dbeb2beaa15fc7e0c75b4b70cb4ba2c58ec27a18fb066afa804119430&amp;scene=0&amp;xtrack=1#rd" target="_blank">直破300！字节笔记小报童专栏4元1季优惠顺延</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-21 17:04:46">发布日期：2025-09-21 17:04:46</time></div><p class="article-description">有点命运多舛，刚刚搞了两天的优惠活动，期间遇到小报童因为被恶意举报的原因无法正常访问。目前官方更换域名后已经完全恢复。虽然这两天微信客户端无法访问，依然有不少朋友通过电脑来购买，再次深表感谢！因此字节</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506660&amp;idx=1&amp;sn=48c7d5f1dacc303085246f53a7e9e9e9&amp;chksm=e9d8144b5b50d6aa901dbeb2beaa15fc7e0c75b4b70cb4ba2c58ec27a18fb066afa804119430&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506644&amp;idx=1&amp;sn=f07266de49ea053286d96ad8c04f5e3a&amp;chksm=e93443b7c87e752508bd6f85df15cff7b954285a1913e12b6fa374580bf69c6936aaf9f3d2eb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe0eyjSCpXpL9ETX78SlEdrLFKVlib9iaOIaibj0XPmO65CA16vibZERNaN0ShFMUhrCtdyduPTrPotBw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506644&amp;idx=1&amp;sn=f07266de49ea053286d96ad8c04f5e3a&amp;chksm=e93443b7c87e752508bd6f85df15cff7b954285a1913e12b6fa374580bf69c6936aaf9f3d2eb&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex/Claude Code 我是怎么躺着把代码写了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-20 19:04:00">发布日期：2025-09-20 19:04:00</time></div><p class="article-description">真就躺着把代码写了，方法很简单 用手机访问部署好VSCode的Web版本。之前也使用过类似于Happy的Claude Code的APP，但是说实话效果都不怎么样，相较于这些的CLI远程工具App或者w</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506644&amp;idx=1&amp;sn=f07266de49ea053286d96ad8c04f5e3a&amp;chksm=e93443b7c87e752508bd6f85df15cff7b954285a1913e12b6fa374580bf69c6936aaf9f3d2eb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506565&amp;idx=1&amp;sn=1f4a3092aba58f2108a91e41cc8b99e6&amp;chksm=e9074e6693b80ab02fe7bc6461634e46a392a9cad51c04bb6d1c4a6acd4343307ab0493328fb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfPrwLtbeibsk1iboIxPPHHxyBSztlKTervqsQfmAqeLleYqu3utZjqicBVqicO9PicWVYLCT9srRNXotQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506565&amp;idx=1&amp;sn=1f4a3092aba58f2108a91e41cc8b99e6&amp;chksm=e9074e6693b80ab02fe7bc6461634e46a392a9cad51c04bb6d1c4a6acd4343307ab0493328fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">另辟蹊径！让Codex也能用上Spec-Kit</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-19 17:22:15">发布日期：2025-09-19 17:22:15</time></div><p class="article-description">Github官方出品的这个Spec-Kit真是个好东西，简直就是AI编程的必备。AI开发章法！Github官方 Claude Code Spec Kit规范驱动开发流。但是OpenAI Codex目前</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506565&amp;idx=1&amp;sn=1f4a3092aba58f2108a91e41cc8b99e6&amp;chksm=e9074e6693b80ab02fe7bc6461634e46a392a9cad51c04bb6d1c4a6acd4343307ab0493328fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506530&amp;idx=1&amp;sn=687106526e2627bbb00fc4d32fcfd3ce&amp;chksm=e9f5a3ebbe4f0e854a73b375ad49e76b698bce3b642787cd0ce33f570eaabf7150e2bcff4eb5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQc5E2fpq4knmrS6IyrGqEBticnJuxsQSuIK8Aj3REhFgia4YNyLhTiaIibbxckicSGicZHibhibgxf3gr48kg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506530&amp;idx=1&amp;sn=687106526e2627bbb00fc4d32fcfd3ce&amp;chksm=e9f5a3ebbe4f0e854a73b375ad49e76b698bce3b642787cd0ce33f570eaabf7150e2bcff4eb5&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何使用Codex高效开发？OpenAI内部Codex工作流解密</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-18 17:33:30">发布日期：2025-09-18 17:33:30</time></div><p class="article-description">OpenAI Codex早已深度融入OpenAI的内部工作流中。从产品工程到安全、基础设施，Codex已经成为OpenAI工程师们日常工作中不可或缺的生产力工具。最近，OpenAI分享的一份内部文档，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506530&amp;idx=1&amp;sn=687106526e2627bbb00fc4d32fcfd3ce&amp;chksm=e9f5a3ebbe4f0e854a73b375ad49e76b698bce3b642787cd0ce33f570eaabf7150e2bcff4eb5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506413&amp;idx=1&amp;sn=724c15d47329e3941848e8daa3561a66&amp;chksm=e9e9033475cca2f43c7f7fb3be0cb5755cb7e357c7ad46cf46c24a8013f6e0774ea245cf060d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQe9UKRV2AHGDCgLVB5DicPx8KLwP0NlWaIXhIAO7zwrsLicicT42uqhjb1ib8dtybOrUx33IzpZM3jbOA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506413&amp;idx=1&amp;sn=724c15d47329e3941848e8daa3561a66&amp;chksm=e9e9033475cca2f43c7f7fb3be0cb5755cb7e357c7ad46cf46c24a8013f6e0774ea245cf060d&amp;scene=0&amp;xtrack=1#rd" target="_blank">首发破百！小报童专栏 4元一季最后四天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-17 11:39:03">发布日期：2025-09-17 11:39:03</time></div><p class="article-description">江山父老能容我，不使人间造孽钱。字节笔记本小报童专栏首发24小时破100订阅，再次感谢各位老板的支持！详情：字节笔记本小报童4元一季上车！有很多朋友关心小报童和公众号的区别是哪里？是不是会重复公众号里</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506413&amp;idx=1&amp;sn=724c15d47329e3941848e8daa3561a66&amp;chksm=e9e9033475cca2f43c7f7fb3be0cb5755cb7e357c7ad46cf46c24a8013f6e0774ea245cf060d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506305&amp;idx=1&amp;sn=2235a436531e8f373480a3552e4a7323&amp;chksm=e9b6d3c2e0204da8cff32e8983be7c8ca491ce60b2fcfde9ff97713454934f55a138480c5f02&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQeLqgzy7K8Z4W2mf05KJIxQh92HONp1XRzClteibJd5R4EN5Eu9ibaLF9c70RuNjB4ibryJvpC8SJbUA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506305&amp;idx=1&amp;sn=2235a436531e8f373480a3552e4a7323&amp;chksm=e9b6d3c2e0204da8cff32e8983be7c8ca491ce60b2fcfde9ff97713454934f55a138480c5f02&amp;scene=0&amp;xtrack=1#rd" target="_blank">从 “焦虑被替代” 到 “抓住 AI 红利”，研发人员必听的大模型技术公开课来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-16 07:26:44">发布日期：2025-09-16 07:26:44</time></div><p class="article-description">最近和研发朋友聊天，发现他们都有点焦虑和担忧：以前靠硬实力吃饭的编码能力，正被 AI 快速覆盖，“被替代”的危机感越来越强。许多人想转行 AI 大模型应用开发赛道，却常常卡在“找不到落地方法”和“摸不</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506305&amp;idx=1&amp;sn=2235a436531e8f373480a3552e4a7323&amp;chksm=e9b6d3c2e0204da8cff32e8983be7c8ca491ce60b2fcfde9ff97713454934f55a138480c5f02&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506304&amp;idx=1&amp;sn=91c719f2549ccb1cdac4e02c2d70fa43&amp;chksm=e9a9276e5d58b5c273a0979a72722894a4410af214b83517fa6e3e232c3ae435e1450ff69550&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQeLqgzy7K8Z4W2mf05KJIxQfnCejVqPSddU3SKKQNebfBlnG9Xh99LwDK3bCoOGjvp8QUJYHSje4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506304&amp;idx=1&amp;sn=91c719f2549ccb1cdac4e02c2d70fa43&amp;chksm=e9a9276e5d58b5c273a0979a72722894a4410af214b83517fa6e3e232c3ae435e1450ff69550&amp;scene=0&amp;xtrack=1#rd" target="_blank">香爆了！免费领取200刀的顶级API额度，可用于Claude Code！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-15 21:08:26">发布日期：2025-09-15 21:08:26</time></div><p class="article-description">邀请地址：https://agentrouter.org/register?aff=VOxc没有任何的商业关联，注册直接送200刀的转化额度，你也可以不用上面aff，这样只送100刀。还是那句话能不能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506304&amp;idx=1&amp;sn=91c719f2549ccb1cdac4e02c2d70fa43&amp;chksm=e9a9276e5d58b5c273a0979a72722894a4410af214b83517fa6e3e232c3ae435e1450ff69550&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506216&amp;idx=1&amp;sn=ff1be65a4e643c7667d1e81f4c951777&amp;chksm=e9eb65f69f7a3f2ed114c2eca8ef271b390b19fd8ac682c402dd6f3a498eb3187794f5feb022&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506216&amp;idx=1&amp;sn=ff1be65a4e643c7667d1e81f4c951777&amp;chksm=e9eb65f69f7a3f2ed114c2eca8ef271b390b19fd8ac682c402dd6f3a498eb3187794f5feb022&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex包月计划正式上线，买Claude Code送送Codex使用，加群&lt;a class=&quot;weapp_text_link&quot; data-miniprogram-appid=&quot;d3hlNGM0ZGEzNjhjOWQ0NmU4&quot; data-miniprogram-applink=&quot;#小程序://Code/CK60o08HaEzyjcG&quot; data-miniprogram-nickname=&quot;VibeCode&quot; data-miniprogram-path=&quot;cGFnZXMvYXJ0aWNsZS9kZXRhaWwuaHRtbD93ZWJ2aWV3PTEmd2ViVXJsPWh0dHBzJTNBJTJGJTJGdmliZS5zb25neWEudG9wJTJGYXJ0aWNsZXMlMkY1JmlkPTUmdGl0bGU9JUU2JThBJTgwJUU2JTlDJUFGJUU0JUJBJUE0JUU2JUI1JTgxJUU3JUJFJUE0&quot; data-miniprogram-servicetype=&quot;&quot; data-miniprogram-type=&quot;text&quot; target=&quot;_blank&quot; href=&quot;javascript:void(0);&quot;&gt;字节笔记本群链接&lt;/a&gt;。已经加群的请勿重复加，谢谢！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-14 17:47:10">发布日期：2025-09-14 17:47:10</time></div><p class="article-description">Codex包月计划正式上线，买Claude Code送送Codex使用，加群字节笔记本群链接。已经加群的请勿重复加，谢谢！</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506216&amp;idx=1&amp;sn=ff1be65a4e643c7667d1e81f4c951777&amp;chksm=e9eb65f69f7a3f2ed114c2eca8ef271b390b19fd8ac682c402dd6f3a498eb3187794f5feb022&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506197&amp;idx=1&amp;sn=c6414715bd0e4e4788700faaa0fb9b3c&amp;chksm=e9e3030aea8c4667031a253579fe05786c0243a64ca3d89902a08516cc3990b26cef45d0e1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdhW4ib3cMZ5cbvMurfsL6FpAOD36Kobzt1kmqsRa0LoyUp0XP9rbu0dPb6cf6DZcza5DtFf5UYu0g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506197&amp;idx=1&amp;sn=c6414715bd0e4e4788700faaa0fb9b3c&amp;chksm=e9e3030aea8c4667031a253579fe05786c0243a64ca3d89902a08516cc3990b26cef45d0e1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">Hooks工作流！Claude Code Hooks的正常打开方式</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-13 13:12:15">发布日期：2025-09-13 13:12:15</time></div><p class="article-description">本文是AI编程高效开发指南的第21篇，本系列预计发布100多篇，每篇不到7毛钱。目前合集已经得到了239位大佬的支持，在此再次说一声感谢!大多数 Claude Code 的 Hooks 教程最对多告诉</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506197&amp;idx=1&amp;sn=c6414715bd0e4e4788700faaa0fb9b3c&amp;chksm=e9e3030aea8c4667031a253579fe05786c0243a64ca3d89902a08516cc3990b26cef45d0e1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506172&amp;idx=1&amp;sn=d08cc6e67321327fff9e6fe9f17395f4&amp;chksm=e9fa5e3790adb45f9cd05b170145f1c151904aa4c1e9f1431780c320d8546a3cf91bd5d401a1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQemuSOLqlqWMr0Licg98MQgiaJhzjYkx8IWXlQIbanj2dtWFKHlj8IH4avSvkicaHChfU9qq10iaohS0A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506172&amp;idx=1&amp;sn=d08cc6e67321327fff9e6fe9f17395f4&amp;chksm=e9fa5e3790adb45f9cd05b170145f1c151904aa4c1e9f1431780c320d8546a3cf91bd5d401a1&amp;scene=0&amp;xtrack=1#rd" target="_blank">羊毛薅秃了！ChatGPT预计全球同价</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-12 21:24:11">发布日期：2025-09-12 21:24:11</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506172&amp;idx=1&amp;sn=d08cc6e67321327fff9e6fe9f17395f4&amp;chksm=e9fa5e3790adb45f9cd05b170145f1c151904aa4c1e9f1431780c320d8546a3cf91bd5d401a1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506130&amp;idx=1&amp;sn=32122fc9bdc348c35fbccdf457637302&amp;chksm=e96fa09e1f98e7b0f7fb30bf8ce47a17e093a8f6d48a4c99d33b35fb20acee37ebd52788d6e6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcYsZIr6eaAlGrv7icdiarn4ibawj42wcjN0YD8zKPCwQ3tpvYdSI2OPGMfUWFibldqcVd5e00J95MRfQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506130&amp;idx=1&amp;sn=32122fc9bdc348c35fbccdf457637302&amp;chksm=e96fa09e1f98e7b0f7fb30bf8ce47a17e093a8f6d48a4c99d33b35fb20acee37ebd52788d6e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">对标Claude Code？CodeBuddy Code CLI 实测</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-11 17:43:17">发布日期：2025-09-11 17:43:17</time></div><p class="article-description">这次测试有点不一样，不测编码能力，而是让支持Sonnet4 的CodeBuddy Code CLI测试一组SVG图表能力。之后会对这个号称对标Claude Code的新CL做一下优缺点总结。测试使用Z</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247506130&amp;idx=1&amp;sn=32122fc9bdc348c35fbccdf457637302&amp;chksm=e96fa09e1f98e7b0f7fb30bf8ce47a17e093a8f6d48a4c99d33b35fb20acee37ebd52788d6e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505968&amp;idx=1&amp;sn=acdc8a4d855ee39f8cfb14abaf2a0e32&amp;chksm=e920a10ec6895d10faa90b2a9f7c54ceacc5d933845f2dd049d66b6c8e5a4383eb0335a6e3a0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505968&amp;idx=1&amp;sn=acdc8a4d855ee39f8cfb14abaf2a0e32&amp;chksm=e920a10ec6895d10faa90b2a9f7c54ceacc5d933845f2dd049d66b6c8e5a4383eb0335a6e3a0&amp;scene=0&amp;xtrack=1#rd" target="_blank">分享一个群友的Claude Code 和 Gemini CLI 互搏的玩法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-10 18:12:26">发布日期：2025-09-10 18:12:26</time></div><p class="article-description">最近，有位群友分享了一种别出心裁的AI用法，让Claude Code 和 Gemini CLI 互搏！
+
+起因是大家懂的，Claude 官方承认模型降智并声称已解决，Claude Code现在不仅是降</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505968&amp;idx=1&amp;sn=acdc8a4d855ee39f8cfb14abaf2a0e32&amp;chksm=e920a10ec6895d10faa90b2a9f7c54ceacc5d933845f2dd049d66b6c8e5a4383eb0335a6e3a0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505932&amp;idx=1&amp;sn=79335cfb844fb2f9ff08f6a3ee52bd31&amp;chksm=e948c90a30e453a236fce897bbbf1b522558584ab850a380ed9df34d907073a75384f9a03192&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcIg4ZibZwOicTrcg88pj0o6AcibiaA38jq3LHLC3WCVjiaLicvm7xiaXU2KsmZWfeAMSKDwbypC5qJmJeGQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505932&amp;idx=1&amp;sn=79335cfb844fb2f9ff08f6a3ee52bd31&amp;chksm=e948c90a30e453a236fce897bbbf1b522558584ab850a380ed9df34d907073a75384f9a03192&amp;scene=0&amp;xtrack=1#rd" target="_blank">Warp 和Warp Code 继续免费！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-09 11:19:56">发布日期：2025-09-09 11:19:56</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505932&amp;idx=1&amp;sn=79335cfb844fb2f9ff08f6a3ee52bd31&amp;chksm=e948c90a30e453a236fce897bbbf1b522558584ab850a380ed9df34d907073a75384f9a03192&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505923&amp;idx=1&amp;sn=0013bbc1da8486b91013ebd746cf0eca&amp;chksm=e94003df730967a4d0301cb44252d07f7fb505c14c50a57f9047f6195f75430804fa3c9c1f23&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcHfu15jh54bLApU3QDYln1jhI8J5yiaEFaGgjZLBqTGQaOuBZric88FCZdOeCM4sm4VYQ2dN76w7qg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505923&amp;idx=1&amp;sn=0013bbc1da8486b91013ebd746cf0eca&amp;chksm=e94003df730967a4d0301cb44252d07f7fb505c14c50a57f9047f6195f75430804fa3c9c1f23&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用Claude Life人生操作系统打造年入30万美元的一人公司</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-08 18:33:55">发布日期：2025-09-08 18:33:55</time></div><p class="article-description">“基本上，就是我和Claude，一起创办了我的公司。”Alex在他的最新访谈里面分享了如何利用Claude Code，在短短25分钟内，为自己打造了一个名为“Claude Life”的全自动化人生操作</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505923&amp;idx=1&amp;sn=0013bbc1da8486b91013ebd746cf0eca&amp;chksm=e94003df730967a4d0301cb44252d07f7fb505c14c50a57f9047f6195f75430804fa3c9c1f23&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505878&amp;idx=1&amp;sn=c25e28c14aef2e71ae29742f0b46ca13&amp;chksm=e9ab33120d7fbb045ecd070c18c231094b9b8ab47af5a031d38ee0762a53ca719d0668da2018&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505878&amp;idx=1&amp;sn=c25e28c14aef2e71ae29742f0b46ca13&amp;chksm=e9ab33120d7fbb045ecd070c18c231094b9b8ab47af5a031d38ee0762a53ca719d0668da2018&amp;scene=0&amp;xtrack=1#rd" target="_blank">本周末NanoBanana API免费用
+
+谷歌大善人今天宣布本周末NanoBanana API 免费用，免费层级的用户可以调用gemini-2.5-flash-image-preview，每日提供 200次免费请求。
+
+如何使用它的API和应用落地，这篇文章提供的详细的源码：&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505876&amp;idx=1&amp;sn=0b19fe8c0b1e358950cadfb77dbb1ec5&amp;scene=21#wechat_redirect&quot;&gt;使用“穷鬼”AI开发套餐开发一个 nano banana发型生成网站&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505759&amp;idx=1&amp;sn=46410cbf19a5598ae38dab2fd9ac5197&amp;scene=21#wechat_redirect&quot;&gt;有章可循！Gemini 2.5 Flash 图像模型提示词设计指南&lt;/a&gt;
+
+&lt;a class=&quot;js_mention_entry wx_at_link&quot; data-biz=&quot;MzIzMzQyMzUzNw==&quot; data-username=&quot;gh_d39605d76a1e&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/mp/readtemplate?t=pages/link_mid_jump&amp;biz=MzIzMzQyMzUzNw==&quot;&gt;@字节笔记本&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-07 09:34:47">发布日期：2025-09-07 09:34:47</time></div><p class="article-description">本周末NanoBanana API免费用
+
+谷歌大善人今天宣布本周末NanoBanana API 免费用，免费层级的用户可以调用gemini-2.5-flash-image-preview，每日提供</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505878&amp;idx=1&amp;sn=c25e28c14aef2e71ae29742f0b46ca13&amp;chksm=e9ab33120d7fbb045ecd070c18c231094b9b8ab47af5a031d38ee0762a53ca719d0668da2018&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505876&amp;idx=1&amp;sn=0b19fe8c0b1e358950cadfb77dbb1ec5&amp;chksm=e9b71124f09fdb64a85afed1ab32d149df89f472a8d760cb1e6aa37ff30e15cabbd9a6f8d9f0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcnSyVDqicGYKUGxdbeStYg0s84xtlMgBRkMlr73r8SVdQkrwynzMN9fXjy7t7VzVHYlicZc2wA3jlA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505876&amp;idx=1&amp;sn=0b19fe8c0b1e358950cadfb77dbb1ec5&amp;chksm=e9b71124f09fdb64a85afed1ab32d149df89f472a8d760cb1e6aa37ff30e15cabbd9a6f8d9f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用“穷鬼”AI开发套餐开发一个 nano banana发型生成网站</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-06 21:07:08">发布日期：2025-09-06 21:07:08</time></div><p class="article-description">本文是AI编程高效开发指南的第20篇，本系列预计发布100多篇，每篇不到7毛钱。目前合集已经得到了230位大佬的支持，在此再次说一声感谢！虽然题为“穷鬼开发套餐”，但却不是指价格最便宜，而是在有限的资</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505876&amp;idx=1&amp;sn=0b19fe8c0b1e358950cadfb77dbb1ec5&amp;chksm=e9b71124f09fdb64a85afed1ab32d149df89f472a8d760cb1e6aa37ff30e15cabbd9a6f8d9f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505837&amp;idx=1&amp;sn=1221c4d7ac16183f3de71c7c7ea2907a&amp;chksm=e9458186a7533a41b82ddf4ccf6a67e9ca9cf86207b46935bda57f2f340a1e71b16f9c984504&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505837&amp;idx=1&amp;sn=1221c4d7ac16183f3de71c7c7ea2907a&amp;chksm=e9458186a7533a41b82ddf4ccf6a67e9ca9cf86207b46935bda57f2f340a1e71b16f9c984504&amp;scene=0&amp;xtrack=1#rd" target="_blank">CodeX 说实话目前还是太过于简陋了，比方说连最简单的对话恢复和预览功能都没有，不过目前社区已经有比较完善的解决方案了，具体可以访问下面的地址，通过一个通用脚本就可以实现便捷的会话管理。
+
+https://gist.github.com/ss-sonic/d713ced22cf887e90c61cedc3b7b639e
+
+另外推荐使用VSCode的CodeX插件版本，对于新手比较友好，目前已经集成了大部分的指令，而且与编辑器可以进行双向的沟通。
+
+&lt;a class=&quot;weapp_text_link&quot; data-miniprogram-appid=&quot;d3hlNGM0ZGEzNjhjOWQ0NmU4&quot; data-miniprogram-applink=&quot;#小程序://Code/CK60o08HaEzyjcG&quot; data-miniprogram-nickname=&quot;VibeCode&quot; data-miniprogram-path=&quot;cGFnZXMvYXJ0aWNsZS9kZXRhaWwuaHRtbD93ZWJ2aWV3PTEmd2ViVXJsPWh0dHBzJTNBJTJGJTJGdmliZS5zb25neWEudG9wJTJGYXJ0aWNsZXMlMkY1JmlkPTUmdGl0bGU9JUU2JThBJTgwJUU2JTlDJUFGJUU0JUJBJUE0JUU2JUI1JTgxJUU3JUJFJUE0&quot; data-miniprogram-servicetype=&quot;&quot; data-miniprogram-type=&quot;text&quot; target=&quot;_blank&quot; href=&quot;javascript:void(0);&quot;&gt;Claude Code CodeX 交流群&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505691&amp;idx=1&amp;sn=2d2fcacfef4fa2944cd8148d9a5660ad&amp;scene=21#wechat_redirect&quot;&gt;OpenAI 的CodeX IDE插件&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505535&amp;idx=1&amp;sn=57cd023aaae7e1be35eb710a77e3b9e0&amp;scene=21#wechat_redirect&quot;&gt;一份 OpenAI CodeX 上手使用的完整攻略&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505783&amp;idx=1&amp;sn=eaa5a340d33ae71ea2726ce7673a2601&amp;scene=21#wechat_redirect&quot;&gt;dmh大神的CodeX深度使用教学直播视频总结笔记&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-05 07:24:53">发布日期：2025-09-05 07:24:53</time></div><p class="article-description">CodeX 说实话目前还是太过于简陋了，比方说连最简单的对话恢复和预览功能都没有，不过目前社区已经有比较完善的解决方案了，具体可以访问下面的地址，通过一个通用脚本就可以实现便捷的会话管理。
+
+http</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505837&amp;idx=1&amp;sn=1221c4d7ac16183f3de71c7c7ea2907a&amp;chksm=e9458186a7533a41b82ddf4ccf6a67e9ca9cf86207b46935bda57f2f340a1e71b16f9c984504&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505796&amp;idx=1&amp;sn=9924eabcc48f499a4ad5607249b490a7&amp;chksm=e965d5edf453d831226508f8e2e0920a5dabbe8b0c971543d52ef6d493eb40248a8a1aea6a65&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505796&amp;idx=1&amp;sn=9924eabcc48f499a4ad5607249b490a7&amp;chksm=e965d5edf453d831226508f8e2e0920a5dabbe8b0c971543d52ef6d493eb40248a8a1aea6a65&amp;scene=0&amp;xtrack=1#rd" target="_blank">大道至简 重器无锋</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-04 06:34:55">发布日期：2025-09-04 06:34:55</time></div><p class="article-description">应该是今年看到的最好的视频访谈了，视频内容不长，但是比较系统性地回顾了 AI 编程的发展脉络和未来展望，算是一个具有节点性意义的一个视频吧。
+
+Claude Code创始人也分享了Claude Cod</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505796&amp;idx=1&amp;sn=9924eabcc48f499a4ad5607249b490a7&amp;chksm=e965d5edf453d831226508f8e2e0920a5dabbe8b0c971543d52ef6d493eb40248a8a1aea6a65&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505767&amp;idx=1&amp;sn=5c3b67e2a1daa05cd92cf5072035c6ac&amp;chksm=e9b5beffc06a782e915db782fcb9ee2bf192a600bc4ae5a64fbf6aa40933cbbe7e50c6219288&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQft81G70Yy1wfLbGBeOksr4vtGKowcWWlolcFiaAMY08e5putkvW4BVMGtU2XK6Jlr6PO2lBBM3zFA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505767&amp;idx=1&amp;sn=5c3b67e2a1daa05cd92cf5072035c6ac&amp;chksm=e9b5beffc06a782e915db782fcb9ee2bf192a600bc4ae5a64fbf6aa40933cbbe7e50c6219288&amp;scene=0&amp;xtrack=1#rd" target="_blank">智谱用一张图告诉我们：编码，就不要在国产开源模型上浪费时间了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-09-02 11:28:01">发布日期：2025-09-02 11:28:01</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505767&amp;idx=1&amp;sn=5c3b67e2a1daa05cd92cf5072035c6ac&amp;chksm=e9b5beffc06a782e915db782fcb9ee2bf192a600bc4ae5a64fbf6aa40933cbbe7e50c6219288&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505670&amp;idx=1&amp;sn=84d614828a4aabc721e2abdc7f3d5354&amp;chksm=e97b4ad7118750aa417e96f9d1c42df1701a3eff15ab57bc1755fe10102a13398667de27212f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcfhUD7QNnrcvUu69AQibrwpNT7iaswbyFN6SBjZUFZHUG3WHEfpbxIFAnUwpxWdrsQtJ5kMC2AUGtA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505670&amp;idx=1&amp;sn=84d614828a4aabc721e2abdc7f3d5354&amp;chksm=e97b4ad7118750aa417e96f9d1c42df1701a3eff15ab57bc1755fe10102a13398667de27212f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 也来梦幻联动 Zed了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-28 20:46:55">发布日期：2025-08-28 20:46:55</time></div><p class="article-description">上午发了Gemini和Zed的梦幻联动后，太爽了！我最喜欢的两个编码工具梦幻联动了！下午Claude Code和Zed的联动也来了来了。不过这回并不是官方的，是能用轻量级桥接器让Claude Code</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505670&amp;idx=1&amp;sn=84d614828a4aabc721e2abdc7f3d5354&amp;chksm=e97b4ad7118750aa417e96f9d1c42df1701a3eff15ab57bc1755fe10102a13398667de27212f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505536&amp;idx=1&amp;sn=b9fd1ecfc24a411c3a89df7ec4dd1862&amp;chksm=e92a5da88f807d1a9022c37faf0a7584f9a1c148c9bf4159733c522a308e0a4119b028d9dd71&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505536&amp;idx=1&amp;sn=b9fd1ecfc24a411c3a89df7ec4dd1862&amp;chksm=e92a5da88f807d1a9022c37faf0a7584f9a1c148c9bf4159733c522a308e0a4119b028d9dd71&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 怎么使用最省？
+
+刚开始我选择了Pro计划，觉得每月20美元很划算，结果发现每5小时只能发送10-40个提示，而且还不能用Opus 4模型。
+
+用了一周就发现完全不够，经常卡在使用限制上，开发效率反而降低了。后来咬牙升级到Max计划，虽然每月要花100美元，但算下来一个24/7工作的智能编程助手成本远比请人工便宜，这笔投资确实值得。
+
+现在的模型使用策略很明确：日常开发全部用Sonnet 4，这个模型在性能和成本之间达到了最佳平衡，只有遇到复杂的架构设计或需要深度代码分析时才会切换到Opus 4。
+
+对于简单的代码格式化、变量重命名这类重复性工作，我都用Windsurf免费的模型，比方说&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505524&amp;idx=1&amp;sn=5806e5e697bfb8b70436f17df4ec2cb7&amp;scene=21#wechat_redirect&quot;&gt;Grok Code&lt;/a&gt;，或者成本更低的GPT-5。
+
+还有我发现集中化地批量处理相同类型的任务也会比零散处理更省钱，比如在一个任务里面处理lint的报错，或者单独完成拆分重构组件的任务。
+
+最省钱技巧是频繁使用`/clear`命令。我现在养成了习惯，每次开始新任务前就清理对话历史，这样避免了大量无关信息消耗token。刚开始我不知道这个，让无关的历史对话一直占用着配额，钱花得冤枉。
+
+另外`/compact`命令也很有用，可以战略性地压缩上下文，只保留当前任务相关的信息。
+
+再就是要精确选择需要分析的文件。虽然Claude Code支持百万token的上下文窗口，但一次性加载整个大型代码库会让成本飙升。现在我都用@标签有针对性地引用特定代码段，既提高了效率又控制了成本。
+
+监控使用情况也很重要的，我会经常用`/status`和`/cost`命令检查，就像开车时看油表一样。装了ccusage这个第三方工具，能看到详细的使用分析和成本分解，帮我找出哪些操作最耗token。
+
+像类似于Git提交这种非编码业务类的操作，我是绝对不会在CC里面完成的，都是使用免费Gemini CLI制作成工作流，量大管饱分析准确：&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247502174&amp;idx=1&amp;sn=32f0494149360829be896b5e01079ea6&amp;scene=21#wechat_redirect&quot;&gt;Gemini CLI高级使用技巧和案例演示及常见问题解答&lt;/a&gt;
+
+最后就是配搭使用，不要怼着Claude Code一头薅，而是搭配着Windsurf来使用：&lt;a class=&quot;normal_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505008&amp;idx=1&amp;sn=e4ee8a96c8cf52cab5c1e1771b519014&amp;scene=21#wechat_redirect&quot;&gt;Windsurf的重生！&lt;/a&gt;，比方说代码重构，让CC来制作任务TodoList ，然后再跑到Windsurf里面来具体执行，基本上消耗一个点就可以解决。
+
+更多的CC使用技巧欢迎下方留言讨论。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-27 20:45:58">发布日期：2025-08-27 20:45:58</time></div><p class="article-description">Claude Code 怎么使用最省？
+
+刚开始我选择了Pro计划，觉得每月20美元很划算，结果发现每5小时只能发送10-40个提示，而且还不能用Opus 4模型。
+
+用了一周就发现完全不够，经常卡在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505536&amp;idx=1&amp;sn=b9fd1ecfc24a411c3a89df7ec4dd1862&amp;chksm=e92a5da88f807d1a9022c37faf0a7584f9a1c148c9bf4159733c522a308e0a4119b028d9dd71&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505492&amp;idx=1&amp;sn=5ebfb137c87139183c3301296bc554a7&amp;chksm=e941422f104d8db44c43170ffc10d71eb6dbf1f7d5d94e3e74e4bf6f980da0f36167de562d25&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfuIZPicfKTP9fOWp7mqNo7pXwtwHMACbCYjtniaNw1ia7SV0fqyOU4fbe8MmIOC8byFD8XWkt7w1vicQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505492&amp;idx=1&amp;sn=5ebfb137c87139183c3301296bc554a7&amp;chksm=e941422f104d8db44c43170ffc10d71eb6dbf1f7d5d94e3e74e4bf6f980da0f36167de562d25&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 官方教程指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-25 19:22:46">发布日期：2025-08-25 19:22:46</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505492&amp;idx=1&amp;sn=5ebfb137c87139183c3301296bc554a7&amp;chksm=e941422f104d8db44c43170ffc10d71eb6dbf1f7d5d94e3e74e4bf6f980da0f36167de562d25&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505475&amp;idx=1&amp;sn=0b31dd4d8732072b161ca99632a73683&amp;chksm=e99bffab59a664fa08c6ddad0ec2e81bfacb9f3c09545d57ebdd6af01a9cc329b24bb248da9b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQcyXe4ayo55jHJH5UQQ81Y8eBp3q8xNvZRYmshq8daue42f6EEibMbM5BNnt4qtB0hScshHuScYITg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505475&amp;idx=1&amp;sn=0b31dd4d8732072b161ca99632a73683&amp;chksm=e99bffab59a664fa08c6ddad0ec2e81bfacb9f3c09545d57ebdd6af01a9cc329b24bb248da9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">上手就会！国货之光 Qoder 完整使用图解和核心开发工作流</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-24 20:29:39">发布日期：2025-08-24 20:29:39</time></div><p class="article-description">本文是AI编程高效开发指南合集的第19篇，本系列预计发布100多篇，每篇不到7毛钱。目前合集已经得到了215位大佬的支持，在此再次说一声感谢！Qoder最近真的是太火了。太炸了！国产AI IDE 终于</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505475&amp;idx=1&amp;sn=0b31dd4d8732072b161ca99632a73683&amp;chksm=e99bffab59a664fa08c6ddad0ec2e81bfacb9f3c09545d57ebdd6af01a9cc329b24bb248da9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505262&amp;idx=1&amp;sn=93ccf62c80da79f038dd633d4f17efaf&amp;chksm=e949281a68bc367e35a539edcee78bb65b82dde823a5b7c909979f04f90728b45696ab94da77&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdWLia7eFb1EsKrnFWsp3KQtASiadsBJOLsM2nU2TSsDEZ7OYicOKKBichQJian3ndScVMl92SwEEibJzBw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505262&amp;idx=1&amp;sn=93ccf62c80da79f038dd633d4f17efaf&amp;chksm=e949281a68bc367e35a539edcee78bb65b82dde823a5b7c909979f04f90728b45696ab94da77&amp;scene=0&amp;xtrack=1#rd" target="_blank">太炸了！国产AI IDE 终于有一个能打的了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-22 08:00:27">发布日期：2025-08-22 08:00:27</time></div><p class="article-description">把Cursor Kiro等一众秒成了渣渣。Qoder （ /ˈkoʊdər/ ） 是一个专为实际软件开发而设计的代理编码平台。它的最大特点就是Quest Mode 任务模式和Memory 记忆，让上下</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505262&amp;idx=1&amp;sn=93ccf62c80da79f038dd633d4f17efaf&amp;chksm=e949281a68bc367e35a539edcee78bb65b82dde823a5b7c909979f04f90728b45696ab94da77&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505231&amp;idx=1&amp;sn=ca508ee8ae12e6a74651cd85e28249e1&amp;chksm=e9e1eebf18b597e4109b372d8fe602ea2623593be065be65513d01853eeab701de5f0eb20db8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQdWLia7eFb1EsKrnFWsp3KQtjlP47WY8VdzGH7Igc1MAPMicQicYdovLU99lf6tAAuDrHz44WKxRarqg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505231&amp;idx=1&amp;sn=ca508ee8ae12e6a74651cd85e28249e1&amp;chksm=e9e1eebf18b597e4109b372d8fe602ea2623593be065be65513d01853eeab701de5f0eb20db8&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent文档编写有了统一标准！OpenAI开源了AGENTS.md</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-21 11:26:51">发布日期：2025-08-21 11:26:51</time></div><p class="article-description">OpenAI发布了开源的agent README格式: AGENTS.md而且这就是它的域名，可以直接访问。目前Codex, Amp, Google jules , Cursor, FactoryAI</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505231&amp;idx=1&amp;sn=ca508ee8ae12e6a74651cd85e28249e1&amp;chksm=e9e1eebf18b597e4109b372d8fe602ea2623593be065be65513d01853eeab701de5f0eb20db8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505204&amp;idx=1&amp;sn=7abe9606b36ded75b0d4c34f1073aaba&amp;chksm=e9bb07f67959603b1ad38fb322e8bf10e3a3eb0779382ab9c311c123c6a93811fb5580cb486f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/4HWyricuhgQfjbIg2D6X2t9FmHAVUYpDvS4JX2Ibg5mtnpibDS9SmL5t1QOgEKiafv1f1QkUWMVmV5wEpcs6kKPrQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505204&amp;idx=1&amp;sn=7abe9606b36ded75b0d4c34f1073aaba&amp;chksm=e9bb07f67959603b1ad38fb322e8bf10e3a3eb0779382ab9c311c123c6a93811fb5580cb486f&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用Claude Code Agent 自动生成流光卡片</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2025-08-19 20:10:22">发布日期：2025-08-19 20:10:22</time></div><p class="article-description">本文是AI编程高效开发指南的第17篇，本系列预计发布100多篇，每篇不到7毛钱。目前合集已经得到了208位大佬的支持，在此再次说一声感谢！上次我们使用Claude Code Agent实现一键视频下载</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247505204&amp;idx=1&amp;sn=7abe9606b36ded75b0d4c34f1073aaba&amp;chksm=e9bb07f67959603b1ad38fb322e8bf10e3a3eb0779382ab9c311c123c6a93811fb5580cb486f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_4.html" class="pagination-button pagination-prev">上一页</a><a href="index_6.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

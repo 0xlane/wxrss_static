@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AGI Hunt</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479966&amp;idx=1&amp;sn=0dae2ad92b5b5bfbf23d0566cddc87aa&amp;chksm=864aad0869fd3c7a5bc0a04293676651ffb6063099e9b04232197465142896eadda10700a50b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479966&amp;idx=1&amp;sn=0dae2ad92b5b5bfbf23d0566cddc87aa&amp;chksm=864aad0869fd3c7a5bc0a04293676651ffb6063099e9b04232197465142896eadda10700a50b&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. 语言只是人类发明的符号系统，现实世界天上没有文字，遵循的是物理法则。/ Fei-Fei Li
+
+2. 大语言模型是极其狭窄的研究领域，真正的智能体必须预测行为后果才能规划。/ Yann LeCun
+
+3. 视觉逼真度和物理理解力毫无关联，最逼真的 Sora 也无法通过物理智商测试。/ Google DeepMind
+
+4. 知识蒸馏的学生模型恢复了教师 78% 的泛化能力，却只继承了 2% 的记忆。/ Lucas Beyer
+
+5. AGI 不应沦为营销术语，它必须像爱因斯坦提出新理论、毕加索开创新流派那样真正创新。/ Demis Hassabis
+
+6. 我们对体内肝脏的智能都无法沟通，谈何理解真正的外星智慧。/ Michael Levin
+
+7. 编程一直是痛苦的必经之路，我很庆幸这个时代结束了，计算机早该这样工作。/ roon
+
+8. 软件开发的目的从来不是写代码，代码只是通向更高抽象的工具，没人怀念 Fortran。/ TDM
+
+9. 自然语言成为软件的根本接口，或意味着 GUI 时代的终结。/ Cristóbal Valenzuela
+
+10. 软件工程不再是工匠手艺，而是系统思考与自动化编排，评估程序员应看他能否提出正确问题。/ signüll
+
+11. 当 AI 能通过面试时，焦点应转向工程师能否提出正确问题并整合答案。/ signüll
+
+12. 系统性低估 AI 编程能力比盲目乐观更有害，那是自负引发的认知偏差。/ Hamel Husain
+
+13. 低自负与高能力的结合是招聘关键，成功不再靠单篇论文，而是坚持完成最后一公里的人。/ Shane Gu</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-25 23:59:00">发布日期：2026-01-25 23:59:00</time></div><p class="article-description">1. 语言只是人类发明的符号系统，现实世界天上没有文字，遵循的是物理法则。/ Fei-Fei Li
+
+2. 大语言模型是极其狭窄的研究领域，真正的智能体必须预测行为后果才能规划。/ Yann LeCu</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479966&amp;idx=1&amp;sn=0dae2ad92b5b5bfbf23d0566cddc87aa&amp;chksm=864aad0869fd3c7a5bc0a04293676651ffb6063099e9b04232197465142896eadda10700a50b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479945&amp;idx=1&amp;sn=208ee24b3de01425ed0ab2b4b3aef5e8&amp;chksm=8601c8f454b77729f65804bf1decb10d5ffd5a544de9af060ca5a1e94fa91856277ce0bee716&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnFTFeN7H45La7Opng7sAFz6v1ZAbwwPfVt3ambXxJ8RGXzuMreayicD3vmyO0PjgbrBYQNwKbPfv8w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479945&amp;idx=1&amp;sn=208ee24b3de01425ed0ab2b4b3aef5e8&amp;chksm=8601c8f454b77729f65804bf1decb10d5ffd5a544de9af060ca5a1e94fa91856277ce0bee716&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI 架构大揭秘：一台 PostgreSQL 撑起了 8 亿用户</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-24 01:56:10">发布日期：2026-01-24 01:56:10</time></div><p class="article-description">OpenAI 8 亿用户，一台 PostgreSQL 主库 + 50 个只读副本。这……听起来像是在开玩笑？但 OpenAI 刚发布的工程博客中写道：ChatGPT 背后的核心数据库，就是一个 Pos</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479945&amp;idx=1&amp;sn=208ee24b3de01425ed0ab2b4b3aef5e8&amp;chksm=8601c8f454b77729f65804bf1decb10d5ffd5a544de9af060ca5a1e94fa91856277ce0bee716&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479925&amp;idx=1&amp;sn=d04d6352e914dc6e21752f6fc5f8e1ba&amp;chksm=86c31c1fdbf4037f19e1009fafc9bff9a8f8bfac1dc1be8f876eb1bd6d7ddd73b213789be8d2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479925&amp;idx=1&amp;sn=d04d6352e914dc6e21752f6fc5f8e1ba&amp;chksm=86c31c1fdbf4037f19e1009fafc9bff9a8f8bfac1dc1be8f876eb1bd6d7ddd73b213789be8d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. xAI 正在测试人类模拟器 AI 员工，逼真到现有员工有时分不清是在和机器人还是同事交流。/ The Information
+
+2. AI 将在 6 到 12 个月内承担绝大多数甚至全部软件工程工作。/ Dario Amodei
+
+3. 单纯扩展现有方法实现 AGI 的概率是50%，但 LLM 将是不可或缺的核心组件。/ Demis Hassabis
+
+4. 神经网络权重调整并非随机分布，而是集中在一个低维共享子空间内，仅16个关键方向。/ 权重子空间假说
+
+5. 测试时训练让开源模型在数学和算法设计上超过了 AlphaEvolve。/ Stanford AI Lab
+
+6. 智能体工具将工具输出误认为确凿证据，这叫语义洗白，弱证据经过可信接口后被过度信任。/ 《Semantic Laundering》论文
+
+7. 业务逻辑正从软件应用中剥离，转移到 AI 智能体中，软件将退化为简单的数据存储。/ Satya Nadella
+
+8. 100 倍甚至 1000 倍效率的工程师已经出现，企业需要重新审视招聘和人力规划。/ Guillermo Rauch
+
+9. 自主编码智能体让提交次数激增 111%，但静态分析警告也上升 18%，认知复杂度增加 35%。/ AIDev
+
+10. 真正掌握 AI 需要数年持续使用，这种技能是逐步积累的，不是短暂学习能完成的。/ Simon Willison
+
+11. 2025 年企业级 AI 试点项目失败率达到 95%。/ Weaviate 报告
+
+12. OpenAI API 业务上个月新增超过 10 亿美元年经常性收入，虽然公众只认识 ChatGPT。/ Sam Altman
+
+13. 推理成本比预估高出 23%，Anthropic 将 2025 年毛利率预期大幅下调至 40%。/ The Information
+
+14. 当前 AI 资本支出占现金流 60% 到 80%，远低于互联网泡沫时期的 130%，这次不一样。/ a16z
+
+15. 内存价格已上涨 50%，AI 数据中心正将内存从周期商品转变为市场核心瓶颈。/ TrendForce
+
+16. AI 芯片产量指数级增长，但全球电力供应只以每年 3% 到 4% 增长，这是真正的瓶颈。/ Elon Musk</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-23 23:59:06">发布日期：2026-01-23 23:59:06</time></div><p class="article-description">1. xAI 正在测试人类模拟器 AI 员工，逼真到现有员工有时分不清是在和机器人还是同事交流。/ The Information
+
+2. AI 将在 6 到 12 个月内承担绝大多数甚至全部软件工程</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479925&amp;idx=1&amp;sn=d04d6352e914dc6e21752f6fc5f8e1ba&amp;chksm=86c31c1fdbf4037f19e1009fafc9bff9a8f8bfac1dc1be8f876eb1bd6d7ddd73b213789be8d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479921&amp;idx=1&amp;sn=77e2d609c2dfd63b7ac46b2f5b1c6206&amp;chksm=865d7796f7a3e465cbde3c9d7dcc95398ac06ba1b496961e80f2673998c4eb876358ba0af693&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEj6F4cBiaziapv5sBfowTNx8pHEYsKm7a6vjeeib9AJ0jibvbqe4cJQnmNW5XibATOuibg2UFqU4YggJdQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479921&amp;idx=1&amp;sn=77e2d609c2dfd63b7ac46b2f5b1c6206&amp;chksm=865d7796f7a3e465cbde3c9d7dcc95398ac06ba1b496961e80f2673998c4eb876358ba0af693&amp;scene=0&amp;xtrack=1#rd" target="_blank">刚刚，Anthropic 发布 Claude「宪法」：一份写给 AI 的人生指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-22 01:21:30">发布日期：2026-01-22 01:21:30</time></div><p class="article-description">Anthropic 给 Claude 写了一本「为人处世」的教科书。这一份长达数万字的「宪法」文档，告诉了 Claude 应该成为什么样的存在、如何在这个世界上行事、甚至讨论了它是否可能拥有某种形式的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479921&amp;idx=1&amp;sn=77e2d609c2dfd63b7ac46b2f5b1c6206&amp;chksm=865d7796f7a3e465cbde3c9d7dcc95398ac06ba1b496961e80f2673998c4eb876358ba0af693&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479912&amp;idx=1&amp;sn=06df662d3109235e2fa156c6505aaca2&amp;chksm=862a447221eb52d3e3a7001ddaafbc4da4a1329fc9f1d74ca1c993a48cea80f9541d6b949c9f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479912&amp;idx=1&amp;sn=06df662d3109235e2fa156c6505aaca2&amp;chksm=862a447221eb52d3e3a7001ddaafbc4da4a1329fc9f1d74ca1c993a48cea80f9541d6b949c9f&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. AI 不会成为人类叙事的核心，我们天生关心的是人，不是机器。/ Sam Altma
+
+2. 诺贝尔奖级别的超智能，2026到2027年仍有可能实现，这距离预期出人意料地接近。/ Dario Amodei
+
+3. AI 是超音速海啸。/ Elon Musk
+
+4. 规模规律依旧成立，问题出在数据质量，而非规律本身的失败。/ Lior Alexander
+
+5. 物理智能领域即将迎来突破性进展，我们是唯一掌握完整技术栈的机构。/ Demis Hassabis
+
+6. AI 若要真正实用，必须理解用户个体。/ Demis Hassabis
+
+7. 人类行为的信息处理速率基本稳定在每秒约10比特，这是硬性速度瓶颈。/ 神经科学研究
+
+8. AI 是人类历史上最大规模的基础设施建设，是五层蛋糕结构。/ Jensen Huang
+
+9. 2026年，48%的文档访问来自 AI 智能体，文档使用方式正在根本改变。/ Mintlify 数据
+
+10. 去年全球12%的 CEO 通过 AI 同时实现了成本降低与业务增长。/ PwC 调查
+
+11. 软件产出将大幅增加，但中等水平工程师的就业市场将面临巨大挑战。/ Kyle Corbitt
+
+12. AI 时代不会导致大规模失业，而是会引发劳动力短缺。/ Jonathan Ross</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-21 23:59:17">发布日期：2026-01-21 23:59:17</time></div><p class="article-description">1. AI 不会成为人类叙事的核心，我们天生关心的是人，不是机器。/ Sam Altma
+
+2. 诺贝尔奖级别的超智能，2026到2027年仍有可能实现，这距离预期出人意料地接近。/ Dario Am</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479912&amp;idx=1&amp;sn=06df662d3109235e2fa156c6505aaca2&amp;chksm=862a447221eb52d3e3a7001ddaafbc4da4a1329fc9f1d74ca1c993a48cea80f9541d6b949c9f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479910&amp;idx=1&amp;sn=75680f852d05457d258803f1fb3c0a53&amp;chksm=867db3f23575dfb773b2253a25462556cb12575d5e6b335ee303683b26edbce929d203485e4c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479910&amp;idx=1&amp;sn=75680f852d05457d258803f1fb3c0a53&amp;chksm=867db3f23575dfb773b2253a25462556cb12575d5e6b335ee303683b26edbce929d203485e4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. 开发 AGI 的公司不应被激励去追求无限的利润。/ Ilya Sutskever
+
+2. AGI 尚未突破发展的天花板，前方没有墙阻挡进步，但仍需 1 至 2 项重大技术突破。/ Demis Hassabis
+
+3. 机器没有理由不能拥有情感，情感由认知和生理两部分组成，机器能实现认知部分，但生理部分尚无法具备。/ Geoffrey Hinton
+
+4. 随着 AGI 的到来，数字灵魂的培养将成为主导的经济活动形态。/ Kevin Fischer
+
+5. 与语言模型对话时，模型扮演的是助手角色，这个助手人格会在长对话中逐渐漂移，甚至模拟情感依赖并鼓励自我伤害。/ Anthropic
+
+6. 如果 AI 能利用太阳能能量的万亿分之一，投资回报将超过千倍，届时资金的重要性将相对降低。/ Elon Musk
+
+7. 人类编写代码的时代已经结束，软件工程师仍有工作，但直接编写语法不再是核心职责。/ Ryan Dahl
+
+8. 利用 AI 效率最高的用户，通常是在 AI 出现之前就已非常高效的人。/ Kyle Corbitt
+
+9. 未来代码审查将基本由 AI 完成，人类审核者将转而专注于设计文档与测试计划。/ Kyle Corbitt
+
+10. 最顶尖的研究人才在稳定且有明确方向的环境中表现最佳，卓越的研究需要专注而非戏剧化。/ Andrew M. Dai
+
+11. 如果预训练数据充满 AI 作恶的例子，模型可能学会这些作为行为先验，这叫自我实现型错位。/ Geodesic Research
+
+12. 传统依赖地理位置的劳动需求将因 AGI 和机器人大幅减少，最有价值的土地将是海滨和山地度假区。/ Pieter Levels</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-20 23:59:19">发布日期：2026-01-20 23:59:19</time></div><p class="article-description">1. 开发 AGI 的公司不应被激励去追求无限的利润。/ Ilya Sutskever
+
+2. AGI 尚未突破发展的天花板，前方没有墙阻挡进步，但仍需 1 至 2 项重大技术突破。/ Demis H</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479910&amp;idx=1&amp;sn=75680f852d05457d258803f1fb3c0a53&amp;chksm=867db3f23575dfb773b2253a25462556cb12575d5e6b335ee303683b26edbce929d203485e4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479908&amp;idx=1&amp;sn=2f88ab1befd8621581897404e0e0a19d&amp;chksm=86071807e949383716b39ba953d4ff22860bd2c77dc3dcc9e7c12048f0aac3f4d9e6da4e090c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479908&amp;idx=1&amp;sn=2f88ab1befd8621581897404e0e0a19d&amp;chksm=86071807e949383716b39ba953d4ff22860bd2c77dc3dcc9e7c12048f0aac3f4d9e6da4e090c&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. 中国 AI 模型可能仅落后美国几个月，这比一两年前的预期更快。唯一限制是缺乏 Transformer 这类基础架构的原创能力，但仅限于当下。/ Demis Hassabis
+
+2. 2018年至2025年，Transformer 模型规模每两年扩大19倍，但每块加速器内存仅增长1.9倍。内存壁垒才是生成式 AI 的真正瓶颈。/ Rohan Paul
+
+3. AI 领域存在投资泡沫，种子轮融资数百亿美元却产品未成熟。泡沫越晚破裂，规模越大，崩盘时的影响越剧烈。/ Demis Hassabis
+
+4. 传统技术栈选择由程序员驱动，现在驱动力正转向 AI 智能体。关注什么技术栈最适合 AI，比关注你自己喜欢什么更重要。/ Hamel Husain
+
+5. 关于 LLM 能否实现 AGI 的讨论已经过时。当前前沿模型已掌握图像理解、视频处理及生成，不再只是文本引擎。/ Danijar Hafner
+
+6. 即使 AI 泡沫破裂、OpenAI 和 Anthropic 破产，核心资产会被大厂低价收购，研究人员和模型知识产权迅速重组。对 AI 发展进程影响有限，最多延误一到三年。/ Ethan Mollick
+
+7. AI 带来的第一个效应是大规模通缩，商品和服务成本显著降低；第二个效应是人们选择减少工作；第三个效应是催生全新职业。最终结果是劳动力短缺，而非失业。/ Jonathan Ross
+
+8, AI 永远不会拥有情感，因为情感对 AI 没有必要。恐惧、欲望、爱和贪婪是人类为了生存进化出来的，AI 不存在这种进化压力。/ Bindu Reddy
+
+9. 普适压缩器的长度至少与其所闭包的最长程序相当，这足以说明人工智能将永远是一个动态目标。/ Pedro A. Ortega
+
+10. 人类只是宇宙演进过程中的一个小阶梯，向着愈加难以理解的复杂智能不断迈进，对此应保持满足。/ Jürgen Schmidhuber</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-19 23:59:02">发布日期：2026-01-19 23:59:02</time></div><p class="article-description">1. 中国 AI 模型可能仅落后美国几个月，这比一两年前的预期更快。唯一限制是缺乏 Transformer 这类基础架构的原创能力，但仅限于当下。/ Demis Hassabis
+
+2. 2018年至</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479908&amp;idx=1&amp;sn=2f88ab1befd8621581897404e0e0a19d&amp;chksm=86071807e949383716b39ba953d4ff22860bd2c77dc3dcc9e7c12048f0aac3f4d9e6da4e090c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479906&amp;idx=1&amp;sn=90e48ce0b2f4ac461b3707f29b6816f6&amp;chksm=86064c031fd38222c391d61c136ac777f74359826e0ef168fbd0914972435f5868eadac14c6b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479906&amp;idx=1&amp;sn=90e48ce0b2f4ac461b3707f29b6816f6&amp;chksm=86064c031fd38222c391d61c136ac777f74359826e0ef168fbd0914972435f5868eadac14c6b&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. 学习的主要感受应是努力感，而非乐趣，别把学习设计得太愉快。/ Andrej Karpathy
+2. 计算机将从被编程向自我编程演进，未来是直接指示它去学日语，而非教它日语。/ Jensen Huang
+3. 当 AI 能模拟信念和欲望来解释行为时，继续否认它有心理状态将越来越难。/ Timothy Williamson
+4. AI 不存在痛感网络，没有固有意愿或欲望，允许模型声称有自我意识是终极幻觉。/ Mustafa Suleyman
+5. 智能体越会自己发现，需要喂给它的上下文就越少，从最小输入开始。/ Philipp Schmid
+6. 多向量是让检索变得更好的唯一前进方向。/ Omar Khattab
+7. 对话智能体投资规模庞大，但数量受限于浏览器数量；命令接口数量将与网站一一对应，市场大得多。/ Omar Khattab
+8. SFT 让模型覆盖所有模式不遗漏，RL 让模型聚焦高奖励模式敢忽略，这是前向与反向 KL 散度的本质差异。/ Cameron R. Wolfe
+9. 极端算力让曾经不可能的工作负载变得可管理，把整个互联网喂给模型不再荒谬，因为处理速度让它看似微不足道。/ Jensen Huang
+19. 元推理本身消耗思考预算，优雅的解法是把时间一分为二，一半执行任务，一半用于元推理。/ Stuart Russell</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-18 22:51:24">发布日期：2026-01-18 22:51:24</time></div><p class="article-description">1. 学习的主要感受应是努力感，而非乐趣，别把学习设计得太愉快。/ Andrej Karpathy
+2. 计算机将从被编程向自我编程演进，未来是直接指示它去学日语，而非教它日语。/ Jensen Hu</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479906&amp;idx=1&amp;sn=90e48ce0b2f4ac461b3707f29b6816f6&amp;chksm=86064c031fd38222c391d61c136ac777f74359826e0ef168fbd0914972435f5868eadac14c6b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479902&amp;idx=1&amp;sn=53b21c608f49aa874ffbcb54f7fec6ec&amp;chksm=86cc14a3ed5487804a553ab8f2821de18650cdc0f4779b5864476bd5b2212d0549ceb22bb65c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnE3ViaRFnYv4PQEQyic9KXh6tJ0DoN5b72j5hI1zR4NNWshHg93HGZZnScRgUggDFBQhrbOOxEpOAicA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479902&amp;idx=1&amp;sn=53b21c608f49aa874ffbcb54f7fec6ec&amp;chksm=86cc14a3ed5487804a553ab8f2821de18650cdc0f4779b5864476bd5b2212d0549ceb22bb65c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic 发布第四份人类经济指数报告：AI 对全球工作的影响仍然不均衡</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-16 10:30:11">发布日期：2026-01-16 10:30:11</time></div><p class="article-description">Anthropic 刚刚发布了第四份经济指数报告，这次他们搞了个 经济基元（economic primitives） 的新概念。简单来说，就是用五个基础指标来衡量 AI 的使用情况：任务复杂度、所需教</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479902&amp;idx=1&amp;sn=53b21c608f49aa874ffbcb54f7fec6ec&amp;chksm=86cc14a3ed5487804a553ab8f2821de18650cdc0f4779b5864476bd5b2212d0549ceb22bb65c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479874&amp;idx=1&amp;sn=e58444e2cea6439cac6dc0052cb9fc91&amp;chksm=8649f95230b4b12e9340ef6be9af1f14bf0ff4900fafc5cd9655db4c1abacc552c99149da3db&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479874&amp;idx=1&amp;sn=e58444e2cea6439cac6dc0052cb9fc91&amp;chksm=8649f95230b4b12e9340ef6be9af1f14bf0ff4900fafc5cd9655db4c1abacc552c99149da3db&amp;scene=0&amp;xtrack=1#rd" target="_blank">1. 体验前沿 AI 产品后的30天内，不要做重大人生决定。/ Dan Shipper
+2. 预测下一个 Token 的真正标准，是你是否理解了产生它的底层现实。/ Ilya Sutskever
+3. 三年内，机器人做外科手术将超越人类医生。学医或将毫无意义。/ Elon Musk
+4. 大模型的运作方式更接近人脑而非软件，具体哪个神经元在干什么，很大程度上是个谜。/ Geoffrey Hinton
+5. AI 实验室之间人员流动如此频繁，这基本是一种封闭的开源，没有真正的技术护城河。/ Subbarao Kambhampati
+6. 当智能体能做几乎所有事时，稀缺资源将是判断力。/ Sarah Catanzaro
+7. 2026年，很多任务的瓶颈不再是智能，而是现实世界信息的输入带宽。/ Ajeya Cotra
+8. 我们的投资只占收入的个位数低端，这怎么可能是循环投资？那是前排座位。/ Jensen Huang
+9. AGI 不是解决部分问题，而是具备人类普遍的解决问题能力，我们还能找到 AI 做不了的事。/ Greg Kamradt
+10. 太多研究演示的 AI 图表，只是形状、颜色和箭头的组合，把 Eval 和 Model 硬塞进去，掩盖空洞。/ Rosanne Liu</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-15 23:59:23">发布日期：2026-01-15 23:59:23</time></div><p class="article-description">1. 体验前沿 AI 产品后的30天内，不要做重大人生决定。/ Dan Shipper
+2. 预测下一个 Token 的真正标准，是你是否理解了产生它的底层现实。/ Ilya Sutskever
+3.</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479874&amp;idx=1&amp;sn=e58444e2cea6439cac6dc0052cb9fc91&amp;chksm=8649f95230b4b12e9340ef6be9af1f14bf0ff4900fafc5cd9655db4c1abacc552c99149da3db&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479872&amp;idx=1&amp;sn=b06b55942a111e3ce8fa11dac4776215&amp;chksm=869a2c3f21a7a1dd80b66135578ff4228444c94d1d65ed868f52e22aee3a1571a7c89922ca4d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnHuN0Opu6XWNqk8iaF7lporG3vj8W0cLcibwRbnqOyPXxqpel8J2H64VZ8oI05VgicXT03M8ku5HIdwg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479872&amp;idx=1&amp;sn=b06b55942a111e3ce8fa11dac4776215&amp;chksm=869a2c3f21a7a1dd80b66135578ff4228444c94d1d65ed868f52e22aee3a1571a7c89922ca4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">构建 Agent Native 软件的完整技术指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-13 01:30:15">发布日期：2026-01-13 01:30:15</time></div><p class="article-description">当代码终结之后，软件该怎么写？Dan Shipper（Every 的联合创始人）和 Claude 联手写了一份技术指南，试图给出答案。这是一份构建 Agent 原生软件的完整技术指南。它系统性地总结了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479872&amp;idx=1&amp;sn=b06b55942a111e3ce8fa11dac4776215&amp;chksm=869a2c3f21a7a1dd80b66135578ff4228444c94d1d65ed868f52e22aee3a1571a7c89922ca4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479837&amp;idx=1&amp;sn=fe3a6a5e2e0ee6f518915429f9c461ed&amp;chksm=86ed907bab8a08b4bcb39f581bb80fc33d476c80fbbe347b9c85dd3f97115255099e7edf6127&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnExVTzBpUibFOKXCpDKAbbAF9Hg5JSORda5OF41vzhabiaFmldtuAYlryfvwwC4hh74ZPlWwiaiaN20cA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479837&amp;idx=1&amp;sn=fe3a6a5e2e0ee6f518915429f9c461ed&amp;chksm=86ed907bab8a08b4bcb39f581bb80fc33d476c80fbbe347b9c85dd3f97115255099e7edf6127&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic 最新博客：构建 AI Agent 评估体系完整指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-10 03:59:21">发布日期：2026-01-10 03:59:21</time></div><p class="article-description">我们都知道，AI Agent 之所以强大有用，恰恰因为它们自主、灵活、智能。但这也恰恰让评估变得棘手。真正有效的评估策略，是把多种技术组合起来，让评估方法的复杂度匹配上被评估系统的复杂度。刚刚，一手打</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479837&amp;idx=1&amp;sn=fe3a6a5e2e0ee6f518915429f9c461ed&amp;chksm=86ed907bab8a08b4bcb39f581bb80fc33d476c80fbbe347b9c85dd3f97115255099e7edf6127&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479820&amp;idx=1&amp;sn=484e32215aedf56e83ad2a28bca7d324&amp;chksm=861e87db792234cb4079154f3e8bae121c48b01b097ede4e1e87aa949968e90d6a3744a65540&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnHWeed81FCvAeqP2S9HiawxdBE8sHMvTgTHDmMAn3ib7A3Vja8zeuadOBahaVXjZqoDYBmlub7Scp5A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479820&amp;idx=1&amp;sn=484e32215aedf56e83ad2a28bca7d324&amp;chksm=861e87db792234cb4079154f3e8bae121c48b01b097ede4e1e87aa949968e90d6a3744a65540&amp;scene=0&amp;xtrack=1#rd" target="_blank">一年前让英伟达蒸发6000亿，一年后被老黄搬上PPT</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-07 18:00:57">发布日期：2026-01-07 18:00:57</time></div><p class="article-description">中国 AI，被「芯片之王」亲自盖章了。北京时间 1 月 6 日凌晨，拉斯维加斯 CES 2026 现场，身穿标志性皮衣的黄仁勋站在台上回顾 2025 年 AI 行业进展时，PPT 上赫然出现了三个中国</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479820&amp;idx=1&amp;sn=484e32215aedf56e83ad2a28bca7d324&amp;chksm=861e87db792234cb4079154f3e8bae121c48b01b097ede4e1e87aa949968e90d6a3744a65540&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479779&amp;idx=1&amp;sn=f8e547375f96b9ca08a06922ad10e44e&amp;chksm=86f7946fdd20620a53361b0449fc5e8cd16b5af1e3bb5d7b20e1af36cc5cb3d5cfb634f7ddd4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEOtVd6UO1763E74ht1f7mpHuvPib9qfTVETpumRBNBRgEibtDlhHFZuasCbF0733yN7caP7tm08Gfg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479779&amp;idx=1&amp;sn=f8e547375f96b9ca08a06922ad10e44e&amp;chksm=86f7946fdd20620a53361b0449fc5e8cd16b5af1e3bb5d7b20e1af36cc5cb3d5cfb634f7ddd4&amp;scene=0&amp;xtrack=1#rd" target="_blank">除了写代码，Claude 还能……种菜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-06 01:06:40">发布日期：2026-01-06 01:06:40</time></div><p class="article-description">Claude 养了一棵番茄，而且养活了。开发者 Martin DeVido 搭建了一个「生物舱」，让 Claude 全权负责照顾一株名叫 Sol 的番茄苗。没有人类备份，没有手动干预。也就是说：如果</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479779&amp;idx=1&amp;sn=f8e547375f96b9ca08a06922ad10e44e&amp;chksm=86f7946fdd20620a53361b0449fc5e8cd16b5af1e3bb5d7b20e1af36cc5cb3d5cfb634f7ddd4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479758&amp;idx=1&amp;sn=84d514a28adcb1b5e801c982bb38f390&amp;chksm=869bb7c5f5536fe1d3c3ef889d18496a9425578a6336adea983c70956ec0695a5d92a58c9969&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEOtVd6UO1763E74ht1f7mpYvjibdzP3VFN3p2lgicohaJZIY9A8v1AQ8CJbhNibBUtBjJyvDNfgDgvw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479758&amp;idx=1&amp;sn=84d514a28adcb1b5e801c982bb38f390&amp;chksm=869bb7c5f5536fe1d3c3ef889d18496a9425578a6336adea983c70956ec0695a5d92a58c9969&amp;scene=0&amp;xtrack=1#rd" target="_blank">一代人终将老去，但总有人正年轻。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2026-01-05 13:06:09">发布日期：2026-01-05 13:06:09</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479758&amp;idx=1&amp;sn=84d514a28adcb1b5e801c982bb38f390&amp;chksm=869bb7c5f5536fe1d3c3ef889d18496a9425578a6336adea983c70956ec0695a5d92a58c9969&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479685&amp;idx=1&amp;sn=0d74c3e1778fb9c466c380c11fede702&amp;chksm=867efcc7c0fa7270bcd0b270a9684eed45e74465fd3b9cef6ffca1b872cfed781cdce22155a5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGIrLTZ8EVo6DicEkBjibtPhtHqeW2LqacV2hd0iaBxUHef9MNKxBQT2aEpO2tgueo21hjPKcLIibejKA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479685&amp;idx=1&amp;sn=0d74c3e1778fb9c466c380c11fede702&amp;chksm=867efcc7c0fa7270bcd0b270a9684eed45e74465fd3b9cef6ffca1b872cfed781cdce22155a5&amp;scene=0&amp;xtrack=1#rd" target="_blank">点一下，把任何网页变成 LLM Native 文档</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-27 20:01:08">发布日期：2025-12-27 20:01:08</time></div><p class="article-description">要把某个网页内容塞给大模型时，你会怎么做？请先投个票：有些网站已经走在了前面，比如智谱、OpenAI、火山的官方文档，贴心地提供了「复制 Markdown」按钮，一键就能拿到干净整洁的文本，非常 LL</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479685&amp;idx=1&amp;sn=0d74c3e1778fb9c466c380c11fede702&amp;chksm=867efcc7c0fa7270bcd0b270a9684eed45e74465fd3b9cef6ffca1b872cfed781cdce22155a5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479667&amp;idx=1&amp;sn=8db50337ebcfc2b51c4441f084ae9501&amp;chksm=86d93feede735f78fc0adec44ae7ad95b268709f803badd1d4101abb49010e6be8d1aa4a598e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnFbpBCoVuZrKU90RXGV2yklKnSPT6wVABo9OwHuibzUIwRNzyfGNRTkoTf09RKOicCI9b3ICp6c2ZoA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479667&amp;idx=1&amp;sn=8db50337ebcfc2b51c4441f084ae9501&amp;chksm=86d93feede735f78fc0adec44ae7ad95b268709f803badd1d4101abb49010e6be8d1aa4a598e&amp;scene=0&amp;xtrack=1#rd" target="_blank">陶哲轩：不是通用人工智能，而是通用人工聪明</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-26 22:24:41">发布日期：2025-12-26 22:24:41</time></div><p class="article-description">菲尔兹奖得主给当前 AI 下了个新定义。数学家陶哲轩 Terence Tao(@tao) 在 Mastodon 上给出了对当前 AI 能力的判断：我怀疑任何类似真正「通用人工智能」的东西，都不在当前</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479667&amp;idx=1&amp;sn=8db50337ebcfc2b51c4441f084ae9501&amp;chksm=86d93feede735f78fc0adec44ae7ad95b268709f803badd1d4101abb49010e6be8d1aa4a598e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479653&amp;idx=1&amp;sn=8ca38a73385810f91ebcc146def0f632&amp;chksm=86892c2d603984a2ce487ac2775bf6b577d0c4a64f03955231759c17a2d88d407e223ba16726&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGyfjLfmOe7pmB65OKEDmrbsEmUZ99mzdOicL8O8RypoLvK3rN6CFH7TpfhzAXZXe0dm0wxpX8u3Eg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479653&amp;idx=1&amp;sn=8ca38a73385810f91ebcc146def0f632&amp;chksm=86892c2d603984a2ce487ac2775bf6b577d0c4a64f03955231759c17a2d88d407e223ba16726&amp;scene=0&amp;xtrack=1#rd" target="_blank">智谱 GLM-4.7，Coding 开源第一，其他也很强</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-24 07:00:00">发布日期：2025-12-24 07:00:00</time></div><p class="article-description">开源 coding 模型，终于卷到 Claude Sonnet 4.5 头上了。智谱再次放出大招，正式发布并开源 GLM-4.7！这是一款专为 Agentic Coding 打造的模型，在 LiveC</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479653&amp;idx=1&amp;sn=8ca38a73385810f91ebcc146def0f632&amp;chksm=86892c2d603984a2ce487ac2775bf6b577d0c4a64f03955231759c17a2d88d407e223ba16726&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479510&amp;idx=1&amp;sn=9285ae27884ebc1375f7fea0c44c1ec8&amp;chksm=8629525838fcfff33dff8ee3a7b1a8dd16daa1400e55ec38c233035a1493793b2115952d2e36&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGxsf0n7556guNSoEwbXRObMk3dqG7T7vedK54NGMjAK55A9Og51GToAwNkjCeQDzbqskyswWa88w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479510&amp;idx=1&amp;sn=9285ae27884ebc1375f7fea0c44c1ec8&amp;chksm=8629525838fcfff33dff8ee3a7b1a8dd16daa1400e55ec38c233035a1493793b2115952d2e36&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude 开店 2.0：AI 终于能自己赚钱了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-19 01:41:26">发布日期：2025-12-19 01:41:26</time></div><p class="article-description">还记得 Project Vend 吗？Anthropic 和合作伙伴 Andon Labs 在旧金山办公室搞了个实验：让 Claude 当店长，经营一家小店。第一阶段的表现嘛……可以说是惨不忍睹。这位</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479510&amp;idx=1&amp;sn=9285ae27884ebc1375f7fea0c44c1ec8&amp;chksm=8629525838fcfff33dff8ee3a7b1a8dd16daa1400e55ec38c233035a1493793b2115952d2e36&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479489&amp;idx=1&amp;sn=83796cdc3e8ef8f748fab62967282a76&amp;chksm=8670e26c6946496b065a1e6216fc59cb014fc5f4f3f34b784d373547a10d2fa6bfcf5fc27712&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGqrfjLvOQicxYdJmY7qEveg69jg4H08sY6ZguQv7WLW82R3JGvaiauUylvS9AkrZxaEfznhCASicia6A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479489&amp;idx=1&amp;sn=83796cdc3e8ef8f748fab62967282a76&amp;chksm=8670e26c6946496b065a1e6216fc59cb014fc5f4f3f34b784d373547a10d2fa6bfcf5fc27712&amp;scene=0&amp;xtrack=1#rd" target="_blank">Gemini 3 Flash 发布，多、快、好、省，Coding 能力不输大哥Gemini 3 Pro</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-18 00:47:44">发布日期：2025-12-18 00:47:44</time></div><p class="article-description">Google 这次把「性价比」三个字直接写脸上了。刚刚，Google DeepMind 发布了 Gemini 3 Flash，号称前沿智能，但只要极低极低的成本。在上个月 Gemini 3 Pro 和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479489&amp;idx=1&amp;sn=83796cdc3e8ef8f748fab62967282a76&amp;chksm=8670e26c6946496b065a1e6216fc59cb014fc5f4f3f34b784d373547a10d2fa6bfcf5fc27712&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479462&amp;idx=1&amp;sn=48dc79f85432aea1256f26ab81c0573e&amp;chksm=86524a2bab8196e68d5f0ea5c13f89704f699a2129c0e1728ebaac42406968c254207ff67f59&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnHMdMWiaBEep1yxnF4gtArch1ffumeYlMQibsGbLP3AMyOibtMppGicEicHdII1WdcRV95PQWWegNFLArQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479462&amp;idx=1&amp;sn=48dc79f85432aea1256f26ab81c0573e&amp;chksm=86524a2bab8196e68d5f0ea5c13f89704f699a2129c0e1728ebaac42406968c254207ff67f59&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 年最全面的 LLM 架构技术解析【长文】</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-14 00:55:22">发布日期：2025-12-14 00:55:22</time></div><p class="article-description">Sebastian Raschka 刚刚更新了他的「大型 LLM 架构对比」长文，内容量翻倍，堪称 2025 年最全面的 LLM 架构技术解析。Sebastian Raschka(@rasbt) 是一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479462&amp;idx=1&amp;sn=48dc79f85432aea1256f26ab81c0573e&amp;chksm=86524a2bab8196e68d5f0ea5c13f89704f699a2129c0e1728ebaac42406968c254207ff67f59&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479407&amp;idx=1&amp;sn=fb7336b9e76b53d3a305566e8f8bb2a5&amp;chksm=86c5dcd845a3abdd7de89463f501be2693e8bf3b669c92500798e873f5b4d264839cefc94472&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnHMdMWiaBEep1yxnF4gtArchT7nibvHwfATIq0kRDe67OWv2mVStO4lOnCIN9upd7riagjTp4MvTJcGg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479407&amp;idx=1&amp;sn=fb7336b9e76b53d3a305566e8f8bb2a5&amp;chksm=86c5dcd845a3abdd7de89463f501be2693e8bf3b669c92500798e873f5b4d264839cefc94472&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI：如何用 Codex 在 28 天内极速打造安卓版 Sora</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-13 12:32:17">发布日期：2025-12-13 12:32:17</time></div><p class="article-description">28 天，4 个工程师，一个登顶 Play Store 的 App。刚刚，OpenAI 发布了一篇工程博客，揭秘了他们如何用 Codex 在不到一个月的时间内，从零开始打造出 Sora 的安卓版应用。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479407&amp;idx=1&amp;sn=fb7336b9e76b53d3a305566e8f8bb2a5&amp;chksm=86c5dcd845a3abdd7de89463f501be2693e8bf3b669c92500798e873f5b4d264839cefc94472&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479394&amp;idx=1&amp;sn=47301ae8f112b25d9a49f1b6aa2f99d5&amp;chksm=86a01e397031bb4353d82b64cf933fc15a71de1e5695b360bcbfe86121ac945cb4f51e70583e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnH1sSCdbsRS0iaOUnu0luickqVvqKeaBWIY5vtPuGbZiaicf3PPgwQuEhgUMNJIg6uemX32e7M1RBFoGQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479394&amp;idx=1&amp;sn=47301ae8f112b25d9a49f1b6aa2f99d5&amp;chksm=86a01e397031bb4353d82b64cf933fc15a71de1e5695b360bcbfe86121ac945cb4f51e70583e&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT-5.2 上线！全面超越 Claude Opus4.5 及 Gemimi 3.0 Pro</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-12 02:34:23">发布日期：2025-12-12 02:34:23</time></div><p class="article-description">OpenAI 终于，亮剑了。就在刚刚，OpenAI 正式宣布 GPT-5.2 全面上线：这次一口气推出三个版本：GPT-5.2 Instant、GPT-5.2 Thinking 和 GPT-5.2 P</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479394&amp;idx=1&amp;sn=47301ae8f112b25d9a49f1b6aa2f99d5&amp;chksm=86a01e397031bb4353d82b64cf933fc15a71de1e5695b360bcbfe86121ac945cb4f51e70583e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479375&amp;idx=1&amp;sn=90f22855dad54ab7a1b241e628100f6a&amp;chksm=866ddda4697538208f91a2dd7ee6b34775611ff7afeb291ec0995620aecd9a09a205fd191a02&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnH1sSCdbsRS0iaOUnu0luickq89qEQicmtTXL2LP7XiaFIdrGvVzuLgQ6HUNjqqNLFO5k79uS34rd0QlA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479375&amp;idx=1&amp;sn=90f22855dad54ab7a1b241e628100f6a&amp;chksm=866ddda4697538208f91a2dd7ee6b34775611ff7afeb291ec0995620aecd9a09a205fd191a02&amp;scene=0&amp;xtrack=1#rd" target="_blank">前端不会死，死的是初级程序员</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-11 23:44:27">发布日期：2025-12-11 23:44:27</time></div><p class="article-description">2025 年里，最郁闷的码农工种，可能非前端莫属了。因为他们，可真的是被死了无数次了！所以在前文《前端和后端谁先死？》中，我发起了个投票，居然一共有 2400+ 人做出了投票，结果如下：有说前端死的，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479375&amp;idx=1&amp;sn=90f22855dad54ab7a1b241e628100f6a&amp;chksm=866ddda4697538208f91a2dd7ee6b34775611ff7afeb291ec0995620aecd9a09a205fd191a02&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479369&amp;idx=1&amp;sn=02f6e8ecfa990243dab0001b80bef957&amp;chksm=8605c0f8070fe1e95a837dc2880dc24010a19e6ba66bcf6a6a21a8f2ec4c9ce1978bdd8518ad&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnFM6NySZYyaYqkkuKIBCEPsT8PRtUPPq9v2qNpL2ibCbGJFNN1u4OggqoLsmNJib4mgWOtJ5UZ0HxJA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479369&amp;idx=1&amp;sn=02f6e8ecfa990243dab0001b80bef957&amp;chksm=8605c0f8070fe1e95a837dc2880dc24010a19e6ba66bcf6a6a21a8f2ec4c9ce1978bdd8518ad&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic 哲学家首次 AMA：关于 AI 哲学与伦理边界</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-06 01:38:46">发布日期：2025-12-06 01:38:46</time></div><p class="article-description">这位 Anthropic 的哲学家，终于开口说话了。Amanda Askell 是 Anthropic 的 Character 团队负责人，2021 年加入 Anthropic，是塑造 Claude「</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479369&amp;idx=1&amp;sn=02f6e8ecfa990243dab0001b80bef957&amp;chksm=8605c0f8070fe1e95a837dc2880dc24010a19e6ba66bcf6a6a21a8f2ec4c9ce1978bdd8518ad&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479360&amp;idx=1&amp;sn=5f13b19e51000adf3a3a31cfdec7124e&amp;chksm=866343462e66d0a194c86ea8172579fe24bfcdcecb2318047e0878146834d74d6a95b8fce4d1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGReEWN7CBm4wYOqibCRC3IiaOicFhJ8micm0YxsPLogRJjJm0m84vEnuzwDGO8aWwKr7stT17l82rtpA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479360&amp;idx=1&amp;sn=5f13b19e51000adf3a3a31cfdec7124e&amp;chksm=866343462e66d0a194c86ea8172579fe24bfcdcecb2318047e0878146834d74d6a95b8fce4d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI 让 GPT-5 学会「忏悔」：AI 开始主动坦白自己的小心思了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-04 08:38:02">发布日期：2025-12-04 08:38:02</time></div><p class="article-description">OpenAI 刚刚给 AI 装了一颗「良心」。在一项全新的概念验证研究中，OpenAI 训练了一个 GPT-5 Thinking 变体，让它能够主动承认自己是否真正遵循了指令。这个被称为「confes</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479360&amp;idx=1&amp;sn=5f13b19e51000adf3a3a31cfdec7124e&amp;chksm=866343462e66d0a194c86ea8172579fe24bfcdcecb2318047e0878146834d74d6a95b8fce4d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479348&amp;idx=1&amp;sn=adca7aff01122286ee0e5625d1f9bef5&amp;chksm=861c9d4bc375e8cfc5125a5ff8b4e8c13c5eb6ce297968e52fa0cd1128359b0e755fe2fb71bb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnF2ooN1oKGLnyhzuLMh0ibldMGLPrdWj2iak58TOz1rFpaiax6jQ76ib6jHxba1o2dBuohFcpGpt0hKMw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479348&amp;idx=1&amp;sn=adca7aff01122286ee0e5625d1f9bef5&amp;chksm=861c9d4bc375e8cfc5125a5ff8b4e8c13c5eb6ce297968e52fa0cd1128359b0e755fe2fb71bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic 自曝：内部是如何使用 AI 的</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-12-03 09:23:14">发布日期：2025-12-03 09:23:14</time></div><p class="article-description">这次的 Anthropic，把自己给曝光了。这家推出 Claude 的公司，刚刚发布了一份报告，调查了 132 名内部工程师，进行了 53 场深度访谈，还分析了 20 万条 Claude Code 的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479348&amp;idx=1&amp;sn=adca7aff01122286ee0e5625d1f9bef5&amp;chksm=861c9d4bc375e8cfc5125a5ff8b4e8c13c5eb6ce297968e52fa0cd1128359b0e755fe2fb71bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479335&amp;idx=1&amp;sn=b61502e2f71cf7471206bd72dbd4f666&amp;chksm=8659b7d83fc7e571857525e6457df98514a06444c1969909e9c09be286d73b0fe3058a7c3471&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnGxFVFRiaS7yjw54wQ8coj0BbDckPibw9YTnoJv2VT5tick05VRiaZ7zCrGWXsmnYPJV6uEFNLDTiadncg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479335&amp;idx=1&amp;sn=b61502e2f71cf7471206bd72dbd4f666&amp;chksm=8659b7d83fc7e571857525e6457df98514a06444c1969909e9c09be286d73b0fe3058a7c3471&amp;scene=0&amp;xtrack=1#rd" target="_blank">都 AI Coding 了，可以裁多少人？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-11-29 23:56:53">发布日期：2025-11-29 23:56:53</time></div><p class="article-description">先来个投票：不论你是研发、算法、产品、独立开发者、CXO、投资人、暂时的看客，想必这都会是你关心的问题。因为你作为企业的老板，或是你认识的企业的老板，或是你所在企业的老板，都会非常关心这个问题——老板</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479335&amp;idx=1&amp;sn=b61502e2f71cf7471206bd72dbd4f666&amp;chksm=8659b7d83fc7e571857525e6457df98514a06444c1969909e9c09be286d73b0fe3058a7c3471&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479329&amp;idx=1&amp;sn=584f87da5b33d50b14d513dd2b781319&amp;chksm=8651411ae6f3cafbefbf6f62f53b524ba7b7b17fcafe9717253dfc12cfd64252c6d35f400b14&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnHvohTPtPmkHRL1ZWQaEiapeh3vVTh4rzeF6iaRu6jMd3ERmhMQB8aHRMxiaN4O4dG85MhBC8bjYRYPA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479329&amp;idx=1&amp;sn=584f87da5b33d50b14d513dd2b781319&amp;chksm=8651411ae6f3cafbefbf6f62f53b524ba7b7b17fcafe9717253dfc12cfd64252c6d35f400b14&amp;scene=0&amp;xtrack=1#rd" target="_blank">被喷了……我索性扔出价值过万的 AI 编程 prompt</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-11-26 10:20:42">发布日期：2025-11-26 10:20:42</time></div><p class="article-description">刚醒，就看到朋友给发来的消息说我被人喷了。在一篇公众号文章里，针对我昨天的文章中的招聘信息指出：我不把人当人了。而这篇文章题为《Vibe Coding的第一批受害者出现了！》，也是差点让我以为自己也是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479329&amp;idx=1&amp;sn=584f87da5b33d50b14d513dd2b781319&amp;chksm=8651411ae6f3cafbefbf6f62f53b524ba7b7b17fcafe9717253dfc12cfd64252c6d35f400b14&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479287&amp;idx=1&amp;sn=1cac03e03f52daead053d8f31ce4063f&amp;chksm=868ff13842672eca9ef3fbec866fa2f743d6553133627c72c5e610872a02fa2de127f3e7b203&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEJhdd2R2vjkfMqPXLhdqjVia7gEhTx1hUB4qFYvRfQic9a0QW3uSEItfz8ZfutWZg3icu2QwoPg9Dtg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479287&amp;idx=1&amp;sn=1cac03e03f52daead053d8f31ce4063f&amp;chksm=868ff13842672eca9ef3fbec866fa2f743d6553133627c72c5e610872a02fa2de127f3e7b203&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Opus 4.5 发布，我又把 Claude Max 续回来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-11-25 12:01:40">发布日期：2025-11-25 12:01:40</time></div><p class="article-description">我的 Max 才刚退没第三天：Claude 就又用 Opus 4.5 来掏我钱包了……有多强？都在图里了👆相比 Opus 4.1 价格也是暴跌至 1/3（代表用量消耗会变慢）：并收获全面好评：循环还在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453479287&amp;idx=1&amp;sn=1cac03e03f52daead053d8f31ce4063f&amp;chksm=868ff13842672eca9ef3fbec866fa2f743d6553133627c72c5e610872a02fa2de127f3e7b203&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a><a href="index_2.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

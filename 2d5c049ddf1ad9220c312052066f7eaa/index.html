@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Relay学安全</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489774&amp;idx=1&amp;sn=4cf4278ac39e7661f7df524b73d9e47e&amp;chksm=cea91640aab52767524e87a69b5528626c5e5edfa638c5bdb22eecaee11b354ec5312c1f7e62&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft4ohTLSW6ibyaprLurA1sO2kAuxEGjq8ibxhFamKgzU0MM9Dn0q3s3PA8pKc1N0pFTPBgBZSKdkaBLQbcymWCYyibRK5ZZZlY0wiaU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489774&amp;idx=1&amp;sn=4cf4278ac39e7661f7df524b73d9e47e&amp;chksm=cea91640aab52767524e87a69b5528626c5e5edfa638c5bdb22eecaee11b354ec5312c1f7e62&amp;scene=0&amp;xtrack=1#rd" target="_blank">MiniFilter内核回调</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-28 18:18:40">发布日期：2026-02-28 18:18:40</time></div><p class="article-description">微过滤器内核回调是专门的回调例程，它用于在不同的阶段监控和拦截文件系统操作。比如在创建文件阶段监控和拦截，在修改文件内容阶段进行监控和拦截。而EDR利用这些回调来捕获有关恶意文件系统活动的遥测数据。比</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489774&amp;idx=1&amp;sn=4cf4278ac39e7661f7df524b73d9e47e&amp;chksm=cea91640aab52767524e87a69b5528626c5e5edfa638c5bdb22eecaee11b354ec5312c1f7e62&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489734&amp;idx=1&amp;sn=9b4952b26f829ed558e03fff454b38b7&amp;chksm=cef94808da1552b5e2f0ab8af9acf5083ab8ba15a5fd6b689313718b34a4867514f7eb6ca9c3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft4tXxgVQ4iaCCvlIjDxEwiaOBphD1jIkEk6GS8yt4gjcN7OibpjE78qos0hb8RSp8phMgWyib4ANRQxfWvXGxhZhyePRNYyWKH0q14/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489734&amp;idx=1&amp;sn=9b4952b26f829ed558e03fff454b38b7&amp;chksm=cef94808da1552b5e2f0ab8af9acf5083ab8ba15a5fd6b689313718b34a4867514f7eb6ca9c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用DropBox构建隐秘C2通道</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-25 18:33:45">发布日期：2026-02-25 18:33:45</time></div><p class="article-description">首先来介绍一下DropBox，DropBox是一个云存储以及文件同步的服务，它的核心功能是让用户在不同设备之间无缝的同步文件，并实现云端备份以及团队协作。而我们就可以利用DropBox来作为我们的C2</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489734&amp;idx=1&amp;sn=9b4952b26f829ed558e03fff454b38b7&amp;chksm=cef94808da1552b5e2f0ab8af9acf5083ab8ba15a5fd6b689313718b34a4867514f7eb6ca9c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489717&amp;idx=1&amp;sn=0e0bace5e388b300cdb7becfbf9fbef4&amp;chksm=cecb4eb071673ecceadd96640e6f56c2c6ee90e01b03a4f9bef3465600edca615e350284d513&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft57hyCKTWeuG4otwsQvYcuOEfnEIFhdhQdHZbF1ibdtXXSLff6znVriciaJVXFB9iahK452w74FRRwB8RQ7ZrC5KhRhiaU9DCuzJ0SM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489717&amp;idx=1&amp;sn=0e0bace5e388b300cdb7becfbf9fbef4&amp;chksm=cecb4eb071673ecceadd96640e6f56c2c6ee90e01b03a4f9bef3465600edca615e350284d513&amp;scene=0&amp;xtrack=1#rd" target="_blank">Echo_Driver任意读驱动</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-24 11:50:02">发布日期：2026-02-24 11:50:02</time></div><p class="article-description">Echo_Driver.sys驱动下载地址:https://www.loldrivers.io/drivers/afb8bb46-1d13-407d-9866-1daa7c82ca63/下载下来是一个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489717&amp;idx=1&amp;sn=0e0bace5e388b300cdb7becfbf9fbef4&amp;chksm=cecb4eb071673ecceadd96640e6f56c2c6ee90e01b03a4f9bef3465600edca615e350284d513&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489699&amp;idx=1&amp;sn=292511e8fcdb4ebe0321f5a9b817df18&amp;chksm=cef2b4639c91481ac84eaa522527389d323331dc224e9eaa79e97d719e63f7520207a4249f26&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft4qeViadaAMpt14X8VmSIu3tjQ4Kibiah5ujRnzKjYugqWYFCcibdGcT6XaNRQsdzmMgKMsNZiasmYrDSFx15BIdr38nicbnkfItD9JE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489699&amp;idx=1&amp;sn=292511e8fcdb4ebe0321f5a9b817df18&amp;chksm=cef2b4639c91481ac84eaa522527389d323331dc224e9eaa79e97d719e63f7520207a4249f26&amp;scene=0&amp;xtrack=1#rd" target="_blank">Windows追踪事件-ETW</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-23 22:31:55">发布日期：2026-02-23 22:31:55</time></div><p class="article-description">介绍Windows追踪事件简称ETW，ETW可以收集系统上发生的事件和活动的信息。事件如何产生?  这些事件是由操作系统自身，比如加载了某个DLL，打开了某个文件而产生的。需要注意的是用户模式进程和内</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489699&amp;idx=1&amp;sn=292511e8fcdb4ebe0321f5a9b817df18&amp;chksm=cef2b4639c91481ac84eaa522527389d323331dc224e9eaa79e97d719e63f7520207a4249f26&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489663&amp;idx=1&amp;sn=40b9c76a4c5a12bd8852322ea01c8560&amp;chksm=ce801bb7ea6c5313d72d2040b2c2f60e4b077e1daccd0b9a47c84d364f4595d8443847dbd568&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft66XzD5T3fuCY7WE4Zxib8wiciczqGiaZE9tdxUrLicva6UIUibjrHY8um2jaNw8YJvu7MW6NA7TupBfvC7g0V87gafVTQaMibCEwXBjw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489663&amp;idx=1&amp;sn=40b9c76a4c5a12bd8852322ea01c8560&amp;chksm=ce801bb7ea6c5313d72d2040b2c2f60e4b077e1daccd0b9a47c84d364f4595d8443847dbd568&amp;scene=0&amp;xtrack=1#rd" target="_blank">某Hao玩Killing Process驱动</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-16 00:00:00">发布日期：2026-02-16 00:00:00</time></div><p class="article-description">免责声明本文所有内容仅供网络安全学习与研究之用，旨在提升安全意识、探讨防御技术。读者必须承诺并保证仅将所述知识用于合法、授权的环境。严禁任何个人或组织将本文提及的任何技术、方法或工具用于任何非法入侵、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489663&amp;idx=1&amp;sn=40b9c76a4c5a12bd8852322ea01c8560&amp;chksm=ce801bb7ea6c5313d72d2040b2c2f60e4b077e1daccd0b9a47c84d364f4595d8443847dbd568&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489661&amp;idx=1&amp;sn=6d7a0f5218001903e76ab965aa72fd77&amp;chksm=ce7501c78d5273ca3c3bbeefce2096cae44557011ddaafc24d1d0e3bd770a7958d0cf55122c0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft66XzD5T3fuCY7WE4Zxib8wiciczqGiaZE9tdxUrLicva6UIUibjrHY8um2jaNw8YJvu7MW6NA7TupBfvC7g0V87gafVTQaMibCEwXBjw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489661&amp;idx=1&amp;sn=6d7a0f5218001903e76ab965aa72fd77&amp;chksm=ce7501c78d5273ca3c3bbeefce2096cae44557011ddaafc24d1d0e3bd770a7958d0cf55122c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">某Hao玩Killing Process驱动</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-15 22:53:36">发布日期：2026-02-15 22:53:36</time></div><p class="article-description">演示视频:驱动文件获取:   公众号后台回复20260215获取漏洞点如下:还是通过ZwOpenProcess来打开进程的句柄后，使用ZwTerminateProcess函数将其结束掉。下面则是根据传</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489661&amp;idx=1&amp;sn=6d7a0f5218001903e76ab965aa72fd77&amp;chksm=ce7501c78d5273ca3c3bbeefce2096cae44557011ddaafc24d1d0e3bd770a7958d0cf55122c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489645&amp;idx=1&amp;sn=6341ee47712a6fb0584efaf757812c28&amp;chksm=cef11d665b76c159908f8485b86761fd448787fbb3994a3fbc8930ab947f0bfb348b94dd866b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/1ibFic8ns5ft5b2Jib2hDY4V73prMibVJmnsvmWLGlW0b1k3wrDDF5icdxP7zibDRzic3QQyJHm0XpYeJNianplozYAjFScUMblEicBKJEx7t5PtoibtE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489645&amp;idx=1&amp;sn=6341ee47712a6fb0584efaf757812c28&amp;chksm=cef11d665b76c159908f8485b86761fd448787fbb3994a3fbc8930ab947f0bfb348b94dd866b&amp;scene=0&amp;xtrack=1#rd" target="_blank">4.LLVM和本地进程镂空</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-13 14:16:09">发布日期：2026-02-13 14:16:09</time></div><p class="article-description">免责声明本文所有内容仅供网络安全学习与研究之用，旨在提升安全意识、探讨防御技术。读者必须承诺并保证仅将所述知识用于合法、授权的环境。严禁任何个人或组织将本文提及的任何技术、方法或工具用于任何非法入侵、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489645&amp;idx=1&amp;sn=6341ee47712a6fb0584efaf757812c28&amp;chksm=cef11d665b76c159908f8485b86761fd448787fbb3994a3fbc8930ab947f0bfb348b94dd866b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489631&amp;idx=1&amp;sn=cdf0337c0587e516dcd40c94aca50002&amp;chksm=ce3eb83530162ce1a852a5b6f77006fe63e46d5fd67e07a5f6a4e2ee42d9995a02b49b541f94&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ia1z64qxm2mqxMk6zDPw14dnqU3gUlJJ2NKmyKAIZia5vkianVl9uumIIP2W6MLQZuFRY1s1GJgW2oJ9JFvLlu2BQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489631&amp;idx=1&amp;sn=cdf0337c0587e516dcd40c94aca50002&amp;chksm=ce3eb83530162ce1a852a5b6f77006fe63e46d5fd67e07a5f6a4e2ee42d9995a02b49b541f94&amp;scene=0&amp;xtrack=1#rd" target="_blank">EDR Killing 如何挖掘？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-12 11:53:32">发布日期：2026-02-12 11:53:32</time></div><p class="article-description">免责声明本文所有内容仅供网络安全学习与研究之用，旨在提升安全意识、探讨防御技术。读者必须承诺并保证仅将所述知识用于合法、授权的环境。严禁任何个人或组织将本文提及的任何技术、方法或工具用于任何非法入侵、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489631&amp;idx=1&amp;sn=cdf0337c0587e516dcd40c94aca50002&amp;chksm=ce3eb83530162ce1a852a5b6f77006fe63e46d5fd67e07a5f6a4e2ee42d9995a02b49b541f94&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489630&amp;idx=1&amp;sn=a795a504cb6fe72b3564f38424b022cf&amp;chksm=cec7a844f355a33681a0b01a2f6f764f1e634c8976e97a1c0fb9ba895e1cfac381d13a2d6e55&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/1ibFic8ns5ft5CuhZeicSgWbbsso8Upxrse4eNunIPMk1zbLEpx1Fmx6BIgdyZwup9c2xXe3pSwpos78o44F5W6kL7Azo8WXic3v7SQCLE5dfwk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489630&amp;idx=1&amp;sn=a795a504cb6fe72b3564f38424b022cf&amp;chksm=cec7a844f355a33681a0b01a2f6f764f1e634c8976e97a1c0fb9ba895e1cfac381d13a2d6e55&amp;scene=0&amp;xtrack=1#rd" target="_blank">3.动态链接库DLL</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-11 11:59:23">发布日期：2026-02-11 11:59:23</time></div><p class="article-description">什么是动态链接库DLL？动态链接库DLL是包含了可执行函数或数据的共享库。它可以被多个应用程序同时使用。他们用于导出函数来供其他进程使用。与EXE不同的是，DLL文件不能自己执行代码。相反DLL文件需</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489630&amp;idx=1&amp;sn=a795a504cb6fe72b3564f38424b022cf&amp;chksm=cec7a844f355a33681a0b01a2f6f764f1e634c8976e97a1c0fb9ba895e1cfac381d13a2d6e55&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489614&amp;idx=1&amp;sn=a817a63d825a6fd4eacaef40c2525173&amp;chksm=ce94b187e4588e9a9e4a4febb582b3a1ef2b87b67b7d58aba2ae5ef9a26dc28682ef81303fcb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/1ibFic8ns5ft4wHtW9kH3Akh2ElgVR4yVQmLibcabyCZSFHZuIoTyWaAb7oU0L99kwZUStkUaw77C7zO65sOENJJFCibnXJrJ8w4vibdx6JvB8uM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489614&amp;idx=1&amp;sn=a817a63d825a6fd4eacaef40c2525173&amp;chksm=ce94b187e4588e9a9e4a4febb582b3a1ef2b87b67b7d58aba2ae5ef9a26dc28682ef81303fcb&amp;scene=0&amp;xtrack=1#rd" target="_blank">2.免杀基础</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-09 12:05:16">发布日期：2026-02-09 12:05:16</time></div><p class="article-description">Windows APIWindows API为开发人员提供了一种让其应用程序与Windows操作系统交互的方式。例如如果应用程序需要在屏幕上显示内容，修改文件或查询注册表，所有这些操作都可以通过Win</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489614&amp;idx=1&amp;sn=a817a63d825a6fd4eacaef40c2525173&amp;chksm=ce94b187e4588e9a9e4a4febb582b3a1ef2b87b67b7d58aba2ae5ef9a26dc28682ef81303fcb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489613&amp;idx=1&amp;sn=54bdc15c90ca7e799b689ca8c037aba2&amp;chksm=ce09c92d62ef4bc27e65a6e088a4c58cba503576169f60c00c35a4ce2447a3a9f5336320d081&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft5ia9lib3XnrwTJibfvQ8tfq0HA7IoYf7wt0OohVW7I8DH7AwDuM0W1BGzwfokRXmXz5gUSoibHsqlFEznKh6umDxTk3BKWqJAPSSo/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489613&amp;idx=1&amp;sn=54bdc15c90ca7e799b689ca8c037aba2&amp;chksm=ce09c92d62ef4bc27e65a6e088a4c58cba503576169f60c00c35a4ce2447a3a9f5336320d081&amp;scene=0&amp;xtrack=1#rd" target="_blank">把杀软偷偷关了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-08 19:06:12">发布日期：2026-02-08 19:06:12</time></div><p class="article-description">免责声明本文所有内容仅供网络安全学习与研究之用，旨在提升安全意识、探讨防御技术。读者必须承诺并保证仅将所述知识用于</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489613&amp;idx=1&amp;sn=54bdc15c90ca7e799b689ca8c037aba2&amp;chksm=ce09c92d62ef4bc27e65a6e088a4c58cba503576169f60c00c35a4ce2447a3a9f5336320d081&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489579&amp;idx=1&amp;sn=01e1e1ce587dcc0392093cd929e69a12&amp;chksm=cec1c08c578b5d02d848958f6ce2e3ada62feddc0a10378b4440c3be36411b798a7a419d7a3a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/1ibFic8ns5ft4EWhu0pMfCGVeBQD2f54Jh5uicV5Erv9PvXiaIzyX9THIqibr54ZR8xxsrO2wbkbiciax7GHj7es0P9YgtNjI7kAwgDC88VMAWeptQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489579&amp;idx=1&amp;sn=01e1e1ce587dcc0392093cd929e69a12&amp;chksm=cec1c08c578b5d02d848958f6ce2e3ada62feddc0a10378b4440c3be36411b798a7a419d7a3a&amp;scene=0&amp;xtrack=1#rd" target="_blank">1.免杀基础</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2026-02-06 14:20:10">发布日期：2026-02-06 14:20:10</time></div><p class="article-description">免责声明本文所有内容仅供网络安全学习与研究之用，旨在提升安全意识、探讨防御技术。读者必须承诺并保证仅将所</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489579&amp;idx=1&amp;sn=01e1e1ce587dcc0392093cd929e69a12&amp;chksm=cec1c08c578b5d02d848958f6ce2e3ada62feddc0a10378b4440c3be36411b798a7a419d7a3a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489474&amp;idx=1&amp;sn=b948a75568b18fe87cd936b005b4939e&amp;chksm=ce5cbddc7b82a5a6e217a029b04569047440ff2ccaa78bcaef943a6787e4014bcb5cdf942a9e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/6XVKAUnbCxe89YhiaCU4mX7P6XkrVqKvz9MHRhiaHA1VLcvQgpz9RxJdjJ57dLovT8Iwkt04et5fkHJOlxHrLB4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489474&amp;idx=1&amp;sn=b948a75568b18fe87cd936b005b4939e&amp;chksm=ce5cbddc7b82a5a6e217a029b04569047440ff2ccaa78bcaef943a6787e4014bcb5cdf942a9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">【2025HW招聘】- 河南宁云志</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2025-03-14 17:31:08">发布日期：2025-03-14 17:31:08</time></div><p class="article-description">河南宁云志25年国HW招聘前言：2025国家级护网将要开始，我们开启人才筹备计划。此计划旨在为甲方提供高质量安全服务，为师傅们提供稳定可靠的HW项目岗位。公司简介河南宁云志科技有限公司，是一家专注网络</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489474&amp;idx=1&amp;sn=b948a75568b18fe87cd936b005b4939e&amp;chksm=ce5cbddc7b82a5a6e217a029b04569047440ff2ccaa78bcaef943a6787e4014bcb5cdf942a9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489470&amp;idx=1&amp;sn=b2699c1738c792e9fdb2d42a723537cf&amp;chksm=cefa994c3f266c8ebc1fc186c928d324de422b7fa40b5addc98fdbf90d5a20ccc7790966c75a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9q9BkLgdQNvfLvs0BOmddyLp5P7zR5DrDeH1DxIBmRdP6oth4zxib4R0FlKz9m3TUALBfmF07maJ0mr6Hy3Inlg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489470&amp;idx=1&amp;sn=b2699c1738c792e9fdb2d42a723537cf&amp;chksm=cefa994c3f266c8ebc1fc186c928d324de422b7fa40b5addc98fdbf90d5a20ccc7790966c75a&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025HVV · 人才招募就差你</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2d5c049ddf1ad9220c312052066f7eaa/index.html">Relay学安全</a></span><time class="article-date" datetime="2025-03-04 20:13:51">发布日期：2025-03-04 20:13:51</time></div><p class="article-description">人才招募HVV简介护网行动是国家网络安全的重要组成部分，旨在通过实战演练，提升网络安全防护能力，发现并修复潜在的安全漏洞，保障国家关键信息基础设施的安全。2025年护网行动即将启动，现面向全社会招募网</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MDg3OTc0OA==&amp;mid=2247489470&amp;idx=1&amp;sn=b2699c1738c792e9fdb2d42a723537cf&amp;chksm=cefa994c3f266c8ebc1fc186c928d324de422b7fa40b5addc98fdbf90d5a20ccc7790966c75a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

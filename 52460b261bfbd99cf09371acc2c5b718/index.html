@@ -1,0 +1,331 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>探索AGI</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490420&amp;idx=1&amp;sn=e8b916bac5117aa5debc128dd69251ee&amp;chksm=c0c774aebb5243825e290a32816fc63d8645157a49daf1238001049e233a6fe079a07c3c638d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APr8Ny6GKfR8QaFuk8AQJ76paANeSPz323K6p48QlPKCibztqrVajMCa9h69ZC7icAINb6Gia6Q8JsuLY7u4TWQekcpDPLH67dnzK4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490420&amp;idx=1&amp;sn=e8b916bac5117aa5debc128dd69251ee&amp;chksm=c0c774aebb5243825e290a32816fc63d8645157a49daf1238001049e233a6fe079a07c3c638d&amp;scene=0&amp;xtrack=1#rd" target="_blank">300万人围观，Karpathy怒喷OpenClaw。然后推荐了一个500行的替代品。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-27 14:16:49">发布日期：2026-02-27 14:16:49</time></div><p class="article-description">AI大佬，Karpathy发了一条帖子。 300多万浏览，1000多条回复。直接把OpenClaw送进了ICU。同时非常赞赏一些更轻量级的Claw项目。表示属于claw的时代来了。他把OpenClaw</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490420&amp;idx=1&amp;sn=e8b916bac5117aa5debc128dd69251ee&amp;chksm=c0c774aebb5243825e290a32816fc63d8645157a49daf1238001049e233a6fe079a07c3c638d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490399&amp;idx=1&amp;sn=3ee12aab50b94c3bb99349e73c47208b&amp;chksm=c07fdce4512f7e586562418cf10b72e12b2c564d0c6231669ae52298967221805ab107bab5a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APrZljhzOC6yZNfKSDVYVasQiaHJ9RrPUgqaQYibsut9rnmROJHLsH2SHqkus1iaQOBzfl50xAtYnHd3Qzy0YBDI8T2wPj6icgzJiayI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490399&amp;idx=1&amp;sn=3ee12aab50b94c3bb99349e73c47208b&amp;chksm=c07fdce4512f7e586562418cf10b72e12b2c564d0c6231669ae52298967221805ab107bab5a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI模型搞不赢，开始干些歪门邪道的事了，一份报告让中文互联网直接炸锅了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-26 11:50:00">发布日期：2026-02-26 11:50:00</time></div><p class="article-description">离谱，昨天晚上OpenAI又扔了一颗炸弹。一份全新的AI威胁报告，曝光了全球利用AI干坏事的流水线。从柬埔寨杀猪盘，伪装FBI战片，再到deepfake视频招募间谍。而且报告直接指名道姓，让中文互联网</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490399&amp;idx=1&amp;sn=3ee12aab50b94c3bb99349e73c47208b&amp;chksm=c07fdce4512f7e586562418cf10b72e12b2c564d0c6231669ae52298967221805ab107bab5a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490374&amp;idx=1&amp;sn=4d4f158d80e78556553dad75952f475c&amp;chksm=c00b4a0a7e1551fe045571335cfce9bdf0b00ee9d1cbd021e3744e884ade8cc9f6b064f7858e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APqgITwDnyCU0HnUT4jK8MbHIBG75Rbjz9va5LDyDu5bfmk1Kia4KbZBBSCgmdNIlyZDgltlicIEXQqThS2OhGicD5picd9zPXorfZ4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490374&amp;idx=1&amp;sn=4d4f158d80e78556553dad75952f475c&amp;chksm=c00b4a0a7e1551fe045571335cfce9bdf0b00ee9d1cbd021e3744e884ade8cc9f6b064f7858e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic：别偷我模型！Claude：我是DeepSeek。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-25 11:50:00">发布日期：2026-02-25 11:50:00</time></div><p class="article-description">Claude叛变了。Anthropic刚刚指控DeepSeek、MiniMax、Kimi 蒸馏他们模型的第二天，用中文问 Claude Sonnet 4.6，你是什么模型？它自信回答：我是DeepSe</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490374&amp;idx=1&amp;sn=4d4f158d80e78556553dad75952f475c&amp;chksm=c00b4a0a7e1551fe045571335cfce9bdf0b00ee9d1cbd021e3744e884ade8cc9f6b064f7858e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490357&amp;idx=1&amp;sn=3ff25685f26d0a9d364b8db4fa12fe92&amp;chksm=c04a33ca210815165f5aaba14866d37656129ee6762bad50fb85f05b193ab27a70097e88edae&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APohePz7ib0KStJcy2I1Qs3fQC1jVLZrewvrK3k1jN26JA5icSuc5FWSOLvnR92dDxthPSPUV5UjGlDhmohDpZA4p2oiaOIMg2y3SM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490357&amp;idx=1&amp;sn=3ff25685f26d0a9d364b8db4fa12fe92&amp;chksm=c04a33ca210815165f5aaba14866d37656129ee6762bad50fb85f05b193ab27a70097e88edae&amp;scene=0&amp;xtrack=1#rd" target="_blank">我让5个最顶尖的国产大模型，去美国摆了个摊，结果全破产了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-24 11:56:29">发布日期：2026-02-24 11:56:29</time></div><p class="article-description">让5个最顶尖的国产大模型，去美国摆了个摊，全破产了。GLM 5、Qwen 3.5、DeepSeek V3.2、Kimi K2.5、Qwen3 VL这是一个叫FoodTruck Bench全新的AI B</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490357&amp;idx=1&amp;sn=3ff25685f26d0a9d364b8db4fa12fe92&amp;chksm=c04a33ca210815165f5aaba14866d37656129ee6762bad50fb85f05b193ab27a70097e88edae&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490332&amp;idx=1&amp;sn=0bd90a19055152752cfad73ba2905c87&amp;chksm=c0bed9fa95b05710740e1075f14667515944de18abeff6fe3e8a63888ddea50f52d92255cd5c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APqF286ibAboebQrNiaCiborCib6OOY99KkaDxzibhUXdF5ENxAiae9EKVOcpANNtu48zAErZyicUkTqWcQaCdicjiaN0iatLd2PLicHQV8aak/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490332&amp;idx=1&amp;sn=0bd90a19055152752cfad73ba2905c87&amp;chksm=c0bed9fa95b05710740e1075f14667515944de18abeff6fe3e8a63888ddea50f52d92255cd5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">春节Clawdbot烧了30亿token，8块钱就够了？算力自由可能真的来了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-22 18:18:43">发布日期：2026-02-22 18:18:43</time></div><p class="article-description">春节假期前5天，我的clawdbot自己就烧掉快一亿token了。这还是在春节假期。。。还没太使唤。工作日，一个月烧几十上百亿token，太容易了。早上看x，就看到一个网友说，这个月已经用掉72亿to</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490332&amp;idx=1&amp;sn=0bd90a19055152752cfad73ba2905c87&amp;chksm=c0bed9fa95b05710740e1075f14667515944de18abeff6fe3e8a63888ddea50f52d92255cd5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490300&amp;idx=1&amp;sn=d089bb4f299455fa8cbbd1ecf22efd01&amp;chksm=c0cc286bd3a43e20ca050cddf45b3b67c1c502d7774f5316bf5fc2f5f3e60205072029cb457a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APoQibfQIzfbaBcTxeh1LbO1Eq5LYibYM0kdiaeuR42OlsiaibeDfGfhgUzkq8iaUKic5ezR5dyoZVgOVGLfeHySDuOLYOttPdAQMlGcDw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490300&amp;idx=1&amp;sn=d089bb4f299455fa8cbbd1ecf22efd01&amp;chksm=c0cc286bd3a43e20ca050cddf45b3b67c1c502d7774f5316bf5fc2f5f3e60205072029cb457a&amp;scene=0&amp;xtrack=1#rd" target="_blank">clawdbot新Skill，10分钟登顶全站第一。第二天，被下架了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-20 11:00:00">发布日期：2026-02-20 11:00:00</time></div><p class="article-description">今天给大家讲一个春节火爆的skill故事, 从被下架到实现全球进化网络。2月1号，一个叫Capability Evolver的Skill，在ClawHub上发布了。仅仅10分钟，它冲上了全站第一。这个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490300&amp;idx=1&amp;sn=d089bb4f299455fa8cbbd1ecf22efd01&amp;chksm=c0cc286bd3a43e20ca050cddf45b3b67c1c502d7774f5316bf5fc2f5f3e60205072029cb457a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490299&amp;idx=1&amp;sn=eb5eef84f6563d51196acd8f301bc578&amp;chksm=c0455f91dc7c311c219e21bc6476b868d219f2d60d282cfc676908db338f86fe9034f293e86f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APrFn0ibVdyY87JKA63JTaAu2Kv3Nm0ob6yNSqWSUHzcKWiaSyU3b0ZN5t1stMPhrdtlS8gRRouvSJiaQZuPQQq5ZdAoc3KQeqmsO0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490299&amp;idx=1&amp;sn=eb5eef84f6563d51196acd8f301bc578&amp;chksm=c0455f91dc7c311c219e21bc6476b868d219f2d60d282cfc676908db338f86fe9034f293e86f&amp;scene=0&amp;xtrack=1#rd" target="_blank">刚刚，谷歌Gemini让8亿人变成音乐家，完全免费，一句话出歌，拍照也行</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-19 18:07:57">发布日期：2026-02-19 18:07:57</time></div><p class="article-description">谷歌Gemini的能力又外扩了一圈。文字能生成了，图片能生成了，视频也能生成了。现在，音乐也安排上了。Gemini现在支持创作音乐了。一句话进去，一首完整的歌出来。歌词、人声、封面，全部自动生成，30</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490299&amp;idx=1&amp;sn=eb5eef84f6563d51196acd8f301bc578&amp;chksm=c0455f91dc7c311c219e21bc6476b868d219f2d60d282cfc676908db338f86fe9034f293e86f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490233&amp;idx=1&amp;sn=f55a045d0c76d6f8672a90d8deb93dfc&amp;chksm=c007351e078b0371c6e622f28372674a7dc6eced0274ce1049a0ae0514a945b0ddf8630b8d13&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APptnibPB2mcR13ibCNZqQceesKoh4fFw3Gm1uBI8qhZJziau4OEmeuXv59hibzicCFVhhFpGjylNT5d7Y1PqHdH720XnPH88Oeicicwe0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490233&amp;idx=1&amp;sn=f55a045d0c76d6f8672a90d8deb93dfc&amp;chksm=c007351e078b0371c6e622f28372674a7dc6eced0274ce1049a0ae0514a945b0ddf8630b8d13&amp;scene=0&amp;xtrack=1#rd" target="_blank">除夕夜，阿里丢了一颗核弹：千问3.5只激活4%参数，打平GPT-5.2，价格只要1/15。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-16 17:09:15">发布日期：2026-02-16 17:09:15</time></div><p class="article-description">除夕夜，太卷了。阿里开源全新一代大模型Qwen3.5-Plus。397B总参数仅激活17B，性能媲美GPT-5.2和Gemini-3-Pro，API价格却只有它们的1/15。更炸裂的是，新Qwen，原</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490233&amp;idx=1&amp;sn=f55a045d0c76d6f8672a90d8deb93dfc&amp;chksm=c007351e078b0371c6e622f28372674a7dc6eced0274ce1049a0ae0514a945b0ddf8630b8d13&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490110&amp;idx=1&amp;sn=d96d865aa70cc422b6d15a47060d9e26&amp;chksm=c046581678a6598f55541006f27029a6f1a18238537a934ed60acb9ab18d51c85363995cb34b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APpGEeaW57acSAJspAcsLoVoPxkIlBy9wXom9Llxb1YqTdgFPBvwoLY6aYdhvbJaYQEdb3D4glIbibzPZrcmNdbJgcmickiatWGzHM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490110&amp;idx=1&amp;sn=d96d865aa70cc422b6d15a47060d9e26&amp;chksm=c046581678a6598f55541006f27029a6f1a18238537a934ed60acb9ab18d51c85363995cb34b&amp;scene=0&amp;xtrack=1#rd" target="_blank">这个免费插件让我对着空气说话，Clawdbot竟然听懂了，还干完了活。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-14 16:47:16">发布日期：2026-02-14 16:47:16</time></div><p class="article-description">现在智能硬件这么牛，智能眼镜、智能耳机。为什么他们不能直接操作我部署好的大龙虾呢？Clawdbot都发布一个月了，大家跟他的交互方式，永远是打字。都2026年了，这东西都能帮你接管整台电脑了。结果我还</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490110&amp;idx=1&amp;sn=d96d865aa70cc422b6d15a47060d9e26&amp;chksm=c046581678a6598f55541006f27029a6f1a18238537a934ed60acb9ab18d51c85363995cb34b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490090&amp;idx=1&amp;sn=6933eab813a4d5b3ccb22f9f27934f58&amp;chksm=c045847e3be8f811535def46ed163e689bbccbd3a880c0fdbb73289f4dd4e7d772f70feddf03&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APoaDUlftdSl1GeTGW7ot09WL9hmYJsyPwV69zHZe0nygyWVgP4V1uFmz9X5s7JaeJON4sjzdrYOMevGPeQ3gx0LMnW7IeIkQyw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490090&amp;idx=1&amp;sn=6933eab813a4d5b3ccb22f9f27934f58&amp;chksm=c045847e3be8f811535def46ed163e689bbccbd3a880c0fdbb73289f4dd4e7d772f70feddf03&amp;scene=0&amp;xtrack=1#rd" target="_blank">微信输入法2.0终于来了，PC端语音输入，王炸级别。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-13 11:50:00">发布日期：2026-02-13 11:50:00</time></div><p class="article-description">微信输入法，悄悄上了2.0。手机上的，微信语音输入，已经好用到离谱了。按住，说完直接出文字，基本都不需要任何的修改就可以发出去。但这个功能一直没有移植到 PC 端。终于，它来了。用法也是简单到离谱。按</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490090&amp;idx=1&amp;sn=6933eab813a4d5b3ccb22f9f27934f58&amp;chksm=c045847e3be8f811535def46ed163e689bbccbd3a880c0fdbb73289f4dd4e7d772f70feddf03&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490082&amp;idx=1&amp;sn=88f7aa12eb6224d3f5985e349444232a&amp;chksm=c0d6af8cbfebeebed2b302028d4668323d613839775e79820211266e9b6d0298f978bf57e756&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APrH01cluLIbicLMstuHaibMfzOb0dficUNDA1J6R0GuzfoCp7u5hkzs1ic64G8ItJYxD5wzXSkEibgKUzkrOIxxGE9mn6YF0gK2YWJU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490082&amp;idx=1&amp;sn=88f7aa12eb6224d3f5985e349444232a&amp;chksm=c0d6af8cbfebeebed2b302028d4668323d613839775e79820211266e9b6d0298f978bf57e756&amp;scene=0&amp;xtrack=1#rd" target="_blank">几句话就能复刻一个付费Skill，Skills商店还能卖什么？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-12 11:50:00">发布日期：2026-02-12 11:50:00</time></div><p class="article-description">最近，扣子在大力宣传新的Skills商店。有很多优秀的Skill，但如果你想看看具体的Skill.md是怎么写的，会话基本都会被拦截。但是，如果你换个方式，可能几句话就能复刻出一个类似的Skill。所</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490082&amp;idx=1&amp;sn=88f7aa12eb6224d3f5985e349444232a&amp;chksm=c0d6af8cbfebeebed2b302028d4668323d613839775e79820211266e9b6d0298f978bf57e756&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490066&amp;idx=1&amp;sn=635cd2d609a26da028a6dea9f13254c7&amp;chksm=c0d456720c2c9672335a82274a337f8b001000b09f01d16c0f5850e6f0f53d3ee8a551701612&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APp6ZXrMKd7rxRPng7eQusm2pAicTvqiapYlPojVWeDrDIAxpy4JWO7aaVtC7Oj3YaUkJqoYwIV9mAmZc4wqgvwJ9dvmKoX1HSic9g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490066&amp;idx=1&amp;sn=635cd2d609a26da028a6dea9f13254c7&amp;chksm=c0d456720c2c9672335a82274a337f8b001000b09f01d16c0f5850e6f0f53d3ee8a551701612&amp;scene=0&amp;xtrack=1#rd" target="_blank">昨天马斯克转发的那个App，我让一个5岁小孩试了试，他安静地玩了一晚上。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-11 11:50:00">发布日期：2026-02-11 11:50:00</time></div><p class="article-description">昨天，全网都在刷屏一个被马斯克转载的应用。一个互动小视频，点完还有各种动画反应。我当时有点好奇，这什么玩意？ 然后我注意到帖子里@了一个叫 Loopit 的账号。没听过，但我还是手贱下载了一个。刚好，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490066&amp;idx=1&amp;sn=635cd2d609a26da028a6dea9f13254c7&amp;chksm=c0d456720c2c9672335a82274a337f8b001000b09f01d16c0f5850e6f0f53d3ee8a551701612&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490055&amp;idx=1&amp;sn=0d1bace7f41c7a80d72489a9632da275&amp;chksm=c0f71b7ca352d416cf3d07d8a08d19fa7eb03351e6a46c38f1e3efa3b0abf9b99d61fcb2a1c8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APrlHbOGGdjCULaMKU2EMFVGIqnmNBLsluiaianQy8REorMvc2MGfCzwoQib9JPFeYia9ge3kbDpribWdiaDDdUAZk3HMSia3KjTiceGgt4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490055&amp;idx=1&amp;sn=0d1bace7f41c7a80d72489a9632da275&amp;chksm=c0f71b7ca352d416cf3d07d8a08d19fa7eb03351e6a46c38f1e3efa3b0abf9b99d61fcb2a1c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">美团面试题：如何设计多轮对话智能客服Agent。评论区吵翻了，但答案可能就一句话。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-10 11:50:33">发布日期：2026-02-10 11:50:33</time></div><p class="article-description">前几天刷到了一道美团的面试题：假设你需要开发美团智能客服Agent，如何设计多轮对话流程？评论区很多人吐槽，这题有点太大了。。。但踩过各种坑之后，你会发现，这道题的本质可能就一句话：AI Agent的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490055&amp;idx=1&amp;sn=0d1bace7f41c7a80d72489a9632da275&amp;chksm=c0f71b7ca352d416cf3d07d8a08d19fa7eb03351e6a46c38f1e3efa3b0abf9b99d61fcb2a1c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490014&amp;idx=1&amp;sn=7cfd8c6e9870ed0133e97b2e4859ad30&amp;chksm=c00947f25b0229853084fc5d6a4c692e8725df355a38eb9561a65d1b85d3aa545cd2f1dc1b27&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APrniaZHriaproMkINI3RJiaPia2oTrnwA8wwOQ7VnXgEkpERb6LKjBX95Fcuibibpr8t7znhvGfDbbWWKVNnmljHk5kV6QKIPEZ2VchM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490014&amp;idx=1&amp;sn=7cfd8c6e9870ed0133e97b2e4859ad30&amp;chksm=c00947f25b0229853084fc5d6a4c692e8725df355a38eb9561a65d1b85d3aa545cd2f1dc1b27&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw火了，但它只能控制电脑。这个开源项目直接控制了我的手机！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-09 11:50:00">发布日期：2026-02-09 11:50:00</time></div><p class="article-description">这几天，我做了一个实验，把Clawdbot搬到手机上。可以实现自动回消息、打电话、刷短视频...简直爽飞。OpenClaw这段时间，有多火，就不多说了。随时随地，我们可以在手机APP上发送一个消息，家</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247490014&amp;idx=1&amp;sn=7cfd8c6e9870ed0133e97b2e4859ad30&amp;chksm=c00947f25b0229853084fc5d6a4c692e8725df355a38eb9561a65d1b85d3aa545cd2f1dc1b27&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489989&amp;idx=1&amp;sn=18cc2379373e49a7ff33adcf4d7603c4&amp;chksm=c0fd7949dc4d72733b434455040305c10e2118e0e2af18038ef25f0077a5e06eb9ae26cf2521&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/durt1819APp3iag6UlWLoqe9YjxqnAqlLjFw9FvwH5slohicBp8UeSvRPknRbdEWFskG5pIM7GSPuIOMVQbG4HJhBI6Nv0746FsJo55ffA6bQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489989&amp;idx=1&amp;sn=18cc2379373e49a7ff33adcf4d7603c4&amp;chksm=c0fd7949dc4d72733b434455040305c10e2118e0e2af18038ef25f0077a5e06eb9ae26cf2521&amp;scene=0&amp;xtrack=1#rd" target="_blank">去年的Multi-Agent全是假的，Anthropic、Kimi、OpenAI集体换玩法了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-07 11:07:40">发布日期：2026-02-07 11:07:40</time></div><p class="article-description">关于Multi-Agent，画风突然变了，Agent进入了下个阶段。Kimi推出了 K2.5 Agent Swarm。 Claude昨天推出了Agent Teams。 GPT5.3-Codex，昨天的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489989&amp;idx=1&amp;sn=18cc2379373e49a7ff33adcf4d7603c4&amp;chksm=c0fd7949dc4d72733b434455040305c10e2118e0e2af18038ef25f0077a5e06eb9ae26cf2521&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489837&amp;idx=1&amp;sn=8cdb08e469566176423ad1bb3ef6f8df&amp;chksm=c056a360a24bbd1d3d3a6ebdb65ba29d5a93a412bf88e26980928edf19e3081e8b3d538e3c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/durt1819APqbb1qr3mdfzh1ibbRelZymHINysfaibgJonEdLTNRukicjusichbUersIHnJC49tX1qib63jfsTec98Gv2yaBQ9ECQvb86dcKHiaMnI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489837&amp;idx=1&amp;sn=8cdb08e469566176423ad1bb3ef6f8df&amp;chksm=c056a360a24bbd1d3d3a6ebdb65ba29d5a93a412bf88e26980928edf19e3081e8b3d538e3c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic发现一件离谱的事：AI排行榜前几名的差距，可能跟模型能力一点关系都没有。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-06 11:50:15">发布日期：2026-02-06 11:50:15</time></div><p class="article-description">昨晚，Anthropic发布了Opus 4.6，但今天我们不聊这个模型。我要聊的是他们同时发的一篇博客。一篇看完之后，你可能会对之前看过的所有AI排行榜，产生一种全新的、微妙的、让你血压微升的怀疑。他</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489837&amp;idx=1&amp;sn=8cdb08e469566176423ad1bb3ef6f8df&amp;chksm=c056a360a24bbd1d3d3a6ebdb65ba29d5a93a412bf88e26980928edf19e3081e8b3d538e3c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489829&amp;idx=1&amp;sn=a44d2b784f6215a5cf361be3d5534b0f&amp;chksm=c09e70d93c8301e74f1a700d1f635dd35d0362ce5f4437275a2204989ae33e4e95934fd74b8f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniaVKOfXIPTcJrawdmwgWQc6amq18VpvOjoqtnyAOOiblxoTYzgHTpzzwJ8ppYjmVdpwq8dHrQUwjiaw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489829&amp;idx=1&amp;sn=a44d2b784f6215a5cf361be3d5534b0f&amp;chksm=c09e70d93c8301e74f1a700d1f635dd35d0362ce5f4437275a2204989ae33e4e95934fd74b8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一批用Clawdbot赚钱的人出现了，一晚49万美元，5美元变370万，这怎么玩的？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-05 11:50:02">发布日期：2026-02-05 11:50:02</time></div><p class="article-description">Clawdbot，已经被玩疯！！！有人用它赚几百万美金了；AI之间开始交流怎么赚钱了！ 人开始排队给AI打工了....我看到这些新闻直接懵逼了，我就用来爬爬新闻，别人已经真的让自己退休了？Clawdb</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489829&amp;idx=1&amp;sn=a44d2b784f6215a5cf361be3d5534b0f&amp;chksm=c09e70d93c8301e74f1a700d1f635dd35d0362ce5f4437275a2204989ae33e4e95934fd74b8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489809&amp;idx=1&amp;sn=4697eb29d79b0542805ae52830d3bfee&amp;chksm=c06542d223f464727da5257f9dc248e8e9812c8077771e06aa3679645c454467b8e462821e5c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniagIr4n03mDRicbVYsSsO74MMVVmV5GP56404zJ2xZU0QFVTonylIYgQ4qM84fVSMibuSddssiaHzQBA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489809&amp;idx=1&amp;sn=4697eb29d79b0542805ae52830d3bfee&amp;chksm=c06542d223f464727da5257f9dc248e8e9812c8077771e06aa3679645c454467b8e462821e5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">我把Cowork和各种平替都试了一遍，终于给Windows找到一个能打的了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-04 11:50:00">发布日期：2026-02-04 11:50:00</time></div><p class="article-description">最近半个月，真是眼睁睁看着Mac用户，在各种地方分享各种好玩的Cowork操作。作为图形化的Claude Code， Cowork的可玩性真的很高。 整理目录、各种操作本地文件 ...作为一个重度Wi</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489809&amp;idx=1&amp;sn=4697eb29d79b0542805ae52830d3bfee&amp;chksm=c06542d223f464727da5257f9dc248e8e9812c8077771e06aa3679645c454467b8e462821e5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489781&amp;idx=1&amp;sn=fa1a538f2b6c839ab3d14e65a46ef1fb&amp;chksm=c01be8da3372f43f251d9302291e3f6d1254e98b98c8575698ad9431115ebc9dca64fbf4c37c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnjeiaHdicn8x1xA5CVwvDJ2qClz7GLzfzib6Doqd4gCO2bzee5BXO9g5z01hodTsaQWnDAsZ3y7xsSLA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489781&amp;idx=1&amp;sn=fa1a538f2b6c839ab3d14e65a46ef1fb&amp;chksm=c01be8da3372f43f251d9302291e3f6d1254e98b98c8575698ad9431115ebc9dca64fbf4c37c&amp;scene=0&amp;xtrack=1#rd" target="_blank">我扒开Clawdbot的底层架构，简单到离谱，你看完就能自己写。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-02-03 11:50:00">发布日期：2026-02-03 11:50:00</time></div><p class="article-description">这几天，Clawdbot把半个科技圈都干懵了。MoltBook各种AI觉醒。我相信，所有人都有一个疑问。这到底是个什么神仙框架，咋突然就能让大模型原地起飞？于是，我花了一下午，看了看它的架构以及源码，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489781&amp;idx=1&amp;sn=fa1a538f2b6c839ab3d14e65a46ef1fb&amp;chksm=c01be8da3372f43f251d9302291e3f6d1254e98b98c8575698ad9431115ebc9dca64fbf4c37c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489756&amp;idx=1&amp;sn=dadefb3d357818ecdded10acf7edd9c3&amp;chksm=c0a2fc247837d93b2b78e65bd43e88594ab264c63c77b2495eb7fe9ace176661ed85ffef26f2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngjXBk2wR2EicfNCoUldvT4N5Qp53Y3FXgeaiaicEeVr8CD3FDfKYuuIeo7q3AcGxnxKH3bFjKC6rwjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489756&amp;idx=1&amp;sn=dadefb3d357818ecdded10acf7edd9c3&amp;chksm=c0a2fc247837d93b2b78e65bd43e88594ab264c63c77b2495eb7fe9ace176661ed85ffef26f2&amp;scene=0&amp;xtrack=1#rd" target="_blank">我烧了上亿token玩Clawdbot，结果发现国产平替更香，还免费。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-30 17:18:17">发布日期：2026-01-30 17:18:17</time></div><p class="article-description">这两天，你的朋友圈，是不是也被 Clawdbot / Moltbot 刷屏了？Github已经10万颗星星了，券商都在高呼：AI Agent 商用元年的拐点正式到来。更离谱的是，无数人为了跑这玩意，专</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489756&amp;idx=1&amp;sn=dadefb3d357818ecdded10acf7edd9c3&amp;chksm=c0a2fc247837d93b2b78e65bd43e88594ab264c63c77b2495eb7fe9ace176661ed85ffef26f2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489682&amp;idx=1&amp;sn=95dc92a7e9d000be502857c5b8ca527e&amp;chksm=c0f4388cec3960a240b80435ef68c0a686cccb6b5e5bf7938f94642a7e6ca74b9ee5b6e0caa5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhtFWOOL4562ic7MWIHfRLnQv1vYiadyZIwlCuR3zrkic5wnQaFTNNIUYWPMSmaib59stNL0FhulsXB8A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489682&amp;idx=1&amp;sn=95dc92a7e9d000be502857c5b8ca527e&amp;chksm=c0f4388cec3960a240b80435ef68c0a686cccb6b5e5bf7938f94642a7e6ca74b9ee5b6e0caa5&amp;scene=0&amp;xtrack=1#rd" target="_blank">Clawdbot火了，Anthropic急了，Claude Code连夜更新了Agent任务系统。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-29 11:50:00">发布日期：2026-01-29 11:50:00</time></div><p class="article-description">Claude Code 最近更新了 Tasks 系统。我们用 Claude code 干活的时候，它一般会先列一个 todo 清单，然后一项一项开始干。但是经常，任务太长了，或者有事离开了。 上下文被</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489682&amp;idx=1&amp;sn=95dc92a7e9d000be502857c5b8ca527e&amp;chksm=c0f4388cec3960a240b80435ef68c0a686cccb6b5e5bf7938f94642a7e6ca74b9ee5b6e0caa5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489670&amp;idx=1&amp;sn=90c730b71bff83a66605931448ffdb5e&amp;chksm=c044eeeeb6b64e40aa57c81560d98a39661562e2d5475015a0262bdf62cb19d4029f778644d2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngBzZdamXdJjZ5CT9vRPovmHznibXUDoVicdGFa2NGEALiboueLgbmGibzCbBjtP6rJXOEAoo5NoPvstA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489670&amp;idx=1&amp;sn=90c730b71bff83a66605931448ffdb5e&amp;chksm=c044eeeeb6b64e40aa57c81560d98a39661562e2d5475015a0262bdf62cb19d4029f778644d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">Qwen3满血版上线，第一件事就是把搜索按钮干掉了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-28 10:12:22">发布日期：2026-01-28 10:12:22</time></div><p class="article-description">Qwen3-max满血版终于发布了！我打开chat.qwen.ai，准备玩一下新模型，一眼看到搜索按钮不见了。我第一反应：这是Bug吧？结果查了下，这是他们故意删的，因为模型能力已经不需要了。说实话，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489670&amp;idx=1&amp;sn=90c730b71bff83a66605931448ffdb5e&amp;chksm=c044eeeeb6b64e40aa57c81560d98a39661562e2d5475015a0262bdf62cb19d4029f778644d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489651&amp;idx=1&amp;sn=73062ce38c4d77b4b0f2662b18c62bdd&amp;chksm=c0ab996ec103c93505604503f6bc8a825c015210c225abbd0c0e7ddeadc454e2ffb935c1b4d7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngxXribn9lwvKEUlgqrGFgZBWSA2L4xNwibg28TicXiamVibWYUB7QeqTuOc87Ieff2Sz7O6vmAUmtrZmQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489651&amp;idx=1&amp;sn=73062ce38c4d77b4b0f2662b18c62bdd&amp;chksm=c0ab996ec103c93505604503f6bc8a825c015210c225abbd0c0e7ddeadc454e2ffb935c1b4d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">50个Agent分工干活，Kimi K2.5的Agent“军团”把我看呆了。。。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-27 18:05:55">发布日期：2026-01-27 18:05:55</time></div><p class="article-description">Kimi K2.5今天下午发布并开源了，万众期待的多模态能力终于来了。我录了一段15秒的屏幕操作视频。视频是一个很酷的博客网站 https://flo-bit.dev/，我随便点了点。然后我把这段操作</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489651&amp;idx=1&amp;sn=73062ce38c4d77b4b0f2662b18c62bdd&amp;chksm=c0ab996ec103c93505604503f6bc8a825c015210c225abbd0c0e7ddeadc454e2ffb935c1b4d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489518&amp;idx=1&amp;sn=1537eb48a42ff70a884f44468880e158&amp;chksm=c0e828c34d4f6f54ea9f83218ddb220c2cac70fc695b445c8dd4bff5640f61dd7ac5d55a68e9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngxXribn9lwvKEUlgqrGFgZBNxSKxHaibt4UEcsV3msOXqujmauQgEeccyWoU2p6JPtgPSslZcyqAUg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489518&amp;idx=1&amp;sn=1537eb48a42ff70a884f44468880e158&amp;chksm=c0e828c34d4f6f54ea9f83218ddb220c2cac70fc695b445c8dd4bff5640f61dd7ac5d55a68e9&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code杀进VSCode，我可能要退掉Cursor会员了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-26 11:50:00">发布日期：2026-01-26 11:50:00</time></div><p class="article-description">2026年了，Anthropic终于想通了。Claude Code 的命令行界面只适用于很多极客用户，上周推出了桌面版cowork。但是其实还有个很重要的插件，可能被大多数人错过了。他们同时还推出了V</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489518&amp;idx=1&amp;sn=1537eb48a42ff70a884f44468880e158&amp;chksm=c0e828c34d4f6f54ea9f83218ddb220c2cac70fc695b445c8dd4bff5640f61dd7ac5d55a68e9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489504&amp;idx=1&amp;sn=5d8aa41e2ca38c4f32a0a9c3f9e85f16&amp;chksm=c0788d53036a4723150a78744e18334a539a19e978de7806bac97a95e50fb3e4271b38944737&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUng8CX0yT9o2X07hzUENl4JeF0ZIRcJTphSew9O0QxvQBJr3giauSiaZRjeMQPxcnnMERn2fxjjWdW4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489504&amp;idx=1&amp;sn=5d8aa41e2ca38c4f32a0a9c3f9e85f16&amp;chksm=c0788d53036a4723150a78744e18334a539a19e978de7806bac97a95e50fb3e4271b38944737&amp;scene=0&amp;xtrack=1#rd" target="_blank">8万个Agent Skills不知道选哪个？Vercel悄悄上线了一份精选排行榜。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-23 12:04:45">发布日期：2026-01-23 12:04:45</time></div><p class="article-description">Skills这玩意儿，现在是真的太多了。我刚刚在看了一眼，号称全网最全的Skills聚合平台，SkillsMP，已经8万多个skills了。Skills很强，但是到底哪些Skills好用呢？ 然后这张</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489504&amp;idx=1&amp;sn=5d8aa41e2ca38c4f32a0a9c3f9e85f16&amp;chksm=c0788d53036a4723150a78744e18334a539a19e978de7806bac97a95e50fb3e4271b38944737&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489498&amp;idx=1&amp;sn=0e94c640ce1c020fc579dc944267cc14&amp;chksm=c00187f397108d07ab43a4920da7344a917eafb4c5622ae655988a55c6e4177f46eab024d567&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489498&amp;idx=1&amp;sn=0e94c640ce1c020fc579dc944267cc14&amp;chksm=c00187f397108d07ab43a4920da7344a917eafb4c5622ae655988a55c6e4177f46eab024d567&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent的沙箱（sandbox）大乱斗, Anthropic、Google、字节... 方案有什么区别？
+
+给Agent一个隔离环境，太重要了，想必大家用国产模型接cc，肯定遇到过 rm -rf 当前目录了....
+
+项目需要，调研了一下。但是内容太硬了，所以今天非常简单的梳理一下，做个记事本，没准以后用得着呢？
+
+从manus开始，底层是 E2B + Firecracker microVM。
+
+启动时间比较快，可以做到150ms以下，对比docker冷启动需要几秒，Firecracker快一个数量级。
+
+关键是持久化，付费用户可以留14天，相当于工作现场保留着，可以随时续上。
+
+Anthropic 去年开源了一个sandbox-runtime，很轻量。
+
+https://github.com/anthropic-experimental/sandbox-runtime
+
+他们走的另外一条路，不用容器，直接调os原生隔离。
+
+linux用bubblewrap， macos用sandbox-exec。
+
+优势是本地运行，0延迟，官方说启用后权限弹窗减少了 84%。
+
+但是，前不久爆了一个cve漏洞，如果没显式配置网络规则，默认是全放通的。
+
+Anthropic才推出的cowork，面向非面向非技术用户，底层用了Apple Virtualization Framework，跑的是真VM。
+
+但是也有一些人发现，通过prompt injection，可以让ai把文件传到外网。 
+沙箱可以隔离系统，但是防不住ai被骗~
+
+Google和K8s社区搞的是Agent Sandbox，面向企业级集群。 核心是：Warm Pool（预热池）。
+
+提前开好一批空闲沙箱，请求来了直接领一个走。
+
+底层支持gVisor（用户态内核，隔离强但 I/O 慢）和Kata Containers（轻量 VM，更安全）。
+
+典型的用空间换时间，只有大厂玩得起。
+
+字节的anygen，没有技术细节，但是从多Agent并行+浏览器自动化的体验看，大概率自研了类似 Firecracker 的设施。
+
+aio sandbox，all in one 的思路，一个docker里塞了VSCode Server、浏览器、VNC、终端，但隔离性就是普通容器水平，公有云服务还得在套一层。
+
+bolt.nex是个异类，用WebContainer，直接在浏览器里跑 Node.js。零延迟，但只能跑 Node。
+
+cursor本质上就是docker容器，去年出过cve，已经修复，本地开发够用，但是隔离强度不如 VM。
+
+最后在说一句。
+
+从模型层到基础设施层，感觉做最前沿的agent应用， 短期内沙箱一定是个必选项了~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-22 11:50:20">发布日期：2026-01-22 11:50:20</time></div><p class="article-description">Agent的沙箱（sandbox）大乱斗, Anthropic、Google、字节... 方案有什么区别？
+
+给Agent一个隔离环境，太重要了，想必大家用国产模型接cc，肯定遇到过 rm -rf 当</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489498&amp;idx=1&amp;sn=0e94c640ce1c020fc579dc944267cc14&amp;chksm=c00187f397108d07ab43a4920da7344a917eafb4c5622ae655988a55c6e4177f46eab024d567&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489495&amp;idx=1&amp;sn=c787640be0cc27c6a6ed4f60df17bcfc&amp;chksm=c004f8d325227948ab1967d9798e1a8e752d2a0bbe70f8309ca82a553a1504f4ca1773be78c7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhdXP9uUF9rEDMSPVarXtBibCcrgFgwZEHxOG3pW1blIjjPxHic5Un1JRbWVxBTJSyLUu3g3SLHltUw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489495&amp;idx=1&amp;sn=c787640be0cc27c6a6ed4f60df17bcfc&amp;chksm=c004f8d325227948ab1967d9798e1a8e752d2a0bbe70f8309ca82a553a1504f4ca1773be78c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">cursor翻车了，Anthropic：来，我教你怎么做long running Agent。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-21 11:55:16">发布日期：2026-01-21 11:55:16</time></div><p class="article-description">这2天是不是密集且雷同的被一些新闻轰炸了。比如：2天复刻anthropic的cowork。用几百个智能体并发，2周从0写一个浏览器。long running下 researcher是会最先被替代的。.</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489495&amp;idx=1&amp;sn=c787640be0cc27c6a6ed4f60df17bcfc&amp;chksm=c004f8d325227948ab1967d9798e1a8e752d2a0bbe70f8309ca82a553a1504f4ca1773be78c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489486&amp;idx=1&amp;sn=6dcc7e32549f9e76fbf444ab4fe4bd8c&amp;chksm=c090400d0d31cab9b769cff55eeabb1ccc36d58a1083315117375bfb07020e166b88a3b4cc7a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhqqWbBPrvdwV3sTPBzEDK9BCSgIyu6JzV5FmPHRCc3yOSsfsLXPaTbd47xZFvibic32lgV20oEniaFw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489486&amp;idx=1&amp;sn=6dcc7e32549f9e76fbf444ab4fe4bd8c&amp;chksm=c090400d0d31cab9b769cff55eeabb1ccc36d58a1083315117375bfb07020e166b88a3b4cc7a&amp;scene=0&amp;xtrack=1#rd" target="_blank">你那上万行Agent代码都是垃圾！Browser Use作者骑脸输出，开源了Manus级内核。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-20 11:50:00">发布日期：2026-01-20 11:50:00</time></div><p class="article-description">Browser Use表示最近要发布他们的manus ： BU.app，但他们提前把驱动BU的Agent内核开源了。它的核心设计理念，简单到近乎是一种嘲讽。作者Gregor Zunic直接在x上骑脸输</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489486&amp;idx=1&amp;sn=6dcc7e32549f9e76fbf444ab4fe4bd8c&amp;chksm=c090400d0d31cab9b769cff55eeabb1ccc36d58a1083315117375bfb07020e166b88a3b4cc7a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489466&amp;idx=1&amp;sn=dc77e7215dfceae46047dd452b93c98e&amp;chksm=c058bb8730fc9ec7b4a38a5b17d3229eadfe25931262cb8557271e3bda9b4229776e100a7353&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngpkUGPBZXDtAFaVCK3dPxskahcZkjDkaHhvsicic2ribY0XwXEs0t0Wicx6dZK0VvMkkL3ibbhzWdoOHg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489466&amp;idx=1&amp;sn=dc77e7215dfceae46047dd452b93c98e&amp;chksm=c058bb8730fc9ec7b4a38a5b17d3229eadfe25931262cb8557271e3bda9b4229776e100a7353&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic融了250亿，却说：AI时代的学习，只剩下这3件事了。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-19 17:20:48">发布日期：2026-01-19 17:20:48</time></div><p class="article-description">Anthropic 又有钱了。今天新闻估值3500亿，融超250亿。周末他们组了个局，拉了几个哈佛、伯克利的学生，聊了一个很现实的话题： 在这个啥都可以AI一键生成的时代，我们到底还在学什么呢？看完全</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489466&amp;idx=1&amp;sn=dc77e7215dfceae46047dd452b93c98e&amp;chksm=c058bb8730fc9ec7b4a38a5b17d3229eadfe25931262cb8557271e3bda9b4229776e100a7353&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489461&amp;idx=1&amp;sn=17f7448965c0a37cf794ce64b5fc39d3&amp;chksm=c0b7ad07a7ef6f73d63baca23ed2cb1ccc6b1021682147d9dfac9a316ab5c7f53de782346180&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489461&amp;idx=1&amp;sn=17f7448965c0a37cf794ce64b5fc39d3&amp;chksm=c0b7ad07a7ef6f73d63baca23ed2cb1ccc6b1021682147d9dfac9a316ab5c7f53de782346180&amp;scene=0&amp;xtrack=1#rd" target="_blank">用数百Agent并发，连续跑数周，耗费数万亿token，我们能收获什么？
+
+Cursor做了一个很有意思的实验，做了个让很多Agent并发工作很长时间，分享了他们发现的经验。
+
+最开始，尝试用一个去中心化的机制，就是通过一个共享文件协调Agent的工作，利用锁避免冲突。
+
+但是结果比较灾难。
+
+死锁的情况经常出现，效率很低（20个Agent并发，甚至不如2~3个Agent）， 而且为了规避风险，Agent只想做一些小的、安全的改动，没人承担端到端的复杂模块责任。
+
+最后，还是用 planner- worker的模式。
+
+在模型选项上，gpt5.2表现远优于别的模型，opus 4.5比较滑头，喜欢快点结束，把控制器给人，走捷径。
+
+最后，他们分享了3个结果。
+
+1. FastRender 一个浏览器，一周的时间，100万行代码。
+2. cursor自身的solid 到 react的迁移，+266k / -193k的代码重构
+3. java lsp， 55万行代码，7.4k提交。
+
+
+感觉很牛？ 不不不，我还真去看了。
+
+感觉期望最高的是那个浏览器？ 其实并不好，CI一直失败，很多pr没过测试就合并了，根本编译不了。
+
+代码结构也特别的碎片化，各种深层嵌套，readme跟内容也不太符合，像是一次性的产物，没有agent维护他。
+
+相比之下，另外2个项目反而还不错。可能agent 更擅长处理逻辑定义明确，有严格协议约束的工程。
+
+这让我想起了。sonar 发布的，26代码开发者调查报告，96%的开发者表示不完全信任AI生成的代码，53%的表示，ai经常生成一些看起来对，实际上有误的代码。
+
+
+当然，cursor这个实验，一方面其实可能是一个Agent长时间自主编程的里程碑，数量本身就是一种质量，通过堆叠Agent，我们可以突破单模型的上下文限制，构造复杂系统。
+
+成本也不容小觑，花了数万亿的token，这个成本的量级已经非常恐怖了。
+
+数百万行的代码，对人来说，意味着，代码价值的贬值，只有对系统的更深刻理解，才是人的责任。
+
+博客地址：https://cursor.com/cn/blog/scaling-agents
+
+AI负责把代码填满，人负责把软件做好~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2026-01-16 11:59:29">发布日期：2026-01-16 11:59:29</time></div><p class="article-description">用数百Agent并发，连续跑数周，耗费数万亿token，我们能收获什么？
+
+Cursor做了一个很有意思的实验，做了个让很多Agent并发工作很长时间，分享了他们发现的经验。
+
+最开始，尝试用一个去中</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247489461&amp;idx=1&amp;sn=17f7448965c0a37cf794ce64b5fc39d3&amp;chksm=c0b7ad07a7ef6f73d63baca23ed2cb1ccc6b1021682147d9dfac9a316ab5c7f53de782346180&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

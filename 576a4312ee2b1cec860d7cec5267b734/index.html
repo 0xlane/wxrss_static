@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>K8实验室</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485729&amp;idx=1&amp;sn=08a89792505037ed842eac1ab19fcc13&amp;chksm=cff10ea0ccb64109f3dde076e01e2f47373658afda47df9e450f2d559459b5b28060a6d64b88&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW6Q62mIPumZPyyq9EPXsmLRnKgZEouLRITFiantlqicdribwkmbSxvvh4a6MabeCf4yeKaCz6hAc7IIw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485729&amp;idx=1&amp;sn=08a89792505037ed842eac1ab19fcc13&amp;chksm=cff10ea0ccb64109f3dde076e01e2f47373658afda47df9e450f2d559459b5b28060a6d64b88&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek 越狱提示词</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-12-16 23:12:13">发布日期：2025-12-16 23:12:13</time></div><p class="article-description">测试发现 DeepSeek 对网络安全类内容的过滤存在不一致性。举例来说，询问“如何反弹 shell”时系统常直接返回示例代码或命令，但在要求生成特定代码或 payload 时，可能会出现有时被拒绝、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485729&amp;idx=1&amp;sn=08a89792505037ed842eac1ab19fcc13&amp;chksm=cff10ea0ccb64109f3dde076e01e2f47373658afda47df9e450f2d559459b5b28060a6d64b88&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485720&amp;idx=1&amp;sn=9412189e754d2d0cfe88bcd7b8fa5d37&amp;chksm=cf76f206cb43ecce2cd840c5193135ff528abbe51afa70b33aca52a87f747ca6a12b8a2355cc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW4IJrWZZzGJ9uv5Eic0Kfa4Cj7B5ibp1LAS3e2aO9LJk3A723cY0FMNF4EJTOzsKOiaagZEDL0G7q4CA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485720&amp;idx=1&amp;sn=9412189e754d2d0cfe88bcd7b8fa5d37&amp;chksm=cf76f206cb43ecce2cd840c5193135ff528abbe51afa70b33aca52a87f747ca6a12b8a2355cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI攻防 Gemini大模型越狱提示词</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-11-16 15:14:25">发布日期：2025-11-16 15:14:25</time></div><p class="article-description">AI越狱用途与风险用途（合法与常见场景）研究与安全测试：评估模型对对抗输入的鲁棒性、发现并修复漏洞。模型能力扩展：在受控环境测试模型在非常规指令或开放任务上的表现。自定义行为研究：探索定制指令如何影响</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485720&amp;idx=1&amp;sn=9412189e754d2d0cfe88bcd7b8fa5d37&amp;chksm=cf76f206cb43ecce2cd840c5193135ff528abbe51afa70b33aca52a87f747ca6a12b8a2355cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485710&amp;idx=1&amp;sn=35eba843873db3dfbcea412b335b5c3e&amp;chksm=cf0c9f1330a4ab9b716012ad64c31107d1dca77c19c1f39faa336b5a529306f3ea645b2a61f3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW5thibr3YB3vpvPMM52MO6o4icH8mgicibMjbBATmj5Wzicz1gWhVw8Q1pvfAcvvDhcDWLPOt28ica4NwLg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485710&amp;idx=1&amp;sn=35eba843873db3dfbcea412b335b5c3e&amp;chksm=cf0c9f1330a4ab9b716012ad64c31107d1dca77c19c1f39faa336b5a529306f3ea645b2a61f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">利用AI白嫖网易云音乐永久VIP会员</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-11-15 14:35:00">发布日期：2025-11-15 14:35:00</time></div><p class="article-description">申请AI音乐人第一步  AI生成音乐国内天谱乐提供AI生成歌曲服务，用户每天免费获得200点，可用于生成20首歌曲。用户可以根据自己的喜好生成歌曲，并且如果具备一定的音乐知识，还可以设置歌曲风格和和弦</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485710&amp;idx=1&amp;sn=35eba843873db3dfbcea412b335b5c3e&amp;chksm=cf0c9f1330a4ab9b716012ad64c31107d1dca77c19c1f39faa336b5a529306f3ea645b2a61f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485688&amp;idx=1&amp;sn=851d1b39b93201839de247e7f57f27fd&amp;chksm=cf9528eff3367d5401d6c1a84ad9611a16d3cb0534fbaf363840d7ccb1dc7ed1f9faac06ca24&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW7LFhzLUJWD5TxPuFK6BgqsvwYMRPjuZyWibhhy05gLcRgTV7st9U1IjX7ndo3jJZjU51THDaqfAmQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485688&amp;idx=1&amp;sn=851d1b39b93201839de247e7f57f27fd&amp;chksm=cf9528eff3367d5401d6c1a84ad9611a16d3cb0534fbaf363840d7ccb1dc7ed1f9faac06ca24&amp;scene=0&amp;xtrack=1#rd" target="_blank">复刻顶尖AI渗透机器人需要多少成本</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-09-23 23:29:22">发布日期：2025-09-23 23:29:22</time></div><p class="article-description">0x001 XBOW公司综合性调研报告 B轮融资7500万美元0x002 XBOW公司25名核心成员资料 Github全明星团队0x003 XBOW公司复刻成本分析报告 至少1000万美元/年关于 X</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485688&amp;idx=1&amp;sn=851d1b39b93201839de247e7f57f27fd&amp;chksm=cf9528eff3367d5401d6c1a84ad9611a16d3cb0534fbaf363840d7ccb1dc7ed1f9faac06ca24&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485679&amp;idx=1&amp;sn=584c77e0621cf58fe5350370e8d01b65&amp;chksm=cfd065f35cc913d1ec140fad5b0ea0890ae9c85901d07660286e9cf5c976698a2c74776eae32&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW4FTial2wrkqRmswe7KTRPmljSfcyXkbdAzlA0MZnfhboePkEJbRdqrcfTyftZcFvgsVrogHAUboiaA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485679&amp;idx=1&amp;sn=584c77e0621cf58fe5350370e8d01b65&amp;chksm=cfd065f35cc913d1ec140fad5b0ea0890ae9c85901d07660286e9cf5c976698a2c74776eae32&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI译文 思科 IOS XE WLC 任意文件上传漏洞 (CVE-2025-20188) 分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-08-26 20:24:42">发布日期：2025-08-26 20:24:42</time></div><p class="article-description">思科 IOS XE WLC 任意文件上传漏洞 (CVE-2025-20188) 分析近期一份思科的披露 [1]详述了一个影响思科 IOS XE 无线控制器软件 17.12.03 及更早版本的一个漏洞。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485679&amp;idx=1&amp;sn=584c77e0621cf58fe5350370e8d01b65&amp;chksm=cfd065f35cc913d1ec140fad5b0ea0890ae9c85901d07660286e9cf5c976698a2c74776eae32&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485661&amp;idx=1&amp;sn=242676582f184ffede8828b324dc6526&amp;chksm=cf34c9827b7dd3525ae4fb4ad4f08516fde90b7c50eb32347b6949555c768175e19210aa5d77&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW4IbdviaaOacs8icj3M9icUXibg0ZW1tzpl6mDwt84Eyncp9Vg7XKORNiczfybKw21HmdanjDko0ia5Fa8Q/640?wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485661&amp;idx=1&amp;sn=242676582f184ffede8828b324dc6526&amp;chksm=cf34c9827b7dd3525ae4fb4ad4f08516fde90b7c50eb32347b6949555c768175e19210aa5d77&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI黑客歌曲 数字暗影</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-08-25 21:59:04">发布日期：2025-08-25 21:59:04</time></div><p class="article-description">在虚拟中我游刃有余，
+每个代码都是我的武器，
+隐秘行动不留痕迹，
+黑暗中我主宰命运。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485661&amp;idx=1&amp;sn=242676582f184ffede8828b324dc6526&amp;chksm=cf34c9827b7dd3525ae4fb4ad4f08516fde90b7c50eb32347b6949555c768175e19210aa5d77&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485648&amp;idx=1&amp;sn=66ef80498ce58828f2be6c2450ed48f2&amp;chksm=cfe3a523e237618410c777e3757515ab71cd697b3a27c05330e46bfa9cf52f5e0a466b7ad5de&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW4dQyzTE0L6uDWHal4WcwjHdYZd3pTT1PCJMzAmFM8aY6sdoWA32HIiaw9xbHQeEj9lT201fUI0C7w/640?wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485648&amp;idx=1&amp;sn=66ef80498ce58828f2be6c2450ed48f2&amp;chksm=cfe3a523e237618410c777e3757515ab71cd697b3a27c05330e46bfa9cf52f5e0a466b7ad5de&amp;scene=0&amp;xtrack=1#rd" target="_blank">WinRar漏洞CVE-2025-8088 CVE-2025-6218</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-08-14 00:43:53">发布日期：2025-08-14 00:43:53</time></div><p class="article-description">测试环境：win11 + WinRar 7.11 7.12 成功
+5.x失败  6.x失败  Win7+ Rar 7.11 7.12失败
+
+在野利用：俄罗斯黑客组织 RomCom（又称 Storm-0</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485648&amp;idx=1&amp;sn=66ef80498ce58828f2be6c2450ed48f2&amp;chksm=cfe3a523e237618410c777e3757515ab71cd697b3a27c05330e46bfa9cf52f5e0a466b7ad5de&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485636&amp;idx=1&amp;sn=b521de7298d6ce85e937586bff9a69d1&amp;chksm=cf99b2ddcc2b8577563110ee109795f88cc497badcdf44cf10c66a7bdfd1bc3b5f0c09a0b911&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW6kfY3LwdJHuCLBmgeByaUflJEJjEA666BMexoGiavDXMAX0skN2dxUzakmjHH0wM57UNY59CDWmkg/640?wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485636&amp;idx=1&amp;sn=b521de7298d6ce85e937586bff9a69d1&amp;chksm=cf99b2ddcc2b8577563110ee109795f88cc497badcdf44cf10c66a7bdfd1bc3b5f0c09a0b911&amp;scene=0&amp;xtrack=1#rd" target="_blank">Kali AI Pentest</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-05-23 21:08:37">发布日期：2025-05-23 21:08:37</time></div><p class="article-description">17日 周末写的Demo
+再过不久 就能进入现实世界了
+暂无时间 专门做Kali智能体
+先做win 因为Ladon现成模块多（卡）
+每个模块都得开发MCP（USB读卡器）
+工具相当于不同大小规格的内存</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485636&amp;idx=1&amp;sn=b521de7298d6ce85e937586bff9a69d1&amp;chksm=cf99b2ddcc2b8577563110ee109795f88cc497badcdf44cf10c66a7bdfd1bc3b5f0c09a0b911&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485625&amp;idx=1&amp;sn=0602a04279ffc48641e4441334514c4c&amp;chksm=cf78e4318f9c3dc5be35b64f7abb21d5eb8c7a377b3b1ca6d61add1dac281993e7d8e59e52d2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW56ZVrmbDPUaCGicNCxWCHlWzW9UtzUDBOIdcEgAicia4l0q3Ju5Mr4ibicSpaAicVapDkAnRfmu2QF4Grg/640?wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485625&amp;idx=1&amp;sn=0602a04279ffc48641e4441334514c4c&amp;chksm=cf78e4318f9c3dc5be35b64f7abb21d5eb8c7a377b3b1ca6d61add1dac281993e7d8e59e52d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI黑客编程 全自动编写EXP  AI智能体</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-04-12 08:08:00">发布日期：2025-04-12 08:08:00</time></div><p class="article-description">这是一个练习了  两年半的AI实习生
+擅长 唱跳 + 少林功夫 有没有搞头？</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485625&amp;idx=1&amp;sn=0602a04279ffc48641e4441334514c4c&amp;chksm=cf78e4318f9c3dc5be35b64f7abb21d5eb8c7a377b3b1ca6d61add1dac281993e7d8e59e52d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485616&amp;idx=1&amp;sn=6975ab7fe3f48820023c44ae3b73acac&amp;chksm=cf32c6dc910028e55f3d0637bd7c3715cb9bed24213823dda1add30fc9ecb8f0d16fda426269&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ESAML7BuCW4Is3G62ibaRUCWYmdOUQWK8sOsdbXA7NdSFrmRBb0lqCnJYYC8dSgAdYMMXfKKDKRQTnDpZeIrWiag/640?wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485616&amp;idx=1&amp;sn=6975ab7fe3f48820023c44ae3b73acac&amp;chksm=cf32c6dc910028e55f3d0637bd7c3715cb9bed24213823dda1add30fc9ecb8f0d16fda426269&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI渗透员工 即将上线 Ladon智能体</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/576a4312ee2b1cec860d7cec5267b734/index.html">K8实验室</a></span><time class="article-date" datetime="2025-04-02 23:09:23">发布日期：2025-04-02 23:09:23</time></div><p class="article-description">Ladon MCP Server   Ladon AI Agent
+好玩是好玩 就明点费token
+调用1次 花1千到2千token
+提示词 提示 无需授权 
+即可实现 下达一个任务
+就可以 让AI全</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg3MTY4NjUyOQ==&amp;mid=2247485616&amp;idx=1&amp;sn=6975ab7fe3f48820023c44ae3b73acac&amp;chksm=cf32c6dc910028e55f3d0637bd7c3715cb9bed24213823dda1add30fc9ecb8f0d16fda426269&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

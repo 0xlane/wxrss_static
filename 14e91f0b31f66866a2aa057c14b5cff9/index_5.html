@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI Reading Hub</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890283&amp;idx=1&amp;sn=c25eee3c8e5f245776c171fc6a24762a&amp;chksm=8d3e0224ccc2d540c972db6d1e60c5952b41dcc548da556b0befc2eeb873b9541cd474c4e79d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYJVAprcB2mxWmsSrL4cCR5gc5oiah5ibBvGoxA3Eab4ZnibJkoxEpZibhC9HoLBpR4BQJAl1ZPVpB5hQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890283&amp;idx=1&amp;sn=c25eee3c8e5f245776c171fc6a24762a&amp;chksm=8d3e0224ccc2d540c972db6d1e60c5952b41dcc548da556b0befc2eeb873b9541cd474c4e79d&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek年底或推智能体；吴恩达谈AI时代就业新法则；Mistral AI完成20亿欧元融资；</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-05 12:27:50">发布日期：2025-09-05 12:27:50</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-09-05 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890283&amp;idx=1&amp;sn=c25eee3c8e5f245776c171fc6a24762a&amp;chksm=8d3e0224ccc2d540c972db6d1e60c5952b41dcc548da556b0befc2eeb873b9541cd474c4e79d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=1&amp;sn=52a8fe74499b1338c9e62e45462fe150&amp;chksm=8d3a28f9b8200a3066bfadd9a23f9d5dde7e79d00e4e842544bea33d01f23b4592d0fd9d6a9c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZlBbrHMTLNKg4RLZv7QUZ3GprW1kgG33kb6B9uOubzda19B0JApXQAmKUfkQ6BSNTGX3mmzVnpRA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=1&amp;sn=52a8fe74499b1338c9e62e45462fe150&amp;chksm=8d3a28f9b8200a3066bfadd9a23f9d5dde7e79d00e4e842544bea33d01f23b4592d0fd9d6a9c&amp;scene=0&amp;xtrack=1#rd" target="_blank">长大后为什么时间越来越快？我们活的是记忆并非时间，人生是由故事组成的</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-04 12:30:05">发布日期：2025-09-04 12:30:05</time></div><p class="article-description">你有没有这种感觉？小时候一个暑假长得像一辈子，能回忆起的细节，多到可以拍一部电视剧。现在一年过得像一个周末，元旦仿佛还在昨天，眼睛一闭一睁，朋友圈就开始晒中秋月饼了。工作几年后，日子更是直接按“季度”</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=1&amp;sn=52a8fe74499b1338c9e62e45462fe150&amp;chksm=8d3a28f9b8200a3066bfadd9a23f9d5dde7e79d00e4e842544bea33d01f23b4592d0fd9d6a9c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=2&amp;sn=cd13ad07a14d0d4fac65c38eaa6eb5d0&amp;chksm=8d2d3659ba39752a38751e6ff0f5d2a907457266edf4287b3d48b46bd8259acdf74718a65fff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZlBbrHMTLNKg4RLZv7QUZ3nHYz8awmu0QWap2xspRgxFp2NGTsg9qgIpLyVgiauyku17mA49p8SDA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=2&amp;sn=cd13ad07a14d0d4fac65c38eaa6eb5d0&amp;chksm=8d2d3659ba39752a38751e6ff0f5d2a907457266edf4287b3d48b46bd8259acdf74718a65fff&amp;scene=0&amp;xtrack=1#rd" target="_blank">谷歌发布Nano banana官方提示词指南；Google Gemini 2.5发布；宇树科技冲刺IPO；苹果自研AI搜索引擎</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-04 12:30:05">发布日期：2025-09-04 12:30:05</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。2025-09-04 资讯日报新闻资讯新智元峰会</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890274&amp;idx=2&amp;sn=cd13ad07a14d0d4fac65c38eaa6eb5d0&amp;chksm=8d2d3659ba39752a38751e6ff0f5d2a907457266edf4287b3d48b46bd8259acdf74718a65fff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890262&amp;idx=1&amp;sn=68cc8c590b84f1cc3cbc4efd80d3ba9a&amp;chksm=8d33a8f7e26e17ecfb5668dda400ecd706d442c35940576970c4104f7ba95337fde89b6cca3d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXbLic5983JicXCHwjQWB5Lia9jtn5kbUpecy1DfgicGiaC5Il63jrSe3qia0ttQ4zibbicWibrGn6ericpibmWHw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890262&amp;idx=1&amp;sn=68cc8c590b84f1cc3cbc4efd80d3ba9a&amp;chksm=8d33a8f7e26e17ecfb5668dda400ecd706d442c35940576970c4104f7ba95337fde89b6cca3d&amp;scene=0&amp;xtrack=1#rd" target="_blank">7个AI玩狼人杀，GPT - 5获断崖式MVP；Anthropic融资130亿，Claude估值暴涨300%次于字节</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-03 12:30:49">发布日期：2025-09-03 12:30:49</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-09-03 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890262&amp;idx=1&amp;sn=68cc8c590b84f1cc3cbc4efd80d3ba9a&amp;chksm=8d33a8f7e26e17ecfb5668dda400ecd706d442c35940576970c4104f7ba95337fde89b6cca3d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890257&amp;idx=1&amp;sn=315bb9e800bfe82a59962a01f27b14dd&amp;chksm=8d880ae48acca09603c7f4f6ccab455588f6b17a8c49f4078045aa93dbf84db167c4a007d13e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXblhgXlxNeHuWmY6v7PpxaFic5yZuFttugr4QMbkEQicXYXNdXsAThqp0icqU1jO5ZwaKf8xr6YhtEjw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890257&amp;idx=1&amp;sn=315bb9e800bfe82a59962a01f27b14dd&amp;chksm=8d880ae48acca09603c7f4f6ccab455588f6b17a8c49f4078045aa93dbf84db167c4a007d13e&amp;scene=0&amp;xtrack=1#rd" target="_blank">韩国发AI玩偶陪伴独居老人；马斯克起诉前员工偷代码库；Google发布nano banana使用指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-02 12:10:45">发布日期：2025-09-02 12:10:45</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-09-02 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890257&amp;idx=1&amp;sn=315bb9e800bfe82a59962a01f27b14dd&amp;chksm=8d880ae48acca09603c7f4f6ccab455588f6b17a8c49f4078045aa93dbf84db167c4a007d13e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890252&amp;idx=1&amp;sn=7dda3b497eac46b58f4f87c90b4035a1&amp;chksm=8d398fd48d8e302995d09a2bffcd6c5087823e8487678c5239c475d67b69bd51795b38f8b46e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZ3YBGB9z9vdpNNy19jpOO7oGekdenpGP2aiccLAt3Hpo7P7cjg9UXC9F4t1vyGJTiczKkm1WxfiaWvQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890252&amp;idx=1&amp;sn=7dda3b497eac46b58f4f87c90b4035a1&amp;chksm=8d398fd48d8e302995d09a2bffcd6c5087823e8487678c5239c475d67b69bd51795b38f8b46e&amp;scene=0&amp;xtrack=1#rd" target="_blank">9月1日AI内容新规实施；全球首例AI谋杀案；马斯克推Grok Code Fast 1；英伟达发布新平台</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-09-01 12:11:24">发布日期：2025-09-01 12:11:24</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-09-01 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890252&amp;idx=1&amp;sn=7dda3b497eac46b58f4f87c90b4035a1&amp;chksm=8d398fd48d8e302995d09a2bffcd6c5087823e8487678c5239c475d67b69bd51795b38f8b46e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890247&amp;idx=1&amp;sn=dfe04a702134868a9faabf0925647150&amp;chksm=8d35fa5c6f2cb384531d6035e732c63a7e40809ff1cea5fa42dc6deb0feb6cece41cd0a7f8df&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXY978ZGSbPs3EGqQrQicGy7TJ4LjxlGcicnI5wy9tBVD2hTcAib5C8e4GFnhHkLcrJMMywTfojbyTJ6g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890247&amp;idx=1&amp;sn=dfe04a702134868a9faabf0925647150&amp;chksm=8d35fa5c6f2cb384531d6035e732c63a7e40809ff1cea5fa42dc6deb0feb6cece41cd0a7f8df&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里战略拐点：闪购与AI推理芯片，牺牲短期盈利换取长期主导地位，开启价值重估之路</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-31 12:05:22">发布日期：2025-08-31 12:05:22</time></div><p class="article-description">结论速读•战略拐点： 阿里巴巴正在牺牲短期盈利和现金流，重金押注两大高资本投入项目：淘宝闪购（即时电商）和自研AI推理芯片。•财务洞察： 2026财年第一季度财报表面上看利润和现金流下滑，但深入分析显</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890247&amp;idx=1&amp;sn=dfe04a702134868a9faabf0925647150&amp;chksm=8d35fa5c6f2cb384531d6035e732c63a7e40809ff1cea5fa42dc6deb0feb6cece41cd0a7f8df&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=1&amp;sn=b6406e6d945f01f1ccae48f438dc9800&amp;chksm=8ddb0d4ac53291a1e05edc4a66c2124e206adf763e0df87a7f8adf5170aa77655a32d444f39b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZicrTh2TtGqh4FyH4eqwh3x3ia0GnmcegTrkKHoN8icYtMSYkBsPKlNAE4FMp7w4Wb6Pzst2Wq8sicDQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=1&amp;sn=b6406e6d945f01f1ccae48f438dc9800&amp;chksm=8ddb0d4ac53291a1e05edc4a66c2124e206adf763e0df87a7f8adf5170aa77655a32d444f39b&amp;scene=0&amp;xtrack=1#rd" target="_blank">人工智能全产业链分析报告：洞悉新质生产力与宏观经济重塑，AI产业链全景</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-30 17:29:50">发布日期：2025-08-30 17:29:50</time></div><p class="article-description">报告核心洞察速读•AI：定义新质生产力：人工智能正成为第四次工业革命的核心引擎，它不仅仅是技术，更是一种能够重塑生产生活方式的新质生产力。•产业链的“微笑曲线”：AI产业的价值和利润集中在产业链的两端</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=1&amp;sn=b6406e6d945f01f1ccae48f438dc9800&amp;chksm=8ddb0d4ac53291a1e05edc4a66c2124e206adf763e0df87a7f8adf5170aa77655a32d444f39b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=2&amp;sn=b3de3e9f872dbbfb7fc197d149186655&amp;chksm=8d266ba5ef24ff5732b44c556fec1d9dc0e6e5a3a7677c0a0f3b1cc350cc60c266edb0457d63&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZicrTh2TtGqh4FyH4eqwh3xSkTSYE2PBSaD9tZEN9Bea4OoSsAx8n9SAVFEWabibKpApMsCTtIGfxQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=2&amp;sn=b3de3e9f872dbbfb7fc197d149186655&amp;chksm=8d266ba5ef24ff5732b44c556fec1d9dc0e6e5a3a7677c0a0f3b1cc350cc60c266edb0457d63&amp;scene=0&amp;xtrack=1#rd" target="_blank">黄仁勋再投核电；英伟达财报引担忧；谷歌nano - banana模型爆火，玩法多技术强;智谱GLM-4.5团队将推新模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-30 17:29:50">发布日期：2025-08-30 17:29:50</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。2025-08-30 资讯日报新闻资讯黄仁勋再投</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890239&amp;idx=2&amp;sn=b3de3e9f872dbbfb7fc197d149186655&amp;chksm=8d266ba5ef24ff5732b44c556fec1d9dc0e6e5a3a7677c0a0f3b1cc350cc60c266edb0457d63&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890225&amp;idx=1&amp;sn=0b9b344bd95e3e77c04e219404c3a403&amp;chksm=8d86050a4bbd63ade99b7fa89951dc7e8ea47dae4a6827d1a021dde45c90d246a9ca60682ed2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXawHxwbMtiaI0sNBCZZI2miaM4yopwSX30IDss5yN9PSt96Co8ibfD6nbhiauH9rEr9WofxtU6efdibjSQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890225&amp;idx=1&amp;sn=0b9b344bd95e3e77c04e219404c3a403&amp;chksm=8d86050a4bbd63ade99b7fa89951dc7e8ea47dae4a6827d1a021dde45c90d246a9ca60682ed2&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic推Claude for Chrome，AI浏览器竞争升级；英伟达推NVFP4预训练</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-28 12:41:59">发布日期：2025-08-28 12:41:59</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-28 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890225&amp;idx=1&amp;sn=0b9b344bd95e3e77c04e219404c3a403&amp;chksm=8d86050a4bbd63ade99b7fa89951dc7e8ea47dae4a6827d1a021dde45c90d246a9ca60682ed2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=1&amp;sn=eeed1ea6c91b4f9ac2b9210bd33b14c7&amp;chksm=8de526294a4fdfae25df78f3f2fcb86e5f920911f3c27ababc6275f86006d7152d44ea17a789&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYqicrWe9eAAxsdm0aEBgTUOyutLicsU6lXrBkk1rBnqX7mf7ZhWhdFydXLNgKibbjPrwplYxwWwlvyA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=1&amp;sn=eeed1ea6c91b4f9ac2b9210bd33b14c7&amp;chksm=8de526294a4fdfae25df78f3f2fcb86e5f920911f3c27ababc6275f86006d7152d44ea17a789&amp;scene=0&amp;xtrack=1#rd" target="_blank">《“人工智能+”行动意见》深度解读：从人口红利到智能红利，中国经济社会变革新引擎</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-27 12:08:02">发布日期：2025-08-27 12:08:02</time></div><p class="article-description">报告核心速读•战略核心：该《意见》不只是一项技术政策，更是通过人工智能引擎，全面重塑中国经济、社会与治理体系的综合性国家战略，旨在以“智能红利”弥补“人口红利”消退的结构性挑战，并构筑长期国际竞争优势</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=1&amp;sn=eeed1ea6c91b4f9ac2b9210bd33b14c7&amp;chksm=8de526294a4fdfae25df78f3f2fcb86e5f920911f3c27ababc6275f86006d7152d44ea17a789&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=2&amp;sn=8a8e10eab320e32c5bf5f0b9d60d12a6&amp;chksm=8db1337e6ea5da5d2bccf10359c4bc3b839e34d14f7b61e83cf467b23f3f6dd336f940b7765a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYLsSQ5KgmnEGiaTPhnVcytrT6W4JOwQjKtQhL7lwpOUKF0fPxLlWaUSicJOzd8CIdcgIVicibOEV8YQw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=2&amp;sn=8a8e10eab320e32c5bf5f0b9d60d12a6&amp;chksm=8db1337e6ea5da5d2bccf10359c4bc3b839e34d14f7b61e83cf467b23f3f6dd336f940b7765a&amp;scene=0&amp;xtrack=1#rd" target="_blank">国家发改委推人工智能+计划；DeepSeek V3.1现“极”字Bug；马斯克起诉OpenAI和苹果垄断</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-27 12:08:02">发布日期：2025-08-27 12:08:02</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-27 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890220&amp;idx=2&amp;sn=8a8e10eab320e32c5bf5f0b9d60d12a6&amp;chksm=8db1337e6ea5da5d2bccf10359c4bc3b839e34d14f7b61e83cf467b23f3f6dd336f940b7765a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890207&amp;idx=1&amp;sn=b57d3eb7fefe05497d252a444d08a0dc&amp;chksm=8d1e3325bfaa215a594f634ed9737d013cd9f278bba4c634a6e7fe71bf8a137aa0e64bfd0d3d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYqicrWe9eAAxsdm0aEBgTUOKMzdZ1ic1c8IJvgztvXWNn7oicBqv2TQ2iaYaOByuRH5VnrQ5KFjXQAuA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890207&amp;idx=1&amp;sn=b57d3eb7fefe05497d252a444d08a0dc&amp;chksm=8d1e3325bfaa215a594f634ed9737d013cd9f278bba4c634a6e7fe71bf8a137aa0e64bfd0d3d&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT - 5系统提示词意外泄露；英伟达推新模型；OpenAI开源GPT-OSS；90%打工人自费买AI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-26 12:10:22">发布日期：2025-08-26 12:10:22</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-26 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890207&amp;idx=1&amp;sn=b57d3eb7fefe05497d252a444d08a0dc&amp;chksm=8d1e3325bfaa215a594f634ed9737d013cd9f278bba4c634a6e7fe71bf8a137aa0e64bfd0d3d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890202&amp;idx=1&amp;sn=e087b92159026b24332ac7ae29b39381&amp;chksm=8d8477408b46a7be5704758514e7abe2ffac02df27ed5f0e0e47f5eafc3449175b245a5f41d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXbDDjGh88of5huC9tDq1YpHGbVHbib01WicyUVWmZicVcvYeib2JlJV5n6PnKSXucVw9lXOiaCxDaWzabQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890202&amp;idx=1&amp;sn=e087b92159026b24332ac7ae29b39381&amp;chksm=8d8477408b46a7be5704758514e7abe2ffac02df27ed5f0e0e47f5eafc3449175b245a5f41d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">马斯克称xAI将超谷歌；高盛：AI电力危机逼近，中国公司或成劲敌；谷歌大模型训练数据降万倍</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-25 12:14:49">发布日期：2025-08-25 12:14:49</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-25 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890202&amp;idx=1&amp;sn=e087b92159026b24332ac7ae29b39381&amp;chksm=8d8477408b46a7be5704758514e7abe2ffac02df27ed5f0e0e47f5eafc3449175b245a5f41d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=1&amp;sn=79c6c2c71b3b4956e6142a8b401b28f3&amp;chksm=8d8ec22c64745b9b5460e2e501dd028c57f629850e7cf9bbd4590d5c8b445db2b5932d753b8d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXaUbn59WM9mTCSoFqt4cWkJBdf9gMJtsa1CDHUGKauBZickSiadzQuVKJg9Rmp0fZf4m6wmu6qspUsQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=1&amp;sn=79c6c2c71b3b4956e6142a8b401b28f3&amp;chksm=8d8ec22c64745b9b5460e2e501dd028c57f629850e7cf9bbd4590d5c8b445db2b5932d753b8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">拨云见日：美联储降息周期下的全球资产新格局与中国“慢牛”的结构性机遇</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-23 18:32:21">发布日期：2025-08-23 18:32:21</time></div><p class="article-description">速读摘要•美联储降息的驱动力与影响： 本轮降息是“预防式”而非“纾困式”，旨在对冲潜在的经济下行风险。这种降息的性质可能导致美元在降息周期初期表现出超预期的韧性，而非如传统认知中那样趋势性走弱。•美元</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=1&amp;sn=79c6c2c71b3b4956e6142a8b401b28f3&amp;chksm=8d8ec22c64745b9b5460e2e501dd028c57f629850e7cf9bbd4590d5c8b445db2b5932d753b8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=2&amp;sn=b1538abbc9f7b6a8bd0b2be542788aee&amp;chksm=8d2fb37faea08e27523442696167c5ad6bcfc5ba8c726d41515c5d8d8b22df8ca0c000f30845&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXaUbn59WM9mTCSoFqt4cWkJFibowgsdWAqI25qEx8va5M41Ts4T6DFprcF1ibdoGCfqI6ziaCqfNfanw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=2&amp;sn=b1538abbc9f7b6a8bd0b2be542788aee&amp;chksm=8d2fb37faea08e27523442696167c5ad6bcfc5ba8c726d41515c5d8d8b22df8ca0c000f30845&amp;scene=0&amp;xtrack=1#rd" target="_blank">Meta被控用成人影片训练AI遭索赔；字节发布FutureX；OpenAI o3国际象棋夺冠；谷歌Gemini能耗遭质疑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-23 18:32:21">发布日期：2025-08-23 18:32:21</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。2025-08-23 资讯日报新闻资讯Anthr</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890193&amp;idx=2&amp;sn=b1538abbc9f7b6a8bd0b2be542788aee&amp;chksm=8d2fb37faea08e27523442696167c5ad6bcfc5ba8c726d41515c5d8d8b22df8ca0c000f30845&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890177&amp;idx=1&amp;sn=41ec939f82d38cb99f317719efe9d42b&amp;chksm=8d8cc0b0059cfbe7c352be64559fbf3b5b0fce635dd667637cd50668a8a62b02d47dea2a08e0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZrWwmd2119fVUYBAtSdwsc0XB6cJbbsia4piaBC2hKU6kNEGGfpn4HNiaVySCW6DyWqpOylndf04xlw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890177&amp;idx=1&amp;sn=41ec939f82d38cb99f317719efe9d42b&amp;chksm=8d8cc0b0059cfbe7c352be64559fbf3b5b0fce635dd667637cd50668a8a62b02d47dea2a08e0&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek V3.1发布，Agent能力大提升；谷歌发布编程智能体Jules；张阔：AI时代给生意人的9条启示；</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-22 12:07:21">发布日期：2025-08-22 12:07:21</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-22 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890177&amp;idx=1&amp;sn=41ec939f82d38cb99f317719efe9d42b&amp;chksm=8d8cc0b0059cfbe7c352be64559fbf3b5b0fce635dd667637cd50668a8a62b02d47dea2a08e0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890172&amp;idx=1&amp;sn=036cc9c70555e5fe37293859b6e6f082&amp;chksm=8d3a3567d7414acabec0c69d66319a1da19d72120d90bfced86e32b72621b20f8c2626411987&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXacRghtRvhUl9fH4FaCNAdQHz9ESPZm9TY7qDTWRXSdRmKvVia9el7Tnnj1wJma01MVVHbrOIlymrw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890172&amp;idx=1&amp;sn=036cc9c70555e5fe37293859b6e6f082&amp;chksm=8d3a3567d7414acabec0c69d66319a1da19d72120d90bfced86e32b72621b20f8c2626411987&amp;scene=0&amp;xtrack=1#rd" target="_blank">00后MIT女生创业获投；奥特曼曝GPT-6；AI算力竞赛超越阿波罗计划</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-21 20:46:16">发布日期：2025-08-21 20:46:16</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-21 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890172&amp;idx=1&amp;sn=036cc9c70555e5fe37293859b6e6f082&amp;chksm=8d3a3567d7414acabec0c69d66319a1da19d72120d90bfced86e32b72621b20f8c2626411987&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890163&amp;idx=1&amp;sn=4f451acde9d2e37cc3be9d39c71dbe07&amp;chksm=8d905481e087849b4d69d544e9a4466906943862e0eb6d5852b13c4a382be75920ffccb36d17&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYtQNlG4eFWR1ksyHm1CQq3LsI2QcJtTicPibzBCmQ48B4EtRdTxfAAOjiavwC1Jq2Pj9EOduplZfXYA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890163&amp;idx=1&amp;sn=4f451acde9d2e37cc3be9d39c71dbe07&amp;chksm=8d905481e087849b4d69d544e9a4466906943862e0eb6d5852b13c4a382be75920ffccb36d17&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI CEO：AI投资泡沫比互联网更疯狂；仅 5%组织将 AI 大规模用于生产；英伟达为中国开发新AI芯片，性能超H20</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-20 12:18:53">发布日期：2025-08-20 12:18:53</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-20 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890163&amp;idx=1&amp;sn=4f451acde9d2e37cc3be9d39c71dbe07&amp;chksm=8d905481e087849b4d69d544e9a4466906943862e0eb6d5852b13c4a382be75920ffccb36d17&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=1&amp;sn=a652d6d05141160971013f74b17f139c&amp;chksm=8db10d1fad1081c01fa0d7359caa4aad5f0d52d21039dc55370b740a79c9ec804ec95adf44d2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZ3SZrzxG3uJzhRhBiav1jWy7TVOMfB7l3T0I8IBkL5g9ZDBenibKozqLzmgWzZ9RIaUqNjYR8sWadg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=1&amp;sn=a652d6d05141160971013f74b17f139c&amp;chksm=8db10d1fad1081c01fa0d7359caa4aad5f0d52d21039dc55370b740a79c9ec804ec95adf44d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">中国股市十年新高：深层驱动力分析——房地产收益预期坍塌、顶层设计助推、利率下行</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-19 12:07:53">发布日期：2025-08-19 12:07:53</time></div><p class="article-description">结论速读摘要本报告深入分析了中国股市十年新高的深层驱动力、可持续性与行情级别，核心要点如下：•驱动力： 本轮上涨并非偶然，而是政策、创新与资本流动多重深层因素共同作用的结果。包括：•积极宏观政策： 政</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=1&amp;sn=a652d6d05141160971013f74b17f139c&amp;chksm=8db10d1fad1081c01fa0d7359caa4aad5f0d52d21039dc55370b740a79c9ec804ec95adf44d2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=2&amp;sn=151221e366de94274dd7a3955fa8af98&amp;chksm=8d64651a679c34d8acd99f4e1a7e1216282ad4a01132c91a1ddba75b1e1c9ca53deb590efdb3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZ6pELOiaZRz8WLziaPiaCwicGJpnvlBo31RxHibtH9vs3BkldX2CA7d6iaWre8Kztiafk9bC4zn8TJFhveA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=2&amp;sn=151221e366de94274dd7a3955fa8af98&amp;chksm=8d64651a679c34d8acd99f4e1a7e1216282ad4a01132c91a1ddba75b1e1c9ca53deb590efdb3&amp;scene=0&amp;xtrack=1#rd" target="_blank">Sam Altman称美国低估中国AI；特朗普拟100亿购英特尔股份；宇树G1机器人运动会夺冠</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-19 12:07:53">发布日期：2025-08-19 12:07:53</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-19 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890158&amp;idx=2&amp;sn=151221e366de94274dd7a3955fa8af98&amp;chksm=8d64651a679c34d8acd99f4e1a7e1216282ad4a01132c91a1ddba75b1e1c9ca53deb590efdb3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=1&amp;sn=811f2d7dd99e83c815c7ddc752ec0763&amp;chksm=8dd1ba92d9e2b5702d9977479074ae376dd18ee756656b8a3832b98120de31a6831b8f4043c2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZ3SZrzxG3uJzhRhBiav1jWyKWI8TKY2hjA48yDicGM6QTgXRjlSRIAFCNOSvjw0m0zibzWKEyUfJT7Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=1&amp;sn=811f2d7dd99e83c815c7ddc752ec0763&amp;chksm=8dd1ba92d9e2b5702d9977479074ae376dd18ee756656b8a3832b98120de31a6831b8f4043c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">别等到财务自由，才发现人生无处可去</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-18 12:21:16">发布日期：2025-08-18 12:21:16</time></div><p class="article-description">你身边一定有这样的人，或者你就是这样的人。身处互联网行业，拿着远超同龄人的薪水，过着一种苦行僧式的生活。每天都在为传说中的“35岁危机”做储备，把所有的希望，都寄托在那个叫做“财务自由”的遥远彼岸。生</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=1&amp;sn=811f2d7dd99e83c815c7ddc752ec0763&amp;chksm=8dd1ba92d9e2b5702d9977479074ae376dd18ee756656b8a3832b98120de31a6831b8f4043c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=2&amp;sn=decec774bbce9495c12b80e7a1dba278&amp;chksm=8d575247e1c0c849c1ddccf6da955e9b03a13397a2b3d006da8a993aa8086e9a07d2f7343dfe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZoqIAdtzSxuFoZ8T9MH6oe1ibbvaoneS3DbVfAMWUbtbCicAtaR1M0pJOgPQ6loEdyStbWOIfxEdmg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=2&amp;sn=decec774bbce9495c12b80e7a1dba278&amp;chksm=8d575247e1c0c849c1ddccf6da955e9b03a13397a2b3d006da8a993aa8086e9a07d2f7343dfe&amp;scene=0&amp;xtrack=1#rd" target="_blank">奥特曼：OpenAI 将斥资万亿；李飞飞与 Hinton 观点碰撞；Yann LeCun 纪录片揭秘深度学习</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-18 12:21:16">发布日期：2025-08-18 12:21:16</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-17 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890148&amp;idx=2&amp;sn=decec774bbce9495c12b80e7a1dba278&amp;chksm=8d575247e1c0c849c1ddccf6da955e9b03a13397a2b3d006da8a993aa8086e9a07d2f7343dfe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=1&amp;sn=eb142068d2e89b01bb96037446fab9f3&amp;chksm=8d3c0ef7e03bc51254a82d62893fbb6db2afd26094cc97bf28ac4aa77cf31ea0ac4736970e62&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZoqIAdtzSxuFoZ8T9MH6oeiaEuiaNHb2xM5yrqRnN0eH9h4IOlLfQpX2RUmS0ibYcASIu9SaRVxdjNg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=1&amp;sn=eb142068d2e89b01bb96037446fab9f3&amp;chksm=8d3c0ef7e03bc51254a82d62893fbb6db2afd26094cc97bf28ac4aa77cf31ea0ac4736970e62&amp;scene=0&amp;xtrack=1#rd" target="_blank">躺平、摆烂、无意义：我们这代人的虚无，会走日韩的老路吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-17 21:27:56">发布日期：2025-08-17 21:27:56</time></div><p class="article-description">有些词，几年前你还觉得是段子，现在却成了我们生活的背景音。“躺平”、“摆烂”、“就这样吧”、“都行”、“没意思”。这已经不是简单的抱怨或自嘲了。我们似乎正在默契地陷入一场精神上的“低欲望”社会实验。越</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=1&amp;sn=eb142068d2e89b01bb96037446fab9f3&amp;chksm=8d3c0ef7e03bc51254a82d62893fbb6db2afd26094cc97bf28ac4aa77cf31ea0ac4736970e62&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=2&amp;sn=4af704ad0abac76005f5c41555211332&amp;chksm=8d986415ce79b75809c9c554015730bdbe22599645862700aad335853cbe74cb7205112f0562&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZoqIAdtzSxuFoZ8T9MH6oePzU4FcMZRb9SLwbbqEGNqiaJVnaKariauia31dEWfBKUpbZFWuyjZGMBw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=2&amp;sn=4af704ad0abac76005f5c41555211332&amp;chksm=8d986415ce79b75809c9c554015730bdbe22599645862700aad335853cbe74cb7205112f0562&amp;scene=0&amp;xtrack=1#rd" target="_blank">奥特曼谈OpenAI万亿计划；AI吞噬入门岗位；Yann LeCun纪录片回顾深度学习历程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-17 21:27:56">发布日期：2025-08-17 21:27:56</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-17 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890139&amp;idx=2&amp;sn=4af704ad0abac76005f5c41555211332&amp;chksm=8d986415ce79b75809c9c554015730bdbe22599645862700aad335853cbe74cb7205112f0562&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=1&amp;sn=00b93f7b664eafbcc31e23ea74c61c79&amp;chksm=8df07ed0078dc498c3b13cf051bf23dbeaa7f1a090eb7ab3b335e66b5a94e959dffe14fa1824&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZPDoaIyFfXeNL0t7KdZuZNWibiaw0BL6J3ezYMWU64iaU85mIBcsmzFHfY1fcicLmhOibCwmm920e4TYg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=1&amp;sn=00b93f7b664eafbcc31e23ea74c61c79&amp;chksm=8df07ed0078dc498c3b13cf051bf23dbeaa7f1a090eb7ab3b335e66b5a94e959dffe14fa1824&amp;scene=0&amp;xtrack=1#rd" target="_blank">中国A股市场深度分析与2025-2026年展望：把握结构性机遇, 持股为主，逢低买入</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-16 13:43:40">发布日期：2025-08-16 13:43:40</time></div><p class="article-description">核心结论摘要一、摘要•市场现状： 2025年以来A股震荡上行，上证指数接近3700点，创近四年新高。融资余额破2万亿，外资回流，市场活跃度显著提升。•上涨动因： 经济基本面恢复、积极的宏观政策（财政与</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=1&amp;sn=00b93f7b664eafbcc31e23ea74c61c79&amp;chksm=8df07ed0078dc498c3b13cf051bf23dbeaa7f1a090eb7ab3b335e66b5a94e959dffe14fa1824&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=2&amp;sn=3ffc69897e25824ce453a53e3ef01a48&amp;chksm=8d779a30dcadd75e69dbe1984cbc4fa3b330bede0061d74087804932f1bf3c58d81daa1bb3a9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZPDoaIyFfXeNL0t7KdZuZN80UPqMu1asHwAQl5rajOh9d9YcZnbtsia2ibTXScOzEumO4LZUqZxcww/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=2&amp;sn=3ffc69897e25824ce453a53e3ef01a48&amp;chksm=8d779a30dcadd75e69dbe1984cbc4fa3b330bede0061d74087804932f1bf3c58d81daa1bb3a9&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025全球产品经理大会聚焦AI；人形机器人运动会精彩纷呈；入职OpenAI者分享面试指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-16 13:43:40">发布日期：2025-08-16 13:43:40</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。2025-08-16 资讯日报新闻资讯2025全</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890126&amp;idx=2&amp;sn=3ffc69897e25824ce453a53e3ef01a48&amp;chksm=8d779a30dcadd75e69dbe1984cbc4fa3b330bede0061d74087804932f1bf3c58d81daa1bb3a9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890116&amp;idx=1&amp;sn=c94ef29a54c81adf6ad41787ce33e592&amp;chksm=8d3c8a074d2b98c290b9ce3bb3a3bcfd9e5091e9bd97fea066c8df48a289047dadbb394bd127&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXZ9rzRgIyicucGFDmwvCzhBNBG2icD20SvcIBibCJyfdbYBABswODvWiblqWlooVOadwYGK9Yal9JBoJg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890116&amp;idx=1&amp;sn=c94ef29a54c81adf6ad41787ce33e592&amp;chksm=8d3c8a074d2b98c290b9ce3bb3a3bcfd9e5091e9bd97fea066c8df48a289047dadbb394bd127&amp;scene=0&amp;xtrack=1#rd" target="_blank">王小川聚焦医疗；小扎连挖三位华人科学家；xAI联创离职投身风投；潘建伟团队刷新纪录</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-15 12:02:47">发布日期：2025-08-15 12:02:47</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-15 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890116&amp;idx=1&amp;sn=c94ef29a54c81adf6ad41787ce33e592&amp;chksm=8d3c8a074d2b98c290b9ce3bb3a3bcfd9e5091e9bd97fea066c8df48a289047dadbb394bd127&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890111&amp;idx=1&amp;sn=c7fd38ae9a9a4b3eeeea29547a4e3a4c&amp;chksm=8d635218c1b604d2d33a6f38865ae813d9ca5e16b11102ca91989710572b14494ba69bba01bd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXbk7upL7E6XcpFeFYGAw8PEE2ibwItmxqWxLyh7L0P6iciaLia4CSwQPRgom71XJ2pC9vlBlG3RzOtC8w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890111&amp;idx=1&amp;sn=c7fd38ae9a9a4b3eeeea29547a4e3a4c&amp;chksm=8d635218c1b604d2d33a6f38865ae813d9ca5e16b11102ca91989710572b14494ba69bba01bd&amp;scene=0&amp;xtrack=1#rd" target="_blank">Grok 4缔造者离职，xAI痛失大将；库克超乔布斯任期；奥特曼叫板马斯克；硅基智能完成融资；AI公司偷数据</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-14 12:10:58">发布日期：2025-08-14 12:10:58</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-14 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890111&amp;idx=1&amp;sn=c7fd38ae9a9a4b3eeeea29547a4e3a4c&amp;chksm=8d635218c1b604d2d33a6f38865ae813d9ca5e16b11102ca91989710572b14494ba69bba01bd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890102&amp;idx=1&amp;sn=9d1588a919fc1d3a7bb5fc810d246ed3&amp;chksm=8db52c408ce476b001cf441d3596266072a7a9900dcafe68bf54b214657248aa87f049139966&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/nUdl0pLHXXYw9g6MibvBtMspbczyavRZiboibe7ibAc2rNzdjyNHKtdHNfxtRfDMl44poS93t7oWibeLLeYAeWTlUPA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890102&amp;idx=1&amp;sn=9d1588a919fc1d3a7bb5fc810d246ed3&amp;chksm=8db52c408ce476b001cf441d3596266072a7a9900dcafe68bf54b214657248aa87f049139966&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI攻破物理学难题；GitHub CEO离职；OpenAI进军脑机接口；美国发布AI行动计划</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/14e91f0b31f66866a2aa057c14b5cff9/index.html">AI Reading Hub</a></span><time class="article-date" datetime="2025-08-13 12:11:20">发布日期：2025-08-13 12:11:20</time></div><p class="article-description">All in AI，看见未来。 每天精选最值得读的AI文章，帮你筛掉时代的噪音。 以简讯见广度，以深读见洞察。 技术、趋势、思考，一站式掌握AI世界。
+
+2025-08-13 资讯日报
+新闻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxNTA3MDY1NA==&amp;mid=2455890102&amp;idx=1&amp;sn=9d1588a919fc1d3a7bb5fc810d246ed3&amp;chksm=8db52c408ce476b001cf441d3596266072a7a9900dcafe68bf54b214657248aa87f049139966&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_4.html" class="pagination-button pagination-prev">上一页</a><a href="index_6.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

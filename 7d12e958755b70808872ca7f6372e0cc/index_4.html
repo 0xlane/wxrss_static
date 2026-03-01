@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Higress</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=1&amp;sn=029706ecf57550579d177ac171db95fb&amp;chksm=fa99186ee34af2f64bec79e3239a197b258459f220d8399324ac439e9d0e91b7e1045979e435&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukNlG4gS5SftfqxT9icnibFmluiadoe2clUVUU5sTDM0sW7qgBacdZulLQkgo6U7cSIzNbEsbgcecmOw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=1&amp;sn=029706ecf57550579d177ac171db95fb&amp;chksm=fa99186ee34af2f64bec79e3239a197b258459f220d8399324ac439e9d0e91b7e1045979e435&amp;scene=0&amp;xtrack=1#rd" target="_blank">大模型无缝切换，QwQ-32B和DeepSeek-R1 全都要</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-10 19:02:24">发布日期：2025-03-10 19:02:24</time></div><p class="article-description">近期，通义千问发布最新推理模型 QwQ-32B。在各类基准测试中，拥有 320 亿参数的 QwQ 模型，其性能可与具备 6710 亿参数（其中 370 亿被激活）的 DeepSeek-R1 媲美。这意</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=1&amp;sn=029706ecf57550579d177ac171db95fb&amp;chksm=fa99186ee34af2f64bec79e3239a197b258459f220d8399324ac439e9d0e91b7e1045979e435&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=2&amp;sn=22e2133bccd2344d887e11418ace54f5&amp;chksm=fad7023ed9e3896f78d767014b8445500fcf2c04a1ca8e39279984a2b124cb8e1efe0a52b7c0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukNlG4gS5SftfqxT9icnibFmlULlcCbmn8AQicYIvdftzqHB64K88hx3N7hozd1BACY1iarUkgtS39Rhg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=2&amp;sn=22e2133bccd2344d887e11418ace54f5&amp;chksm=fad7023ed9e3896f78d767014b8445500fcf2c04a1ca8e39279984a2b124cb8e1efe0a52b7c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">搭把手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-10 19:02:24">发布日期：2025-03-10 19:02:24</time></div><p class="article-description">🧲 Higress 是阿里云开源的一款高性能网关，用于部署 Web 应用和大模型应用，并提供商业版服务，阿里云官网搜索「API 网关」。Higress 官网：https://higress.cn/AP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485792&amp;idx=2&amp;sn=22e2133bccd2344d887e11418ace54f5&amp;chksm=fad7023ed9e3896f78d767014b8445500fcf2c04a1ca8e39279984a2b124cb8e1efe0a52b7c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=1&amp;sn=8bf53a83bda7f5f7c2462204918f07af&amp;chksm=fa968733fe126603da0be2fadc42ecb07e37c1ed1968f93b9a1fa1d6e26f261e827031de5813&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukfDic9LROX79vaJMc1FxRFCJJu3HSAuGiaicWJ39iaxiat2Yty8GAEmJ3JfKkDu3zs6yp8ic5PgGrNOhCw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=1&amp;sn=8bf53a83bda7f5f7c2462204918f07af&amp;chksm=fa968733fe126603da0be2fadc42ecb07e37c1ed1968f93b9a1fa1d6e26f261e827031de5813&amp;scene=0&amp;xtrack=1#rd" target="_blank">钉钉 + AI 网关给 DeepSeek 办入职</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-05 17:41:12">发布日期：2025-03-05 17:41:12</time></div><p class="article-description">通过 Open-WebUI 在企业内部部署一套 DeepSeek 只是第一步，给 DeepSeek 办理入职，在钉钉等企业通讯工具上和 DeepSeek 对话才是真时尚。01为什么要在钉钉上线一个 D</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=1&amp;sn=8bf53a83bda7f5f7c2462204918f07af&amp;chksm=fa968733fe126603da0be2fadc42ecb07e37c1ed1968f93b9a1fa1d6e26f261e827031de5813&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=2&amp;sn=6934f5a63abad6edfb2087f88a254949&amp;chksm=fa5b22bef8a4fdb7e75f52951e72a97a0012c066be31b0c1313a48f4aeda503cfc75e9ade370&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukfDic9LROX79vaJMc1FxRFCRGkwibc7wCRTONRLRoCKLvtG3GedQrNPI4sGvdk2vzDxT21rsG0fRvA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=2&amp;sn=6934f5a63abad6edfb2087f88a254949&amp;chksm=fa5b22bef8a4fdb7e75f52951e72a97a0012c066be31b0c1313a48f4aeda503cfc75e9ade370&amp;scene=0&amp;xtrack=1#rd" target="_blank">搭把手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-05 17:41:12">发布日期：2025-03-05 17:41:12</time></div><p class="article-description">🧲 Higress 是阿里云开源的一款高性能网关，用于部署 Web 应用和大模型应用，并提供商业版服务，阿里云官网搜索「API 网关」。Higress 官网：https://higress.cn/AP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485785&amp;idx=2&amp;sn=6934f5a63abad6edfb2087f88a254949&amp;chksm=fa5b22bef8a4fdb7e75f52951e72a97a0012c066be31b0c1313a48f4aeda503cfc75e9ade370&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=1&amp;sn=793c0ed289de49d3561ca02d310d9b98&amp;chksm=fa9fe288ba0b08ad1f231a3a98361dd81f2f5fab4688225cb79bbf20afee0a2bb9f52d72a29b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukexveZssePTJrPzdXDw41NHlYmMhd0wQKaMPeibCgoZIGeWCh9iaxBo3MEWSZsHKpQYlOp2wmAM7Og/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=1&amp;sn=793c0ed289de49d3561ca02d310d9b98&amp;chksm=fa9fe288ba0b08ad1f231a3a98361dd81f2f5fab4688225cb79bbf20afee0a2bb9f52d72a29b&amp;scene=0&amp;xtrack=1#rd" target="_blank">详细版教程｜使用 Higress AI 网关，4步实现 DeepSeek 联网搜索功能</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-04 18:00:00">发布日期：2025-03-04 18:00:00</time></div><p class="article-description">为什么公司部署的 DeepSeek 的内容生成效果不如 DeepSeek 官方的？一是看是否是满血版，二是看是否支持了联网搜索，三是看联网搜索是否仅能获取网页标题、摘要、关键词而非全文。之前我们在《H</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=1&amp;sn=793c0ed289de49d3561ca02d310d9b98&amp;chksm=fa9fe288ba0b08ad1f231a3a98361dd81f2f5fab4688225cb79bbf20afee0a2bb9f52d72a29b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=2&amp;sn=2f4a2ee650eef6d130d0792dbff69cea&amp;chksm=faa78c26100b1ade83737f8583924098ee341d296b8e9b35733157cd9ccf695bf808f3d0de29&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbukexveZssePTJrPzdXDw41NuW64wQYqAAWjia4SicnBf9PQibbFWb8sUt9T4N47P3bFyLbf9ofA6uEsg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=2&amp;sn=2f4a2ee650eef6d130d0792dbff69cea&amp;chksm=faa78c26100b1ade83737f8583924098ee341d296b8e9b35733157cd9ccf695bf808f3d0de29&amp;scene=0&amp;xtrack=1#rd" target="_blank">搭把手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-04 18:00:00">发布日期：2025-03-04 18:00:00</time></div><p class="article-description">🧲 Higress 是阿里云开源的一款高性能网关，用于部署 Web 应用和大模型应用，并提供商业版服务，阿里云官网搜索「API 网关」。Higress 官网：https://higress.cn/AP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485745&amp;idx=2&amp;sn=2f4a2ee650eef6d130d0792dbff69cea&amp;chksm=faa78c26100b1ade83737f8583924098ee341d296b8e9b35733157cd9ccf695bf808f3d0de29&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=1&amp;sn=c80ccbeca5ba24e2d3cc4be806fd36d5&amp;chksm=faec81f089415ba85710a41bf6c2b7308a97c10cc5189bd6872858a754ba60b80e89bb59084f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbunK7H2pLGTBFYaWsf6uQdSdgXRzP0zEZ9wSbMALJgkjxicgHLORBIoCG4uWbibuta5iamaypMra0hxuw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=1&amp;sn=c80ccbeca5ba24e2d3cc4be806fd36d5&amp;chksm=faec81f089415ba85710a41bf6c2b7308a97c10cc5189bd6872858a754ba60b80e89bb59084f&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI Agent 的发展趋势和开源技术实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-03 19:00:00">发布日期：2025-03-03 19:00:00</time></div><p class="article-description">本文为 《 AI 原生开发实战营-杭州站》 的分享文字稿在过去一年里大模型领域主要有两大领域的热点，一个是 LLM，几乎以每月的速度进行大版本更新，大家关心的是效果和成本。 另一个是 AI Agent</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=1&amp;sn=c80ccbeca5ba24e2d3cc4be806fd36d5&amp;chksm=faec81f089415ba85710a41bf6c2b7308a97c10cc5189bd6872858a754ba60b80e89bb59084f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=2&amp;sn=3c7568ae1045650117162fc2055ae4ba&amp;chksm=facff12a0db62628ebe54fce1ff557909a198e140ef080d03bdd76cfb09ede9b3ca3c66b2311&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbunK7H2pLGTBFYaWsf6uQdSdq8qHpIHqowXiaZFwRwQ7Bquoaibo93Vb1FfymIUMqr1Mo6BncmXvtsaw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=2&amp;sn=3c7568ae1045650117162fc2055ae4ba&amp;chksm=facff12a0db62628ebe54fce1ff557909a198e140ef080d03bdd76cfb09ede9b3ca3c66b2311&amp;scene=0&amp;xtrack=1#rd" target="_blank">搭把手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-03 19:00:00">发布日期：2025-03-03 19:00:00</time></div><p class="article-description">搭把手🧲 Higress 是阿里云开源的一款高性能网关，用于部署 Web 应用和大模型应用，并提供商业版服务，阿里云官网搜索「API 网关」。Higress 官网：https://higress.cn</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485723&amp;idx=2&amp;sn=3c7568ae1045650117162fc2055ae4ba&amp;chksm=facff12a0db62628ebe54fce1ff557909a198e140ef080d03bdd76cfb09ede9b3ca3c66b2311&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485694&amp;idx=1&amp;sn=896c8b1d1f5146a389c11dec7876f229&amp;chksm=fa3d7a69431f5c8aa5a3e6bc73853a0a72254313d6c8a83e99598ba861c3c4d80bcbb64bcc36&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbunbPMrqFhiaeyPGf3eqUQZYyYzEyFm3UdiaaWsH1dpj8d0ibyat0fTFodah7c7HE9AB6ERvSxWNjVs2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485694&amp;idx=1&amp;sn=896c8b1d1f5146a389c11dec7876f229&amp;chksm=fa3d7a69431f5c8aa5a3e6bc73853a0a72254313d6c8a83e99598ba861c3c4d80bcbb64bcc36&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里云云原生前端工程师团队招人，简历直推，专人负责，支持进度查询</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-03-01 19:23:28">发布日期：2025-03-01 19:23:28</time></div><p class="article-description">01 团队介绍阿里云云原生前端工程师团队，立足于万亿级规模的云原生赛道，致力于用 AI 驱动的前端技术革新提升云产品用户体验，以前沿技术为 toB 领域创造倍增商业价值。团队深度布局 AI+云原生技术</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485694&amp;idx=1&amp;sn=896c8b1d1f5146a389c11dec7876f229&amp;chksm=fa3d7a69431f5c8aa5a3e6bc73853a0a72254313d6c8a83e99598ba861c3c4d80bcbb64bcc36&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485687&amp;idx=1&amp;sn=cda682fcde613bdeec67af811ab5892e&amp;chksm=fa05babe39f97160463bbae2327d467c0c9bcb9caad4b1d6ff3d9af44e3552735558788e1235&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbumHcMHu05ibqyFsicdpbOjylyDAyHwC2GqZml3icjfGgAeTeXfVCJ97M7NjYh8HapAIBe91H38JZHQ2g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485687&amp;idx=1&amp;sn=cda682fcde613bdeec67af811ab5892e&amp;chksm=fa05babe39f97160463bbae2327d467c0c9bcb9caad4b1d6ff3d9af44e3552735558788e1235&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里云云原生中间件团队招人，简历直推，专人负责，支持进度查询</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-02-28 11:32:09">发布日期：2025-02-28 11:32:09</time></div><p class="article-description">01 团队介绍阿里云云原生中间件团队负责分布式软件和 AI Agent 基础设施的研发，致力于为阿里云数万家企业客户提供卓越的 AI 网关、API 网关和微服务产品，加速企业上云的进程和创新速度。同时</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485687&amp;idx=1&amp;sn=cda682fcde613bdeec67af811ab5892e&amp;chksm=fa05babe39f97160463bbae2327d467c0c9bcb9caad4b1d6ff3d9af44e3552735558788e1235&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485680&amp;idx=1&amp;sn=ffb1def2c2e4673dbb83d3ba6ec940db&amp;chksm=faac1aec8f2a1210e3cac46cc7fbe4dde45f34bc41b188f2f58bf51f43d3432238e75c9d8e2c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbumul7TA7SIQkXZkOIu1CKsOgDJia3gQbq4iahILanp6jYM7986fwpJ8WicR0M3efezrqvlHk9kgUXX8w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485680&amp;idx=1&amp;sn=ffb1def2c2e4673dbb83d3ba6ec940db&amp;chksm=faac1aec8f2a1210e3cac46cc7fbe4dde45f34bc41b188f2f58bf51f43d3432238e75c9d8e2c&amp;scene=0&amp;xtrack=1#rd" target="_blank">关于 AI 的未来，8点启发，减少认知踩坑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-02-27 20:33:07">发布日期：2025-02-27 20:33:07</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485680&amp;idx=1&amp;sn=ffb1def2c2e4673dbb83d3ba6ec940db&amp;chksm=faac1aec8f2a1210e3cac46cc7fbe4dde45f34bc41b188f2f58bf51f43d3432238e75c9d8e2c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=1&amp;sn=880770f26882258d88a637b194e96564&amp;chksm=fad7ab5241a7f19dd62593e1283d9320c73f4531b0ae5ac32f15f06c4d9aa9f5b0d92e8acaa7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbun7MkhHDM4hjknGroelI8tM5tBWCc71lcAqg5ANn6TiaDIdWcVmV9vxRK1tKCIZLic8SkkY9FLAibIVQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=1&amp;sn=880770f26882258d88a637b194e96564&amp;chksm=fad7ab5241a7f19dd62593e1283d9320c73f4531b0ae5ac32f15f06c4d9aa9f5b0d92e8acaa7&amp;scene=0&amp;xtrack=1#rd" target="_blank">帮你整理好了，AI 网关的8个常见应用场景</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-02-26 18:59:13">发布日期：2025-02-26 18:59:13</time></div><p class="article-description">之前我们分享过《AI 网关需要具备的10大基本能力》，属于供应者视角，今天我们从消费者视角介绍 AI 网关的8个常见应用场景。由于目前大部分企业部署大模型主要是内部自用，因此本文列举的应用场景大部分来</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=1&amp;sn=880770f26882258d88a637b194e96564&amp;chksm=fad7ab5241a7f19dd62593e1283d9320c73f4531b0ae5ac32f15f06c4d9aa9f5b0d92e8acaa7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=2&amp;sn=a29079ea851a7c8b1174e0dddb3b604a&amp;chksm=fa4a69c6bafcea2b215de00bf4e91435c792c114af1b81aec03f86ff7572f5ac6d942df758af&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/FGTgoffPbun7MkhHDM4hjknGroelI8tMSAc409aT1ZfgvCOiaoDzCg4I0efI9ric0clKYZB1soiaH25cTSrII0Htw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=2&amp;sn=a29079ea851a7c8b1174e0dddb3b604a&amp;chksm=fa4a69c6bafcea2b215de00bf4e91435c792c114af1b81aec03f86ff7572f5ac6d942df758af&amp;scene=0&amp;xtrack=1#rd" target="_blank">搭把手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d12e958755b70808872ca7f6372e0cc/index.html">Higress</a></span><time class="article-date" datetime="2025-02-26 18:59:13">发布日期：2025-02-26 18:59:13</time></div><p class="article-description">🧲 Higress 是阿里云开源的一款高性能网关，用于部署 Web 应用和大模型应用，并提供商业版服务，阿里云官网搜索「API 网关」。Higress 官网：https://higress.cn/AP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzkyMTgzNg==&amp;mid=2247485634&amp;idx=2&amp;sn=a29079ea851a7c8b1174e0dddb3b604a&amp;chksm=fa4a69c6bafcea2b215de00bf4e91435c792c114af1b81aec03f86ff7572f5ac6d942df758af&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_3.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

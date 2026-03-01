@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PyTorch研习社</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497696&amp;idx=1&amp;sn=0fe768b7472e5fea03afb4cfb9cca39e&amp;chksm=eb3ef59659efe7df7506e6362275a9a5ef8a366fd6b985c41ae66d8cf0d9b837762c03b39eda&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9FP4SJOry61n33jchQ7NN9RZeiaiaCPgG9BhwrF8BG6IP5lyDCHhX1hYoU9ibYCFVtHwfkR0cfMz6Hw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497696&amp;idx=1&amp;sn=0fe768b7472e5fea03afb4cfb9cca39e&amp;chksm=eb3ef59659efe7df7506e6362275a9a5ef8a366fd6b985c41ae66d8cf0d9b837762c03b39eda&amp;scene=0&amp;xtrack=1#rd" target="_blank">谷歌Agent2Agent和Anthropic MCP的深度对比</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-11 08:00:00">发布日期：2025-04-11 08:00:00</time></div><p class="article-description">Agent2Agent (A2A) 和 MCP 是增强智能体能力的协议，但它们服务于不同的目的。MCP 帮助智能体与外部工具（如 API 或数据库）交互，而 A2A 专注于让智能体之间共享信息并协作。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497696&amp;idx=1&amp;sn=0fe768b7472e5fea03afb4cfb9cca39e&amp;chksm=eb3ef59659efe7df7506e6362275a9a5ef8a366fd6b985c41ae66d8cf0d9b837762c03b39eda&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497675&amp;idx=1&amp;sn=d5f48be644fe0ba56e1b979a6e4909f4&amp;chksm=eb89eb012ff2d3317383e7380c30811c5623037965791b5a4fb9ba023058d1b121e027143c8d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9zEvaJFVmWpY1ySw2YJKibysocBk3q84Q7lAKTvT7sPQqL06MdiceSSMCW99a3ePNbPTFiaKbC1hrRQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497675&amp;idx=1&amp;sn=d5f48be644fe0ba56e1b979a6e4909f4&amp;chksm=eb89eb012ff2d3317383e7380c30811c5623037965791b5a4fb9ba023058d1b121e027143c8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">Gemma3+Mistral-OCR+RAG：实现多模态文档问答系统</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-10 08:30:00">发布日期：2025-04-10 08:30:00</time></div><p class="article-description">我在这个项目中使用 Gemma3 + Mistral OCR + RAG 创建了一个能够支持包含表格、发票、文本和图表的多模态 PDF 文档问答系统。等你看完这篇文章后，你会明白是什么让 Mistra</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497675&amp;idx=1&amp;sn=d5f48be644fe0ba56e1b979a6e4909f4&amp;chksm=eb89eb012ff2d3317383e7380c30811c5623037965791b5a4fb9ba023058d1b121e027143c8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497636&amp;idx=1&amp;sn=8596085ed7cbf199d34eaf17aac405b0&amp;chksm=eb3a19c706914729b375ad5051f3171fcfd2134ade9dcfdbc5212a0ba33b9c5ef54836fbcb14&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu8YpNbU1Dib9hbN1np47wtUwwvERTHek5Y0ficM9XehUicFAWChVNiaujSD5ccucLfO11tWV0NAWAHg8Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497636&amp;idx=1&amp;sn=8596085ed7cbf199d34eaf17aac405b0&amp;chksm=eb3a19c706914729b375ad5051f3171fcfd2134ade9dcfdbc5212a0ba33b9c5ef54836fbcb14&amp;scene=0&amp;xtrack=1#rd" target="_blank">LangGraph+MCP+Ollama：打造强大的多智能体聊天机器人</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-09 08:00:00">发布日期：2025-04-09 08:00:00</time></div><p class="article-description">我将在本文教你如何使用 LangGraph、MCP 和 Ollama 打造一个多智能体（Multi-Agent）聊天机器人。MCP 是 Model Context Protocol（模型上下文协议）的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497636&amp;idx=1&amp;sn=8596085ed7cbf199d34eaf17aac405b0&amp;chksm=eb3a19c706914729b375ad5051f3171fcfd2134ade9dcfdbc5212a0ba33b9c5ef54836fbcb14&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=1&amp;sn=4541b54e75b894dc5b6325ff4703978c&amp;chksm=ebb7d77d923655556ba69d396ec65952376116f2e79c0ebcde2aa4038fb7a70f206bb10fe2ec&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicgODudMcVmxJKSnPZxL2TJcIzX7rupDzWHmqWrbQydffONlL3ImnzqHybSBnMa2t6xgOUtiaq6FDA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=1&amp;sn=4541b54e75b894dc5b6325ff4703978c&amp;chksm=ebb7d77d923655556ba69d396ec65952376116f2e79c0ebcde2aa4038fb7a70f206bb10fe2ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">将Agentic RAG与MCP服务器集成的技术实现指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-08 08:00:00">发布日期：2025-04-08 08:00:00</time></div><p class="article-description">检索增强生成（RAG）将大语言模型（LLM）与外部知识检索相结合，使得模型的回答基于最新的实事，而不仅仅依赖其训练数据。在RAG流程中，用户查询被用来搜索知识库（通常通过向量数据库中的嵌入表示），然后</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=1&amp;sn=4541b54e75b894dc5b6325ff4703978c&amp;chksm=ebb7d77d923655556ba69d396ec65952376116f2e79c0ebcde2aa4038fb7a70f206bb10fe2ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=2&amp;sn=f3afd15feeda89745a4f7041e297a2c0&amp;chksm=eb0c587375ea90d3a418eded52eda660e5530e6dd72b8d113db898dc75b1bf1aaa8d442907d0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuibajDbibFQK9mJMSiblUJBrgS65sTFof5ib4luYy0Hak4WVRiaLYNuxRuU6s2nxvI0U7nn24aHOjkYA7A/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=2&amp;sn=f3afd15feeda89745a4f7041e297a2c0&amp;chksm=eb0c587375ea90d3a418eded52eda660e5530e6dd72b8d113db898dc75b1bf1aaa8d442907d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">用提示词秒变UI设计大师，效果炸裂！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-08 08:00:00">发布日期：2025-04-08 08:00:00</time></div><p class="article-description">OpenAI最近宣布，ChatGPT现在可以通过GPT-4o生成高质量图像，取代了之前基于DALL·E的模型。新模型在遵循指令和渲染图像中的文字方面表现更出色。上周，许多人用它将照片转化为AI艺术作品</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=2&amp;sn=f3afd15feeda89745a4f7041e297a2c0&amp;chksm=eb0c587375ea90d3a418eded52eda660e5530e6dd72b8d113db898dc75b1bf1aaa8d442907d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=3&amp;sn=a11c35ac28d5c75be6b0e7f45fc1e0ec&amp;chksm=ebe50ef5a900316e18af7c5d20a7ef09fcbbbb56858548d8bb6531a50315c2b70dd2c92ed691&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9cqsrmPsUVhArID8Xkr4wBnEIEXHMkbzKYR3pUibD3tKu58NEwhQmibWiayiauaiaY9lr9N397fjGjptQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=3&amp;sn=a11c35ac28d5c75be6b0e7f45fc1e0ec&amp;chksm=ebe50ef5a900316e18af7c5d20a7ef09fcbbbb56858548d8bb6531a50315c2b70dd2c92ed691&amp;scene=0&amp;xtrack=1#rd" target="_blank">提示工程101第六课：思维链提示</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-08 08:00:00">发布日期：2025-04-08 08:00:00</time></div><p class="article-description">随着 AI 语言模型的不断进步，人们越来越需要引导模型生成更加透明、逻辑清晰且可验证的输出。思维链（Chain of Thought，CoT）提示通过鼓励模型“展示推理过程”，使其更像人类解决复杂问题</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497584&amp;idx=3&amp;sn=a11c35ac28d5c75be6b0e7f45fc1e0ec&amp;chksm=ebe50ef5a900316e18af7c5d20a7ef09fcbbbb56858548d8bb6531a50315c2b70dd2c92ed691&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=1&amp;sn=e7fff2e9cb39811d17f7a249552f212a&amp;chksm=ebbaf7dfc5c57e5f6bfd5ddc25ddec680abef2ff340055195bae8dc88e56beef8b24fca1b32f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicgODudMcVmxJKSnPZxL2TJV6osN6ibqAibMlib95Bn7dKwshpHajk4qdqxJPZQmCKuMYWwJl1iacbxsg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=1&amp;sn=e7fff2e9cb39811d17f7a249552f212a&amp;chksm=ebbaf7dfc5c57e5f6bfd5ddc25ddec680abef2ff340055195bae8dc88e56beef8b24fca1b32f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Llama 4开源，竞技场吊打DeepSeek，谷歌都喊牛！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-07 08:00:00">发布日期：2025-04-07 08:00:00</time></div><p class="article-description">这几天正值清明假期，没想到Meta居然挑了个我们假期深夜扔出重磅炸弹——Llama 4系列正式开源！作为Llama家族的最新成员，这次升级可不是小打小闹，直接把AI模型的性能和玩法推到了新高度。想知道</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=1&amp;sn=e7fff2e9cb39811d17f7a249552f212a&amp;chksm=ebbaf7dfc5c57e5f6bfd5ddc25ddec680abef2ff340055195bae8dc88e56beef8b24fca1b32f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=2&amp;sn=be0c77a6312b54b49b0eb4a9edb0bfd5&amp;chksm=eb653543f40987271c2fe2636c314956741e6ac8bd90c9898a957c1baded0bfc66d06b08d165&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuibibndtW3oV4a5TvzYHycrWkZG0EQDotWiaibLdpYF3s1QEhEj8kvf85GAWQvPibSJ6SwMJvO7Eibt0sSA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=2&amp;sn=be0c77a6312b54b49b0eb4a9edb0bfd5&amp;chksm=eb653543f40987271c2fe2636c314956741e6ac8bd90c9898a957c1baded0bfc66d06b08d165&amp;scene=0&amp;xtrack=1#rd" target="_blank">用大模型构建企业级知识图谱真的太简单了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-07 08:00:00">发布日期：2025-04-07 08:00:00</time></div><p class="article-description">一开始听到“知识图谱（Knowledge Graph）”这个词，确实有点让人望而生畏——不是概念本身，而是构建它的过程。我之前尝试过做一个知识图谱，但失败了。图这种数据结构，确实是表达复杂关系最好的方</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497544&amp;idx=2&amp;sn=be0c77a6312b54b49b0eb4a9edb0bfd5&amp;chksm=eb653543f40987271c2fe2636c314956741e6ac8bd90c9898a957c1baded0bfc66d06b08d165&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497509&amp;idx=1&amp;sn=78cb78393dafb976b05ea0eef8064d84&amp;chksm=ebef496dcb595f69b4d8aca50c1021186b995f992e7d63ebbe7655a6cc035e1d4325f9516611&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicgODudMcVmxJKSnPZxL2TJotE8WfgTA5X4F7nAqGXdx1dPzw4QDXerSuDUMe9mCqwibzX62xNHoFQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497509&amp;idx=1&amp;sn=78cb78393dafb976b05ea0eef8064d84&amp;chksm=ebef496dcb595f69b4d8aca50c1021186b995f992e7d63ebbe7655a6cc035e1d4325f9516611&amp;scene=0&amp;xtrack=1#rd" target="_blank">开发者必备的开源AI项目推荐</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-06 08:25:07">发布日期：2025-04-06 08:25:07</time></div><p class="article-description">大家好！我是一名软件开发者，一直在寻找能让工作更轻松、项目更酷的工具。科技世界日新月异——有时候快得让人应接不暇——所以要跟上每一个新冒出来的东西真的挺难的。这也是我一直钟情于开源项目的原因：它们免费</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497509&amp;idx=1&amp;sn=78cb78393dafb976b05ea0eef8064d84&amp;chksm=ebef496dcb595f69b4d8aca50c1021186b995f992e7d63ebbe7655a6cc035e1d4325f9516611&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497443&amp;idx=1&amp;sn=1803e15f35df265514d9462f1097a10e&amp;chksm=eb03bbe063e90447a94be5bf4bb348c025785de8ba9a2f724576ffde95bdf33c8e3ea069d86c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuibibndtW3oV4a5TvzYHycrWkK6TFz69MQYGotcUx0wrRXibibobicERZB8xuMuHz0IPHO4eXh0O3KjhtA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497443&amp;idx=1&amp;sn=1803e15f35df265514d9462f1097a10e&amp;chksm=eb03bbe063e90447a94be5bf4bb348c025785de8ba9a2f724576ffde95bdf33c8e3ea069d86c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agentic GraphRAG在商业合同中的应用，附源码及源码解析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-05 08:20:00">发布日期：2025-04-05 08:20:00</time></div><p class="article-description">Agentic GraphRAG 旨在通过将法律信息结构化为知识图谱，提升商业合同领域的问答准确性。该方法利用 LangGraph Agent 构建和管理知识图谱，使法律文本的检索更加精准和高效。通过</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497443&amp;idx=1&amp;sn=1803e15f35df265514d9462f1097a10e&amp;chksm=eb03bbe063e90447a94be5bf4bb348c025785de8ba9a2f724576ffde95bdf33c8e3ea069d86c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=1&amp;sn=c0e615c47dc92e9c8d85cc8d0aa62acc&amp;chksm=eb316ce15c1fab612ec63675ee7a3577708cbaf4479676f383e0a56260ef1f0eab61dfdc11c3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu83oo02t3LZpor1NLbqdc0FJClDlVS6CXQduLSe9HHHYKV1dS9ZZpuiakPbp2iaYkpONgLC5icLkBnkw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=1&amp;sn=c0e615c47dc92e9c8d85cc8d0aa62acc&amp;chksm=eb316ce15c1fab612ec63675ee7a3577708cbaf4479676f383e0a56260ef1f0eab61dfdc11c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">我测试了所有顶级的大模型在前端开发中的表现，其中一个模型表现尤为突出</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-04 08:26:59">发布日期：2025-04-04 08:26:59</time></div><p class="article-description">本周对AI来说可谓是疯狂的一周。DeepSeek V3-0324 刚刚发布，从基准测试来看，它是目前最强的AI模型，甚至超越了像 Grok 3 这样的推理模型。几天后，谷歌又推出了 Gemini 2.</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=1&amp;sn=c0e615c47dc92e9c8d85cc8d0aa62acc&amp;chksm=eb316ce15c1fab612ec63675ee7a3577708cbaf4479676f383e0a56260ef1f0eab61dfdc11c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=2&amp;sn=6ff1ef3ea914fb3762a12b5e9048fe70&amp;chksm=ebb01c9e3626757ee98da5e2c94a8fb11782444a8e8ad28533816e3e41caad5570f2984dec3a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu83oo02t3LZpor1NLbqdc0FPHH9v2IgbJqNYuNGWgZZFicjiaDrylwxGR3BJXXY3yQQSvNtWof4vn6Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=2&amp;sn=6ff1ef3ea914fb3762a12b5e9048fe70&amp;chksm=ebb01c9e3626757ee98da5e2c94a8fb11782444a8e8ad28533816e3e41caad5570f2984dec3a&amp;scene=0&amp;xtrack=1#rd" target="_blank">用我的文章引流卖课，你好歹打声招呼啊</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-04 08:26:59">发布日期：2025-04-04 08:26:59</time></div><p class="article-description">前几天我像往常一样，本着做一名知识的传播者的目的发了一篇文章《连续尝试了18种RAG技术之后，我找到了最优的那个》。然后今天有读者反映有个叫玄姐的博主用我的文章进行引流卖课。然后我就去看了一下，好家伙</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497365&amp;idx=2&amp;sn=6ff1ef3ea914fb3762a12b5e9048fe70&amp;chksm=ebb01c9e3626757ee98da5e2c94a8fb11782444a8e8ad28533816e3e41caad5570f2984dec3a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=1&amp;sn=7313bc762eb4cd5fb385c96a7fceb317&amp;chksm=eba8c13ac7af723f569eccf4d21f4550b70fbeb90555463fd0916b958eacded80911f88f1571&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicibYqNZe7jqPY9VkQhUqONCf1ia7OibsUQnW4RAJbjVqEnG5tXsPSuPO5gD67uagT0Q9icq3ezZLPBag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=1&amp;sn=7313bc762eb4cd5fb385c96a7fceb317&amp;chksm=eba8c13ac7af723f569eccf4d21f4550b70fbeb90555463fd0916b958eacded80911f88f1571&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025第一篇关于Agentic RAG最全面的综述</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-03 08:00:00">发布日期：2025-04-03 08:00:00</time></div><p class="article-description">检索增强生成（Retrieval-Augmented Generation，RAG） 系统结合了大语言模型（LLM）与检索机制，能够生成具有上下文相关性的高质量回答。虽然传统 RAG 在知识检索和生成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=1&amp;sn=7313bc762eb4cd5fb385c96a7fceb317&amp;chksm=eba8c13ac7af723f569eccf4d21f4550b70fbeb90555463fd0916b958eacded80911f88f1571&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=2&amp;sn=91e66b387f5cc70fb05d9002b6a5f3b6&amp;chksm=eb7b15579f21b89cce6bc06f1cc0043ba3e66d29ed56799dfcf9c1ae691d64c4d93b649e349c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9cqsrmPsUVhArID8Xkr4wBTiccD7fEjUlxNZa6tyO1aNSq3WONWSzGecNC4TWEAN5Fs4q862jw3Vw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=2&amp;sn=91e66b387f5cc70fb05d9002b6a5f3b6&amp;chksm=eb7b15579f21b89cce6bc06f1cc0043ba3e66d29ed56799dfcf9c1ae691d64c4d93b649e349c&amp;scene=0&amp;xtrack=1#rd" target="_blank">三分钟聊一下什么是向量数据库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-03 08:00:00">发布日期：2025-04-03 08:00:00</time></div><p class="article-description">随着生成式 AI（GenAI）的崛起，向量数据库的流行度飙升。事实上，向量数据库不仅仅适用于大语言模型（LLM），在许多其他 AI 系统中也非常有用。在机器学习领域，我们经常需要处理向量嵌入（Vect</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497310&amp;idx=2&amp;sn=91e66b387f5cc70fb05d9002b6a5f3b6&amp;chksm=eb7b15579f21b89cce6bc06f1cc0043ba3e66d29ed56799dfcf9c1ae691d64c4d93b649e349c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=1&amp;sn=30e2694d415a94c90e729ecb08d459bf&amp;chksm=eb6fc30864b8f02d7c1dd08709e8b9770e542d2b290150910ffd6d7e275b80064c1ac3564a45&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu8fkVAWZvnjbwk2IlJRK7w8qesoQeKa9Sy5EcJibFaUgdgCWVUhtn0bw66EKlLSA1HhbW1M687LNAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=1&amp;sn=30e2694d415a94c90e729ecb08d459bf&amp;chksm=eb6fc30864b8f02d7c1dd08709e8b9770e542d2b290150910ffd6d7e275b80064c1ac3564a45&amp;scene=0&amp;xtrack=1#rd" target="_blank">离谱！DeepSeek-V3加持的DeepSite一键生成网页应用，关键还免费！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-02 08:00:00">发布日期：2025-04-02 08:00:00</time></div><p class="article-description">DeepSite 是由开发者 enzostvs 打造的 Hugging Face Space 应用，基于最新版本的 DeepSeek-V3-0324 模型。该应用将 AI 编程与无代码开发完美结合，用</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=1&amp;sn=30e2694d415a94c90e729ecb08d459bf&amp;chksm=eb6fc30864b8f02d7c1dd08709e8b9770e542d2b290150910ffd6d7e275b80064c1ac3564a45&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=2&amp;sn=bf381dd92fdd3a2888e841a017e82717&amp;chksm=ebfce8fed5da621e615933be286ae470ee51bb5ae79c0aa05fec32dadddee11e93e657c3b38a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu8kNcpuA6SIYQWmdpspoFa7rNsgDs8O0PHiccqvaZ4oGQEFVtoM5WNmUZEiaszYIkoOMIxK110Fbleg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=2&amp;sn=bf381dd92fdd3a2888e841a017e82717&amp;chksm=ebfce8fed5da621e615933be286ae470ee51bb5ae79c0aa05fec32dadddee11e93e657c3b38a&amp;scene=0&amp;xtrack=1#rd" target="_blank">SmolDocling：一种轻量级、先进、闪电般快速的开源 OCR 模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-02 08:00:00">发布日期：2025-04-02 08:00:00</time></div><p class="article-description">Docling 简化了文档处理，解析各种格式（包括高级 PDF 理解），并提供与生成式AI 生态系统的无缝集成。Dcoling 的功能非常强大：🗂️ 解析多种文档格式，包括 PDF、DOCX、XLSX</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497283&amp;idx=2&amp;sn=bf381dd92fdd3a2888e841a017e82717&amp;chksm=ebfce8fed5da621e615933be286ae470ee51bb5ae79c0aa05fec32dadddee11e93e657c3b38a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=1&amp;sn=41dd5435799d4604d31b212d9074b9fd&amp;chksm=eb837bbe2f59304800688d8e1ad1b46e13d294fd97890208bba038d60f607bcaaaedc6504737&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu8kNcpuA6SIYQWmdpspoFa7GVuofFvhXOMQOmeXHxwvUMYphlh4s1OXiadrW4HcHibL0WhO6BX2CvhA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=1&amp;sn=41dd5435799d4604d31b212d9074b9fd&amp;chksm=eb837bbe2f59304800688d8e1ad1b46e13d294fd97890208bba038d60f607bcaaaedc6504737&amp;scene=0&amp;xtrack=1#rd" target="_blank">连续尝试了18种RAG技术之后，我找到了最优的那个</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-01 08:00:00">发布日期：2025-04-01 08:00:00</time></div><p class="article-description">在当前生成式模型与信息检索技术快速发展的背景下，如何有效结合二者，提升问答系统的准确性与实用性成为技术探索的焦点。为了寻找最佳解决方案，我尝试了 18 种不同的 RAG（Retrieval-Augme</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=1&amp;sn=41dd5435799d4604d31b212d9074b9fd&amp;chksm=eb837bbe2f59304800688d8e1ad1b46e13d294fd97890208bba038d60f607bcaaaedc6504737&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=2&amp;sn=a134736af029c90bb02e83c24db7e035&amp;chksm=ebf7f35cc5318175c1ddc2fa0a1bb9bccc6dee752c9eab36e3ecc13ea4e17693826d2e6755e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7BuicpSO1E8AdNq3OqiciazWZlZ9MdfSyuzReSuRHJVkMVjaDRpicvX7sL0gLl1r4R1IVg0v3MtfVXticwPQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=2&amp;sn=a134736af029c90bb02e83c24db7e035&amp;chksm=ebf7f35cc5318175c1ddc2fa0a1bb9bccc6dee752c9eab36e3ecc13ea4e17693826d2e6755e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">RAG101第六课：假设文档嵌入（HyDE）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-04-01 08:00:00">发布日期：2025-04-01 08:00:00</time></div><p class="article-description">传统的检索方法常常难以处理短查询与较长、详细文档之间的语义差距。假设文档嵌入（Hypothetical Document Embedding，HyDE）代表了一种创新的文档检索方法，通过缩小查询与文档</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497255&amp;idx=2&amp;sn=a134736af029c90bb02e83c24db7e035&amp;chksm=ebf7f35cc5318175c1ddc2fa0a1bb9bccc6dee752c9eab36e3ecc13ea4e17693826d2e6755e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=1&amp;sn=caff1132df83c7c5ec3f7028f7ff3750&amp;chksm=ebed8bc5dbe1e4dffe5463a5bc0b7f6247597f8bce629de500a7dd250a639c69fb90bf2f6b75&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9cqsrmPsUVhArID8Xkr4wBqwSEIIPReFxa1sZKoop2QVsIsKILawcGeEf1pCjIxksLFYazjOhyCQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=1&amp;sn=caff1132df83c7c5ec3f7028f7ff3750&amp;chksm=ebed8bc5dbe1e4dffe5463a5bc0b7f6247597f8bce629de500a7dd250a639c69fb90bf2f6b75&amp;scene=0&amp;xtrack=1#rd" target="_blank">无需标注数据！将Llama 3.3 70B调优到GPT-4o水平</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-03-31 08:00:00">发布日期：2025-03-31 08:00:00</time></div><p class="article-description">LLM 难以适应新的企业任务。提示工程易出错且效果有限，而微调需要大量人工标注数据，大多数企业任务无法满足。Databricks 推出的 TAO（Test-time Adaptive Optimiza</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=1&amp;sn=caff1132df83c7c5ec3f7028f7ff3750&amp;chksm=ebed8bc5dbe1e4dffe5463a5bc0b7f6247597f8bce629de500a7dd250a639c69fb90bf2f6b75&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=2&amp;sn=8c954fd1a8dcde4aa6112b24e7f6a0c7&amp;chksm=eb9a57244b4031b88abd518a0634cf434954a1d353619d130c2da4e98d94dcd95d699d81d8ec&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SaeK9tW7Bu9cqsrmPsUVhArID8Xkr4wBHM1pAwcLvqKMzU4T29FZ8IxeV5H3Njm5Mic6hIpK6KyHyy1CI1VLkYA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=2&amp;sn=8c954fd1a8dcde4aa6112b24e7f6a0c7&amp;chksm=eb9a57244b4031b88abd518a0634cf434954a1d353619d130c2da4e98d94dcd95d699d81d8ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用Playwright、MCP和Semantic Kernel在4步构建一个能够浏览互联网的AI应用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b989241b12db798009f0c58202224e4a/index.html">PyTorch研习社</a></span><time class="article-date" datetime="2025-03-31 08:00:00">发布日期：2025-03-31 08:00:00</time></div><p class="article-description">在深入实践之前，我们先来理解 MCP 的概念。我参考了许多博客和视频（文末会附上链接），但对我来说，最简单的理解方式是：就像 REST 为 Web API 交互提供了标准化方式一样，Model Con</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2ODUyMTQyNA==&amp;mid=2247497212&amp;idx=2&amp;sn=8c954fd1a8dcde4aa6112b24e7f6a0c7&amp;chksm=eb9a57244b4031b88abd518a0634cf434954a1d353619d130c2da4e98d94dcd95d699d81d8ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_12.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

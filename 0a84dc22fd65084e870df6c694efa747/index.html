@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TIPFactory情报工厂</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488778&amp;idx=1&amp;sn=df8e8635bb258aa97fa5c2970ad37791&amp;chksm=c0a0a36a0475498f826673ecb949f42a3fbf0cbb6ac8148d42fb1dba2e4a27038c4235be4a4c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UhfibIyPpmuMD1UqUBmqzC3rhb2uAyQib3iauFKEeNGdfHcXI8x6CibiaBEEywrDncPuZicfcKx9B9hcGv6ickWqovjuhpIhmibtgGHUuKuriboYT4IY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488778&amp;idx=1&amp;sn=df8e8635bb258aa97fa5c2970ad37791&amp;chksm=c0a0a36a0475498f826673ecb949f42a3fbf0cbb6ac8148d42fb1dba2e4a27038c4235be4a4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude 高级技巧与安全配置CLAUDE.md、MCP、命令、技能与钩子 (Skills &amp; Hooks)</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2026-02-11 19:33:00">发布日期：2026-02-11 19:33:00</time></div><p class="article-description">1 安全守门员: 全局 CLAUDE.mdClaude Code 按以下顺序加载 CLAUDE.md 文件：层级位置用途企业级/etc/claude-code/CLAUDE.md组织范围的策略全局~</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488778&amp;idx=1&amp;sn=df8e8635bb258aa97fa5c2970ad37791&amp;chksm=c0a0a36a0475498f826673ecb949f42a3fbf0cbb6ac8148d42fb1dba2e4a27038c4235be4a4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488771&amp;idx=1&amp;sn=0cfc7859d8744bb860a3a2071553b204&amp;chksm=c0dbc8462aa638f346892a20849d5608ef429030e05e927f1ce96dd3312a01e3bee66c8b015c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmecoa.qpic.cn/mmecoa_jpg/9fFHO9YSichpLFMfBgNBLj0zYQRJ3KVsYialgNPHs8mv61vEGR8RwEUA8mC5UPAbEurBgOPqN7Xz3ZKhTQUKQtOA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488771&amp;idx=1&amp;sn=0cfc7859d8744bb860a3a2071553b204&amp;chksm=c0dbc8462aa638f346892a20849d5608ef429030e05e927f1ce96dd3312a01e3bee66c8b015c&amp;scene=0&amp;xtrack=1#rd" target="_blank">有奖直播 | 就在明天15:00！艾体宝Lepide解锁AD审计新方案，彻底告别手动日志分析！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2026-01-28 12:30:00">发布日期：2026-01-28 12:30:00</time></div><p class="article-description">点击“蓝字”关注我们倒计时1天直播概述上一期直播，我们系统讲解了AD的核心职能，同时强调了AD作为企业安全基石的重要性、常见安全隐患与识别方法，以及如何通过Lepide平台实现自动化监控、风险可视化和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488771&amp;idx=1&amp;sn=0cfc7859d8744bb860a3a2071553b204&amp;chksm=c0dbc8462aa638f346892a20849d5608ef429030e05e927f1ce96dd3312a01e3bee66c8b015c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488768&amp;idx=1&amp;sn=9fe392e2c58cb12bb4c485282830955a&amp;chksm=c07261b2366ba04d87c4e6a7d115396f67a3c15575d51422a221783d54a13770aecfcf797d14&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer4JcnRAHGsHSAB4M5weGxTNHlYH6RTHtf5WN4Ntt80ZGnfNypsuo6jfsqj8hCGoMDhe4CI2mXVCcg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488768&amp;idx=1&amp;sn=9fe392e2c58cb12bb4c485282830955a&amp;chksm=c07261b2366ba04d87c4e6a7d115396f67a3c15575d51422a221783d54a13770aecfcf797d14&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度伪装：黑客如何把恶意软件“走私”进 AI 模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2026-01-26 18:59:00">发布日期：2026-01-26 18:59:00</time></div><p class="article-description">这是一个关于深度学习模型供应链安全的深度技术博客。博文基于 Palo Alto Networks 研究员 Mohamed Nabeel 和 Oleksii Starov 的最新研究论文《Deep Di</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488768&amp;idx=1&amp;sn=9fe392e2c58cb12bb4c485282830955a&amp;chksm=c07261b2366ba04d87c4e6a7d115396f67a3c15575d51422a221783d54a13770aecfcf797d14&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488759&amp;idx=1&amp;sn=9768d4f52f140873bf05646dcaabf9da&amp;chksm=c065faf5b2f4049712a10b5ba734609ac11bee8b71d636990e1150e4dcff6203590eba0e18e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7O5YxHwQ09ibw3ibPyiauJ1Cj6R04iczen78tNGRAwauj5Ln5DiahYiaQobns7yPte5ceKpUoETHuLJqUg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488759&amp;idx=1&amp;sn=9768d4f52f140873bf05646dcaabf9da&amp;chksm=c065faf5b2f4049712a10b5ba734609ac11bee8b71d636990e1150e4dcff6203590eba0e18e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">深入分析AuraSteale-MaaS混淆与对抗技术</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2026-01-07 21:43:00">发布日期：2026-01-07 21:43:00</time></div><p class="article-description">前提要点AuraStealer 是一种新兴的恶意软件即服务 (MaaS) 信息窃取者。为了阻止静态和动态分析，AuraStealer 采用了广泛的反分析和混淆技术，包括间接控制流混淆和异常驱动的 AP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488759&amp;idx=1&amp;sn=9768d4f52f140873bf05646dcaabf9da&amp;chksm=c065faf5b2f4049712a10b5ba734609ac11bee8b71d636990e1150e4dcff6203590eba0e18e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488703&amp;idx=1&amp;sn=62f707e18839345398abd5530d2c3324&amp;chksm=c0442267ea895e8413f9034a03810468f1ecc87a3330ef5f86e17ab0b4495c77ce523357a3a8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5B1FTicGdjpp2tjvTEquJa8BDwvKEXNH1wHKC5hof0EHKzTlviadXEBribqmVTlRIP5DweYfvictrukA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488703&amp;idx=1&amp;sn=62f707e18839345398abd5530d2c3324&amp;chksm=c0442267ea895e8413f9034a03810468f1ecc87a3330ef5f86e17ab0b4495c77ce523357a3a8&amp;scene=0&amp;xtrack=1#rd" target="_blank">可视化安全对抗技术平台 v0.1 上线测试</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-12-30 21:21:00">发布日期：2025-12-30 21:21:00</time></div><p class="article-description">地址：https://tipfactory.jentletao.top参考可以提Issue，有空就加</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488703&amp;idx=1&amp;sn=62f707e18839345398abd5530d2c3324&amp;chksm=c0442267ea895e8413f9034a03810468f1ecc87a3330ef5f86e17ab0b4495c77ce523357a3a8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488696&amp;idx=1&amp;sn=d5a245958b198840d433a76af7c67da7&amp;chksm=c09c27b78ff1e14b80652a09f7eb0cf7f410aa7ec99119a86b998536b8b0c27e87ecb79c0fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7DS82zv8Uw8hpGzGMEzrBSbwU3gXemlGThIe5qb0iaIlE8gDM4hnDAqGquCCgFFWLykfUak8jMxUA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488696&amp;idx=1&amp;sn=d5a245958b198840d433a76af7c67da7&amp;chksm=c09c27b78ff1e14b80652a09f7eb0cf7f410aa7ec99119a86b998536b8b0c27e87ecb79c0fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank">SideWinder（响尾蛇） APT最新“隐身”攻击链剖析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-12-25 19:01:00">发布日期：2025-12-25 19:01:00</time></div><p class="article-description">在例行遥测中捕捉到一条极难发现的 SideWinder（又名 Rattlesnake、T-APT-04）攻击链。该组织长期以南亚政府、军工、财税等高价值目标为猎物，此次将矛头对准印度所得税纳税人，通</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488696&amp;idx=1&amp;sn=d5a245958b198840d433a76af7c67da7&amp;chksm=c09c27b78ff1e14b80652a09f7eb0cf7f410aa7ec99119a86b998536b8b0c27e87ecb79c0fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488687&amp;idx=1&amp;sn=dbf7c1d24aca6478dd70618b7138375d&amp;chksm=c0a8617fa724a167ea75ddf8427ca5113c0f16da452f674aead07548ead3d0b440340c1d38ba&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7lU8KTicTJiawGEWfrDRk3dIuZRFWicVeDnwCyicQfRPeZuWic29OjpXllJcC7pM6X8od0J9nXOpqsB6g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488687&amp;idx=1&amp;sn=dbf7c1d24aca6478dd70618b7138375d&amp;chksm=c0a8617fa724a167ea75ddf8427ca5113c0f16da452f674aead07548ead3d0b440340c1d38ba&amp;scene=0&amp;xtrack=1#rd" target="_blank">银狐系valleyRAT工具对抗技术浅析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-12-15 20:52:00">发布日期：2025-12-15 20:52:00</time></div><p class="article-description">ValleyRAT 是一种多阶段远程访问木马（RAT），主要针对中文用户和组织，常与“SilverFox”  组织关联。本篇报告重点在分析与总结valleyRAT黑客工具的技术对抗手段，以及可能的检</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488687&amp;idx=1&amp;sn=dbf7c1d24aca6478dd70618b7138375d&amp;chksm=c0a8617fa724a167ea75ddf8427ca5113c0f16da452f674aead07548ead3d0b440340c1d38ba&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488666&amp;idx=1&amp;sn=8f4c1c63467c6aecc257c303de6d8981&amp;chksm=c0a057a3ffa1c32b09f055226aa06fe00ed2eebbce07ec028dba8cfa4439ff9bbe46b99400f3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7kPK70YyPJk9EibCic11P3ZfXW2VDPK7JdBnHplt9G9yj2AC1MeQwmBoNJyDKKJu5Ez4hcDwSOkxGg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488666&amp;idx=1&amp;sn=8f4c1c63467c6aecc257c303de6d8981&amp;chksm=c0a057a3ffa1c32b09f055226aa06fe00ed2eebbce07ec028dba8cfa4439ff9bbe46b99400f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">Active Directory 渗透测试快速指南：从架构到攻击链</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-11-27 20:07:00">发布日期：2025-11-27 20:07:00</time></div><p class="article-description">在现代企业 IT 架构中，Microsoft Active Directory（AD） 几乎是 Windows 网络环境的“中枢神经系统”。它不仅管理着用户身份、计算机资产和访问权限，还通过组策略（</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488666&amp;idx=1&amp;sn=8f4c1c63467c6aecc257c303de6d8981&amp;chksm=c0a057a3ffa1c32b09f055226aa06fe00ed2eebbce07ec028dba8cfa4439ff9bbe46b99400f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488662&amp;idx=1&amp;sn=3e7909dc121c76d896c6a90c2dfc3573&amp;chksm=c063fcb08f06e5848270e41220c91f55aa233c199ccaca6cd39b0f56ea7b0a37809eec74984a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5xtEEehuO5AnZBIS1MeJ2XicNdJ51ibg048DCyevbktmNZ8sxDicBc0PrrUtNmic53AU464Epjuib5qTQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488662&amp;idx=1&amp;sn=3e7909dc121c76d896c6a90c2dfc3573&amp;chksm=c063fcb08f06e5848270e41220c91f55aa233c199ccaca6cd39b0f56ea7b0a37809eec74984a&amp;scene=0&amp;xtrack=1#rd" target="_blank">深入解析现代 Windows 结构化异常处理（SEH）（x64）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-10-31 12:56:00">发布日期：2025-10-31 12:56:00</time></div><p class="article-description">在 Windows 平台上，操作系统实现了一套独有的异常处理机制 —— 结构化异常处理（SEH） 和 向量化异常处理（VEH），这可以看作是对传统 C/C++ 语言异常处理机制的扩展，用于在运行时处</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488662&amp;idx=1&amp;sn=3e7909dc121c76d896c6a90c2dfc3573&amp;chksm=c063fcb08f06e5848270e41220c91f55aa233c199ccaca6cd39b0f56ea7b0a37809eec74984a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488653&amp;idx=1&amp;sn=864d531e78d7e5e79a3c7c7e8fc98b99&amp;chksm=c0581df4b011d7455acc8ae35b79d1bb0de4aad28c9201edf979645b14a3f4a80a90707be745&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5LVaiaX6UpicR99IFiaLib9vic1hfHFhl6Mf9TAfPP0bjnAehfxygOzub1x3DuHJRepbpA2FWKibibScekw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488653&amp;idx=1&amp;sn=864d531e78d7e5e79a3c7c7e8fc98b99&amp;chksm=c0581df4b011d7455acc8ae35b79d1bb0de4aad28c9201edf979645b14a3f4a80a90707be745&amp;scene=0&amp;xtrack=1#rd" target="_blank">EtherHiding：APT恶意软件隐藏区块链里</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-10-23 20:58:00">发布日期：2025-10-23 20:58:00</time></div><p class="article-description">Google 威胁情报组发现朝鲜威胁组织 UNC5342 开始用 EtherHiding 来发恶意软件、偷加密货币。这是我们第一次看到国家队用这招。本文会详细分析这个技术和事件。EtherHiding</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488653&amp;idx=1&amp;sn=864d531e78d7e5e79a3c7c7e8fc98b99&amp;chksm=c0581df4b011d7455acc8ae35b79d1bb0de4aad28c9201edf979645b14a3f4a80a90707be745&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488645&amp;idx=1&amp;sn=11da73fb4a29f3f7d78709482ecdcaa4&amp;chksm=c0d4bc7f6a74f508f43c1fbdaa86f11218a0f67ca5c33873bb13d145293b0853aeacd179825f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5T827xiabdDbAKmPOARvFACGIVkROiarylibAjdQrzcRuWqCVuXMEbvTvHrMNK753xx1nVhBfUmCZkw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488645&amp;idx=1&amp;sn=11da73fb4a29f3f7d78709482ecdcaa4&amp;chksm=c0d4bc7f6a74f508f43c1fbdaa86f11218a0f67ca5c33873bb13d145293b0853aeacd179825f&amp;scene=0&amp;xtrack=1#rd" target="_blank">工具推荐：向杀毒软件注入恶意代码</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-10-14 19:55:00">发布日期：2025-10-14 19:55:00</time></div><p class="article-description">一、引言在对目标机器进行渗透测试时，杀毒软件会对我们的操作进行严格监控和判断。如果我们的payload被认定为危险，可能会被系统删除，甚至导致我们完全失去对目标机器的访问权限。然而，杀毒软件自身的进</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488645&amp;idx=1&amp;sn=11da73fb4a29f3f7d78709482ecdcaa4&amp;chksm=c0d4bc7f6a74f508f43c1fbdaa86f11218a0f67ca5c33873bb13d145293b0853aeacd179825f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488633&amp;idx=1&amp;sn=89718a7a17db2d988ca88e28237a18a6&amp;chksm=c0afb29212759766c1aaacbb73450f6ac704e5d708e909b9e51a1e6dfac353ac2be3e806e1ef&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5tsReYtIIl8V3hkLdqh6eQvfRX4gxExQWQElOMz2p6MQsSUa4BAbKdXZNaVt1cl1FbImvH7MTOUg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488633&amp;idx=1&amp;sn=89718a7a17db2d988ca88e28237a18a6&amp;chksm=c0afb29212759766c1aaacbb73450f6ac704e5d708e909b9e51a1e6dfac353ac2be3e806e1ef&amp;scene=0&amp;xtrack=1#rd" target="_blank">windows综合内核调试技术</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-09-03 22:15:00">发布日期：2025-09-03 22:15:00</time></div><p class="article-description">1. 基础内核调试命令命令作用.logfile查看是否已设置日志文件.logappend &lt;完整路径&gt;新建或追加日志文件，示例：.logappend c:\\\\kernel-logs.logg继续</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488633&amp;idx=1&amp;sn=89718a7a17db2d988ca88e28237a18a6&amp;chksm=c0afb29212759766c1aaacbb73450f6ac704e5d708e909b9e51a1e6dfac353ac2be3e806e1ef&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488627&amp;idx=1&amp;sn=d2462503c68db13430e695000bcaea89&amp;chksm=c0899fe97e27956309102b31bcefba7f61f305c206442b5f46dd97f3f6b3a7631b5c440b76c4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer6wgswT0icD1n4dqxW7SskNzbtjANGjsjfvOuLicEQBXZWuI2zBcLia27caMs49A1jCaNXbMR8uhiaibFg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488627&amp;idx=1&amp;sn=d2462503c68db13430e695000bcaea89&amp;chksm=c0899fe97e27956309102b31bcefba7f61f305c206442b5f46dd97f3f6b3a7631b5c440b76c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">Kimsuky（APT）泄漏工具包分析，附网盘下载地址</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-08-19 20:54:00">发布日期：2025-08-19 20:54:00</time></div><p class="article-description">前言本文分析了一个APT工作站的数据泄露内容。这些数据和源代码来自针对韩国和中国台湾的威胁行为者的工作站。 我们相信这是朝鲜“Kimsuky”组织的一员（参考文献#14）。Kimsuky是一个由朝鲜政</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488627&amp;idx=1&amp;sn=d2462503c68db13430e695000bcaea89&amp;chksm=c0899fe97e27956309102b31bcefba7f61f305c206442b5f46dd97f3f6b3a7631b5c440b76c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488622&amp;idx=1&amp;sn=15344fdbbe4fc675bcd73b9b5e19225b&amp;chksm=c0d98d36a624d0801a9e6dd23d11568c8b0100450f7ff0f7979d2e81c217f9db30c2f8d7b537&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer4VQRib4k1rNux7cSNaHDuS20C0qyDnQwic35wQHqoseLqQ9g2w6CwI8BPpwP3mWABSjWRMDibibRS25g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488622&amp;idx=1&amp;sn=15344fdbbe4fc675bcd73b9b5e19225b&amp;chksm=c0d98d36a624d0801a9e6dd23d11568c8b0100450f7ff0f7979d2e81c217f9db30c2f8d7b537&amp;scene=0&amp;xtrack=1#rd" target="_blank">剖析 Cmimai Stealer 的 VBS 有效负载</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-08-08 18:51:00">发布日期：2025-08-08 18:51:00</time></div><p class="article-description">最近，我们看到了一条关于 Cmimai Stealer 的推文，这是一种 VBS（Visual Basic 脚本）信息窃取程序，于 2025 年 6 月开始浮出水面。该恶意软件是一类 Infoste</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488622&amp;idx=1&amp;sn=15344fdbbe4fc675bcd73b9b5e19225b&amp;chksm=c0d98d36a624d0801a9e6dd23d11568c8b0100450f7ff0f7979d2e81c217f9db30c2f8d7b537&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488599&amp;idx=1&amp;sn=f839d36fbd9f6e04c30dad81d845d9b4&amp;chksm=c083dba5d8f1bf82ba18f4f8aaa07d058a9f0649016d25920605ffb42dcfc4ab7921d51ad4dd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7fKuUibSibL2Y3oOyE3E8tEiahGXVtbIuCtf09hKBZPB4iahsbV2ZQro9eib9I8JwnzicIZWoVOnS0ibubA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488599&amp;idx=1&amp;sn=f839d36fbd9f6e04c30dad81d845d9b4&amp;chksm=c083dba5d8f1bf82ba18f4f8aaa07d058a9f0649016d25920605ffb42dcfc4ab7921d51ad4dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">浅析针对大模型的嵌入式提示词注入恶意软件分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-07-31 19:32:00">发布日期：2025-07-31 19:32:00</time></div><p class="article-description">前言&amp;背景二进制逆向分析一直都被看作是枯燥无聊的工作，恶意软件分析群体，对于GenAI的新奇也是抱有怀疑态度，但是又充满希望：新AI技术兴起，能否改变逆向的游戏原则。乐于研究新技术的团队，已经开始了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488599&amp;idx=1&amp;sn=f839d36fbd9f6e04c30dad81d845d9b4&amp;chksm=c083dba5d8f1bf82ba18f4f8aaa07d058a9f0649016d25920605ffb42dcfc4ab7921d51ad4dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488582&amp;idx=1&amp;sn=6b02479070ba4fa0247398cb90505e49&amp;chksm=c03572b22893f8d1c9dce7828034682cd339b668100ab207b1549a396b3a9b49b2a925ced539&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7ZPHlvGQfPniaZx5kssqJ1hYD96ia7JzlSfAjPicWlmVpxhwUf1lcORJdsFWsU3z6ODpCFeQp8o3ibibQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488582&amp;idx=1&amp;sn=6b02479070ba4fa0247398cb90505e49&amp;chksm=c03572b22893f8d1c9dce7828034682cd339b668100ab207b1549a396b3a9b49b2a925ced539&amp;scene=0&amp;xtrack=1#rd" target="_blank">国护期间针对某通信公司的白加黑样本分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-07-08 20:04:00">发布日期：2025-07-08 20:04:00</time></div><p class="article-description">投递阶段整个技术是白加黑加载shellcode loader，然后加载C2工具。伪造的文件是白的Wondershare*，CC工具是vshell，*这个go写的c2框架工具现在已经没有公开下载源了，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488582&amp;idx=1&amp;sn=6b02479070ba4fa0247398cb90505e49&amp;chksm=c03572b22893f8d1c9dce7828034682cd339b668100ab207b1549a396b3a9b49b2a925ced539&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488537&amp;idx=1&amp;sn=06a5c070760f6c5e7cd15f0d42faabc7&amp;chksm=c05eccd802b942c7e51bf9bee9ad750dc1eaf55623d691c5f980de554058eecdcdd74a0692b7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer50dOfFGND88GWl6n2zt3icHQafsLZ1ubmujOxp4yD1ra0FiaLibzwZCVkUQUStlfK3J4QkMfkZic5ODg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488537&amp;idx=1&amp;sn=06a5c070760f6c5e7cd15f0d42faabc7&amp;chksm=c05eccd802b942c7e51bf9bee9ad750dc1eaf55623d691c5f980de554058eecdcdd74a0692b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">揭露天鹅向量（Swan Vector）APT组织：针对中国台湾和日本的多阶段DLL植入攻击</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-05-19 19:49:00">发布日期：2025-05-19 19:49:00</time></div><p class="article-description">引言最近实验室的APT团队最近发现了一项名为“天鹅向量”的攻击活动，该活动主要针对中国台湾和日本的教育机构和机械工程行业。攻击者利用虚假简历作为诱饵，通过复杂的多阶段恶意软件生态系统实施攻击。本文将</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488537&amp;idx=1&amp;sn=06a5c070760f6c5e7cd15f0d42faabc7&amp;chksm=c05eccd802b942c7e51bf9bee9ad750dc1eaf55623d691c5f980de554058eecdcdd74a0692b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488506&amp;idx=1&amp;sn=b48b84248cf27ef0eff54422a417e831&amp;chksm=c0aff37d15f38028691121105d4a4e0d8ff3ef097f7f5efbf8dbd8482f185d59811864eda023&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer6dP6n38U75kiaQicy1cJJCDxjv5UicGHjL4K3J1IQPSPq2LI8JwcynvZCkfxoNp4ict7lcR5vo2lwwOA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488506&amp;idx=1&amp;sn=b48b84248cf27ef0eff54422a417e831&amp;chksm=c0aff37d15f38028691121105d4a4e0d8ff3ef097f7f5efbf8dbd8482f185d59811864eda023&amp;scene=0&amp;xtrack=1#rd" target="_blank">利用 Windows 更新堆栈获取系统访问权限（CVE-2025-21204）附exploit</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-04-24 19:33:00">发布日期：2025-04-24 19:33:00</time></div><p class="article-description">CVE-2025-21204 是 Windows 更新堆栈中的一个本地提权漏洞。攻击者通过滥用目录连接点或符号链接，可以劫持由 MoUsoCoreWorker.exe 等以 SYSTEM 级别运行的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488506&amp;idx=1&amp;sn=b48b84248cf27ef0eff54422a417e831&amp;chksm=c0aff37d15f38028691121105d4a4e0d8ff3ef097f7f5efbf8dbd8482f185d59811864eda023&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488498&amp;idx=1&amp;sn=ab5e3f6aafefa09836feec33a3797de9&amp;chksm=c05dca02900abf6fa7bd32414fa9ea6ab1842acf86513b403a124f4fa5a8771e78a2bc57ea30&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer4w4b4mVas5icqdfxKxQFAnLfWI6NzT4tmNLgic1icPQB23V6r7a6JAoXiadgZianS5lqeHFlDWibO1wqxA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488498&amp;idx=1&amp;sn=ab5e3f6aafefa09836feec33a3797de9&amp;chksm=c05dca02900abf6fa7bd32414fa9ea6ab1842acf86513b403a124f4fa5a8771e78a2bc57ea30&amp;scene=0&amp;xtrack=1#rd" target="_blank">针对MCP协议Agent攻击</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-04-16 13:09:18">发布日期：2025-04-16 13:09:18</time></div><p class="article-description">什么是MCP协议扩展阅读：https://modelcontextprotocol.io/introductionMCP 是一种开放协议，它标准化了应用程序如何为 LLMs.将 MCP 想象成 AI</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488498&amp;idx=1&amp;sn=ab5e3f6aafefa09836feec33a3797de9&amp;chksm=c05dca02900abf6fa7bd32414fa9ea6ab1842acf86513b403a124f4fa5a8771e78a2bc57ea30&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488491&amp;idx=1&amp;sn=f21bdfb69f519125aca23d410664ed84&amp;chksm=c04f50466bd9d85857502452e49cbfe0f27e7f0d2454794b720cfcf54d467f725ff80f61cb38&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer4Aoib0iaOYWWmuibMsxjibsCiaHKib7ia1ibkgMokH78FHB1SKerG38jTKG1Cq0eAJB6Nyv2cAh5DhNWNoiag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488491&amp;idx=1&amp;sn=f21bdfb69f519125aca23d410664ed84&amp;chksm=c04f50466bd9d85857502452e49cbfe0f27e7f0d2454794b720cfcf54d467f725ff80f61cb38&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何攻击LLM 和AI Agent（PART1）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-03-26 12:59:00">发布日期：2025-03-26 12:59:00</time></div><p class="article-description">面向白帽子的几个重要概念系统提示词（system prompt）系统提示是开发人员为模型设置的指令，有时也被称为 “系统指令” 或 “开发者消息”。它们通常对终端用户不可见，但会极大地影响模型的行为</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488491&amp;idx=1&amp;sn=f21bdfb69f519125aca23d410664ed84&amp;chksm=c04f50466bd9d85857502452e49cbfe0f27e7f0d2454794b720cfcf54d467f725ff80f61cb38&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488482&amp;idx=1&amp;sn=ebadf84a767dd8a817c5178140c85a96&amp;chksm=c082bd3281d709abcc58d3eca1489438c9227d34e0bcd1f19210990f0054067830ef30a6843c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer7zuibdmic74551bvbfVAibibdpSFicpGm87bMuneFuFiaUVia4ExpA4Djx7q5Blg4RDMcUV95NcoUOmia9cw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488482&amp;idx=1&amp;sn=ebadf84a767dd8a817c5178140c85a96&amp;chksm=c082bd3281d709abcc58d3eca1489438c9227d34e0bcd1f19210990f0054067830ef30a6843c&amp;scene=0&amp;xtrack=1#rd" target="_blank">CDN资产检测技术(2025)</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-03-14 18:54:00">发布日期：2025-03-14 18:54:00</time></div><p class="article-description">阅读体验更好可访问：https://jentletao.top/2025/03/14/CDN%E8%B5%84%E4%BA%A7%E6%A3%80%E6%B5%8B%E6%8A%80%E6%9C%AF</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488482&amp;idx=1&amp;sn=ebadf84a767dd8a817c5178140c85a96&amp;chksm=c082bd3281d709abcc58d3eca1489438c9227d34e0bcd1f19210990f0054067830ef30a6843c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488473&amp;idx=1&amp;sn=be55e005a2b0ab177d4527eb2a62f7ae&amp;chksm=c0dcb9a9286f865468c183684164eacddd6b924f6e716c99e4b8b95fabf10a7d5a4ea1d3a517&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer5aInYNlPKKeQnuXZIapJxf8BkFnicCpLyKEzMcwGEFTZKdbBnuLl67QqicJIG61xIOiayuicI5aib94Iw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488473&amp;idx=1&amp;sn=be55e005a2b0ab177d4527eb2a62f7ae&amp;chksm=c0dcb9a9286f865468c183684164eacddd6b924f6e716c99e4b8b95fabf10a7d5a4ea1d3a517&amp;scene=0&amp;xtrack=1#rd" target="_blank">100种容器攻击手法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-03-07 12:00:00">发布日期：2025-03-07 12:00:00</time></div><p class="article-description">容器安全攻防指南：100种攻击方法背后的防护策略—— 从漏洞利用到防御体系的全面解析公众号回复：100容器获取全文PDF引言：容器安全为何如此重要？容器技术凭借轻量化、易部署的特性，已成为现代云原生</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488473&amp;idx=1&amp;sn=be55e005a2b0ab177d4527eb2a62f7ae&amp;chksm=c0dcb9a9286f865468c183684164eacddd6b924f6e716c99e4b8b95fabf10a7d5a4ea1d3a517&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488467&amp;idx=1&amp;sn=c11692271a722d2c10daa1bceb36f1e3&amp;chksm=c01aa33a5b3d0fc4713d7787e5fef2ecc14cb0d1ce9592577aad9863536370e7c877570415e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer6ia4vibHKOXM0P0tb2o090AldXLVluSXKcosrCyjuDicwdceSrup38thtJxFLRmMicfCzZlF4Xp7sCtw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488467&amp;idx=1&amp;sn=c11692271a722d2c10daa1bceb36f1e3&amp;chksm=c01aa33a5b3d0fc4713d7787e5fef2ecc14cb0d1ce9592577aad9863536370e7c877570415e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">光环下的裂痕：浅谈360政企安全是“数字铁壁”还是“泡沫蓝图”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-02-20 12:00:00">发布日期：2025-02-20 12:00:00</time></div><p class="article-description">前言前几天看到360发布《2024年全球高级持续性威胁（APT）研究报告》，依旧是国内高质量技术年报的标杆，但是回顾一年间企业的“骚操作”，以及民营企业座谈会没有红衣教主的身影，不禁为老东家感到一点汗</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488467&amp;idx=1&amp;sn=c11692271a722d2c10daa1bceb36f1e3&amp;chksm=c01aa33a5b3d0fc4713d7787e5fef2ecc14cb0d1ce9592577aad9863536370e7c877570415e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488462&amp;idx=1&amp;sn=9cfb75421975bffdfe049b3e6df12b67&amp;chksm=c07c2f851f535a4ddfe3a5478d4ffc39e4ed48ffe7577e2af01d9ed0c881c206b1122bea9c64&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPCLBuONer6XVdBAPytDsdJ72CKVhHEoEf6kVgaBTQLYpeowbNwlB6FWbGyTicgYksbOSVcgqbfL2L6FckmciczA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488462&amp;idx=1&amp;sn=9cfb75421975bffdfe049b3e6df12b67&amp;chksm=c07c2f851f535a4ddfe3a5478d4ffc39e4ed48ffe7577e2af01d9ed0c881c206b1122bea9c64&amp;scene=0&amp;xtrack=1#rd" target="_blank">反反rootkit--覆盖驱动与隐藏线程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0a84dc22fd65084e870df6c694efa747/index.html">TIPFactory情报工厂</a></span><time class="article-date" datetime="2025-02-18 19:36:00">发布日期：2025-02-18 19:36:00</time></div><p class="article-description">覆盖驱动与隐藏线程在上一篇博客中，我们有了一个小型反Rootkit驱动的开发。这个驱动能够检测映射到无支持内存的恶意驱动，前提是这些恶意驱动要么作为标准的Windows驱动运行（为IRP通信注册设备</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMjM0ODAwNg==&amp;mid=2247488462&amp;idx=1&amp;sn=9cfb75421975bffdfe049b3e6df12b67&amp;chksm=c07c2f851f535a4ddfe3a5478d4ffc39e4ed48ffe7577e2af01d9ed0c881c206b1122bea9c64&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

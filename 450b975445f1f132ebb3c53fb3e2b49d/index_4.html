@@ -1,0 +1,344 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>腾讯云开发者</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=1&amp;sn=1a85a79a209a85a7d49437180c228050&amp;chksm=eb055dd01aed41db3fa0065598a2f6c8ded0ce4086a52064f94b8c163c6b7d91a3e8c922dd18&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97RViclnCfGsWo4FGQEyFtsnqhUS7IISxFs89NpxLIlIobx1Cb9icfjGHK0jRickEjnadSfrtgYlSM0A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=1&amp;sn=1a85a79a209a85a7d49437180c228050&amp;chksm=eb055dd01aed41db3fa0065598a2f6c8ded0ce4086a52064f94b8c163c6b7d91a3e8c922dd18&amp;scene=0&amp;xtrack=1#rd" target="_blank">架构师必备的15条定律，条条经典！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-31 08:45:00">发布日期：2025-07-31 08:45:00</time></div><p class="article-description">👉目录1 帕金森定律 Parkinson’s law2 侯世达定律 Hofstadter’s law3 布鲁克斯定律 Brooks’ law4 康威定律 Conway’s law5 坎宁安定律 Cun</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=1&amp;sn=1a85a79a209a85a7d49437180c228050&amp;chksm=eb055dd01aed41db3fa0065598a2f6c8ded0ce4086a52064f94b8c163c6b7d91a3e8c922dd18&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=2&amp;sn=21d7607b4fe8e79b9ec872339a3a204d&amp;chksm=eb0507b2749c7dac16cfe7463a0ed656e764fbe6ff825e3526957be0d96f3abd504e4549850b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97RViclnCfGsWo4FGQEyFtsnGm9KicGO6v17bZe545CtWQazMibRrW7eVXOsfTDsSGa8Ct2hVQqwOb7Q/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=2&amp;sn=21d7607b4fe8e79b9ec872339a3a204d&amp;chksm=eb0507b2749c7dac16cfe7463a0ed656e764fbe6ff825e3526957be0d96f3abd504e4549850b&amp;scene=0&amp;xtrack=1#rd" target="_blank">LLM学习的「阶梯地图」（二）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-31 08:45:00">发布日期：2025-07-31 08:45:00</time></div><p class="article-description">👉目录1 序言2 LLM 系列(四)：神奇的魔法数 273 LLM 系列（五）：模型训练篇4 结语5 腾讯云架构师技术同盟交流圈介绍6 卓越架构师共学计划介绍01序言当 Transformer 架构像</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=2&amp;sn=21d7607b4fe8e79b9ec872339a3a204d&amp;chksm=eb0507b2749c7dac16cfe7463a0ed656e764fbe6ff825e3526957be0d96f3abd504e4549850b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=1&amp;sn=f5c431afd1f565279541e428a966e26e&amp;chksm=ebe53421126344721ca71d6697ca79738853525971cf7a876e22140615fc7694f05e9faa4e00&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97edXmP4kkgebr3r8stwylrg7rvjBE9Bs78wia3tcIHsIurIibUzcQbEdnLTWUulXpiavq4LugOt0uhQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=1&amp;sn=f5c431afd1f565279541e428a966e26e&amp;chksm=ebe53421126344721ca71d6697ca79738853525971cf7a876e22140615fc7694f05e9faa4e00&amp;scene=0&amp;xtrack=1#rd" target="_blank">微信程序员推荐的后台开发环境和常用小工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-30 08:45:00">发布日期：2025-07-30 08:45:00</time></div><p class="article-description">👉目录1 终端配置2 zsh+tmux3 neovim4 一些好用的小工具本文详细分享了作者的后台开发环境配置方案及常用效率工具，旨在帮助读者搭建个性化、高效的开发工作流。文章从终端环境配置切入，逐步</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=1&amp;sn=f5c431afd1f565279541e428a966e26e&amp;chksm=ebe53421126344721ca71d6697ca79738853525971cf7a876e22140615fc7694f05e9faa4e00&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=2&amp;sn=67316fcc12529c40f2c539188ab42dae&amp;chksm=ebad5679020a94ece3c9ca2f3f9781d0db6e646014706d62849607b00ba758e2aef4af2d8e56&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97edXmP4kkgebr3r8stwylrMapfbNNeMlsfhdCCM1GicFBouetibNTMecF21SB4UBHbfpBpQ40pMicLw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=2&amp;sn=67316fcc12529c40f2c539188ab42dae&amp;chksm=ebad5679020a94ece3c9ca2f3f9781d0db6e646014706d62849607b00ba758e2aef4af2d8e56&amp;scene=0&amp;xtrack=1#rd" target="_blank">半夜被叫醒修Bug的日子，真的要结束了吗？丨直播预告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-30 08:45:00">发布日期：2025-07-30 08:45:00</time></div><p class="article-description">还记得那些被深夜告警电话惊醒的日子吗？还在为复杂的故障排查而焦头烂额吗？还在担心自己的运维工作被AI替代吗？如果你是运维工程师，这些问题一定曾经让你夜不能寐。   🚀 运维正在经历一场前所未有的变革从</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691475&amp;idx=2&amp;sn=67316fcc12529c40f2c539188ab42dae&amp;chksm=ebad5679020a94ece3c9ca2f3f9781d0db6e646014706d62849607b00ba758e2aef4af2d8e56&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691457&amp;idx=1&amp;sn=454fbe9b02a2ca70b2795710cbd232dc&amp;chksm=ebab7beeb001efb105bb1839acd975f4b492580e5c350637a73a74f3e0dfe94231b885512f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95nW5LHaXibNzc2ibtyLxRbbdSaHPiauOd3BXB9h3JHIo1dNh9U1zgUOdgFic5qhHIhN4ZkQwBHjic0iaFg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691457&amp;idx=1&amp;sn=454fbe9b02a2ca70b2795710cbd232dc&amp;chksm=ebab7beeb001efb105bb1839acd975f4b492580e5c350637a73a74f3e0dfe94231b885512f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">转行了：从程序员到技术策划，我的心路历程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-29 08:45:00">发布日期：2025-07-29 08:45:00</time></div><p class="article-description">👉目录1 我的成长路径2 为什么转行技术美术3 如何转行技术美术4 找技术美术的工作5 腾讯内的成长6 比较好的习惯，有利于我长期在一线冲锋7 为什么离职转行技术策划我们常说，世界上不止一条路可以选择</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691457&amp;idx=1&amp;sn=454fbe9b02a2ca70b2795710cbd232dc&amp;chksm=ebab7beeb001efb105bb1839acd975f4b492580e5c350637a73a74f3e0dfe94231b885512f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691186&amp;idx=1&amp;sn=d82a1ef76be5c2eb91550544769aa13a&amp;chksm=eb2f394f583a020f0817356410c61c32a9bf1b2ebdd83e4451a9fac81505c687d266fcd1b2b4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97TbUiczpohDPfme5aVy7EmsTMaFc4mPyUJE5vFByjeFR9OVkzQbhEQxtJKTFBSMuLW784xfkP2hGQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691186&amp;idx=1&amp;sn=d82a1ef76be5c2eb91550544769aa13a&amp;chksm=eb2f394f583a020f0817356410c61c32a9bf1b2ebdd83e4451a9fac81505c687d266fcd1b2b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">谁教你这么写提示词的！？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-11 08:44:16">发布日期：2025-07-11 08:44:16</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691186&amp;idx=1&amp;sn=d82a1ef76be5c2eb91550544769aa13a&amp;chksm=eb2f394f583a020f0817356410c61c32a9bf1b2ebdd83e4451a9fac81505c687d266fcd1b2b4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690930&amp;idx=1&amp;sn=263b511dc0264982953f6c5d784cbaea&amp;chksm=eb711d29a52f7093543207ac2f49785c6d7337a4c07ccdfd4e6003c831cefdbbde314270873b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe964gZpFAu4qrDleTWE3BSYYNqaAiaSIN3h2tWsHEXAydzCyFNKMvNPERUeBeV1m7mafW4JPQb9rMAQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690930&amp;idx=1&amp;sn=263b511dc0264982953f6c5d784cbaea&amp;chksm=eb711d29a52f7093543207ac2f49785c6d7337a4c07ccdfd4e6003c831cefdbbde314270873b&amp;scene=0&amp;xtrack=1#rd" target="_blank">彻底爆了！一文吃透AIGC、Agent、MCP的概念和关系</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-10 08:45:00">发布日期：2025-07-10 08:45:00</time></div><p class="article-description">👉目录1 AIGC2 智能体 Agent3 MCP4 总结近两年 AI 技术发展迅猛，日新月异。大语言模型 (LLM)、AIGC、多模态、RAG、Agent、MCP 等各种相关概念层出不穷，若不深入了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690930&amp;idx=1&amp;sn=263b511dc0264982953f6c5d784cbaea&amp;chksm=eb711d29a52f7093543207ac2f49785c6d7337a4c07ccdfd4e6003c831cefdbbde314270873b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690922&amp;idx=1&amp;sn=a906834509a831650975bd5fbb9ff352&amp;chksm=eb34e8d1f67c527076eb23a085c90fea1f43e1cfd040730e82e0ce71c4e63334f2bc65c1d914&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95GkC5tRCun2tBibYstZII2fRIlPZ96RDibeDHdgq2naH4xticoecKNVEWyZSbbjMEG2JGxMv9bEWrSg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690922&amp;idx=1&amp;sn=a906834509a831650975bd5fbb9ff352&amp;chksm=eb34e8d1f67c527076eb23a085c90fea1f43e1cfd040730e82e0ce71c4e63334f2bc65c1d914&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何设计一个支付系统：核心交易系统架构丨架构师系列文集</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-09 08:45:00">发布日期：2025-07-09 08:45:00</time></div><p class="article-description">👉目录1 概述2 支付系统/核心交易系统的架构特点3 系统预告在上一篇文章如何设计一个支付系统丨架构师系列文集中，我们主要讲解了支付系统的设计全貌，为了帮助大家进一步深入理解支付系统的设计细节，腾讯云</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690922&amp;idx=1&amp;sn=a906834509a831650975bd5fbb9ff352&amp;chksm=eb34e8d1f67c527076eb23a085c90fea1f43e1cfd040730e82e0ce71c4e63334f2bc65c1d914&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690919&amp;idx=1&amp;sn=374e8c83fc0e33ba2f4a3b8290d214bd&amp;chksm=eb638563eba5aaa40454296f7696ca8381f404e6307e76ddc643fc90f07273be2c70bcaae259&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe96dakeQFEVKgUelCU4vOwcLKR9vkLyeesOpoYf0Za3hYCLZTBvBOKLremicMEpYibFFcDCWt4oamvqw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690919&amp;idx=1&amp;sn=374e8c83fc0e33ba2f4a3b8290d214bd&amp;chksm=eb638563eba5aaa40454296f7696ca8381f404e6307e76ddc643fc90f07273be2c70bcaae259&amp;scene=0&amp;xtrack=1#rd" target="_blank">每个程序员都应该了解的GPU工作原理：从硬件到架构</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-08 08:45:00">发布日期：2025-07-08 08:45:00</time></div><p class="article-description">👉目录1 背景2 图形渲染到GPGPU3 CPU/GPU异构计算架构4 一个简单的应用5 编译-Fat Binary6 程序加载 - cubin loading7 程序执行 - Kernel Laun</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690919&amp;idx=1&amp;sn=374e8c83fc0e33ba2f4a3b8290d214bd&amp;chksm=eb638563eba5aaa40454296f7696ca8381f404e6307e76ddc643fc90f07273be2c70bcaae259&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=1&amp;sn=aa07ab3df2e54dcdbdb4b078cbaefc5b&amp;chksm=eb6c0f65e1588fea248cfc9a00347364dc76a5391444a2c1da388a9310eede07c832dc78fe6a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95NYo8OEIwmwX4luJDWtN0yNX1Bk1XRqTZ3WdmiahEqUFKwcRxZLH27YibwUHDF3JNGMQhSFT9MxmfA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=1&amp;sn=aa07ab3df2e54dcdbdb4b078cbaefc5b&amp;chksm=eb6c0f65e1588fea248cfc9a00347364dc76a5391444a2c1da388a9310eede07c832dc78fe6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文搞定手游内存优化</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-01 08:45:00">发布日期：2025-07-01 08:45:00</time></div><p class="article-description">👉目录1 整体思路2 具体实践3 总结内存优化属于性能优化的一部分，内存优化没有功耗、卡顿和帧率等优化可以被玩家们直观的体验到，但是一旦发生Out Of Memory（OOM）问题，玩家将会直接从游戏</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=1&amp;sn=aa07ab3df2e54dcdbdb4b078cbaefc5b&amp;chksm=eb6c0f65e1588fea248cfc9a00347364dc76a5391444a2c1da388a9310eede07c832dc78fe6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=2&amp;sn=e87e81c86774df0066408d1e0bf4d42f&amp;chksm=eb8cb3ed10d837b88d87279d032136eaee99cf53a4b9679625a4cca3dd1ffa9e68e340ce5dfd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94fB7CjlAicAQSEFjmicO855sPoZXAWSiaTVf7MiaKxea2cGCP1Y2fBfPicgJdNKCsMbiay8onsWNkYjS1w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=2&amp;sn=e87e81c86774df0066408d1e0bf4d42f&amp;chksm=eb8cb3ed10d837b88d87279d032136eaee99cf53a4b9679625a4cca3dd1ffa9e68e340ce5dfd&amp;scene=0&amp;xtrack=1#rd" target="_blank">架构师技术同盟·问答热力季（参与有奖）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-07-01 08:45:00">发布日期：2025-07-01 08:45:00</time></div><p class="article-description">开发者们看过来！是不是总有些技术难题或职场困惑找不到人聊？亦或者没有机会请教一线大咖答疑解惑？🤔腾讯云架构师天团带着问答热力季来啦！不管是AI工具实操卡点（如MCP怎么使用）还是职业转型迷茫（如想从码</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690830&amp;idx=2&amp;sn=e87e81c86774df0066408d1e0bf4d42f&amp;chksm=eb8cb3ed10d837b88d87279d032136eaee99cf53a4b9679625a4cca3dd1ffa9e68e340ce5dfd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690678&amp;idx=1&amp;sn=424479029815264e0737d1e98eafa046&amp;chksm=ebbd8045917e11f9925f626e3180b8d89475526f1f96dba8b9d357a7c90ee397d646b74fde8d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94NH56AxUzIGOtm1UTp4JhowXzLmG89chDZ1z6qaAxibOmYmEYSgVS8lAMzGEXD1Iwxeza1MR8C1wA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690678&amp;idx=1&amp;sn=424479029815264e0737d1e98eafa046&amp;chksm=ebbd8045917e11f9925f626e3180b8d89475526f1f96dba8b9d357a7c90ee397d646b74fde8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">首次揭秘！腾讯多模态OCR大模型最新技术演进：没有最强OCR，只有无限进化！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-20 08:45:00">发布日期：2025-06-20 08:45:00</time></div><p class="article-description">👉目录1 技术演进2 领域进展3 技术要点4 文档智能5 实测体验在各行业加速智能化转型的进程中，OCR技术（即光学字符识别，一种将图像中文字转化为可编辑文本的AI技术，在文档处理、办公自动化、交通出</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690678&amp;idx=1&amp;sn=424479029815264e0737d1e98eafa046&amp;chksm=ebbd8045917e11f9925f626e3180b8d89475526f1f96dba8b9d357a7c90ee397d646b74fde8d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=1&amp;sn=ab526205c1d0c3d907b9ff81274c550f&amp;chksm=ebabe28592b462e4abc9f25cb9b276ef4d1e400cc4471fc13ec22c9143896839333f2ee7e217&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97Jx5nMZ3GRFlTr2ibWeetojBryQCjzbib2kDaxYGLWb5Kbn7fy5KFKJjXNVq88dGRWjZOia3LN2sXDw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=1&amp;sn=ab526205c1d0c3d907b9ff81274c550f&amp;chksm=ebabe28592b462e4abc9f25cb9b276ef4d1e400cc4471fc13ec22c9143896839333f2ee7e217&amp;scene=0&amp;xtrack=1#rd" target="_blank">分享一个讲透任意知识点的万能框架，程序员提升个人技术影响力必备！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-19 08:45:00">发布日期：2025-06-19 08:45:00</time></div><p class="article-description">👉目录1 Why‑What‑How —— 先讲痛点，再给解药，最后上操作2 层层递进 —— 像剥洋葱一样，从皮到芯讲透它3 F‑R‑S‑C‑O —— 用五个视角，给知识做一次全面体检4 英雄之旅（Fa</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=1&amp;sn=ab526205c1d0c3d907b9ff81274c550f&amp;chksm=ebabe28592b462e4abc9f25cb9b276ef4d1e400cc4471fc13ec22c9143896839333f2ee7e217&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=2&amp;sn=46b786705a7b514cac024b34a44449b4&amp;chksm=ebe4ef9f365dee3504d0d5ab44c957b4853325f0dc03ac1bfba122501800231690791385532d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97Jx5nMZ3GRFlTr2ibWeetojQN15NEb1TYibibqtHepcriaciaFHERkqc4KAbPoT4ODe6LJGhM47s2wzGA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=2&amp;sn=46b786705a7b514cac024b34a44449b4&amp;chksm=ebe4ef9f365dee3504d0d5ab44c957b4853325f0dc03ac1bfba122501800231690791385532d&amp;scene=0&amp;xtrack=1#rd" target="_blank">腾讯云黑客松AI Coding挑战赛火热开启！10万元现金奖池等你瓜分</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-19 08:45:00">发布日期：2025-06-19 08:45:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=2&amp;sn=46b786705a7b514cac024b34a44449b4&amp;chksm=ebe4ef9f365dee3504d0d5ab44c957b4853325f0dc03ac1bfba122501800231690791385532d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690617&amp;idx=1&amp;sn=e784459bb79c09a8847152c7f34720d3&amp;chksm=ebf58209f19e8676db6b22d2623210c7f654dbd80d0edabeb5674eb90b3ea7c71887042629f3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95RicL4hE6huot0ny7dmdcdx0MmZAZH3Pc9802MYYMof8hxn4fcfM9wAq9Rz7RvwlNrcrHvukmCVjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690617&amp;idx=1&amp;sn=e784459bb79c09a8847152c7f34720d3&amp;chksm=ebf58209f19e8676db6b22d2623210c7f654dbd80d0edabeb5674eb90b3ea7c71887042629f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">程序员版「长安的荔枝」：别当职场软柿子，掌握核心竞争力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-18 08:45:00">发布日期：2025-06-18 08:45:00</time></div><p class="article-description">👉目录1 需求太多，怎么办？2 会议、沟通太低效，怎么办？3 上下文信息不清晰，怎么办？4 没有架构思维，怎么办？5 写在最后唐天宝年间，长安城内，杨贵妃对岭南荔枝念念不忘。为了博得佳人一笑，唐玄宗下</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690617&amp;idx=1&amp;sn=e784459bb79c09a8847152c7f34720d3&amp;chksm=ebf58209f19e8676db6b22d2623210c7f654dbd80d0edabeb5674eb90b3ea7c71887042629f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690564&amp;idx=1&amp;sn=7876d52d31c1954432240ef3939ff36f&amp;chksm=ebc96c57aa4cee4c710b288ae2fd61149517b2d2799549cdebb8f83d13fc90ed02d8e78b42d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690564&amp;idx=1&amp;sn=7876d52d31c1954432240ef3939ff36f&amp;chksm=ebc96c57aa4cee4c710b288ae2fd61149517b2d2799549cdebb8f83d13fc90ed02d8e78b42d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">三年又三年，都快十年了大哥！
+
+
+                                                    
+
+
+这是一位入职腾讯近十年的架构师的思考总结，分享给各位。
+
+好的架构设计应该是简单、可进化的。
+
+简单的架构设计意味着成本低、风险低，可以这样理解：
+
+合理模块化，低耦合、大系统小做。
+合理层次化，清晰。
+可维护。
+
+可进化，我的理解是：
+
+抓住核心业务需求，系统架构在后续发展中低成本低风险地调整以适配业务的发展。比如QQ的核心需求是社交聊天，无论后续业务怎么发展，这都是其关键点，抓住这个需求去设计关系链和聊天系统，关注焦点就自然落到了可用、稳定性、可扩展、高性能上。好的架构设计，可以通过平行扩展解决一大部分数据规模和请求规模上升带来的压力。
+
+注：不要过早优化，先实现功能并尽快上线，根据监控数据对关键地方进行优化。
+
+好的服务设计是简单的，监控完善，可灰度的。
+
+服务设计，首要考虑有没有可复用的成熟可控方案，而不是马上动手去设计一个全新的方案。如果没有，再去思考如何简单设计。
+
+举例：业务后台服务设计很依赖对业务本身的理解，入口、用户量、操作量（读写比例）、数据量规模、系统的可用性要求等等。
+
+根据这些特征值，去判断选择异步/同步网络服务，多线程/多进程，数据存储是否使用NoSQL或者MySQL，MySQL是否需要cache，读写是否分离等等。
+
+监控是服务运营中非常关键的一点，我的经验是：监控业务规模，监控机器状态，监控代码的错误和异常，监控代码复杂逻辑，关键信息日志记录。做到每个上报数据，都能从中清楚服务本身是不是存在异常，应该怎么处理。
+
+灰度升级是海量后台的一个关键点。要求服务设计和发布的时候尽量不能是0和1的选择。灰度更多关注的是服务发布的风险控制上。
+
+好的代码设计是层次化、简单易于理解的。
+
+个人觉得好的代码设计应该是：
+
+代码目录结构(引用的代码库和自己写的分开)清晰，文件命名和实现的功能相匹配。
+类的设计遵循合理的层次化。
+逻辑代码命名跟其行为一致，遵循do one thing and do it well的原则，复杂的逻辑需要加上注释。
+
+评论区加入讨论，挑选一条留言送出腾讯云开发者社区周边一份！
+
+延展阅读：&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690508&amp;idx=1&amp;sn=7862e4bb77047d0fdd8ab4f9c8005366&amp;scene=21#wechat_redirect&quot;&gt;如何画好架构图：架构思维的三大底层逻辑&lt;/a&gt;
+
+鹅厂程序员面对面直播继续，记得提前预约直播～👇</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-13 08:45:00">发布日期：2025-06-13 08:45:00</time></div><p class="article-description">三年又三年，都快十年了大哥！
+
+
+                                                    
+
+
+这是一位入职腾讯近十年的架构师的思考总结，分享给各位。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690564&amp;idx=1&amp;sn=7876d52d31c1954432240ef3939ff36f&amp;chksm=ebc96c57aa4cee4c710b288ae2fd61149517b2d2799549cdebb8f83d13fc90ed02d8e78b42d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690517&amp;idx=1&amp;sn=f9eaf7d2cf5f4d656ea2316d4c2226ca&amp;chksm=eb515df0bf87779ef0530ae1fd55b44ed933302f3dfe39de4c8fa96e299ae574ff0d46056f32&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97wf3PhPkUBbSic4ibeGHfSC9tScmr9O0HLzia5aQ2kg2iaDEKjBibrl4Oic6OzRP62UgrBQib6vlFvjusLw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690517&amp;idx=1&amp;sn=f9eaf7d2cf5f4d656ea2316d4c2226ca&amp;chksm=eb515df0bf87779ef0530ae1fd55b44ed933302f3dfe39de4c8fa96e299ae574ff0d46056f32&amp;scene=0&amp;xtrack=1#rd" target="_blank">庆幸经历过没有AI的时代——一个程序员爸爸的担忧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-12 08:45:00">发布日期：2025-06-12 08:45:00</time></div><p class="article-description">👉目录1 能力幻觉2 AI 的“附庸”3 所有的意义都在于过程，因为它承载着我们的体验4 个人成长没有捷径可走，所见的捷径往往是弯路刘慈欣的《三体》系列中，三体人通过投放&quot;智子&quot;——一种高维智能粒子—</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690517&amp;idx=1&amp;sn=f9eaf7d2cf5f4d656ea2316d4c2226ca&amp;chksm=eb515df0bf87779ef0530ae1fd55b44ed933302f3dfe39de4c8fa96e299ae574ff0d46056f32&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690508&amp;idx=1&amp;sn=7862e4bb77047d0fdd8ab4f9c8005366&amp;chksm=eb9f76b59157aa4e718d5d446fd7de18631a6a21358e9467898fb2b9e265b6de65342ebfbb7c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95GhKyPaIKCvmTRiao63yPvlsmEymRvs8Od70tkzicic12P5En6DVAjMaVMp9OOhBic1vXxIfMFLBM3bQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690508&amp;idx=1&amp;sn=7862e4bb77047d0fdd8ab4f9c8005366&amp;chksm=eb9f76b59157aa4e718d5d446fd7de18631a6a21358e9467898fb2b9e265b6de65342ebfbb7c&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何画好架构图：架构思维的三大底层逻辑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-11 08:45:00">发布日期：2025-06-11 08:45:00</time></div><p class="article-description">👉目录0 前言1 宏观2 中观3 微观4 补充俗话说，一图胜千言。日常工作中，当我们要表达自己的设计思路的时候，会画各式各样的图。但因为各自知识储备的差异，思维的差异，不同类型的系统侧重的架构设计点也</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690508&amp;idx=1&amp;sn=7862e4bb77047d0fdd8ab4f9c8005366&amp;chksm=eb9f76b59157aa4e718d5d446fd7de18631a6a21358e9467898fb2b9e265b6de65342ebfbb7c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=1&amp;sn=a4d980a8630847d56a27e57ec5f93693&amp;chksm=eb621060963694443dadf03065262de5fc632d5a38567648bd68fd6197c11d024914c7d6476e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94cdHDsujCB0bqF88jPNTB3jVafnQaYh5ffMkN5GKTpESPyicGmAckz2u9dCWIU3XKtmWN0icVFCgOg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=1&amp;sn=a4d980a8630847d56a27e57ec5f93693&amp;chksm=eb621060963694443dadf03065262de5fc632d5a38567648bd68fd6197c11d024914c7d6476e&amp;scene=0&amp;xtrack=1#rd" target="_blank">重磅！支持纯血鸿蒙！腾讯视频ovCompose跨平台框架发布</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-10 08:45:00">发布日期：2025-06-10 08:45:00</time></div><p class="article-description">👉目录1 背景2 特性优势3 实现原理4 仓库说明5 计划ovCompose(online-video-compose)是腾讯大前端领域 TDF 端框架 Oteam 中，腾讯视频团队基于 Compos</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=1&amp;sn=a4d980a8630847d56a27e57ec5f93693&amp;chksm=eb621060963694443dadf03065262de5fc632d5a38567648bd68fd6197c11d024914c7d6476e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=2&amp;sn=da4b7adc54fad786c5193796a40f9432&amp;chksm=eb210e0b0fa9d97f7588eed9f9b55843766f9fae20d12cbfba46b6a0b67125ead33e673302c8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94cdHDsujCB0bqF88jPNTB31Y3ibNLtPL3RV9t8Ouic6TG42gSwibsHEYfyxj0tXqM9t0LJM6dd5MdRA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=2&amp;sn=da4b7adc54fad786c5193796a40f9432&amp;chksm=eb210e0b0fa9d97f7588eed9f9b55843766f9fae20d12cbfba46b6a0b67125ead33e673302c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">OC 城市行・广州站报名火热开启！云原生与 AI 驱动的技术盛宴等你解锁</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-10 08:45:00">发布日期：2025-06-10 08:45:00</time></div><p class="article-description">在数字化转型浪潮中，云原生与 AI 技术正加速融合并重塑产业格局，成为驱动各行业变革的核心引擎。这一融合不仅重塑了企业的技术架构，也为操作系统领域带来全新的机遇与挑战。如何在这场技术浪潮中把握先机，实</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690487&amp;idx=2&amp;sn=da4b7adc54fad786c5193796a40f9432&amp;chksm=eb210e0b0fa9d97f7588eed9f9b55843766f9fae20d12cbfba46b6a0b67125ead33e673302c8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690447&amp;idx=1&amp;sn=8d4aa1c7ce5e21fd502f98c28e348179&amp;chksm=eb7c90414ea3f46b8192029fff0c91c1446cf8eb563868a16a5ba6b2103db1e3659793238652&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe949HD9cZh9wdRmhbqj4dWguVH7XjKUI6QibFGPiaqUT7merPN6CQicicpbSOJWEicomibpNFhbnSCnGq8icg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690447&amp;idx=1&amp;sn=8d4aa1c7ce5e21fd502f98c28e348179&amp;chksm=eb7c90414ea3f46b8192029fff0c91c1446cf8eb563868a16a5ba6b2103db1e3659793238652&amp;scene=0&amp;xtrack=1#rd" target="_blank">微信读书后台架构演进之路</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-06 08:45:00">发布日期：2025-06-06 08:45:00</time></div><p class="article-description">👉目录1 前言2 整体架构3 RPC框架4 书籍数据中台建设5 账号系统可用性建设6 内容召回演进7 写在最后今年是微信读书上线10周年，后台架构也伴随着微信读书的成长经历了多次迭代与升级。每一次的组</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690447&amp;idx=1&amp;sn=8d4aa1c7ce5e21fd502f98c28e348179&amp;chksm=eb7c90414ea3f46b8192029fff0c91c1446cf8eb563868a16a5ba6b2103db1e3659793238652&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690446&amp;idx=1&amp;sn=17cb3f8966689f7266fad880e6ebac5a&amp;chksm=eb33711bed67577b6d6c07c9e8d5681388160c854240e93ecdbc3d5c9913657f43fe0f17c790&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe949HD9cZh9wdRmhbqj4dWguMud1w6yeqZgBOWuxibianVe3qH70NupfJLF818ENaZenFuIIaAhMM1lQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690446&amp;idx=1&amp;sn=17cb3f8966689f7266fad880e6ebac5a&amp;chksm=eb33711bed67577b6d6c07c9e8d5681388160c854240e93ecdbc3d5c9913657f43fe0f17c790&amp;scene=0&amp;xtrack=1#rd" target="_blank">我认识最优秀却默默无闻的程序员</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-06-05 17:00:00">发布日期：2025-06-05 17:00:00</time></div><p class="article-description">开篇先提一个程序员的终极哲学问题：我们能否构建出永不出问题的系统？答案是显而易见的，宇宙的真理是熵增，系统的复杂度总会持续增大，最终陷入一个混乱无序的状态，要么爆炸要么重构。在实际落地到高可用、高可靠</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690446&amp;idx=1&amp;sn=17cb3f8966689f7266fad880e6ebac5a&amp;chksm=eb33711bed67577b6d6c07c9e8d5681388160c854240e93ecdbc3d5c9913657f43fe0f17c790&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690387&amp;idx=1&amp;sn=746ad952ea39810159de1560088654b3&amp;chksm=eb72e5451c5f14ac26768632878637903c9c38cdcf3eab4d9448d71362e0ebb2951f2ba40f86&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe96vZ2qY129CubJ77hPEUvOicvdf9edXDIDA02EZ1cFBMwtyhwoYtv2PIS4SwRMFvxrI5DokxhAMXZQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690387&amp;idx=1&amp;sn=746ad952ea39810159de1560088654b3&amp;chksm=eb72e5451c5f14ac26768632878637903c9c38cdcf3eab4d9448d71362e0ebb2951f2ba40f86&amp;scene=0&amp;xtrack=1#rd" target="_blank">2天开发一款复杂应用，首发支持DeepSeek-R1最新版，这款代码神器有点东西！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-30 17:00:00">发布日期：2025-05-30 17:00:00</time></div><p class="article-description">👉目录1 AI代码生成采纳率达30%，提效增质成果初现2 帮助企业解决软件工程难题，2天开发一款复杂应用3 One More Thing：一体化AI原生开发平台AI IDEAI正在加速现代软件工程开发</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690387&amp;idx=1&amp;sn=746ad952ea39810159de1560088654b3&amp;chksm=eb72e5451c5f14ac26768632878637903c9c38cdcf3eab4d9448d71362e0ebb2951f2ba40f86&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690344&amp;idx=1&amp;sn=16773f00ad0dabe8e9951f9676d5ae4c&amp;chksm=ebf4a5660df7b38c0e91bb1a24c9fcd4bdf947f9f05bc3233ec3b5f54efdd0c0fff78f6d73e6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe97py1JoEmiaSGp8V3U7OzibAsgFPoicDAj69BrUbtvMBpVA4sdBibvxfUek9zM4YOY9K1lp5xiazLu2BPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690344&amp;idx=1&amp;sn=16773f00ad0dabe8e9951f9676d5ae4c&amp;chksm=ebf4a5660df7b38c0e91bb1a24c9fcd4bdf947f9f05bc3233ec3b5f54efdd0c0fff78f6d73e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">架构师必备的服务架构性能优化大全！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-29 08:45:00">发布日期：2025-05-29 08:45:00</time></div><p class="article-description">👉目录1 缓存2 并行化处理3 批量化处理4 数据压缩处理5 无锁化6 顺序写7 分片化8 避免请求9 池化10 异步处理11 总结笔者最近对负责项目做了一些服务性能优化的工作，主要优化了项目中的一些</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690344&amp;idx=1&amp;sn=16773f00ad0dabe8e9951f9676d5ae4c&amp;chksm=ebf4a5660df7b38c0e91bb1a24c9fcd4bdf947f9f05bc3233ec3b5f54efdd0c0fff78f6d73e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690337&amp;idx=1&amp;sn=209bd97f3ccce2da1231fbae6c60d528&amp;chksm=eb90fa04e53415f699adfb6d7a9032749a65febcf26b3560413993177e5dfad06584fea91a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94K3NAfg0vpPclU9Urw1F7eJMyCPGx1uYIqmh3zmrCPGWXxWNDjeibnaaib9dKQDSsRf3pK88VPgMdw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690337&amp;idx=1&amp;sn=209bd97f3ccce2da1231fbae6c60d528&amp;chksm=eb90fa04e53415f699adfb6d7a9032749a65febcf26b3560413993177e5dfad06584fea91a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank">万字总结：腾讯会议后台告警治理实践——如何才能避免“事后诸葛亮”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-28 08:45:00">发布日期：2025-05-28 08:45:00</time></div><p class="article-description">👉目录1 让人头疼难题——为什么我们总是事后诸葛亮？2 告警的“向左”与“向右”3 为什么要做到精确告警是很难的4 推动告警治理，落地过程也是困难的5 如何有效识别出无效错误？6 腾讯会议部分新业务错</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690337&amp;idx=1&amp;sn=209bd97f3ccce2da1231fbae6c60d528&amp;chksm=eb90fa04e53415f699adfb6d7a9032749a65febcf26b3560413993177e5dfad06584fea91a5b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690299&amp;idx=1&amp;sn=64ae2900cd880e2cc975527cddec7d6c&amp;chksm=eb3964dc7f932b98de8788e36dbf86bdadc65981c89cebffcc233e2fe92544d8fd805e513205&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94K3NAfg0vpPclU9Urw1F7e9XLiaYhcuxjaspyXJAmnYyDwJp7r9FK3cJpHKG8RwrrpFb3j2JibSYHw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690299&amp;idx=1&amp;sn=64ae2900cd880e2cc975527cddec7d6c&amp;chksm=eb3964dc7f932b98de8788e36dbf86bdadc65981c89cebffcc233e2fe92544d8fd805e513205&amp;scene=0&amp;xtrack=1#rd" target="_blank">吹过头了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-27 08:45:00">发布日期：2025-05-27 08:45:00</time></div><p class="article-description">👉目录1 MCP的本质：统一的工具调用协议2 MCP的开发难题与市场乱局3 MCP很好，但它不是万灵药人人都在聊MCP，但人们口中的MCP往往只是一个拼凑而成的幻影。如今，各大厂商纷纷为它镀金包装，就</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690299&amp;idx=1&amp;sn=64ae2900cd880e2cc975527cddec7d6c&amp;chksm=eb3964dc7f932b98de8788e36dbf86bdadc65981c89cebffcc233e2fe92544d8fd805e513205&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690286&amp;idx=1&amp;sn=ded7a7f548cf16ba2ad63eb2dfa05db4&amp;chksm=eb8e8cd0d81092ca73513c97821fd0129a264ae81d4d7075827e1f59ccc63e20f8baf75d0f24&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690286&amp;idx=1&amp;sn=ded7a7f548cf16ba2ad63eb2dfa05db4&amp;chksm=eb8e8cd0d81092ca73513c97821fd0129a264ae81d4d7075827e1f59ccc63e20f8baf75d0f24&amp;scene=0&amp;xtrack=1#rd" target="_blank">裸辞后，随代码去流浪
+
+
+                                          
+
+
+
+产品经理把「用户画像精准触达」翻译成「让App图标根据用户心情变色」；
+测试坚持认为「并发量10万」等于「同时打开10万个浏览器页面」；
+老板恼火于写一个闪烁着「五彩斑斓的黑」的搜索引擎，为什么两周还没出Demo。
+
+过去一年，你花大价钱买了8个技术课程：每个都完成了开篇词的学习。
+加入Keep 1000天的你，成功完成了三次腹肌撕裂者打卡记录。
+你的人际交流能力也得到了长足的进步：
+
+“网络没有问题。”
+“交换机一切正常。”
+“下周一定上线。”
+“在我的机子上没有复现。”
+“你们服务器挂了吧。”
+“重启试试。”
+
+世界是个草台班子，自己居然还没混成台柱子。
+35岁的马刘辞职邮件只有一句话：
+
+我的代码不应该被禁锢在网吧卡座般的工位上。
+
+你在敦煌月牙泉边用CodeBuddy生成的代码，正跑在北上广深的机房里。
+三亚冲浪店老板用你基于云开发搭建的预约系统，实现了“冲浪板与键盘齐飞”的终极理想。
+挂在轻量应用服务器上的网站，记录了你的清凉一夏。
+那个1元巨款拿下的域名，redirect到了你环游世界的vlog里。
+
+深夜在青旅天台改bug时终于明白，有些东西比离职更难以戒断。何谓进步：是让所有复杂的、重复的、反人性的环节坍缩成后台一行「/start」，而你的眼睛只用盯着自己。
+
+你依然会在丽江的雨夜为某个死锁问题拍案而起，但这次窗外的雪山知道，那键盘声不是为了KPI，而是为了某只走失的流浪猫刚上线的“喵脸识别”小程序，科技向善。
+
+5月29日晚19:00，腾讯云开发者视频号“云上鹅好物”第一期直播间，我们将用技术人的方式聊聊产品：
+
+TVP专家+产品同学现场掰开揉碎讲产品
+抢跑618惊喜福利价产品抢购：域名注册、轻量应用服务器、云服务器CVM、云开发CloudBase、轻量对象存储（Lighthouse版）
+
+三小只公仔/键盘/马克杯等周边抽到手软
+
+评论区留下你最期待能来“云上鹅好物”直播的产品，我们将挑选2名用户送出腾讯视频会员月卡！
+
+
+🏃揭秘腾讯云爆款产品！抢跑618，开发者直播间限定福利，爆款低至1元起，手慢无！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-23 08:44:36">发布日期：2025-05-23 08:44:36</time></div><p class="article-description">裸辞后，随代码去流浪
+
+
+                                          
+
+
+
+产品经理把「用户画像精准触达」翻译成「让App图标根据用户心情变色」；
+测试坚持认</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690286&amp;idx=1&amp;sn=ded7a7f548cf16ba2ad63eb2dfa05db4&amp;chksm=eb8e8cd0d81092ca73513c97821fd0129a264ae81d4d7075827e1f59ccc63e20f8baf75d0f24&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690250&amp;idx=1&amp;sn=033b3923fd2583421fac5137978a4461&amp;chksm=ebf609bd23be84cc0b1f4ad08e10bafa1fb22a8fcff1286aba3d020f6644d5fd9ef572a30e8f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe959icqfwrH4EKqXOBwDWgI0ibaicZ0PwEpvNQmxQHYv47iapABOiadciaOHicickXj0rtcBHyPMMficV0AialbQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690250&amp;idx=1&amp;sn=033b3923fd2583421fac5137978a4461&amp;chksm=ebf609bd23be84cc0b1f4ad08e10bafa1fb22a8fcff1286aba3d020f6644d5fd9ef572a30e8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">大厂神器？Protobuf编码原理和避坑指南！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-22 08:45:00">发布日期：2025-05-22 08:45:00</time></div><p class="article-description">👉目录1 编码原理    1.1 概述    1.2 Varints 编码    1.3 ZigZag 编码    1.4 embedded messages &amp; repeated2 最佳实践</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690250&amp;idx=1&amp;sn=033b3923fd2583421fac5137978a4461&amp;chksm=ebf609bd23be84cc0b1f4ad08e10bafa1fb22a8fcff1286aba3d020f6644d5fd9ef572a30e8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690234&amp;idx=1&amp;sn=02351ca4bc60468aee162000ed5b07ca&amp;chksm=eb8a150a048a999963a14039a6ace85b4d09265b689520e56e77df35f94b8b49c9a1746202d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95YfT6jRntOjzVAiaM05yMoz37lI0zPR2lSIoV2H6iczSeBJ0JOKcXaC9no0tibFPF3sg3jz4OJibia9Qw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690234&amp;idx=1&amp;sn=02351ca4bc60468aee162000ed5b07ca&amp;chksm=eb8a150a048a999963a14039a6ace85b4d09265b689520e56e77df35f94b8b49c9a1746202d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">Electron以慢著称，腾讯文档却能实现内存优化60%降幅？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-21 08:45:00">发布日期：2025-05-21 08:45:00</time></div><p class="article-description">👉目录1 背景介绍2 优化方案3 实施过程4 优化效果5 总结6 后续计划腾讯文档桌面端新版本已对外发布，该版本中优化了内存占用，Windows 版本内存占用下降了约60%，改善了用户体感，本文对桌面</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690234&amp;idx=1&amp;sn=02351ca4bc60468aee162000ed5b07ca&amp;chksm=eb8a150a048a999963a14039a6ace85b4d09265b689520e56e77df35f94b8b49c9a1746202d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690223&amp;idx=1&amp;sn=2534eca69d76c393ec5463cab399f9dc&amp;chksm=eba24cf4d1a5c360e4443c35d88dbe11a74027b5ebee3597ab1404cc33057c9975f80983e214&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe95h9SV1yzt8Wvqu1Zia97FVNLF2kxXTaiccibs47JWHTgbqrHUOBtgU6lUIpvKRvzQr3rFjD972sgZ9Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690223&amp;idx=1&amp;sn=2534eca69d76c393ec5463cab399f9dc&amp;chksm=eba24cf4d1a5c360e4443c35d88dbe11a74027b5ebee3597ab1404cc33057c9975f80983e214&amp;scene=0&amp;xtrack=1#rd" target="_blank">实操干货！MCP Server开发从0到1</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-05-20 08:45:00">发布日期：2025-05-20 08:45:00</time></div><p class="article-description">👉目录1 MCP 协议简介2 MCP 主要架构3 MCP 开发踩坑经历4 关于 AI 的感想最近 Model Context Protocol ( MCP ) 概念大火，刚好它可以用 Node 或 P</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690223&amp;idx=1&amp;sn=2534eca69d76c393ec5463cab399f9dc&amp;chksm=eba24cf4d1a5c360e4443c35d88dbe11a74027b5ebee3597ab1404cc33057c9975f80983e214&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_3.html" class="pagination-button pagination-prev">上一页</a><a href="index_5.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

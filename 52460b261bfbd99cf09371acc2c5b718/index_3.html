@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>探索AGI</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488449&amp;idx=1&amp;sn=c069df6d420ec917d8727f1ab424f6fc&amp;chksm=c0e2519e71224722f083555c470221275eda8cea20eceb216f96d67ce41e037c82ba920e8399&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngXGeIGYBpEb9RvKy1WMr1V7SwrpU1mJ036mOjuwNGwvd1fu1P7iaIcOmekY6xeutLibFEricuvjswfQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488449&amp;idx=1&amp;sn=c069df6d420ec917d8727f1ab424f6fc&amp;chksm=c0e2519e71224722f083555c470221275eda8cea20eceb216f96d67ce41e037c82ba920e8399&amp;scene=0&amp;xtrack=1#rd" target="_blank">Langchain 、 Manus 组了一个研讨会：Agent越智能，死得越快！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-27 11:50:00">发布日期：2025-10-27 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~最近，Langchain 的工程师 Lance Martin 和 Manus 的创始人Peak 季逸超 进行了一次关于Agent的研讨会，信息量有点</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488449&amp;idx=1&amp;sn=c069df6d420ec917d8727f1ab424f6fc&amp;chksm=c0e2519e71224722f083555c470221275eda8cea20eceb216f96d67ce41e037c82ba920e8399&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488439&amp;idx=1&amp;sn=48d2ab1f98d50aa90f8a07d41c9ba71e&amp;chksm=c057a181f35566544742066f925d10b80be74ca56a95fda420aac288fa238d61e2971d5100f4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488439&amp;idx=1&amp;sn=48d2ab1f98d50aa90f8a07d41c9ba71e&amp;chksm=c057a181f35566544742066f925d10b80be74ca56a95fda420aac288fa238d61e2971d5100f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 没有带来上四休三，反而让硅谷卷到 996。 
+
+最近在Armin Ronacher的播客听到一些有意思的悖论：AI本应该让我们工作更少，但现实是我们比以往工作得更多了。 
+
+我在自己的工作模式中也观察到了同样的现象。这种工作量的增加并非是事情变多了，而是一种持续工作的心理强迫。
+
+996起源于阿里，现在在硅谷发扬。他们的理由是要保持竞争力，在AI快速发展的今天，人有可以持续运行的工具，所以必须更努力才能跟上节奏。 
+
+回顾过去，从油灯到电灯，再到如今的大模型，技术进步确实改变了工作的本质。 
+
+灯让人们可以将工作干到深夜，随之而来的是一种微妙的转变，可以工作变成了应该工作。这就是进步的本质：新获得的奢侈品迅速变成必需品。 
+
+科技圈都再说，无限工具加无限杠杆等于无限潜能。 
+
+但这种心态很恐怖。过去，疲劳是休息的信号，而现在，疲劳成了软弱的标志。 
+
+我们成了自己的监工，从醒来到入睡都必须利用每一个可用时刻。 
+
+我们内化了无限潜能的说法，在追求自由的伪装下剥削自己。 
+
+这归根结底是一个关于文化的故事。工具本身不要求工作，是人、是系统在要求。机器不在乎你睡不睡觉。让我们彻夜难眠的，是我们自己讲述的关于生产力意味着什么的故事。 
+
+就像电灯延长了白天一样，AI正在延长工作时间。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-24 11:50:00">发布日期：2025-10-24 11:50:00</time></div><p class="article-description">AI 没有带来上四休三，反而让硅谷卷到 996。 
+
+最近在Armin Ronacher的播客听到一些有意思的悖论：AI本应该让我们工作更少，但现实是我们比以往工作得更多了。 
+
+我在自己的工作模式中</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488439&amp;idx=1&amp;sn=48d2ab1f98d50aa90f8a07d41c9ba71e&amp;chksm=c057a181f35566544742066f925d10b80be74ca56a95fda420aac288fa238d61e2971d5100f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488436&amp;idx=1&amp;sn=0317d5e5cd4ead466138a56136c5824f&amp;chksm=c01b7136651e20fd8f3a49fc72cbe4e81ac46f9eefd1248071b06aacd477da55cc250efe0382&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488436&amp;idx=1&amp;sn=0317d5e5cd4ead466138a56136c5824f&amp;chksm=c01b7136651e20fd8f3a49fc72cbe4e81ac46f9eefd1248071b06aacd477da55cc250efe0382&amp;scene=0&amp;xtrack=1#rd" target="_blank">从DeepSeek OCR到AI炒股大赛，是时候停止对DeepSeek的猛吹了
+
+Alpha Arena 最出圈大概是20号左右，那时候各种营销DeepSeek来自幻方，量化是基本功。 
+
+到今天，收益基本归0了，但是没人再说了。
+
+首先如果真的看过这个榜，就知道这特么就是个赌博。
+
+Prompt极其简单，一些数据都不对，比如DOGE的MACD全是0，只提供3分钟和4个小时的数据，MACD、RSI的指标很滞后。
+
+做的越多错的越多，离谱的像Gemini基本是分钟级别交易，亏得差不多了，整体就是在赌AI模型的运势。
+
+这2天又出来了，GPT反买，别墅靠大海，的说法。但是仔细看GPT的反思，即使在巨额亏损，仍清晰说自己为什么持仓，风险参数是什么，仓位逻辑是什么。
+
+你能理解他为什么错，反而DeepSeek的持仓理由永远都是，计划未变，仓位不懂。（即使市场剧烈波动）。
+
+在回到DeepSeek-OCR，也是被吹的很离谱，甚至很多人再说它还原的多精确。
+
+如果从OCR角度来看，那确实不太对，它真的比不过专业的OCR模型精度，比如百度新出的。越复杂的文档的效果越差，甚至中文的效果明显比英文差。
+
+DeepSeek OCR 说是通过视觉token压缩文本信息，比如将1万字的5000个token压缩到512个视觉token。
+
+但是需要注意的是，解码精度很高，不代表，信息丢失的少。 就像你眯着眼睛看，内容断断续续的，能看清楚很多东西，但是可能不一定会比连续的summary好。
+
+最后，叠个甲，我爱国产模型，但是在猛吹背后，也可以认真审视真正的价值与局限。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-23 11:50:00">发布日期：2025-10-23 11:50:00</time></div><p class="article-description">从DeepSeek OCR到AI炒股大赛，是时候停止对DeepSeek的猛吹了
+
+Alpha Arena 最出圈大概是20号左右，那时候各种营销DeepSeek来自幻方，量化是基本功。 
+
+到今天，收</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488436&amp;idx=1&amp;sn=0317d5e5cd4ead466138a56136c5824f&amp;chksm=c01b7136651e20fd8f3a49fc72cbe4e81ac46f9eefd1248071b06aacd477da55cc250efe0382&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488433&amp;idx=1&amp;sn=837d40645eb3a15d57b440ea5cf123e2&amp;chksm=c0d93b4770053b8b54aefc5a9394e2f096c815eff21fbbbedb9e97664e8aec6a02a9565ad7e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488433&amp;idx=1&amp;sn=837d40645eb3a15d57b440ea5cf123e2&amp;chksm=c0d93b4770053b8b54aefc5a9394e2f096c815eff21fbbbedb9e97664e8aec6a02a9565ad7e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025年10月21日，OpenAI、Google、Anthropic 相互狙击，同一天发布了三款产品。
+
+Google致力于广度（让所有人都能创造），OpenAI致力于深度（融入所有生活场景），Anthropic选择了精度。
+
+最终还是Google的股价以微跌买单。
+
+OpenAI推出自己的AI 浏览器 - Altas，目前仅限于macOS， 所有用户均可下载，但是Agent模式面向付费用户。
+
+交互上有点抄袭似Dia，还做了个骚操作，迁移Chrome数据，送7天会员~
+
+Google的AI Studio大更新，宣传是轻松100倍构建应用，但是大家万众期待的Gemini 3 呢？
+
+它解决的是AI想法如何快速变成现实的问题。
+
+新界面可以通过模型选择器、功能模块等，让构建应用像搭积木一样容易，最重要的是可以一键部署，快速迭代。
+
+愿景是一个由Gemini驱动的AI应用网络，年底前建成一百万个应用。
+
+
+Claude Code（网页版）推出，一个基于云的AI编程工具，可在浏览器中直接执行代码任务。
+
+目前仅面向Pro和Max付费用户的研究预览版，每个任务都在隔离环境中运行，可以联通GitHub， 支持移动端，随时随地可编程。
+
+
+可以看出来现在巨头们在竞争的 AI 三大基本盘，交互、创造和专业执行。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-22 11:50:00">发布日期：2025-10-22 11:50:00</time></div><p class="article-description">2025年10月21日，OpenAI、Google、Anthropic 相互狙击，同一天发布了三款产品。
+
+Google致力于广度（让所有人都能创造），OpenAI致力于深度（融入所有生活场景），An</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488433&amp;idx=1&amp;sn=837d40645eb3a15d57b440ea5cf123e2&amp;chksm=c0d93b4770053b8b54aefc5a9394e2f096c815eff21fbbbedb9e97664e8aec6a02a9565ad7e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488431&amp;idx=1&amp;sn=95f2ae18a1eca0f6d118d15517b975a9&amp;chksm=c0485f77f53256f8ee1292ae8d4f09e7edb424686593f3172e6cfb26b3be1aeaa737237e8a6c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488431&amp;idx=1&amp;sn=95f2ae18a1eca0f6d118d15517b975a9&amp;chksm=c0485f77f53256f8ee1292ae8d4f09e7edb424686593f3172e6cfb26b3be1aeaa737237e8a6c&amp;scene=0&amp;xtrack=1#rd" target="_blank">前2天，Anthropic 又出了一期《Build more effective agents》的播客。
+
+Multi-Agent 研究工程师 Erik Schluntz 分享了他们在构建高效 AI Agent 方面最新的思考和实践，系统讲述从 「工作流」 -&gt; 「单一 Agent」 -&gt; 「Agent 工作流」 -&gt; 「多智能体系统」的演变过程，还给出了大量一线实践指南。
+
+地址在：https://www.youtube.com/watch?v=uhJJgc-0iTQ
+
+
+Q: 为什么 Claude 擅长执行复杂的智能体任务？
+
+在训练的时候，Claude 就被赋予大量开放式、多步骤的长期任务，允许模型探索环境，通过强化学习，不断练习。
+
+并且，Claude将，编程作为核心能力，结果是一个顶级的编码智能体，几乎可以胜任任何其他工作。
+
+Q: Claude Skill 解决了什么痛点？
+
+claude.md 文件对于 Claude 而言，像是一个操作手册；Skill 就是给了模型一个完整的工具箱和资料库。
+
+Q: 智能体的架构模式是如何演变的？
+
+从 串联提示 演变为鲁棒的 串联智能体循环。
+
+过去，将多个Prompt像流水线一样串联起来。 Step 1 -&gt; Step 2 -&gt; Step 3。 任何步骤失败，整个流程会崩溃。
+
+现在，工作流中的每一步，都是一个独立的、闭环的智能体循环。在进入下一步之前，当前步骤的智能体会不断尝试、验证、修正，直到产出正确结果，再将成品传递给下一步。
+
+
+Q: 常见陷阱与最佳实践
+
+过度设计，第一天就试图构建一个复杂的多智能体系统。导致效率低下、难以调试和维护。这是最常见的一个问题。
+
+一定要从简单开始，只在绝对必要时，才增加复杂性。
+
+其次，工具设计应面向UI，而非API。模型是工具的用户，工具的设计应追求一次交互，信息完备的最佳用户体验。
+
+Q:  未来 6-12 个月，我们将看到什么？
+
+1. 自我验证与闭环测试
+智能体将能利用Computer Use能力，自行验证工作成果。
+
+2.  Computer Use能力普及化
+Claude 将能直接在你使用的任何软件中工作，打破复制粘贴的壁垒。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-21 11:50:00">发布日期：2025-10-21 11:50:00</time></div><p class="article-description">前2天，Anthropic 又出了一期《Build more effective agents》的播客。
+
+Multi-Agent 研究工程师 Erik Schluntz 分享了他们在构建高效 AI</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488431&amp;idx=1&amp;sn=95f2ae18a1eca0f6d118d15517b975a9&amp;chksm=c0485f77f53256f8ee1292ae8d4f09e7edb424686593f3172e6cfb26b3be1aeaa737237e8a6c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488429&amp;idx=1&amp;sn=eda1a274813c3d21317394a7defc42d4&amp;chksm=c093f9fa5afe1dde5c29bf2fff66ef98396e63a932d137b1bfd16acf2568f8c2f8f707e9b8fe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488429&amp;idx=1&amp;sn=eda1a274813c3d21317394a7defc42d4&amp;chksm=c093f9fa5afe1dde5c29bf2fff66ef98396e63a932d137b1bfd16acf2568f8c2f8f707e9b8fe&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Skills到底是什么？和MCP、RAG、FunctionCaling的本质区别是？
+
+一个暴论：AI Agent的未来，一半靠模型，另一半靠工程。
+
+A社这次不止增加了这个概念，还开源了一个仓库，https://github.com/anthropics/skills，里面包含了所有20个左右的官方Skill的源码示例，这才是真正的灵魂。
+
+一个Skill = 任务说明书 SKILL.md + 工具代码 (scripts) + 专业知识 (references) + 素材资源 (assets)。
+
+它把完成一个特定任务所需的一切都打包好了，本质上就是一种代码和资源的组织方式，一种约定优于配置的理念。
+
+精髓是：为上下文窗口减负这部分是Claude Skills设计的精髓，也是它和简单RAG/MCP/FunctionCalling的最大区别。它就是一套精心设计，为了节省上下文窗口而设计的分层加载策略。
+
+Claude Skills与MCP的关系，它俩不是替代关系，而是正交的、可以组合的。MCP负责连接，Skills负责驱动。一个解决通信标准，一个解决能力封装。
+
+这套东西，有什么用？既然这玩意儿本质上就是一堆文件夹和代码，我们能从中得到什么？最大的价值是：Anthropic把他们在生产环境中打磨出的一套Agent能力管理的设计模式开源了。我们完全可以把这个模式借鉴过来，用在自己的Agent体系里，不管你用的是Qwen、Deepseek，还是别的模型。
+
+当你的Agent能力越来越多时，怎么管理？一个几千行的System Prompt？一个包含几十个工具函数的大杂烩文件？这些都很难维护。
+
+而Skills提供了一种解耦的、模块化的方案。你团队里的Agent不再是依赖一个巨大的、难以维护的system_prompt.txt，而是一个由几十个标准化的Skill文件夹组成的能力库，每个Skill都可以独立版本控制、测试和迭代。
+
+所以说呀，Claude Skills本身不是什么黑科技。它最大的启示还是：AI Agent的未来，一半靠模型，另一半靠工程。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-20 11:50:00">发布日期：2025-10-20 11:50:00</time></div><p class="article-description">Claude Skills到底是什么？和MCP、RAG、FunctionCaling的本质区别是？
+
+一个暴论：AI Agent的未来，一半靠模型，另一半靠工程。
+
+A社这次不止增加了这个概念，还开源</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488429&amp;idx=1&amp;sn=eda1a274813c3d21317394a7defc42d4&amp;chksm=c093f9fa5afe1dde5c29bf2fff66ef98396e63a932d137b1bfd16acf2568f8c2f8f707e9b8fe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488427&amp;idx=1&amp;sn=7b1c65ab275f4b2561e2fe2f0c033afb&amp;chksm=c06ea44bc4ae7b12a9f781699a079560a0a58883b2f7fe994f1631f00a295c014935d2f94909&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhtbyr0LPdicF9adkVOE9Jp2N7cOxd8Ulx97x8gy3s3lIDYNhKbcYYbL9LUzlXtjTd8qfWyErccpibw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488427&amp;idx=1&amp;sn=7b1c65ab275f4b2561e2fe2f0c033afb&amp;chksm=c06ea44bc4ae7b12a9f781699a079560a0a58883b2f7fe994f1631f00a295c014935d2f94909&amp;scene=0&amp;xtrack=1#rd" target="_blank">超100家YC疯抢的 FDE 模式，正成为AI Agent的 PMF 范式！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-17 11:50:00">发布日期：2025-10-17 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~最近硅谷在发生一件很有意思的事：很多的VC都在招聘一个叫 FDE（Forward Deployed Engineer）的岗位。这是一个诞生于情报部门</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488427&amp;idx=1&amp;sn=7b1c65ab275f4b2561e2fe2f0c033afb&amp;chksm=c06ea44bc4ae7b12a9f781699a079560a0a58883b2f7fe994f1631f00a295c014935d2f94909&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488421&amp;idx=1&amp;sn=f694104a428ea223c00ffa2c249640f1&amp;chksm=c074cf1d1e8a97c32d707f93415e1680b899c3268252f3824b4cdcb3f99b149ccb2616181be0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhZN0BtJ6BbEkq39rGdLj9KmOIybLKvtRwtMe316Ch4ic2rN584SRDiaTI9oo2tHJ8icAaYX90Huw71w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488421&amp;idx=1&amp;sn=f694104a428ea223c00ffa2c249640f1&amp;chksm=c074cf1d1e8a97c32d707f93415e1680b899c3268252f3824b4cdcb3f99b149ccb2616181be0&amp;scene=0&amp;xtrack=1#rd" target="_blank">Google开源了一个能操作电脑的智能体</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-16 11:50:00">发布日期：2025-10-16 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~前两天，谷歌悄咪咪开源了一个叫 computer-use-preview 的项目。可以让AI直接操控你电脑的Agent框架, 对标broswer_u</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488421&amp;idx=1&amp;sn=f694104a428ea223c00ffa2c249640f1&amp;chksm=c074cf1d1e8a97c32d707f93415e1680b899c3268252f3824b4cdcb3f99b149ccb2616181be0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488409&amp;idx=1&amp;sn=a73da5336637845e3634a268e95996ca&amp;chksm=c0d8561f102147400a7d17f48cc331281e5e414027d086d7de8248ec3dc7c03e131dfc62084c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnj7QKvWJvebgYzKUZD159xGp4mCIALKdk1ekEccAdC2FSFjepxWJ6xqu1pEAxHQYcQqQSbQevE2Fw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488409&amp;idx=1&amp;sn=a73da5336637845e3634a268e95996ca&amp;chksm=c0d8561f102147400a7d17f48cc331281e5e414027d086d7de8248ec3dc7c03e131dfc62084c&amp;scene=0&amp;xtrack=1#rd" target="_blank">硅谷顶级团队闭门会，让Agent活下来的共识，95%的AI Agent都死了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-15 11:53:06">发布日期：2025-10-15 11:53:06</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~这周，旧金山一场600多人参加的AI技术大会上，Uber、WisdomAI、EvenUp... 等企业的大佬们，畅谈AI。一个核心的insight是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488409&amp;idx=1&amp;sn=a73da5336637845e3634a268e95996ca&amp;chksm=c0d8561f102147400a7d17f48cc331281e5e414027d086d7de8248ec3dc7c03e131dfc62084c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488402&amp;idx=1&amp;sn=d0bdd81c709eec17a4d3b6af67934750&amp;chksm=c0872f668dfbbae90100b5f504b0c4f0536d8565bb208decb93209c582bbbf528cd628ac296e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniaT8iaXg82pf9FOh0faHWwNtLlKYX9SPqRVYuHBdMm31YRUcWoBkf1rFAHpN1jyWTpG5pwib8c0gI2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488402&amp;idx=1&amp;sn=d0bdd81c709eec17a4d3b6af67934750&amp;chksm=c0872f668dfbbae90100b5f504b0c4f0536d8565bb208decb93209c582bbbf528cd628ac296e&amp;scene=0&amp;xtrack=1#rd" target="_blank">谷歌揭秘：Multi-Agent 推理时扩展才是未来。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-14 11:50:00">发布日期：2025-10-14 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~谷歌 DeepMind 和 MIT 联合发了一篇论文，名叫 TUMIX（Tool-Use Mixture）。大概就是说，Multi-Agent 才是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488402&amp;idx=1&amp;sn=d0bdd81c709eec17a4d3b6af67934750&amp;chksm=c0872f668dfbbae90100b5f504b0c4f0536d8565bb208decb93209c582bbbf528cd628ac296e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488390&amp;idx=1&amp;sn=1eea05bd86d91cd63bbaa11db73998b8&amp;chksm=c048aed1a255a2b47758565ceb90b4a65e9fd7d03d8569ccdfbfc7d87cc77fe837bd0f76f36f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngLWicTD94UKvHF5XkDDAibhaz4dkeIgj90bgfRV9pia768qjtqFm60c5hcic4LhEkVu25CIXo4d1UwEA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488390&amp;idx=1&amp;sn=1eea05bd86d91cd63bbaa11db73998b8&amp;chksm=c048aed1a255a2b47758565ceb90b4a65e9fd7d03d8569ccdfbfc7d87cc77fe837bd0f76f36f&amp;scene=0&amp;xtrack=1#rd" target="_blank">Chrome已死，AI浏览器当立！认知革命比技术成熟来得更快。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-13 11:50:00">发布日期：2025-10-13 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~过去分享了好几篇AI浏览器相关的，围绕为啥那么Agent需要AI浏览器，Agent Infra。Chrome过时了，AI Agent需要自己的浏览器</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488390&amp;idx=1&amp;sn=1eea05bd86d91cd63bbaa11db73998b8&amp;chksm=c048aed1a255a2b47758565ceb90b4a65e9fd7d03d8569ccdfbfc7d87cc77fe837bd0f76f36f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=1&amp;sn=5087c35b842be87c186ea6d6351de812&amp;chksm=c07be90744e4e864b4e3ec40b0cbaf5f36067b8bd178f03443c7d223e2979e18274d18612a0f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhALNNEu2pLCJAtcW7AIuWetbwnIUy39CUOibDD9hh03icbVYYIc9Vz7OGEicZUtTezTso2Ps16LEvBQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=1&amp;sn=5087c35b842be87c186ea6d6351de812&amp;chksm=c07be90744e4e864b4e3ec40b0cbaf5f36067b8bd178f03443c7d223e2979e18274d18612a0f&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025年，AI Agent注定失败？！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-11 11:50:00">发布日期：2025-10-11 11:50:00</time></div><p class="article-description">前几天刷到条有意思的视频，“AI智能体在2025年注定失败？”看完才发现，还真不是危言耸听。CMU最新研究显示，即便是Claude Sonnet 3.5这类顶尖模型驱动的智能体，在真实任务中的完成率也</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=1&amp;sn=5087c35b842be87c186ea6d6351de812&amp;chksm=c07be90744e4e864b4e3ec40b0cbaf5f36067b8bd178f03443c7d223e2979e18274d18612a0f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=2&amp;sn=f8c4daaf2c9772e9c5f761b32e57f8c5&amp;chksm=c0a3836db52dd1c77bdfe7aefbe70050e3e63c22bdf3c66326abe0bba8170182e1d05de07f4e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnh3jCicxLiaJXzicloj7sDuaQQqQSqvdOTyvVOg2L2FfdA6kQPsEtJQVmn4kU63aOGiaQMETezSepQnGg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=2&amp;sn=f8c4daaf2c9772e9c5f761b32e57f8c5&amp;chksm=c0a3836db52dd1c77bdfe7aefbe70050e3e63c22bdf3c66326abe0bba8170182e1d05de07f4e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Google封神，计算机视觉的GPT3时刻来了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-11 11:50:00">发布日期：2025-10-11 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~在ChatGPT（或者GPT3）之前，我们要给翻译、摘要、问答训练各种Bert、Seq2Seq模型。GPT-3 出来后，用一个统一的模型通过Prom</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488380&amp;idx=2&amp;sn=f8c4daaf2c9772e9c5f761b32e57f8c5&amp;chksm=c0a3836db52dd1c77bdfe7aefbe70050e3e63c22bdf3c66326abe0bba8170182e1d05de07f4e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488375&amp;idx=1&amp;sn=9e3da8f7232c95ecd2aca323a3428786&amp;chksm=c0e9f0f595ea019dcc19e5139ad6617d3f393edbdfe6c09d1b7998afb5016958d0e3bad6d290&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhALNNEu2pLCJAtcW7AIuWefb5TPibfgx1hfbhF0Jiar9KpKgnjpdU6YtuTy7PFKFSDGkRzOHqUsaPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488375&amp;idx=1&amp;sn=9e3da8f7232c95ecd2aca323a3428786&amp;chksm=c0e9f0f595ea019dcc19e5139ad6617d3f393edbdfe6c09d1b7998afb5016958d0e3bad6d290&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic：怎么才能控制模型的行为，做好Agents?</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-10 11:50:00">发布日期：2025-10-10 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~Anthropic 最近又发了一篇关于 AI Agents 的博客，过去几个月已经连续好几篇了。我觉得他们关于Agents的内容整体都挺好的，写的也</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488375&amp;idx=1&amp;sn=9e3da8f7232c95ecd2aca323a3428786&amp;chksm=c0e9f0f595ea019dcc19e5139ad6617d3f393edbdfe6c09d1b7998afb5016958d0e3bad6d290&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488369&amp;idx=1&amp;sn=01594cf8796c967ec8b77530cc503f72&amp;chksm=c0d9ef7fff7800c89e3771b89b42ff436326ab11fecf786c863e0facf73069d888601e395f43&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniaHU8y9Hpuib4ayPkblTk9wyUnCFw02qcW8AMEMR0poJPZDBcdXuXjklsARsPD6aGNPLRiaYWa3OnVQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488369&amp;idx=1&amp;sn=01594cf8796c967ec8b77530cc503f72&amp;chksm=c0d9ef7fff7800c89e3771b89b42ff436326ab11fecf786c863e0facf73069d888601e395f43&amp;scene=0&amp;xtrack=1#rd" target="_blank">国庆假期AI圈彻底打疯了，谷歌Gemini 3.0 Pro泄露，血战Claude 4.5！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-10-09 11:50:00">发布日期：2025-10-09 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~国庆各种新闻满天飞，大佬们都不过节的。。。今天快速梳理了一下所有的新闻，给家人们补补课。Anthropic、OpenAI、Google假期前后，御三</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488369&amp;idx=1&amp;sn=01594cf8796c967ec8b77530cc503f72&amp;chksm=c0d9ef7fff7800c89e3771b89b42ff436326ab11fecf786c863e0facf73069d888601e395f43&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488347&amp;idx=1&amp;sn=77d8bc6a450b7f6b80a4fa7f0d3d4aa4&amp;chksm=c05eb113f89e47d5bdb305f10dc2cab0b511463acd1aeb15f16745907f77c3433dbf24deb5a5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnh3jCicxLiaJXzicloj7sDuaQQLgtdC0jawYF0K844crOs455lxYu4VaF0Hk1DU0xGdwUrpicSvr6NQjA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488347&amp;idx=1&amp;sn=77d8bc6a450b7f6b80a4fa7f0d3d4aa4&amp;chksm=c05eb113f89e47d5bdb305f10dc2cab0b511463acd1aeb15f16745907f77c3433dbf24deb5a5&amp;scene=0&amp;xtrack=1#rd" target="_blank">Anthropic又推出了一个新Agent~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-29 11:50:00">发布日期：2025-09-29 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~Anthropic 又悄悄地给 Claude 塞进了一个新功能 —— Imagine。这可能是他们面向软件开发未来形态的探索，让AI实时生成可交互的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488347&amp;idx=1&amp;sn=77d8bc6a450b7f6b80a4fa7f0d3d4aa4&amp;chksm=c05eb113f89e47d5bdb305f10dc2cab0b511463acd1aeb15f16745907f77c3433dbf24deb5a5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488307&amp;idx=1&amp;sn=a9bbc0a6824538460fe8ed8f04d441a7&amp;chksm=c00e8a95fc68f463d7db883cd8c4bc6c92d12e775dd2ef7e97a2ce4100a1a76b80d887b5a28a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnjA518rGTu9A7gvqZryhQI4ME0ICDBpM8DrFbKXYxSjSTC1uuHpKxtcxROCufv2SAvbCjd05ibAVAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488307&amp;idx=1&amp;sn=a9bbc0a6824538460fe8ed8f04d441a7&amp;chksm=c00e8a95fc68f463d7db883cd8c4bc6c92d12e775dd2ef7e97a2ce4100a1a76b80d887b5a28a&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code + Kimi，3个小时，净省￥199 !</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-28 11:50:00">发布日期：2025-09-28 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~我戒掉了一款用了2年的付费软件。就是那个能把 Markdown 排版后无损复制到公众号的 mdnice。倒不是因为它不好用，而是因为我只用了一个下午</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488307&amp;idx=1&amp;sn=a9bbc0a6824538460fe8ed8f04d441a7&amp;chksm=c00e8a95fc68f463d7db883cd8c4bc6c92d12e775dd2ef7e97a2ce4100a1a76b80d887b5a28a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488221&amp;idx=1&amp;sn=d176fc9ecb031976f179d564ce1d55f5&amp;chksm=c04bf4b98e03ebece6d401be477f1b3af6e459c9ab78bf4c412a1f646030d56cf39016e70e28&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniavp8KrIg00ibh3A4CJayRv5yNfAkWvAvB8Jdyib1I4gOjNAZiaPceU8ewfsKqLxYAqQpBfibuu56g9YQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488221&amp;idx=1&amp;sn=d176fc9ecb031976f179d564ce1d55f5&amp;chksm=c04bf4b98e03ebece6d401be477f1b3af6e459c9ab78bf4c412a1f646030d56cf39016e70e28&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent能自己“复盘”和“进化”，这个开源框架牛了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-26 11:50:00">发布日期：2025-09-26 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~昨天分享 Agent Infra，一个好的 Infra 已经可以让Agent自动进化了。然后，我去搜索了一下相关的开源框架，然后还真找到了一个。 仔</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488221&amp;idx=1&amp;sn=d176fc9ecb031976f179d564ce1d55f5&amp;chksm=c04bf4b98e03ebece6d401be477f1b3af6e459c9ab78bf4c412a1f646030d56cf39016e70e28&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488212&amp;idx=1&amp;sn=7ba7ca71705d34c7e2f9121973ae51b4&amp;chksm=c02fd624579d50f0a11554870c9c1aecaf03a74a884212421c3ac62d83ff11980871a2bc352a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniavp8KrIg00ibh3A4CJayRv5KebtFu0JW0dSgPoibLHIxg0Z4cHlJbR2GqKpICbdzQqMDZILNqhIxKQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488212&amp;idx=1&amp;sn=7ba7ca71705d34c7e2f9121973ae51b4&amp;chksm=c02fd624579d50f0a11554870c9c1aecaf03a74a884212421c3ac62d83ff11980871a2bc352a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里AgentBay揭秘，Agent Infra才是真护城河！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-25 11:50:00">发布日期：2025-09-25 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~过去半年，几乎10个创业者有8个在做各种各样的Agent，但是Agent Infra绝对是被大多数人忽视的一个板块。月初，给家人们以 AutoGLM</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488212&amp;idx=1&amp;sn=7ba7ca71705d34c7e2f9121973ae51b4&amp;chksm=c02fd624579d50f0a11554870c9c1aecaf03a74a884212421c3ac62d83ff11980871a2bc352a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488200&amp;idx=1&amp;sn=396f9a9f10cd78d4ebd037cd1c6ac12e&amp;chksm=c03b045db77492d63d6077cb9a36ccc69c91f667d8926162472c22f964678a322488ca3540cd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhmYauYNSQCAe5SPLJkfVnB36uc6diaRmsLQLsIQAsuHdw1jKeeDibmFTqoUBIsat3X9gNoVHFF6NqQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488200&amp;idx=1&amp;sn=396f9a9f10cd78d4ebd037cd1c6ac12e&amp;chksm=c03b045db77492d63d6077cb9a36ccc69c91f667d8926162472c22f964678a322488ca3540cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">云栖大会阿里掀桌子了！Qwen3-Max、VL、Omini、Agent ... 统统发布！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-24 14:00:00">发布日期：2025-09-24 14:00:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~人在云栖大会，一上来，阿里云智能首席技术官周靖人就介绍了 千问多款新模型发布，一款模型升级。今天给家人们分享一下，阿里今天发布&amp;开源的那些大模型全家</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488200&amp;idx=1&amp;sn=396f9a9f10cd78d4ebd037cd1c6ac12e&amp;chksm=c03b045db77492d63d6077cb9a36ccc69c91f667d8926162472c22f964678a322488ca3540cd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488154&amp;idx=1&amp;sn=2249a160bd216f76b00adb6291d217fe&amp;chksm=c05a81eacf53460b678605f9d2997f8ea45013a4cd7bc4e30f16c9bc73dca08a3af0679eed22&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniahLHHBB3pBrThkEnCPGe8oDO3RCaJ1F3ufWhY947tU11ziaAaHL4tWbQX6Zw8sUs7ThqPfeerPZGw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488154&amp;idx=1&amp;sn=2249a160bd216f76b00adb6291d217fe&amp;chksm=c05a81eacf53460b678605f9d2997f8ea45013a4cd7bc4e30f16c9bc73dca08a3af0679eed22&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI 万字报告： 不要再卷Agent了~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-23 11:50:00">发布日期：2025-09-23 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~周末，终于刷完了，OpenAI的《How People Use ChatGPT》。很多数据，比较违背大多数人惯性思维，今天从不同的角度，给大家分享一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488154&amp;idx=1&amp;sn=2249a160bd216f76b00adb6291d217fe&amp;chksm=c05a81eacf53460b678605f9d2997f8ea45013a4cd7bc4e30f16c9bc73dca08a3af0679eed22&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488132&amp;idx=1&amp;sn=bc07ee75ef7778901a3eb8ae4742021b&amp;chksm=c0b9b189d2a3a939c811058b6d5a318bb185430dfd84ae6069d888df400f26878cfbebdd2dcd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniahLHHBB3pBrThkEnCPGe8oicfCsLXvD8uABIicic6ZAs7cpDQF5OpIQxOXls6ysojqR0sx7uDySjPNw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488132&amp;idx=1&amp;sn=bc07ee75ef7778901a3eb8ae4742021b&amp;chksm=c0b9b189d2a3a939c811058b6d5a318bb185430dfd84ae6069d888df400f26878cfbebdd2dcd&amp;scene=0&amp;xtrack=1#rd" target="_blank">谷歌开源新Deep Research范式，教Agent学会真正的思考。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-22 11:50:00">发布日期：2025-09-22 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~周末，谷歌发了一个博客，讲Deep Research 的。 重新定义过去的一些Agent常见范式，全是技巧，很值得一看。现在的AI Agent，能力</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488132&amp;idx=1&amp;sn=bc07ee75ef7778901a3eb8ae4742021b&amp;chksm=c0b9b189d2a3a939c811058b6d5a318bb185430dfd84ae6069d888df400f26878cfbebdd2dcd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488122&amp;idx=1&amp;sn=f9e2fd599e094aedaf1636bf2f7eeddb&amp;chksm=c07158789b16356ea6635b91852c3e0faa364062f553f40d02934eb4444706c6a4ebd44f4275&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUngOZmTlagbVqafwSV5VcFY2mJIcQdrkXL75YCSRDuo1cmiccJ91fGu2Yj5iad4KoXN6rPeJkDcwBr2g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488122&amp;idx=1&amp;sn=f9e2fd599e094aedaf1636bf2f7eeddb&amp;chksm=c07158789b16356ea6635b91852c3e0faa364062f553f40d02934eb4444706c6a4ebd44f4275&amp;scene=0&amp;xtrack=1#rd" target="_blank">Chrome已死，Agent当立。 AI Chrome正式发布~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-19 14:13:36">发布日期：2025-09-19 14:13:36</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~今天，谷歌正式官宣，为Chrome浏览器全面植入Gemini AI，一口气发布了10项更新。今天想跟大家聊一下，谷歌这次拿出了什么？以及当Chrom</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488122&amp;idx=1&amp;sn=f9e2fd599e094aedaf1636bf2f7eeddb&amp;chksm=c07158789b16356ea6635b91852c3e0faa364062f553f40d02934eb4444706c6a4ebd44f4275&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488112&amp;idx=1&amp;sn=3236ee72503023d7707dda1ba7c1c2b3&amp;chksm=c038caa109b16b4fde2fdd5d974f2d71385639745c5fc34655bb0777f8b72df84fc3f18a9e1b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhU2ib0B6QyiavmJUg9r6F8aGMyOuIicibdQ3v31ZjSJfjrDSsFoGbrpqOgwk17xH4KFMEticsFxQOh1fQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488112&amp;idx=1&amp;sn=3236ee72503023d7707dda1ba7c1c2b3&amp;chksm=c038caa109b16b4fde2fdd5d974f2d71385639745c5fc34655bb0777f8b72df84fc3f18a9e1b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Shopify分享了他们做Agent的万字踩坑经验</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-18 11:50:00">发布日期：2025-09-18 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~最近，Shopify 分享了他们构建生产级 AI 助手 Sidekick 的万字长文，信息量爆炸。很值得一看。最早他们类似 Anthropic 总结</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488112&amp;idx=1&amp;sn=3236ee72503023d7707dda1ba7c1c2b3&amp;chksm=c038caa109b16b4fde2fdd5d974f2d71385639745c5fc34655bb0777f8b72df84fc3f18a9e1b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488098&amp;idx=1&amp;sn=0255776033eefc5036ff5edd5250a8ba&amp;chksm=c08b175a16d849c4948c3fdaaa06480a8c1106c3573c5cad5397f32fb822a42ace452dfe272d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnghqiaxW0o3bicpQRblp8EtDQFiaaFVfIAyyPQwic4CsZGkNR1frTl5HicIkqF65iaM0quvvN3Leqbeq8Yg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488098&amp;idx=1&amp;sn=0255776033eefc5036ff5edd5250a8ba&amp;chksm=c08b175a16d849c4948c3fdaaa06480a8c1106c3573c5cad5397f32fb822a42ace452dfe272d&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI Agent的淘宝来了，120行代码，3天赚了1200刀。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-16 20:47:26">发布日期：2025-09-16 20:47:26</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~家人们，别再卷大模型了，真正傻白甜的赛道是——让AI替你打工，还给你交租！我抱着薅羊毛的心态把一段只有120行的n8n工作流扔进了一个名不见经传的新</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488098&amp;idx=1&amp;sn=0255776033eefc5036ff5edd5250a8ba&amp;chksm=c08b175a16d849c4948c3fdaaa06480a8c1106c3573c5cad5397f32fb822a42ace452dfe272d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488084&amp;idx=1&amp;sn=ca6d6c6bba9898260a7156084a862fed&amp;chksm=c0bbc44b9af171fc5c78ea8f9f55a3fc8f26d0460af629519c6a8e5fbe92a4c221457f86c1a8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnhINS4LOjic3AofqhwX3xaUJWoNaDFU7Ur6SQ7icfFtsXEibBQFSGwImke7Ltic8E8niaiaUIaqOvg1dq3Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488084&amp;idx=1&amp;sn=ca6d6c6bba9898260a7156084a862fed&amp;chksm=c0bbc44b9af171fc5c78ea8f9f55a3fc8f26d0460af629519c6a8e5fbe92a4c221457f86c1a8&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent又笨又傻？Anthropic官方揭秘：你要这样做！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-15 11:50:00">发布日期：2025-09-15 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~前2天，Anthropic发了一篇比较干的长文博客。谈了一套Agent工具构建与优化的方法。如果，你也遇到过，给Agent辛辛苦苦构建一堆工具，结果</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488084&amp;idx=1&amp;sn=ca6d6c6bba9898260a7156084a862fed&amp;chksm=c0bbc44b9af171fc5c78ea8f9f55a3fc8f26d0460af629519c6a8e5fbe92a4c221457f86c1a8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488072&amp;idx=1&amp;sn=8b92e38a310d5b9b621c293d6b1abed5&amp;chksm=c0a5503cf1d2e274a114900c65abfda47600b2b063f191f63bb3b7d6ad766ea87564d30c23c1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUng9SMJA4aFhe6Tz1FWGYJEOLSiceibI0rD9sGAu3zpKHFiaxwPKqaicIwK8gsekatZcyib2edZsWU31AoA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488072&amp;idx=1&amp;sn=8b92e38a310d5b9b621c293d6b1abed5&amp;chksm=c0a5503cf1d2e274a114900c65abfda47600b2b063f191f63bb3b7d6ad766ea87564d30c23c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文看懂Agent下半场， Agent Infra 成为新的护城河！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-12 12:00:20">发布日期：2025-09-12 12:00:20</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~前阵子，智谱AutoGLM还是挺刷屏的，它的核心理念是，给每个人配一个云端分身，7x24小时的帮大家干活~今天想给家人们详细挖掘一下Agent In</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488072&amp;idx=1&amp;sn=8b92e38a310d5b9b621c293d6b1abed5&amp;chksm=c0a5503cf1d2e274a114900c65abfda47600b2b063f191f63bb3b7d6ad766ea87564d30c23c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488071&amp;idx=1&amp;sn=2c68599b6b7400cab092c5faa312187d&amp;chksm=c044b0a32f459a9ac5937f719b4782c0c83015ffc064a16ade10d9b26c89dea28e46583bcfb4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniaajz0coZiaPjq3qOr5u9z4e0D8Myl25v2EzfwtJgKd1ArvPwks1EWic6tffxy0xMZuiaGbNkUv9o6tA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488071&amp;idx=1&amp;sn=2c68599b6b7400cab092c5faa312187d&amp;chksm=c044b0a32f459a9ac5937f719b4782c0c83015ffc064a16ade10d9b26c89dea28e46583bcfb4&amp;scene=0&amp;xtrack=1#rd" target="_blank">让Agents更聪明，3招搞定记忆管理~</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-09 11:50:00">发布日期：2025-09-09 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~关于Agent的记忆，大多数人印象中，后台可能就是一个RAG罢了。但是到底有哪些细节和值得注意的地方呢？ 今天深度分析一个还不错的开源项目，探索关于</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488071&amp;idx=1&amp;sn=2c68599b6b7400cab092c5faa312187d&amp;chksm=c044b0a32f459a9ac5937f719b4782c0c83015ffc064a16ade10d9b26c89dea28e46583bcfb4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488058&amp;idx=1&amp;sn=13b4a0820957919ffa443303c759fa84&amp;chksm=c04b2dc277b39a72bd55297f7ad26a6049f2099af711868066bc75a707eedcbf9bdfa2d8ed50&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUniazGtq1SzKZ1MlBL0G0hOHNwCq57lDicESczuOUdiadWg8jyu2uB1ibdc4yWmULj6mCPaXEp9gIiaDDZA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488058&amp;idx=1&amp;sn=13b4a0820957919ffa443303c759fa84&amp;chksm=c04b2dc277b39a72bd55297f7ad26a6049f2099af711868066bc75a707eedcbf9bdfa2d8ed50&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI谈：大模型为什么会有幻觉？如何避免？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-08 11:50:00">发布日期：2025-09-08 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~OpenAI上周发了一篇论文，重点聊了大家都挺感兴趣的话题：为什么大模型会有幻觉？评测缺陷举个例子：你现在参加一场考试，答对得1分，答错或不答都是0</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488058&amp;idx=1&amp;sn=13b4a0820957919ffa443303c759fa84&amp;chksm=c04b2dc277b39a72bd55297f7ad26a6049f2099af711868066bc75a707eedcbf9bdfa2d8ed50&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488051&amp;idx=1&amp;sn=e2313efad3111403dd69bf21f6fb24ba&amp;chksm=c04105ed6bcf9785f40f207dd77a2269dfd8353392d352c6b5307667782b1e81194bf1f96ca5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/d08lv0anUnju90ZdMM9ULKu0jecezXibYZHfEj0KAhmcoe3MVuljP5viaNu4ECv12kFNu4IuicoCDg53ibaEXUryzQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488051&amp;idx=1&amp;sn=e2313efad3111403dd69bf21f6fb24ba&amp;chksm=c04105ed6bcf9785f40f207dd77a2269dfd8353392d352c6b5307667782b1e81194bf1f96ca5&amp;scene=0&amp;xtrack=1#rd" target="_blank">吴恩达大谈，AI时代就业现状、生存法则。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/52460b261bfbd99cf09371acc2c5b718/index.html">探索AGI</a></span><time class="article-date" datetime="2025-09-05 11:50:00">发布日期：2025-09-05 11:50:00</time></div><p class="article-description">嘿，大家好！这里是一个专注于前沿AI和智能体的频道~吴恩达昨天发了一篇长文。大谈AI就业生态。核心的观点是：市场正在残酷地淘汰两类人——只会氛围编程的AI新人和拒绝使用AI的老油条。我们正疯狂招聘，但</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNjcyNTk2NA==&amp;mid=2247488051&amp;idx=1&amp;sn=e2313efad3111403dd69bf21f6fb24ba&amp;chksm=c04105ed6bcf9785f40f207dd77a2269dfd8353392d352c6b5307667782b1e81194bf1f96ca5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_2.html" class="pagination-button pagination-prev">上一页</a><a href="index_4.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

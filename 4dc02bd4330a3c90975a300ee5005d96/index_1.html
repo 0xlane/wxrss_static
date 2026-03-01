@@ -1,0 +1,295 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>测试开发技术</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506795&amp;idx=1&amp;sn=58a1d24d9ad790280803f05481f298bd&amp;chksm=9efd667189d1e8ba8d7d40d6b061e4e131083715632af31a6cc8ce6adae1ea6b52408a1f8104&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQfQundiaaTF2BPXDeXAuMcUXVaJEoy4cCMibbE5jPlzeyj6j6xQ9ibkibug/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506795&amp;idx=1&amp;sn=58a1d24d9ad790280803f05481f298bd&amp;chksm=9efd667189d1e8ba8d7d40d6b061e4e131083715632af31a6cc8ce6adae1ea6b52408a1f8104&amp;scene=0&amp;xtrack=1#rd" target="_blank">线上MySQL数据库卡死了！所有业务都不可用！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-16 08:30:00">发布日期：2026-01-16 08:30:00</time></div><p class="article-description">凌晨2点,手机铃声突然响起——&quot;MySQL数据库卡死了!所有业务都不可用!&quot;这是每个运维工程师最不想接到的电话。生产环境的MySQL突然卡死,不仅会造成业务中断,还可能导致数据丢失和客户投诉。经历过多</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506795&amp;idx=1&amp;sn=58a1d24d9ad790280803f05481f298bd&amp;chksm=9efd667189d1e8ba8d7d40d6b061e4e131083715632af31a6cc8ce6adae1ea6b52408a1f8104&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506794&amp;idx=1&amp;sn=f76cb34b11a7e79959eefb25a3b4ca89&amp;chksm=9edafc143d199702c81ba548d20dbbb65d17f4bd1f9d4a4e881cdf5793da8389e8d6d35894d0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQickFbic5seDA9rLHIqteynuBBQkoiatjQjj5jbTdO4w9DiaU1O1qpibYUPA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506794&amp;idx=1&amp;sn=f76cb34b11a7e79959eefb25a3b4ca89&amp;chksm=9edafc143d199702c81ba548d20dbbb65d17f4bd1f9d4a4e881cdf5793da8389e8d6d35894d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">Jenkins Pipeline流水线详解，建议收藏！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-15 08:30:00">发布日期：2026-01-15 08:30:00</time></div><p class="article-description">Jenkins 流水线（Pipeline）是一种持续集成和交付（CI/CD）工具，它以代码的方式定义整个软件开发过程中的构建、测试和部署流程。与传统的 Jenkins 项目和自由风格项目相比，Jenk</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506794&amp;idx=1&amp;sn=f76cb34b11a7e79959eefb25a3b4ca89&amp;chksm=9edafc143d199702c81ba548d20dbbb65d17f4bd1f9d4a4e881cdf5793da8389e8d6d35894d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506791&amp;idx=1&amp;sn=354d5f56f71e22a507d743ee3e7006ec&amp;chksm=9efc618565d1049cb60e405bbd7d6fc5bff0409b5d871501d634240626ba4da1107b20d8f2f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDnR9ibnHn6Syn01icAxmP2pA2icY5fqJiavsPLHoxuWic4y01fB2naZyJlcY4DFHSpJTNoSsQ2IWROwusA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506791&amp;idx=1&amp;sn=354d5f56f71e22a507d743ee3e7006ec&amp;chksm=9efc618565d1049cb60e405bbd7d6fc5bff0409b5d871501d634240626ba4da1107b20d8f2f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">为什么前后端都需要进行数据校验？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-14 08:30:00">发布日期：2026-01-14 08:30:00</time></div><p class="article-description">一、引言在现代的 Web 应用开发中，前后端数据校验是确保系统安全、数据完整性和用户体验的关键步骤。通过在前后端各个环节对数据进行验证，我们可以有效地防止恶意攻击、保证数据的准确性，并提高用户满意度。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506791&amp;idx=1&amp;sn=354d5f56f71e22a507d743ee3e7006ec&amp;chksm=9efc618565d1049cb60e405bbd7d6fc5bff0409b5d871501d634240626ba4da1107b20d8f2f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506793&amp;idx=1&amp;sn=621452a81209eb4b76e52ba636c671af&amp;chksm=9ef47e5cefe42d3762ed609f65ac9da416ee4e41698cfa4145c78c0e9b02bc00e15a819b80d3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506793&amp;idx=1&amp;sn=621452a81209eb4b76e52ba636c671af&amp;chksm=9ef47e5cefe42d3762ed609f65ac9da416ee4e41698cfa4145c78c0e9b02bc00e15a819b80d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 创始人独家分享 13 条神级技巧，思路打开了！
+
+1、终端同时运行 5 个 Claude，标签页编号 1-5，通过系统通知了解哪个需要输入，充分利用等待时间
+
+2、网页端 Claude Code 再开 5-10 个，和本地同时跑。用 &amp; 移交会话到网页、用 --teleport 在终端和网页间切换，还能用手机 App 启动会话稍后查看。随时随地 Vibe Coding！
+
+3、优先用带思考功能的 Opus 4.5 模型。虽然慢，但工具使用更出色，总体效率更高
+
+4、团队共享 CLAUDE.md 文件，并用 Git 管理。每当 Claude 做错什么，就添加进去，下次它就知道不犯同样的错
+
+5、代码审查时在 PR 中标记 @.claude，它会自动把建议添加到 CLAUDE.md，配合 Github Action 实现自动化更新，逐渐沉淀知识
+
+6、优先用计划模式，和 Claude 讨论到满意再切换为自动接受模式，让它一次性完成任务，不用反复确认
+
+7、用斜杠命令（Slash Commands）提效。封装常用工作流，然后在对话框输入 / 触发自定义快捷指令。比如 /commit-push-pr 会预先计算 git status 等信息。命令存放在 .claude/commands/，可提交 Git 团队共享
+
+8、用子代理实现分工。主Claude 负责调度，子代理负责专项工作。比如code-simplifier 简化代码，verify-app 做端到端测试
+
+9、用 PostToolUse 钩子自动格式化代码，避免CI格式错误
+
+10、别用 --dangerously-skip-permissions！它会跳过权限确认直接执行高风险操作。用 /permissions 管理允许的命令，配置存在 .claude/settings.json 文件，团队共享
+
+11、用 MCP 扩展功能，比如Slack搜索发布、BigQuery查询、Sentry获取日志等。配置存在 .mcp.json，团队共享
+
+12、对于长时间的任务：让Claude用后台代理验证、用 stop 钩子验证、或者用 ralph-wiggum 插件配合 --permission-mode=dontAsk 避免权限提示阻塞任务
+
+13、完善反馈验证机制。让 Claude 知道怎么验证工作，比如打开浏览器测试 UI，发现问题自动迭代直到正常
+
+总结为 5 点：多开实例提效 + 用最强模型 + Git 共享规则文件团队协作 + 重复工作配置成工作流 + 让 AI 自主验证。
+
+学会了学废了！
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mk9hlt2e-e3pdod&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506788&amp;idx=1&amp;sn=10ee949e4257dbd7bfaa059a1e6c7815&amp;scene=21#wechat_redirect&quot;&gt;最近很火爆的Claude Skills到底是个啥？解决什么问题？怎么用！&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-13 08:30:00">发布日期：2026-01-13 08:30:00</time></div><p class="article-description">Claude Code 创始人独家分享 13 条神级技巧，思路打开了！
+
+1、终端同时运行 5 个 Claude，标签页编号 1-5，通过系统通知了解哪个需要输入，充分利用等待时间
+
+2、网页端 Cl</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506793&amp;idx=1&amp;sn=621452a81209eb4b76e52ba636c671af&amp;chksm=9ef47e5cefe42d3762ed609f65ac9da416ee4e41698cfa4145c78c0e9b02bc00e15a819b80d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506790&amp;idx=1&amp;sn=3e5fde89b4939b9f9cd0d1467fdf69ce&amp;chksm=9ef84a9d2cc5467d931ec9092a7be255c70b933668efbde8d3b8895601c19f61d7771f18d87d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlXBxtVNLdbQqsd3NYkyM9qVicOG0kudMIiaXavUp1EkhsHJ0UA9hXfgKr9kiba2pngh3wNxT8huEUxQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506790&amp;idx=1&amp;sn=3e5fde89b4939b9f9cd0d1467fdf69ce&amp;chksm=9ef84a9d2cc5467d931ec9092a7be255c70b933668efbde8d3b8895601c19f61d7771f18d87d&amp;scene=0&amp;xtrack=1#rd" target="_blank">混沌工程实战：使用 Kubernetes+Chaos Mesh 搭建混沌测试体系</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-12 08:30:00">发布日期：2026-01-12 08:30:00</time></div><p class="article-description">一、概述1.1 背景介绍混沌工程通过主动注入故障验证系统在异常情况下的行为，发现分布式系统中的未知弱点。Chaos Mesh 是 CNCF 托管的云原生混沌工程平台，提供丰富的故障注入能力，支持 Po</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506790&amp;idx=1&amp;sn=3e5fde89b4939b9f9cd0d1467fdf69ce&amp;chksm=9ef84a9d2cc5467d931ec9092a7be255c70b933668efbde8d3b8895601c19f61d7771f18d87d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506789&amp;idx=1&amp;sn=0913cf6b807a81b326830327e22174fc&amp;chksm=9e63ad528b373219e0666089b063ec64c692c12b7ca5734103e75c6be5b6daacd7fdc3e0ef45&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlXBxtVNLdbQqsd3NYkyM9qcWymBQLsevQQFpTNrUF8XibtxKc04Nmib1AVZGrqU82wCfjd4J2O27ZQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506789&amp;idx=1&amp;sn=0913cf6b807a81b326830327e22174fc&amp;chksm=9e63ad528b373219e0666089b063ec64c692c12b7ca5734103e75c6be5b6daacd7fdc3e0ef45&amp;scene=0&amp;xtrack=1#rd" target="_blank">从零开始：用 Python+Gemini3 四步搭建你自己的 AI Agent！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-09 08:30:00">发布日期：2026-01-09 08:30:00</time></div><p class="article-description">很多人第一次看到 AI Agent 自己编辑文件、跑代码、修 bug，还能一直运行下去的时候,都觉得挺神奇。其实远没有想象中那么复杂。这里没什么秘密算法,也没有什么&quot;智能体大脑&quot;这种玄学概念。AI A</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506789&amp;idx=1&amp;sn=0913cf6b807a81b326830327e22174fc&amp;chksm=9e63ad528b373219e0666089b063ec64c692c12b7ca5734103e75c6be5b6daacd7fdc3e0ef45&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506764&amp;idx=1&amp;sn=ca8e63da649718de948332cfedfaad8b&amp;chksm=9ed1fc0ef1c71c0d6149a2a09f97dbe132f3d20c1e14d232d6d4affc30e6849163f40bcb04ff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDnlbJU8aKdQ7W75ibiblezGNqPXazaib562DbwzMdcia1YD7KOjQAbUAcr9dvfWm7EyQwgXPseU1kO4vQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506764&amp;idx=1&amp;sn=ca8e63da649718de948332cfedfaad8b&amp;chksm=9ed1fc0ef1c71c0d6149a2a09f97dbe132f3d20c1e14d232d6d4affc30e6849163f40bcb04ff&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026年让自动化更快的13个Python库</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-08 08:30:00">发布日期：2026-01-08 08:30:00</time></div><p class="article-description">在不同项目里反复做同样的事会耗尽你的时间和注意力。原本几秒钟就该跑完的代码，常常变成缓慢而凌乱的流程。许多开发者把数小时花在本可以交给库即时处理的工作上。选对库可以消除摩擦、加速自动化。它们让你把精力</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506764&amp;idx=1&amp;sn=ca8e63da649718de948332cfedfaad8b&amp;chksm=9ed1fc0ef1c71c0d6149a2a09f97dbe132f3d20c1e14d232d6d4affc30e6849163f40bcb04ff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506763&amp;idx=1&amp;sn=bfd1bcf30bc28813d8cee0a4100bfacf&amp;chksm=9e0d473787ea61f400ef377b52810dad3f89668256ebc6b752494b1c9739494c3e65fa53c656&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlXBxtVNLdbQqsd3NYkyM9quS7ujibcZtOISEm49KmticHjlpmraNwVzm8UXLs7Xf9vmtwTRiaic6EDcQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506763&amp;idx=1&amp;sn=bfd1bcf30bc28813d8cee0a4100bfacf&amp;chksm=9e0d473787ea61f400ef377b52810dad3f89668256ebc6b752494b1c9739494c3e65fa53c656&amp;scene=0&amp;xtrack=1#rd" target="_blank">基于 vLLM 的大模型推理服务部署与性能调优实战</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-07 08:30:00">发布日期：2026-01-07 08:30:00</time></div><p class="article-description">一、概述1.1 背景介绍vLLM 是 UC Berkeley 开源的高性能大语言模型推理引擎，专为生产环境的 LLM 服务设计。传统推理框架在处理大规模并发请求时，存在显存利用率低、吞吐量受限等问题。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506763&amp;idx=1&amp;sn=bfd1bcf30bc28813d8cee0a4100bfacf&amp;chksm=9e0d473787ea61f400ef377b52810dad3f89668256ebc6b752494b1c9739494c3e65fa53c656&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506762&amp;idx=1&amp;sn=09688e2b4f6835847cddaf4527089beb&amp;chksm=9ee291b8d52fd5b582cf78db593f63b21c163c66b515989c8b605898407a8c306b45c4d1b1fa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlXBxtVNLdbQqsd3NYkyM9qKkibndoW3g7Ibbhw2rSvkIq9zsjIFeDYY8X0E2JRdAhBicDnpQHfQXiaQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506762&amp;idx=1&amp;sn=09688e2b4f6835847cddaf4527089beb&amp;chksm=9ee291b8d52fd5b582cf78db593f63b21c163c66b515989c8b605898407a8c306b45c4d1b1fa&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何预估一个系统的QPS？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-06 08:30:00">发布日期：2026-01-06 08:30:00</time></div><p class="article-description">预估一个系统的 QPS（Queries Per Second，每秒查询数）是系统设计、容量规划和性能评估中的关键步骤。准确的 QPS 预估有助于合理配置服务器资源、避免系统过载或资源浪费。以下是预估系</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506762&amp;idx=1&amp;sn=09688e2b4f6835847cddaf4527089beb&amp;chksm=9ee291b8d52fd5b582cf78db593f63b21c163c66b515989c8b605898407a8c306b45c4d1b1fa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506788&amp;idx=1&amp;sn=10ee949e4257dbd7bfaa059a1e6c7815&amp;chksm=9ea44612b7989fcfb1becfdee44a8db936b624c67cce4a42701c27a4aebff9dbbc2a3c94f1fb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlXBxtVNLdbQqsd3NYkyM9qjnkYDs7UmPBwPAK2tdmB1aJRvorIBXtCDBsV7guVePxjyibDcXFkBjQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506788&amp;idx=1&amp;sn=10ee949e4257dbd7bfaa059a1e6c7815&amp;chksm=9ea44612b7989fcfb1becfdee44a8db936b624c67cce4a42701c27a4aebff9dbbc2a3c94f1fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">最近很火爆的Claude Skills到底是个啥？解决什么问题？怎么用！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-05 08:30:00">发布日期：2026-01-05 08:30:00</time></div><p class="article-description">上一篇，我们介绍了，Claude Code 使用技巧！实测有效！Claude Code 接入GLM 4.7最近 AI 圈子里什么最火？除了各种 AI 大模型的应用，讨论热度最高的绝对是 Claude</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506788&amp;idx=1&amp;sn=10ee949e4257dbd7bfaa059a1e6c7815&amp;chksm=9ea44612b7989fcfb1becfdee44a8db936b624c67cce4a42701c27a4aebff9dbbc2a3c94f1fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506745&amp;idx=1&amp;sn=4427e8751bf5544adb4fed1ebe4a628e&amp;chksm=9eb61d671a038c57f8949de5a3480532442cd943de09c9f601029273106c9f1bbfbc5a15edab&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDnlbJU8aKdQ7W75ibiblezGNqhbiaj7q6mFErgqgic7zkBiaW0dUQaWY9FfIEkzCGjcGBsQR245Qsth6Gw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506745&amp;idx=1&amp;sn=4427e8751bf5544adb4fed1ebe4a628e&amp;chksm=9eb61d671a038c57f8949de5a3480532442cd943de09c9f601029273106c9f1bbfbc5a15edab&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里通义灵码实测：AI写代码到底有多强？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-01-04 08:30:00">发布日期：2026-01-04 08:30:00</time></div><p class="article-description">01简介及安装功能介绍：https://help.aliyun.com/document_detail/2590613.html使用指南：https://help.aliyun.com/documen</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506745&amp;idx=1&amp;sn=4427e8751bf5544adb4fed1ebe4a628e&amp;chksm=9eb61d671a038c57f8949de5a3480532442cd943de09c9f601029273106c9f1bbfbc5a15edab&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506643&amp;idx=1&amp;sn=ddbe395117c4e4b4e44f10b189503ebf&amp;chksm=9e046d2460429eac426c880a86de1b2a20055fc73111f7517a4bd21dd8c5d920a3ef3172f60b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDnlbJU8aKdQ7W75ibiblezGNqs379zlChqZNa9p8XOvplPCic1etKh5vkm6TxqH5DV98QNVPMRvLdy3w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506643&amp;idx=1&amp;sn=ddbe395117c4e4b4e44f10b189503ebf&amp;chksm=9e046d2460429eac426c880a86de1b2a20055fc73111f7517a4bd21dd8c5d920a3ef3172f60b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Magnitude：强！一款基于 AI 视觉的 Web 自动化框架</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-30 08:30:00">发布日期：2025-12-30 08:30:00</time></div><p class="article-description">你是否还在为脆弱的 Web 自动化测试而烦恼？XPath 变更、CSS 选择器失效、DOM 结构调整，这些问题是不是经常让你的自动化脚本功亏一篑？今天要给大家介绍的 Magnitude，可能会彻底改变</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506643&amp;idx=1&amp;sn=ddbe395117c4e4b4e44f10b189503ebf&amp;chksm=9e046d2460429eac426c880a86de1b2a20055fc73111f7517a4bd21dd8c5d920a3ef3172f60b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506642&amp;idx=1&amp;sn=ba9e24a93b3df56aab1d66a0130a49ff&amp;chksm=9e2e6ae101ab83759574d7dcfbe13b6ec2c8d380759f3f422358292dda57b2d34559bd4654ac&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDk4EbTLZFnDuD4lib8knn5lEgj9jTVceNibKzaCiafCiaAlHKUKicfNWNeWsd51RtYkxlTvVVBAibPKmrmw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506642&amp;idx=1&amp;sn=ba9e24a93b3df56aab1d66a0130a49ff&amp;chksm=9e2e6ae101ab83759574d7dcfbe13b6ec2c8d380759f3f422358292dda57b2d34559bd4654ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">超70k star！一款国产 OCR 开源神器，相当给力！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-29 09:04:22">发布日期：2025-12-29 09:04:22</time></div><p class="article-description">在大模型狂飙突进的今天，高质量、结构化的数据已成为决定 AI 能力的核心基建。而现实中，海量知识却沉睡在PDF、扫描件、报告等非结构化文档中。如何将这座富矿高效、精准地转化为大模型可理解、可训练的数据</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506642&amp;idx=1&amp;sn=ba9e24a93b3df56aab1d66a0130a49ff&amp;chksm=9e2e6ae101ab83759574d7dcfbe13b6ec2c8d380759f3f422358292dda57b2d34559bd4654ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506602&amp;idx=1&amp;sn=b0da26f512e65c034d0a24d5eefbb71e&amp;chksm=9e358f17de895187221103d0bd3d963779420e7dea9ffeaa1278336f3abbb7f793b460197c22&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQF67I8ZUyRrLalX3H347lMfZdWfaaH6nqxne7LQ9ZMLjany2G22mLHA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506602&amp;idx=1&amp;sn=b0da26f512e65c034d0a24d5eefbb71e&amp;chksm=9e358f17de895187221103d0bd3d963779420e7dea9ffeaa1278336f3abbb7f793b460197c22&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025国内热门外包公司排行</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-26 08:30:00">发布日期：2025-12-26 08:30:00</time></div><p class="article-description">当企业数字化转型进入深水区，外包服务早已不是&quot;降本工具&quot;的代名词，而是成为重构核心竞争力的战略伙伴。2025年，随着AI大模型普及、合规要求升级和全球化布局加速，国内外包市场呈现&quot;专业细分+技术深耕&quot;</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506602&amp;idx=1&amp;sn=b0da26f512e65c034d0a24d5eefbb71e&amp;chksm=9e358f17de895187221103d0bd3d963779420e7dea9ffeaa1278336f3abbb7f793b460197c22&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506601&amp;idx=1&amp;sn=6dbf12f9b879c05b622e7e12b2b49a09&amp;chksm=9ee720fd389e0bf6e5db14b43b208635cf329fa6ecb087e789425f26994b7b891440ee92807b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQT24s6Kia9Bp6icYfKxJRLiauXOXbHiaiaVSPCH5kOfu2fSpAa0ILmZOPPEw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506601&amp;idx=1&amp;sn=6dbf12f9b879c05b622e7e12b2b49a09&amp;chksm=9ee720fd389e0bf6e5db14b43b208635cf329fa6ecb087e789425f26994b7b891440ee92807b&amp;scene=0&amp;xtrack=1#rd" target="_blank">一次 HTTP 请求到底经历了什么？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-25 08:30:00">发布日期：2025-12-25 08:30:00</time></div><p class="article-description">今天这篇文章我们用抓包分析工具来分析 HTTP 请求是怎么样的？环境准备本来是想找个网站进行抓包分析的，但是正式环境的网站 HTTP 请求太多，干扰太多，对分析不太友好，所以简单些了一个 demo，对</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506601&amp;idx=1&amp;sn=6dbf12f9b879c05b622e7e12b2b49a09&amp;chksm=9ee720fd389e0bf6e5db14b43b208635cf329fa6ecb087e789425f26994b7b891440ee92807b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506600&amp;idx=1&amp;sn=d2d244e2536455774df61a578cb34288&amp;chksm=9e09c7df7aba37c47b243b943260e39c1208b153f5c8f71195cd8e13dbca45cc4de64fb7a914&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506600&amp;idx=1&amp;sn=d2d244e2536455774df61a578cb34288&amp;chksm=9e09c7df7aba37c47b243b943260e39c1208b153f5c8f71195cd8e13dbca45cc4de64fb7a914&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025互联网大厂员工规模最新排行榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-24 08:30:00">发布日期：2025-12-24 08:30:00</time></div><p class="article-description">第一梯队（10万人以上）：
+1. 京东： 约90w (含物流、兼职及关联公司，属劳动密集型)。
+2. 华为： 约20.9w (研发人员占比超54%)。
+3. 字节跳动： 约15w (业务覆盖全球150</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506600&amp;idx=1&amp;sn=d2d244e2536455774df61a578cb34288&amp;chksm=9e09c7df7aba37c47b243b943260e39c1208b153f5c8f71195cd8e13dbca45cc4de64fb7a914&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506598&amp;idx=1&amp;sn=6ea1562a63219f66d77066446a2be8f7&amp;chksm=9e37d2d1a931eb6a6c484109f9b73568ded657780f881ab73a877eef665cca9d7b81101185f7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506598&amp;idx=1&amp;sn=6ea1562a63219f66d77066446a2be8f7&amp;chksm=9e37d2d1a931eb6a6c484109f9b73568ded657780f881ab73a877eef665cca9d7b81101185f7&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 全球科技公司裁员排行榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-23 08:30:00">发布日期：2025-12-23 08:30:00</time></div><p class="article-description">😱 Top 1 亚马逊
+10月裁掉 14,000人，号称史诗级裁员，总计划裁 3万人。正在砍掉零售业务的臃肿管理层和 HR 等非核心部门，用省的钱卷 AI
+
+😭 Top 2 Intel
+7 月宣布裁员</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506598&amp;idx=1&amp;sn=6ea1562a63219f66d77066446a2be8f7&amp;chksm=9e37d2d1a931eb6a6c484109f9b73568ded657780f881ab73a877eef665cca9d7b81101185f7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506596&amp;idx=1&amp;sn=6fbdb75de075f777de9366692a3f942a&amp;chksm=9e083eaf6522ba303171f3eca19c1484fa87a22b45e11a0f7b05415b6d165d56e3af6c561143&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506596&amp;idx=1&amp;sn=6fbdb75de075f777de9366692a3f942a&amp;chksm=9e083eaf6522ba303171f3eca19c1484fa87a22b45e11a0f7b05415b6d165d56e3af6c561143&amp;scene=0&amp;xtrack=1#rd" target="_blank">字节全员邮件：给大家划几个重点</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-22 09:18:03">发布日期：2025-12-22 09:18:03</time></div><p class="article-description">1、加大在薪酬上的投入，调薪的总投入会增加 1.5 倍，薪酬和激励回报要做到市场领先，不仅是国内的头部，也要对标全球第一梯队。
+
+2、职级体系进行调整，变为L1到L10，同时提升每个职级的总包薪酬上限</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506596&amp;idx=1&amp;sn=6fbdb75de075f777de9366692a3f942a&amp;chksm=9e083eaf6522ba303171f3eca19c1484fa87a22b45e11a0f7b05415b6d165d56e3af6c561143&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506587&amp;idx=1&amp;sn=7a7b005ff73ae8972d917ae2eba94889&amp;chksm=9e5c690bed42fa601e2c2205ea09db61f2b62c20606a8e68ec538bc0456fae06d967be76208c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQNicQibJdXibOOuph9D9Xicdl2ictkJyOyuY0JfttRDh0KP4qgib3VoIBLACg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506587&amp;idx=1&amp;sn=7a7b005ff73ae8972d917ae2eba94889&amp;chksm=9e5c690bed42fa601e2c2205ea09db61f2b62c20606a8e68ec538bc0456fae06d967be76208c&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文掌握 Linux 网络故障排查！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-19 08:30:00">发布日期：2025-12-19 08:30:00</time></div><p class="article-description">网络故障是运维或测试工程师最常遇到的挑战之一。一次网络中断可能导致数万元的业务损失，而快速定位和解决问题的能力，往往决定了一个工程师的价值。本文将分享在企业环境中积累的网络故障排查经验，帮助你建立系统</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506587&amp;idx=1&amp;sn=7a7b005ff73ae8972d917ae2eba94889&amp;chksm=9e5c690bed42fa601e2c2205ea09db61f2b62c20606a8e68ec538bc0456fae06d967be76208c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506586&amp;idx=1&amp;sn=6f28c7630dd9861c260bdee2ffe15acd&amp;chksm=9e7c5ed9c2d7b0fae1428017c4869538af35c2931d321cb2aeeb838b273f63c87f25e6d4a85e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQdwkibeuGFnzgkzQ4fokXanQFBLjrvblFHdicIJXzOERg5InoV7d8uM3w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506586&amp;idx=1&amp;sn=6f28c7630dd9861c260bdee2ffe15acd&amp;chksm=9e7c5ed9c2d7b0fae1428017c4869538af35c2931d321cb2aeeb838b273f63c87f25e6d4a85e&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何高效搭建测试平台？理清思路是关键！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-18 08:30:00">发布日期：2025-12-18 08:30:00</time></div><p class="article-description">01测试平台01职责一个健康的测试平台体系，对测试人员的职责分工、协作模式会有不同的要求。测试平台核心的职责是完成高质量的交付已满足业务需求。测试活动包括单元测试、集成测试、接口测试、性能测试等，都是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506586&amp;idx=1&amp;sn=6f28c7630dd9861c260bdee2ffe15acd&amp;chksm=9e7c5ed9c2d7b0fae1428017c4869538af35c2931d321cb2aeeb838b273f63c87f25e6d4a85e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506585&amp;idx=1&amp;sn=420e666075b83ec0b576cc1fe2dee4e9&amp;chksm=9e2ba0b13455cb86b8307f0370fc2f889f08e3aa795bc0c3a43b26615319ff435dd6d3397564&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQIr0c9L1XSRnkM7OVbcwDMic2ajLUgNFmkia75F0OoBWRSicJiakzjp8iaEg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506585&amp;idx=1&amp;sn=420e666075b83ec0b576cc1fe2dee4e9&amp;chksm=9e2ba0b13455cb86b8307f0370fc2f889f08e3aa795bc0c3a43b26615319ff435dd6d3397564&amp;scene=0&amp;xtrack=1#rd" target="_blank">一篇文章说清！外包公司到底能不能去？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-17 08:30:00">发布日期：2025-12-17 08:30:00</time></div><p class="article-description">在求职市场上，“外包”这个词常常让人五味杂陈。有人说它是“职业生涯的跳板”，也有人说它是“技术的坟墓”。那么，外包公司到底是个什么样的存在？它究竟是通往罗马的康庄大道，还是需要避开的巨坑？今天，我们就</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506585&amp;idx=1&amp;sn=420e666075b83ec0b576cc1fe2dee4e9&amp;chksm=9e2ba0b13455cb86b8307f0370fc2f889f08e3aa795bc0c3a43b26615319ff435dd6d3397564&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506584&amp;idx=1&amp;sn=970e37e46e723e02db095411538badd8&amp;chksm=9ed815c35103f44875ce226960c1ce9a765aa83a3c271f1e341b0d76386ea64bf6c071d52392&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506584&amp;idx=1&amp;sn=970e37e46e723e02db095411538badd8&amp;chksm=9ed815c35103f44875ce226960c1ce9a765aa83a3c271f1e341b0d76386ea64bf6c071d52392&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 校招生最想去的公司排行榜！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-16 08:30:00">发布日期：2025-12-16 08:30:00</time></div><p class="article-description">1. 字节跳动（超越腾讯阿里，稳居榜首）：得票率 42.37%
+2. 腾讯：得票率：38.98%
+3. 阿里巴巴：得票率：33.05%
+4. 小红书（排位惊人，高居第四）： 得票率：21.19%
+5.</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506584&amp;idx=1&amp;sn=970e37e46e723e02db095411538badd8&amp;chksm=9ed815c35103f44875ce226960c1ce9a765aa83a3c271f1e341b0d76386ea64bf6c071d52392&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506582&amp;idx=1&amp;sn=aa4699d8bcbfdb8f13a484c15834d744&amp;chksm=9eb75741493a80ca77ded74e68c9d552ed9ab301817e78323622fad5796cf060fd1c9f7801c5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506582&amp;idx=1&amp;sn=aa4699d8bcbfdb8f13a484c15834d744&amp;chksm=9eb75741493a80ca77ded74e68c9d552ed9ab301817e78323622fad5796cf060fd1c9f7801c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 互联网大厂裁员排行榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-15 08:30:00">发布日期：2025-12-15 08:30:00</time></div><p class="article-description">😱 Top 1 阿里
+截至25年3月，员工数从20.5万降到12.4万。阿里现在聚焦电商和 AI + 云两大主业，其他非核心业务持续剥离
+
+😭 Top 2 百度
+24 年百度全年裁员3,900人。核心</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506582&amp;idx=1&amp;sn=aa4699d8bcbfdb8f13a484c15834d744&amp;chksm=9eb75741493a80ca77ded74e68c9d552ed9ab301817e78323622fad5796cf060fd1c9f7801c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506580&amp;idx=1&amp;sn=2ca470b487b4cf116da6c3415149d096&amp;chksm=9e995b074e1355d3500d9a81d7361ba7f0a63f7350e81c4e76db59465678bd1d62536872c0c7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkCfsySONdEJn1Dm1ctKEOsmhVa0CnpB9FicMibZRsFiaPVPvtXIlpYIhLNsSg65DvQqrGia2yOZVnwSg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506580&amp;idx=1&amp;sn=2ca470b487b4cf116da6c3415149d096&amp;chksm=9e995b074e1355d3500d9a81d7361ba7f0a63f7350e81c4e76db59465678bd1d62536872c0c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">推荐一款Python开源的AI自动化工具：Browser Use</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-12 08:30:00">发布日期：2025-12-12 08:30:00</time></div><p class="article-description">在当今数字化时代，自动化技术的发展日新月异，Python 凭借其简洁的语法和丰富的库资源，成为众多开发者实现自动化任务的首选语言。今天要为大家介绍一款令人瞩目的 Python 开源 AI 自动化工具</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506580&amp;idx=1&amp;sn=2ca470b487b4cf116da6c3415149d096&amp;chksm=9e995b074e1355d3500d9a81d7361ba7f0a63f7350e81c4e76db59465678bd1d62536872c0c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506576&amp;idx=1&amp;sn=fcd4ecbd34591a2c36895ecb32393768&amp;chksm=9ee6ce159052dcef3e7c3e562b0bb4b936e613280c2544dc6f60434329b59e1ac7a84f9c1438&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506576&amp;idx=1&amp;sn=fcd4ecbd34591a2c36895ecb32393768&amp;chksm=9ee6ce159052dcef3e7c3e562b0bb4b936e613280c2544dc6f60434329b59e1ac7a84f9c1438&amp;scene=0&amp;xtrack=1#rd" target="_blank">华为员工工资待遇一览表（2025 最新版）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-11 08:30:00">发布日期：2025-12-11 08:30:00</time></div><p class="article-description">1. 13级： Base 20～26W，绩效奖金 2～6W，无股权 ，总包 22～32W（应届生极少数能摸到上限）
+2. 14级： Base 26～30W，绩效奖金 4～8W，无股权，总包 30～42</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506576&amp;idx=1&amp;sn=fcd4ecbd34591a2c36895ecb32393768&amp;chksm=9ee6ce159052dcef3e7c3e562b0bb4b936e613280c2544dc6f60434329b59e1ac7a84f9c1438&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506574&amp;idx=1&amp;sn=99d16cb896e26a0187d5052fedc4bdef&amp;chksm=9e4ba1f960ed76ce1467dcb6bfec6f8aa41bf08903f0154c5fc2b9fffd62bc10c6cb3cb17713&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQ7qshlpnOWIcEibcbyKFVwClQ83SQSOdIEY1eJj7qh1VYruC9EuDoANQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506574&amp;idx=1&amp;sn=99d16cb896e26a0187d5052fedc4bdef&amp;chksm=9e4ba1f960ed76ce1467dcb6bfec6f8aa41bf08903f0154c5fc2b9fffd62bc10c6cb3cb17713&amp;scene=0&amp;xtrack=1#rd" target="_blank">Docker 镜像瘦身实战：从1.2GB镜像压缩到100MB优化过程！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-10 08:30:00">发布日期：2025-12-10 08:30:00</time></div><p class="article-description">一、概述1.1 背景介绍在容器化时代,Docker 镜像的大小直接影响着应用的部署速度、存储成本和安全风险。臃肿的镜像不仅占用宝贵的磁盘空间和网络带宽,还会拖慢 CI/CD 流水线,增加镜像仓库的存储</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506574&amp;idx=1&amp;sn=99d16cb896e26a0187d5052fedc4bdef&amp;chksm=9e4ba1f960ed76ce1467dcb6bfec6f8aa41bf08903f0154c5fc2b9fffd62bc10c6cb3cb17713&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506572&amp;idx=1&amp;sn=d883619e85b897f75f5ae6e4d7aa5d00&amp;chksm=9efeb67eb37a303004bd3657657e0856b52992010a61c4f490a5c6472d57235cedd6fb911b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506572&amp;idx=1&amp;sn=d883619e85b897f75f5ae6e4d7aa5d00&amp;chksm=9efeb67eb37a303004bd3657657e0856b52992010a61c4f490a5c6472d57235cedd6fb911b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025 互联网大厂幸福度排行榜！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-09 08:30:00">发布日期：2025-12-09 08:30:00</time></div><p class="article-description">🏖️ 第一梯队：真香体验区（相对不卷，生活质量在线）
+
+1、腾讯：午休全楼关灯，入职送小毯子，“有鹅选鹅”。整体节奏在大厂里偏舒服。
+2、网易：有“猪肉福利”、房贷贴息，园区健身房、泳池、理疗室齐全，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506572&amp;idx=1&amp;sn=d883619e85b897f75f5ae6e4d7aa5d00&amp;chksm=9efeb67eb37a303004bd3657657e0856b52992010a61c4f490a5c6472d57235cedd6fb911b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506573&amp;idx=1&amp;sn=1cae358d893e515d56de746103636c0a&amp;chksm=9e4aa6f5d951d5f2b830cbce80b665bfe0d313b6ca62f3f2063030d43b57e5b086380f22e6d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDkH53RDpaGnMW5fsKGLicAibQkw8y3q2OvsR8ADWwN1FiaxPM6hYicbrQ7VibgVW93MM9xSng49TiauJH9w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506573&amp;idx=1&amp;sn=1cae358d893e515d56de746103636c0a&amp;chksm=9e4aa6f5d951d5f2b830cbce80b665bfe0d313b6ca62f3f2063030d43b57e5b086380f22e6d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">最近，测试的招聘市场已经疯掉了…</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-08 09:00:00">发布日期：2025-12-08 09:00:00</time></div><p class="article-description">真的替不少测试人捏把汗。以前靠功能测试、性能测试，每天“点点点”就能安稳度日。现在加班加点编写100个测试用例，但会用AI的同事10分钟就能搞定；AI产品需求巨变，传统测试流程无法跟进；大模型幻觉、P</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506573&amp;idx=1&amp;sn=1cae358d893e515d56de746103636c0a&amp;chksm=9e4aa6f5d951d5f2b830cbce80b665bfe0d313b6ca62f3f2063030d43b57e5b086380f22e6d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506521&amp;idx=1&amp;sn=dec8541739920378ad02b7c98d7eba95&amp;chksm=9e210c22180453b7940f33625eb575b5d2f6f4eb5b1152292194b3668c3ae300e7be9a31ce4d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDmP1mGMFmK3hI415LGzCMRcTSaGibmHGYpspWV0UxRbj4dt41FJps3vKw4PzzMNelCuiaInJ5D3b3Xg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506521&amp;idx=1&amp;sn=dec8541739920378ad02b7c98d7eba95&amp;chksm=9e210c22180453b7940f33625eb575b5d2f6f4eb5b1152292194b3668c3ae300e7be9a31ce4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">弃Flask，入FastAPI，一个字：爽！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-05 08:30:00">发布日期：2025-12-05 08:30:00</time></div><p class="article-description">本文翻译自 Moving from Flask to FastAPI， 作者：Amal Shaji刚好笔者这几天上手体验 FastAPI，感受到这个框架易用和方便。之前也使用过 Python 中的 D</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506521&amp;idx=1&amp;sn=dec8541739920378ad02b7c98d7eba95&amp;chksm=9e210c22180453b7940f33625eb575b5d2f6f4eb5b1152292194b3668c3ae300e7be9a31ce4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506520&amp;idx=1&amp;sn=c68a19c3363048d0063f920becbddea4&amp;chksm=9e371bb279e3a0157494385848fab810164fc2c6e173b4d7325be9de6a8c4057c98b7bba864c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlVcj9343DW7KKUHswdxGZtItE0CabG3D1lFLDrZicy1KBF4S0moVTnIvHicPHGQ1O4ydSv88ic9ibZOw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506520&amp;idx=1&amp;sn=c68a19c3363048d0063f920becbddea4&amp;chksm=9e371bb279e3a0157494385848fab810164fc2c6e173b4d7325be9de6a8c4057c98b7bba864c&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent自动化工作流：n8n、dify、coze，谁更强？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-12-04 08:30:00">发布日期：2025-12-04 08:30:00</time></div><p class="article-description">在AI技术狂飙的今天，“自动化”早已不是新鲜词——但真正的效率革命，发生在“AI能力”与“业务流程”的深度融合中。当大模型能理解需求、生成内容，下一步的关键，是如何让这些能力像乐高积木一样，按需组合成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506520&amp;idx=1&amp;sn=c68a19c3363048d0063f920becbddea4&amp;chksm=9e371bb279e3a0157494385848fab810164fc2c6e173b4d7325be9de6a8c4057c98b7bba864c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a><a href="index_2.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

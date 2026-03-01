@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>玩转VS Code</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498498&amp;idx=1&amp;sn=198c8ee16e2aef15b3c1ce1247f8e9ad&amp;chksm=fdbfef35393ae53a2f9711e7842b73ecb0fccf58ab23af85754e5acefa2c586847995170379b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/1TicKw9hCQaj7G3LAGjLKJS0iap60puOjN8iaia0Q21dQNartibibd25uhsQQmoEPDBVWqJgvlc6bL6ic6A75aKvo1KbA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498498&amp;idx=1&amp;sn=198c8ee16e2aef15b3c1ce1247f8e9ad&amp;chksm=fdbfef35393ae53a2f9711e7842b73ecb0fccf58ab23af85754e5acefa2c586847995170379b&amp;scene=0&amp;xtrack=1#rd" target="_blank">VS Code &amp; Agent Dev Day in Shanghai 圆满落幕！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-31 08:48:08">发布日期：2025-05-31 08:48:08</time></div><p class="article-description">点击蓝字关注我们5月24日下午，由微软 Reactor 与 VS Code 中文社区共同主办，云赛空间协办的 VS Code &amp; Agent Dev Day 在上海顺利举办。7位来自微软的技术专家与生</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498498&amp;idx=1&amp;sn=198c8ee16e2aef15b3c1ce1247f8e9ad&amp;chksm=fdbfef35393ae53a2f9711e7842b73ecb0fccf58ab23af85754e5acefa2c586847995170379b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498495&amp;idx=1&amp;sn=fe10173992a6b0d29799e9b92d90689c&amp;chksm=fd966bc85b4e479dfe6e77c13455cb5f25ee6fa56a379300817128596ed5c19d09a180a33006&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlEFeMo0O5x1FMdHySia4eXlW74eotUNgmTAT4wuXx6W3fcicDsuh0hDMCCaDFyG6qicicDPbBhvia2qW1w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498495&amp;idx=1&amp;sn=fe10173992a6b0d29799e9b92d90689c&amp;chksm=fd966bc85b4e479dfe6e77c13455cb5f25ee6fa56a379300817128596ed5c19d09a180a33006&amp;scene=0&amp;xtrack=1#rd" target="_blank">GitHub Copilot app modernization for Java 公共预览版发布！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-23 07:50:00">发布日期：2025-05-23 07:50:00</time></div><p class="article-description">M点击蓝字 关注我们作者：Nick Zhu - Senior Program Manager, Developer Division At Microsoft排版：Alan Wang现代化 Java</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498495&amp;idx=1&amp;sn=fe10173992a6b0d29799e9b92d90689c&amp;chksm=fd966bc85b4e479dfe6e77c13455cb5f25ee6fa56a379300817128596ed5c19d09a180a33006&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498491&amp;idx=1&amp;sn=48e33f6cf5a14d95d2341d8520faf754&amp;chksm=fd4677f65c5f0da0f2e28a46c4c6fd2f33cad1ac30d7d38e0c7bbf4e3bbc79f776f7cc2dd534&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGBqu2rIev9egrsa3qiaJmnqxqQqMRtLIaOTyflt2DcmaKKTmeYCqFib11Lt2sMg0zv8mDciarNZBVag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498491&amp;idx=1&amp;sn=48e33f6cf5a14d95d2341d8520faf754&amp;chksm=fd4677f65c5f0da0f2e28a46c4c6fd2f33cad1ac30d7d38e0c7bbf4e3bbc79f776f7cc2dd534&amp;scene=0&amp;xtrack=1#rd" target="_blank">本周六 VS Code &amp; Agent Dev Day 大会，了解最新 AI 技术，不容错过！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-22 11:26:24">发布日期：2025-05-22 11:26:24</time></div><p class="article-description">点击蓝字关注我们活动介绍在 AI 深度重塑开发工具的今天，Visual Studio Code 已从代码编辑器进化为智能开发平台，通过集成 GitHub Copilot 等 AI 开发工具，成为开发者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498491&amp;idx=1&amp;sn=48e33f6cf5a14d95d2341d8520faf754&amp;chksm=fd4677f65c5f0da0f2e28a46c4c6fd2f33cad1ac30d7d38e0c7bbf4e3bbc79f776f7cc2dd534&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498489&amp;idx=1&amp;sn=69ccacb75ff0c43a48f0d04db34a9b07&amp;chksm=fd73ae08b39a8240978fd8b9242c4df1a03b0de95331cdf2500aa287665c39e7e06eee5d6ff3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGKBZC3VR1WAMp2u1WibqGHaqGSBsXcp5rDtbLdqeMnIqibH6CBibZ5rKBTNk0R6gGGiaZoCYNO4hkwYw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498489&amp;idx=1&amp;sn=69ccacb75ff0c43a48f0d04db34a9b07&amp;chksm=fd73ae08b39a8240978fd8b9242c4df1a03b0de95331cdf2500aa287665c39e7e06eee5d6ff3&amp;scene=0&amp;xtrack=1#rd" target="_blank">VSCode 中的 GitHub Copilot 将开源！代码智能体占领GitHub！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-21 21:02:23">发布日期：2025-05-21 21:02:23</time></div><p class="article-description">梦晨 发自 凹非寺量子位 | 公众号 QbitAIGitHub上新代码智能体Copilot Coding Agent，从此可以bug自动修，功能自动加，文档自动写。有开发者表示真的很棒，已经用它解决了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498489&amp;idx=1&amp;sn=69ccacb75ff0c43a48f0d04db34a9b07&amp;chksm=fd73ae08b39a8240978fd8b9242c4df1a03b0de95331cdf2500aa287665c39e7e06eee5d6ff3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498482&amp;idx=1&amp;sn=316a04eadd3c4f1558f43dc4eb2dda8b&amp;chksm=fdd6514dcbfc2804c0676847e27264d252a04a6aa7074effd32fff7c1f568629f560cd13a7a9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlFfnn5KBEib4ZubODecpqAvgtgBY3yDZIviaTib5FzZjAW6gV2ZVDlICQOLdVe18bupNKqgoibhBcibelw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498482&amp;idx=1&amp;sn=316a04eadd3c4f1558f43dc4eb2dda8b&amp;chksm=fdd6514dcbfc2804c0676847e27264d252a04a6aa7074effd32fff7c1f568629f560cd13a7a9&amp;scene=0&amp;xtrack=1#rd" target="_blank">JetBrains、Eclipse 和 Xcode 的 GitHub Copilot，已支持 Agent Mode 和 MCP！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-20 20:33:46">发布日期：2025-05-20 20:33:46</time></div><p class="article-description">GitHub Copilot 的代理模式（Agent mode）和模型上下文协议（MCP）现已在 JetBrains、Eclipse 和 Xcode 的公开预览中推出！您可以使用任何 GitHub 账</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498482&amp;idx=1&amp;sn=316a04eadd3c4f1558f43dc4eb2dda8b&amp;chksm=fdd6514dcbfc2804c0676847e27264d252a04a6aa7074effd32fff7c1f568629f560cd13a7a9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498464&amp;idx=1&amp;sn=96bcdde664e70d51066c7e06068fb067&amp;chksm=fd41255e98722a3cf2cabbaa199287864c4104249824c06045286feee1a34e45cd27f51e5f83&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGBqu2rIev9egrsa3qiaJmnqxqQqMRtLIaOTyflt2DcmaKKTmeYCqFib11Lt2sMg0zv8mDciarNZBVag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498464&amp;idx=1&amp;sn=96bcdde664e70d51066c7e06068fb067&amp;chksm=fd41255e98722a3cf2cabbaa199287864c4104249824c06045286feee1a34e45cd27f51e5f83&amp;scene=0&amp;xtrack=1#rd" target="_blank">VS Code &amp; Agent Dev Day 活动报名！AI、MCP、Agent 以及更多</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-18 08:50:25">发布日期：2025-05-18 08:50:25</time></div><p class="article-description">点击蓝字关注我们活动介绍在 AI 深度重塑开发工具的今天，Visual Studio Code 已从代码编辑器进化为智能开发平台，通过集成 GitHub Copilot 等 AI 开发工具，成为开发者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498464&amp;idx=1&amp;sn=96bcdde664e70d51066c7e06068fb067&amp;chksm=fd41255e98722a3cf2cabbaa199287864c4104249824c06045286feee1a34e45cd27f51e5f83&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498462&amp;idx=1&amp;sn=51f330379635fe3766884f52bfb25dbd&amp;chksm=fd1fdd31b1ee6440319d077d7412f5c62b57ea7482da6307ac10017f8c2fab78ec3d10dac2ff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlFT63Jrh42tka6qZ8enYw5ZYyia0xuwEQS1r86qKiaIHOSic5r32h4gdLDibB9OQGFp3BU6EKexQguJBg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498462&amp;idx=1&amp;sn=51f330379635fe3766884f52bfb25dbd&amp;chksm=fd1fdd31b1ee6440319d077d7412f5c62b57ea7482da6307ac10017f8c2fab78ec3d10dac2ff&amp;scene=0&amp;xtrack=1#rd" target="_blank">编程革命彻底爆发！OpenAI最强智能体上线ChatGPT</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-17 18:09:08">发布日期：2025-05-17 18:09:08</time></div><p class="article-description">新智元报道  编辑：编辑部 YXH【新智元导读】OpenAI最强AI编程智能体真的来了！Codex震撼上线，由o3优化版codex-1加持，多任务并行，半小时干完数天软件工程任务。活动推荐：VS</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498462&amp;idx=1&amp;sn=51f330379635fe3766884f52bfb25dbd&amp;chksm=fd1fdd31b1ee6440319d077d7412f5c62b57ea7482da6307ac10017f8c2fab78ec3d10dac2ff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498456&amp;idx=1&amp;sn=76a14b70d878d6bcc92071972ed6325b&amp;chksm=fd527e3871d80bf56f83ce61f1acae72914b7d5adf81a0d9179648109d7160d7088c1f97a539&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlH2KZyMe3CcicKiciaFCJniblyTlH5BXGchuADicRTKhd7HMCRdib8QDtyiaao1Hib9jRica2mJHOZszBk0BYg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498456&amp;idx=1&amp;sn=76a14b70d878d6bcc92071972ed6325b&amp;chksm=fd527e3871d80bf56f83ce61f1acae72914b7d5adf81a0d9179648109d7160d7088c1f97a539&amp;scene=0&amp;xtrack=1#rd" target="_blank">VS Code 1.100 重磅发布！Agent和MCP支持buff叠满！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-14 20:30:23">发布日期：2025-05-14 20:30:23</time></div><p class="article-description">来自：51CTO技术栈5月9日凌晨，VS Code官方账号发布了新版本1.100。这次新版本的发布，亮点很多。活动推荐：VS Code &amp; Agent Dev Day，重磅来袭！先说整体上的感受。这次</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498456&amp;idx=1&amp;sn=76a14b70d878d6bcc92071972ed6325b&amp;chksm=fd527e3871d80bf56f83ce61f1acae72914b7d5adf81a0d9179648109d7160d7088c1f97a539&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498447&amp;idx=1&amp;sn=538ec1d2713c86bea581ed40ac073f7c&amp;chksm=fd1fe6871614cc9eb1aa6560e1708f91000329f0c51fc8125cc3728bbde1ea9c12be7091bded&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGBqu2rIev9egrsa3qiaJmnqxqQqMRtLIaOTyflt2DcmaKKTmeYCqFib11Lt2sMg0zv8mDciarNZBVag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498447&amp;idx=1&amp;sn=538ec1d2713c86bea581ed40ac073f7c&amp;chksm=fd1fe6871614cc9eb1aa6560e1708f91000329f0c51fc8125cc3728bbde1ea9c12be7091bded&amp;scene=0&amp;xtrack=1#rd" target="_blank">VS Code &amp; Agent Dev Day，重磅来袭！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-13 21:41:14">发布日期：2025-05-13 21:41:14</time></div><p class="article-description">点击蓝字关注我们活动介绍在 AI 深度重塑开发工具的今天，Visual Studio Code 已从代码编辑器进化为智能开发平台，通过集成 GitHub Copilot 等 AI 开发工具，成为开发者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498447&amp;idx=1&amp;sn=538ec1d2713c86bea581ed40ac073f7c&amp;chksm=fd1fe6871614cc9eb1aa6560e1708f91000329f0c51fc8125cc3728bbde1ea9c12be7091bded&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498440&amp;idx=1&amp;sn=ded0965e393daf58411bb453be742d0e&amp;chksm=fd23b4fd5c4876b4263e67eccbfc3d73864b661fbc3fc4ba37d2ca534254a3a5662dd4ae8ec3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlFwZ3k1S5X0xSh9rFPmLbDdq4yvKMTdsNf6G3mGL994DS87kCO9esTXJecs1A5b9tK4ZHpSGl28Mw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498440&amp;idx=1&amp;sn=ded0965e393daf58411bb453be742d0e&amp;chksm=fd23b4fd5c4876b4263e67eccbfc3d73864b661fbc3fc4ba37d2ca534254a3a5662dd4ae8ec3&amp;scene=0&amp;xtrack=1#rd" target="_blank">把 MCP Server 打包进 VS Code extension</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-05-01 08:36:02">发布日期：2025-05-01 08:36:02</time></div><p class="article-description">大家好！我是韩老师。本文是 MCP 系列文章的第六篇，之前的五篇是：Code Runner MCP Server，来了！从零开始开发一个 MCP Server！一键安装 MCP Server！再见，S</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498440&amp;idx=1&amp;sn=ded0965e393daf58411bb453be742d0e&amp;chksm=fd23b4fd5c4876b4263e67eccbfc3d73864b661fbc3fc4ba37d2ca534254a3a5662dd4ae8ec3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498436&amp;idx=1&amp;sn=a0c68262a99296a8222892417303c8c6&amp;chksm=fd99314f32277b1b6c4bb1caf1eda895e4fa03c230f7b6cd7db37bea0d4d872e2649508007e0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/SMMjaDt01mbotncv0MZoeQWYUepuwy7vkaEAvuwbfP2PWUicScKAWU0rdyq5Qc63jqr090wbPNToMOT2Zjn8Fag/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498436&amp;idx=1&amp;sn=a0c68262a99296a8222892417303c8c6&amp;chksm=fd99314f32277b1b6c4bb1caf1eda895e4fa03c230f7b6cd7db37bea0d4d872e2649508007e0&amp;scene=0&amp;xtrack=1#rd" target="_blank">再见，SSE！你好，Streamable HTTP！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-20 17:29:32">发布日期：2025-04-20 17:29:32</time></div><p class="article-description">大家好！我是韩老师。之前和大家分享了三篇 MCP 相关的文章：Code Runner MCP Server，来了！从零开始开发一个 MCP Server！一键安装 MCP Server！还是那句话：也</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498436&amp;idx=1&amp;sn=a0c68262a99296a8222892417303c8c6&amp;chksm=fd99314f32277b1b6c4bb1caf1eda895e4fa03c230f7b6cd7db37bea0d4d872e2649508007e0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=1&amp;sn=eb3781524b2494ba79b9c905c2a3d39f&amp;chksm=fd628e036a4626c4debafff51797161cf6d928c35e9e382cc7b2fccb8f1998874fce556d0e2a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlEYBa9GJ3E7Og2COl9ngmicIJpbpnAQ7PibIebSLT4tXd9atJGdx3Yrgq8SUzibPDmOII4C69DcvFG8A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=1&amp;sn=eb3781524b2494ba79b9c905c2a3d39f&amp;chksm=fd628e036a4626c4debafff51797161cf6d928c35e9e382cc7b2fccb8f1998874fce556d0e2a&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI震撼发布o3/o4-mini，直逼视觉推理巅峰！首用图像思考，十倍算力爆表</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-17 09:15:19">发布日期：2025-04-17 09:15:19</time></div><p class="article-description">新智元报道  编辑：编辑部 NZYH【新智元导读】满血版o3和o4-mini深夜登场，首次将图像推理融入思维链，还会自主调用工具，60秒内破解复杂难题。尤其是，o3以十倍o1算力刷新编程、数学、视</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=1&amp;sn=eb3781524b2494ba79b9c905c2a3d39f&amp;chksm=fd628e036a4626c4debafff51797161cf6d928c35e9e382cc7b2fccb8f1998874fce556d0e2a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=2&amp;sn=20a48123099dba2cf4abbbf44e755f4b&amp;chksm=fd99298f7b4dd32644c525bf0d6b9eaf4dc09a52a35cbe43a15261d6701a010f277659f1f3ac&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlHU9nBDJgiaMiaVRbblx9jQs2K3mhPsTHkz4K8yUy1atLI9zVjwviaicNEibDC9QvDS5XBM8Y2o6Np89LQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=2&amp;sn=20a48123099dba2cf4abbbf44e755f4b&amp;chksm=fd99298f7b4dd32644c525bf0d6b9eaf4dc09a52a35cbe43a15261d6701a010f277659f1f3ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">周六，上海，Copilot Developer Camp｜活动报名！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-17 09:15:19">发布日期：2025-04-17 09:15:19</time></div><p class="article-description">Microsoft 365 Copilot 是一个由人工智能驱动的智能助手，同时包含了丰富的扩展功能，能够帮助我们更加高效、有效地工作。为帮助大家更好地学习如何扩展 Microsoft 365 Cop</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498434&amp;idx=2&amp;sn=20a48123099dba2cf4abbbf44e755f4b&amp;chksm=fd99298f7b4dd32644c525bf0d6b9eaf4dc09a52a35cbe43a15261d6701a010f277659f1f3ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498429&amp;idx=1&amp;sn=bbf041a05823f95d57a2825b617e1a43&amp;chksm=fd9ac480d22a16850cfbe387f83c5731112f17bdc79aa068f31226c12d0847686c9368099af8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGtHUeaIDks6ToMibchC2gn4kMh3KNLvZVeWWdjK8CT7RZGiaMKKPKPIV4wlVOCwk8NeajZXNfdf3pQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498429&amp;idx=1&amp;sn=bbf041a05823f95d57a2825b617e1a43&amp;chksm=fd9ac480d22a16850cfbe387f83c5731112f17bdc79aa068f31226c12d0847686c9368099af8&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT-4.1深夜登场！百万上下文编程惊人，GPT-4.5三个月后淘汰</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-15 07:50:39">发布日期：2025-04-15 07:50:39</time></div><p class="article-description">新智元报道  编辑：编辑部 HNZ【新智元导读】OpenAI重磅发布的GPT-4.1系列模型，带来了编程、指令跟随和长上下文处理能力的全面飞跃！由中科大校友Jiahui Yu领衔的团队打造。与此同</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498429&amp;idx=1&amp;sn=bbf041a05823f95d57a2825b617e1a43&amp;chksm=fd9ac480d22a16850cfbe387f83c5731112f17bdc79aa068f31226c12d0847686c9368099af8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498416&amp;idx=1&amp;sn=82e131772bdcd154e3d2201a15952700&amp;chksm=fdc1d3a1022c093c2adc610ac7aaa52c56100db7b830b4d64f6e324e8c8cfda5c4ebb6e0fa80&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlHU9nBDJgiaMiaVRbblx9jQs2K3mhPsTHkz4K8yUy1atLI9zVjwviaicNEibDC9QvDS5XBM8Y2o6Np89LQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498416&amp;idx=1&amp;sn=82e131772bdcd154e3d2201a15952700&amp;chksm=fdc1d3a1022c093c2adc610ac7aaa52c56100db7b830b4d64f6e324e8c8cfda5c4ebb6e0fa80&amp;scene=0&amp;xtrack=1#rd" target="_blank">Global Copilot Developer Camp in Shanghai｜活动报名启动！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-11 09:28:33">发布日期：2025-04-11 09:28:33</time></div><p class="article-description">Microsoft 365 Copilot 是一个由人工智能驱动的智能助手，同时包含了丰富的扩展功能，能够帮助我们更加高效、有效地工作。为帮助大家更好地学习如何扩展 Microsoft 365 Cop</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498416&amp;idx=1&amp;sn=82e131772bdcd154e3d2201a15952700&amp;chksm=fdc1d3a1022c093c2adc610ac7aaa52c56100db7b830b4d64f6e324e8c8cfda5c4ebb6e0fa80&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498412&amp;idx=1&amp;sn=fb40655d0681044d9175be02efe777c7&amp;chksm=fd8c999d43ce441f634f5c81072494a1c706876d19872d08e4007b309c06bd129372e96db5cb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGK0k7c6o7UsU0BDRduE34CBaQ1Tm5QYN8s2KXymLKwoH82DedMO0K55925McSrVRnLrYx9lXibeuw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498412&amp;idx=1&amp;sn=fb40655d0681044d9175be02efe777c7&amp;chksm=fd8c999d43ce441f634f5c81072494a1c706876d19872d08e4007b309c06bd129372e96db5cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">VS Code 重磅更新！Agent mode + MCP</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-04-07 21:35:12">发布日期：2025-04-07 21:35:12</time></div><p class="article-description">好消息！VS Code 迎来重磅更新！Agent mode 正在向所有 VS Code 用户推出！Agent 充当自主的结对程序员，根据您的命令执行多步骤编码任务，例如分析代码库、提出文件编辑建议和运</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498412&amp;idx=1&amp;sn=fb40655d0681044d9175be02efe777c7&amp;chksm=fd8c999d43ce441f634f5c81072494a1c706876d19872d08e4007b309c06bd129372e96db5cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498385&amp;idx=1&amp;sn=63e9bb082dc4c51811553c739a1a0901&amp;chksm=fd6eaa33363021127c142485a50c8900a24a1efddcff77cf3dee7dc82a1d94b328756322c6c9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/SMMjaDt01maER2bpwH7RbOicZgl5tNpStGsDz10FUPSBrESicQsibf32HgPEBGYNHC9U7Z9UEzHfca9Qn43N6mW2Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498385&amp;idx=1&amp;sn=63e9bb082dc4c51811553c739a1a0901&amp;chksm=fd6eaa33363021127c142485a50c8900a24a1efddcff77cf3dee7dc82a1d94b328756322c6c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">在 VS Code 中，一键安装 MCP Server！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-03-30 19:30:00">发布日期：2025-03-30 19:30:00</time></div><p class="article-description">大家好！我是韩老师。本文是 MCP 系列文章的第三篇。之前的两篇文章是：Code Runner MCP Server，来了！从零开始开发一款属于你的 MCP Server！五分钟搞定？经过之前两篇文章</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498385&amp;idx=1&amp;sn=63e9bb082dc4c51811553c739a1a0901&amp;chksm=fd6eaa33363021127c142485a50c8900a24a1efddcff77cf3dee7dc82a1d94b328756322c6c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498383&amp;idx=1&amp;sn=1184c2bdd0e4ea487261e4b01ece0592&amp;chksm=fd0412e3dbb21514423f0bee0cba071bad53d77f842f4ef6ec1cd0de7e40887c40b614d9460f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlE6ibxtw1cMQicSmfVazh1Bdz9aOgiaibt4kqFmKcgjfKceUO0KhdYcY9FZMLqibCz0jMNFyO7XicaHBIdQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498383&amp;idx=1&amp;sn=1184c2bdd0e4ea487261e4b01ece0592&amp;chksm=fd0412e3dbb21514423f0bee0cba071bad53d77f842f4ef6ec1cd0de7e40887c40b614d9460f&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI宣布：正式支持 MCP 协议</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-03-27 19:41:24">发布日期：2025-03-27 19:41:24</time></div><p class="article-description">新智元报道  编辑：编辑部 HNY【新智元导读】OpenAI昨夜又放大招，Agents SDK接入行业标准MCP，下一步加持ChatGPT桌面版，要彻底颠覆每个人AI工作流。自从昨天OpenAI将</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498383&amp;idx=1&amp;sn=1184c2bdd0e4ea487261e4b01ece0592&amp;chksm=fd0412e3dbb21514423f0bee0cba071bad53d77f842f4ef6ec1cd0de7e40887c40b614d9460f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498376&amp;idx=1&amp;sn=5b0f0acfdb8905addc9efe1c197d32cf&amp;chksm=fd2ca819b4de8069088ad926760c2ab997d4b321f909564f3ce43c29b0ac32fdc742836f0eba&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlHe8G86N7N2W5XWm8H92XBbCVCdgJwnuJXOlsu3KBPob8TVFGic772EJsGgEicBomSjlR3x3ZObCibzw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498376&amp;idx=1&amp;sn=5b0f0acfdb8905addc9efe1c197d32cf&amp;chksm=fd2ca819b4de8069088ad926760c2ab997d4b321f909564f3ce43c29b0ac32fdc742836f0eba&amp;scene=0&amp;xtrack=1#rd" target="_blank">从零开始开发一个 MCP Server！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-03-23 19:42:16">发布日期：2025-03-23 19:42:16</time></div><p class="article-description">大家好！我是韩老师。最近，在 AI 开发领域，MCP (Model Context Protocol) 是越来越火了！前几天，我我也开发了一款 Code Runner MCP Server：Code</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498376&amp;idx=1&amp;sn=5b0f0acfdb8905addc9efe1c197d32cf&amp;chksm=fd2ca819b4de8069088ad926760c2ab997d4b321f909564f3ce43c29b0ac32fdc742836f0eba&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498368&amp;idx=1&amp;sn=67b0b87612452ecda9d7551b959476e1&amp;chksm=fdbbf21c43f4df3e4b2d19078507c2e1a1e7536308e671609f22bbdc47ae288524e1e1adaa96&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlHk2CrcPLiclNTSf5uic45PRj8rt5TDM0Zkt5ukyopASHIucfgNib2eAlTTM79oHBZmZXEPMHaayguNw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498368&amp;idx=1&amp;sn=67b0b87612452ecda9d7551b959476e1&amp;chksm=fdbbf21c43f4df3e4b2d19078507c2e1a1e7536308e671609f22bbdc47ae288524e1e1adaa96&amp;scene=0&amp;xtrack=1#rd" target="_blank">Code Runner MCP Server，来了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-03-20 20:41:45">发布日期：2025-03-20 20:41:45</time></div><p class="article-description">大家好！我是韩老师。如果作为程序员的你，还不了解 MCP (Model Context Protocol) 的话，那韩老师劝你赶紧去补补课吧！本文不对 MCP 进行详细介绍~简单来说，MCP is a</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498368&amp;idx=1&amp;sn=67b0b87612452ecda9d7551b959476e1&amp;chksm=fdbbf21c43f4df3e4b2d19078507c2e1a1e7536308e671609f22bbdc47ae288524e1e1adaa96&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498364&amp;idx=1&amp;sn=b9075b867553414a949769099ea897c9&amp;chksm=fda2ccbd9e6f08675f76e7df67d6598e521dff0c8d881679fc98e27e36f0e3362cd4af6a58dd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlHQ9nkEeeFqaEKOemIgUsibCLpeHnDbq7FQ82IR587CkmUAjFVy4rdsc3icGGw0KZj6yfdUAOYl7jCQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498364&amp;idx=1&amp;sn=b9075b867553414a949769099ea897c9&amp;chksm=fda2ccbd9e6f08675f76e7df67d6598e521dff0c8d881679fc98e27e36f0e3362cd4af6a58dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用 VS Code 快速上手 AI 的学习和开发！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-02-25 19:29:38">发布日期：2025-02-25 19:29:38</time></div><p class="article-description">如何能在 VS Code 中快速上手 AI 的学习和开发？AI Toolkit 帮你做到！AI Toolkit 是一款VS Code上的最新的开发软件。面向AI工程师和开发者，助力AI应用和智能体的开</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498364&amp;idx=1&amp;sn=b9075b867553414a949769099ea897c9&amp;chksm=fda2ccbd9e6f08675f76e7df67d6598e521dff0c8d881679fc98e27e36f0e3362cd4af6a58dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498359&amp;idx=1&amp;sn=638ee9fdd14dbe938e7dfb6b82ed8973&amp;chksm=fd73e9d8e0d0d03b33a3c03b312325228d1be72c70fd15f6beaa7c51a86ae4c8c2d1f02acf0d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlELxlT4K77zy4FN7HTWb5Yq3rEKv4XjpLu3PtzRKFxT8vHUicOaEzkpAfju9Z2UBVNS73bXodxqljQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498359&amp;idx=1&amp;sn=638ee9fdd14dbe938e7dfb6b82ed8973&amp;chksm=fd73e9d8e0d0d03b33a3c03b312325228d1be72c70fd15f6beaa7c51a86ae4c8c2d1f02acf0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">GitHub Copilot Edits 双模型架构，幕后揭秘！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-02-15 14:46:28">发布日期：2025-02-15 14:46:28</time></div><p class="article-description">点击蓝字关注我们作者：Sayed Ibrahim Hashimi排版：Rani Sun作者：Isidor Nikolic排版：Rani Sun如今，你可以在 VS Code 中通过至少两种方式使用 G</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498359&amp;idx=1&amp;sn=638ee9fdd14dbe938e7dfb6b82ed8973&amp;chksm=fd73e9d8e0d0d03b33a3c03b312325228d1be72c70fd15f6beaa7c51a86ae4c8c2d1f02acf0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498351&amp;idx=1&amp;sn=cfa124ed2f6f62ad8904050708e182ee&amp;chksm=fd39510a7a9c57a981e4ab5a734892eb7db4262586d66bcd329dd809a71af82f9dc82c6e35b1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z4WC9OGHQlGx0lOQYRJlTaLtRjSTdHEOBCvUvaa5tWo9QVcFN8OicuLIM1FD2QH8abHqBnc31xecoFFX1ibyHVPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498351&amp;idx=1&amp;sn=cfa124ed2f6f62ad8904050708e182ee&amp;chksm=fd39510a7a9c57a981e4ab5a734892eb7db4262586d66bcd329dd809a71af82f9dc82c6e35b1&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek缝合Claude，比单用R1/o1效果都好！GitHub揽星3k</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/f4444b51b7a88e978b59f526c51c7443/index.html">玩转VS Code</a></span><time class="article-date" datetime="2025-02-14 18:36:54">发布日期：2025-02-14 18:36:54</time></div><p class="article-description">梦晨 西风 发自 凹非寺量子位 | 公众号 QbitAI让DeepSeek代替Claude思考，缝合怪玩法火了。原因无它：比单独使用DeepSeek R1、Claude Sonnet 3.5、Open</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NjgwNTExNQ==&amp;mid=2247498351&amp;idx=1&amp;sn=cfa124ed2f6f62ad8904050708e182ee&amp;chksm=fd39510a7a9c57a981e4ab5a734892eb7db4262586d66bcd329dd809a71af82f9dc82c6e35b1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>独立鱼电影</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707091&amp;idx=1&amp;sn=07fd68c2237025c15dbb5945830881b2&amp;chksm=8a3a04c9d95ddefc6b349dac393343cc99c1604d31e261baa3f63d415749f9935fee871bf24c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5Z93mSckhib1EjnGEzWBpjLqBru5zIwTq5M1SvjYBIthw8fQMDHOPzHlY1Sl3oW5ibyZVLBjsKcQiaQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707091&amp;idx=1&amp;sn=07fd68c2237025c15dbb5945830881b2&amp;chksm=8a3a04c9d95ddefc6b349dac393343cc99c1604d31e261baa3f63d415749f9935fee871bf24c&amp;scene=0&amp;xtrack=1#rd" target="_blank">内娱放过他吧，抄都抄那么烂！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-20 22:10:50">发布日期：2025-11-20 22:10:50</time></div><p class="article-description">前段时间，有消息传出《重启人生》将翻拍中国版。此消息一出，很多人都表示强烈抗拒。毕竟，这部日剧可以说是近几年最神的剧之一。按照以往内娱翻拍的成绩，人们都担心又会出现一部糟糕的模仿品。《重启人生》会被拍</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707091&amp;idx=1&amp;sn=07fd68c2237025c15dbb5945830881b2&amp;chksm=8a3a04c9d95ddefc6b349dac393343cc99c1604d31e261baa3f63d415749f9935fee871bf24c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707072&amp;idx=1&amp;sn=08f092e0e432f2561c6071822c1ec274&amp;chksm=8a2730b33f81a4734fd08707e816cac6ea21e7689bfaf85528bf0634b30ded41eba7de492b6d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7HTlt42HPAHD3P0c7LeuHfp8cU7h0Q2hHo5miacXw0HszPgV0MWsenAjtCXTOIFmD3ibKGn0iba6Micg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707072&amp;idx=1&amp;sn=08f092e0e432f2561c6071822c1ec274&amp;chksm=8a2730b33f81a4734fd08707e816cac6ea21e7689bfaf85528bf0634b30ded41eba7de492b6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">完爆内娱小花，她这回赢麻了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-19 22:00:00">发布日期：2025-11-19 22:00:00</time></div><p class="article-description">最近真是提前过年了，高分剧扎堆出炉。其中更有一部英剧，开播时毫无水花，几乎无人在意。后来凭8.7分的口碑逆袭，社媒上也越来越多人安利。被评是今年女性情感剧的天花板。鱼叔看完后，也觉得十分惊喜。它可以说</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707072&amp;idx=1&amp;sn=08f092e0e432f2561c6071822c1ec274&amp;chksm=8a2730b33f81a4734fd08707e816cac6ea21e7689bfaf85528bf0634b30ded41eba7de492b6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707023&amp;idx=1&amp;sn=93e9a61a193a799cbeac5dcd7d287642&amp;chksm=8abd0e0808a58e4b09784adccb58b1de6a30ecee4b883f63d2cac3f5f843b408fd2a45c79f59&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6vDUwhUCMecQZHibz3SrIDvlw0rgGH0OwFFy1m50SKPiaa6H0Oc9CIViaxL3DlbR7m0xAQUibtATGgrQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707023&amp;idx=1&amp;sn=93e9a61a193a799cbeac5dcd7d287642&amp;chksm=8abd0e0808a58e4b09784adccb58b1de6a30ecee4b883f63d2cac3f5f843b408fd2a45c79f59&amp;scene=0&amp;xtrack=1#rd" target="_blank">她开挂了，又出了一部9.2分爆款！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-18 22:00:00">发布日期：2025-11-18 22:00:00</time></div><p class="article-description">临近年底，美剧好像开了挂。《流人 第五季》，豆瓣9.1；《小丑回魂：欢迎来到德里镇》，豆瓣9.0；《双雌大盗》，豆瓣8.6；《同乐者》，豆瓣8.5......但口碑最猛的，还要数这部：《都是她的错》，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657707023&amp;idx=1&amp;sn=93e9a61a193a799cbeac5dcd7d287642&amp;chksm=8abd0e0808a58e4b09784adccb58b1de6a30ecee4b883f63d2cac3f5f843b408fd2a45c79f59&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706940&amp;idx=1&amp;sn=5c99819a75ee8cbcc47bf907fe4a8623&amp;chksm=8a247f118476849c1f79488a76c147dfebd7a2ba68b0f9426398004f0355fe185276f0839036&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5DwAwf7kyh9zBm2tCuD0h6Zc05qgdXKLXUDMR3IGbjgsvhOibcUz6gm1V6Z3gib3BRY73iaoorV0oLw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706940&amp;idx=1&amp;sn=5c99819a75ee8cbcc47bf907fe4a8623&amp;chksm=8a247f118476849c1f79488a76c147dfebd7a2ba68b0f9426398004f0355fe185276f0839036&amp;scene=0&amp;xtrack=1#rd" target="_blank">不会吧，这救市之作也要下架了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-17 23:51:17">发布日期：2025-11-17 23:51:17</time></div><p class="article-description">众所周知，最近中日关系紧张。牵连之下，诸多日本电影也被传紧急撤档、暂缓上映。当然，也有命好的，赶在上周末上映，并成功掀起了一波久违的电影院热度。这就是动画《鬼灭之刃》的最新剧场版《无限城篇 第一章》。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706940&amp;idx=1&amp;sn=5c99819a75ee8cbcc47bf907fe4a8623&amp;chksm=8a247f118476849c1f79488a76c147dfebd7a2ba68b0f9426398004f0355fe185276f0839036&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706922&amp;idx=1&amp;sn=dd3f119bd79e92cf92d5dbb1a2fe8d46&amp;chksm=8a68134425ef9a664abcb3d17d5884f3c19e0457d16c2f59159afba0c1e0c0a0171a00e0c144&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7J2p7T8wh5j4HaHOEricxo0jnqLEvosbAzwicnJb8ic5tZOtzaDY4pmVVgjAROqwKvA5dchT1ZeObhw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706922&amp;idx=1&amp;sn=dd3f119bd79e92cf92d5dbb1a2fe8d46&amp;chksm=8a68134425ef9a664abcb3d17d5884f3c19e0457d16c2f59159afba0c1e0c0a0171a00e0c144&amp;scene=0&amp;xtrack=1#rd" target="_blank">一集封神，收视率暴涨，这剧赢麻了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-16 23:36:08">发布日期：2025-11-16 23:36:08</time></div><p class="article-description">最近，欧美剧频出爆款。一连串8.5分以上好剧，鱼叔都要刷不过来了。尤其是美剧的品质代表HBO，今年可谓大爆发。从年初的《匹兹堡医护前线》，到年中的《镀金时代》第三季，再到最近的《小丑回魂：欢迎来到德里</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706922&amp;idx=1&amp;sn=dd3f119bd79e92cf92d5dbb1a2fe8d46&amp;chksm=8a68134425ef9a664abcb3d17d5884f3c19e0457d16c2f59159afba0c1e0c0a0171a00e0c144&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706906&amp;idx=1&amp;sn=46aa0445e7b1d57139673d6ab9002fe6&amp;chksm=8a4a53798103f5a89b60853fa1eae07a87eaf5c7d631f15209188157931553ceaa2c820a5fb7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5RKEICCG3ibBQ6WQVampm59IPBodQ3aRCDwUHibrPaH9YRJJugRZZpvichMrCBokWproIx0FkSxickibg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706906&amp;idx=1&amp;sn=46aa0445e7b1d57139673d6ab9002fe6&amp;chksm=8a4a53798103f5a89b60853fa1eae07a87eaf5c7d631f15209188157931553ceaa2c820a5fb7&amp;scene=0&amp;xtrack=1#rd" target="_blank">今年最美恶女，杀疯了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-15 22:58:27">发布日期：2025-11-15 22:58:27</time></div><p class="article-description">最近，韩剧又杀出一匹黑马。开播不过几天，全球热度爆表，上线HBO Max后，一举斩获数个地区冠军。目前播出6集，豆瓣8.1分。它改编自人气漫画，题材本身噱头极强——揭露韩国新晋顶流光鲜外表下的暗黑人生</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706906&amp;idx=1&amp;sn=46aa0445e7b1d57139673d6ab9002fe6&amp;chksm=8a4a53798103f5a89b60853fa1eae07a87eaf5c7d631f15209188157931553ceaa2c820a5fb7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706897&amp;idx=1&amp;sn=78119404ed5a3ccda0e64a8a6bb9cc1f&amp;chksm=8a80b636970654c9673bbffb48272e60d137b501739e29e3647be0ee45219907716fb1363435&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4N6fpRctUGvkUp9qRaZ5U1j4Esia8oXZO6VLLRT0Richu8mW4sHGy9GMEU1zL5oeDYSQ7bGloWibibDw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706897&amp;idx=1&amp;sn=78119404ed5a3ccda0e64a8a6bb9cc1f&amp;chksm=8a80b636970654c9673bbffb48272e60d137b501739e29e3647be0ee45219907716fb1363435&amp;scene=0&amp;xtrack=1#rd" target="_blank">豆瓣9.7之后，他又出了一部神剧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-14 22:00:00">发布日期：2025-11-14 22:00:00</time></div><p class="article-description">今年最重磅的剧集之一终于上线。创作团队全是老熟人。导演编剧文斯·吉利根，两部豆瓣9.7收官的神剧《绝命毒师》《风骚律师》打造者。这部新剧是他时隔三年的新作。主演蕾亚·塞洪，《风骚律师》中的女主角金的扮</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706897&amp;idx=1&amp;sn=78119404ed5a3ccda0e64a8a6bb9cc1f&amp;chksm=8a80b636970654c9673bbffb48272e60d137b501739e29e3647be0ee45219907716fb1363435&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706878&amp;idx=1&amp;sn=3e2a6365fe3f1cf5bea4a0f07e687317&amp;chksm=8a3458db47b37c3922d30adf23d2bc22b2d4570ee4724abb06878cd50dd87fbae5ceae5bcea5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6ibibunOR4BNVCC6vSDH4N1aAprLYM7CvnPxaSic47BkGkDYPsoPFiazJqYyeyPxX7DMxMBacPhmzwDQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706878&amp;idx=1&amp;sn=3e2a6365fe3f1cf5bea4a0f07e687317&amp;chksm=8a3458db47b37c3922d30adf23d2bc22b2d4570ee4724abb06878cd50dd87fbae5ceae5bcea5&amp;scene=0&amp;xtrack=1#rd" target="_blank">这么多年，终于等到这部A级大片</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-13 22:00:00">发布日期：2025-11-13 22:00:00</time></div><p class="article-description">时隔3年，《水形物语》导演陀螺（吉尔莫·德尔·托罗）出新作了。阵容很顶。主演有金球奖影帝奥斯卡·伊萨克，奥斯卡最佳男配克里斯托弗·瓦尔兹，还有「恐怖片女王」米娅·高斯……改编自经典IP，科幻小说鼻祖《</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706878&amp;idx=1&amp;sn=3e2a6365fe3f1cf5bea4a0f07e687317&amp;chksm=8a3458db47b37c3922d30adf23d2bc22b2d4570ee4724abb06878cd50dd87fbae5ceae5bcea5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706790&amp;idx=1&amp;sn=f2557d594d5f3e567431a0f404765486&amp;chksm=8a6ebd2ebd7348d2b6454ca82bd4aedcdcaf26c0a0a703f871860c1d62f5050e86530959d740&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6t5gsF3Eck1g4w25I9suqLfqExedvyjj0Y0D5EI9FXu8EVRNia4ucCt20mtiaz39Zf49oWxlfsI2eA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706790&amp;idx=1&amp;sn=f2557d594d5f3e567431a0f404765486&amp;chksm=8a6ebd2ebd7348d2b6454ca82bd4aedcdcaf26c0a0a703f871860c1d62f5050e86530959d740&amp;scene=0&amp;xtrack=1#rd" target="_blank">她刚挤上一线女演员，就被骂惨了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-12 22:00:00">发布日期：2025-11-12 22:00:00</time></div><p class="article-description">今年是华语电影在国际电影节斩获颇丰的一年。毕赣的《狂野时代》，拿到了戛纳电影节的特别奖。舒淇凭《女孩》，拿下釜山国际电影节最佳导演。王传君凭《春树》，斩获东京国际电影节影帝。辛芷蕾凭《日掛中天》，夺得</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706790&amp;idx=1&amp;sn=f2557d594d5f3e567431a0f404765486&amp;chksm=8a6ebd2ebd7348d2b6454ca82bd4aedcdcaf26c0a0a703f871860c1d62f5050e86530959d740&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706679&amp;idx=1&amp;sn=dad3c0910c06225d92d43357bfa13aaa&amp;chksm=8a22d8fb2acd012f8639144ecf6c2a6604315c9cb36fd6898748e68d70b57a42c84af5a9abdd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7XgXibnapEaTsImgrUPQEA7iaaIqFvz4xPlhM2NV1XUZzib0g4wu2y84LazW91zib4icvt1xzG5kVpnvQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706679&amp;idx=1&amp;sn=dad3c0910c06225d92d43357bfa13aaa&amp;chksm=8a22d8fb2acd012f8639144ecf6c2a6604315c9cb36fd6898748e68d70b57a42c84af5a9abdd&amp;scene=0&amp;xtrack=1#rd" target="_blank">内娱女明星手撕导演，翻车了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-11 22:08:15">发布日期：2025-11-11 22:08:15</time></div><p class="article-description">内娱最近好精彩。这边关于《繁花》的争议还在持续发酵，那边关于辛芷蕾的威尼斯影后就有人质疑是运作。还有一个瓜更叫人摸不着头脑。白百何主演的影片，刚在东京电影节连拿大奖，却被传出各种内幕，剧组关系也一度火</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706679&amp;idx=1&amp;sn=dad3c0910c06225d92d43357bfa13aaa&amp;chksm=8a22d8fb2acd012f8639144ecf6c2a6604315c9cb36fd6898748e68d70b57a42c84af5a9abdd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706657&amp;idx=1&amp;sn=4b9aec5cd34df0d78bdb6c6eed023d77&amp;chksm=8a091f3945010ba21011806ed956137e199bc9d08bfcfdc70b695b1770c9df6b6bb0f072c8b1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706657&amp;idx=1&amp;sn=4b9aec5cd34df0d78bdb6c6eed023d77&amp;chksm=8a091f3945010ba21011806ed956137e199bc9d08bfcfdc70b695b1770c9df6b6bb0f072c8b1&amp;scene=0&amp;xtrack=1#rd" target="_blank">过年了！过年了！
+
+
+
+
+最近电影院终于要热闹起来了。
+
+《鬼灭之刃》新剧场版的预售票房，已经破1.1亿！
+
+马上就要打破2022年《玲芽之旅》创下的进口动画电影预售纪录。
+
+不仅如此，国内电影院也一扫十一档过后的持续低迷，将在这个周末迎来一个小高潮。
+
+要知道，从国庆假期以来，已经一个多月的日票房没有过亿。
+
+最低时，全国一万多家电影院总共只有1300万日票房，可谓惨淡。
+
+好在，本月的两部动画电影《鬼灭之刃》《疯狂动物城2》将连续掀起观影热潮。
+
+在进口片持续失效的今天，还是得靠大IP动画来救场啊。
+
+各位鱼友更想看哪一部呢？
+
+除了这两部，本月还有更期待的电影吗？
+
+你们更想看看鱼叔从什么角度写写这两部大热门呢？
+
+今天不妨休息一天，听听大家的声音。
+
+另外也再推推最近几篇不可错过的文章：
+
+1. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mht7svc3-ena6vo&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706514&amp;idx=1&amp;sn=7aa5a0a9cac020cc5453a237a6977b8c&amp;scene=21#wechat_redirect&quot;&gt;11月片单、剧单，全码齐。&lt;/a&gt;
+
+2. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mht7t0hb-oulx91&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706605&amp;idx=1&amp;sn=fdecf0b288e4c2d6acb131f542eebd66&amp;scene=21#wechat_redirect&quot;&gt;今年又一9分奇幻剧，不可错过。&lt;/a&gt;
+
+3. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mht7t8jc-tsfbna&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706524&amp;idx=1&amp;sn=71d48b9fcb5c53d2dbd02d9ca4257025&amp;scene=21#wechat_redirect&quot;&gt;9.4分纪录片，揭露伟大女性生前的秘闻。&lt;/a&gt;
+
+4. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mht7tce2-05ttqg&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706597&amp;idx=1&amp;sn=31e0e1ce9f052722041154c84b77ffd6&amp;scene=21#wechat_redirect&quot;&gt;0分开局的美剧最大笑话，烂到好笑。&lt;/a&gt;
+
+
+明天见！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-10 22:21:58">发布日期：2025-11-10 22:21:58</time></div><p class="article-description">过年了！过年了！
+
+
+
+
+最近电影院终于要热闹起来了。
+
+《鬼灭之刃》新剧场版的预售票房，已经破1.1亿！
+
+马上就要打破2022年《玲芽之旅》创下的进口动画电影预售纪录。
+
+不仅如此，国内电影院也一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706657&amp;idx=1&amp;sn=4b9aec5cd34df0d78bdb6c6eed023d77&amp;chksm=8a091f3945010ba21011806ed956137e199bc9d08bfcfdc70b695b1770c9df6b6bb0f072c8b1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706655&amp;idx=1&amp;sn=aa25f14b92f13d2adfa464b48512f584&amp;chksm=8a835f59503b9abce6c6ac78718b308ee3b133cafce36cfad3b1fed27e305919889a249b7143&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4PQE3iaa9DrIzYZpg5xodguwlpTGBVh1UdIU1z3MnwbN2BfApJMOMT7fyKIvyYrV9rtrVbB7utMOw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706655&amp;idx=1&amp;sn=aa25f14b92f13d2adfa464b48512f584&amp;chksm=8a835f59503b9abce6c6ac78718b308ee3b133cafce36cfad3b1fed27e305919889a249b7143&amp;scene=0&amp;xtrack=1#rd" target="_blank">消失8年，她一回归又是王炸</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-09 22:56:38">发布日期：2025-11-09 22:56:38</time></div><p class="article-description">今年最「炸裂」的电影，来了。奥斯卡金像奖导演凯瑟琳·毕格罗，时隔8年回归影坛。她之前的作品几乎都是让人肾上腺素飙升的硬核大片。比如《拆弹部队》《猎杀本·拉登》《底特律》…… 这次更刺激，讲述一枚核武器</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706655&amp;idx=1&amp;sn=aa25f14b92f13d2adfa464b48512f584&amp;chksm=8a835f59503b9abce6c6ac78718b308ee3b133cafce36cfad3b1fed27e305919889a249b7143&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706605&amp;idx=1&amp;sn=fdecf0b288e4c2d6acb131f542eebd66&amp;chksm=8a38c7b12c21b11f6a216f344454afec3f10f50b7fc9002cd394a24c5a9d496248ca614310c4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4ovJLiaJZ9Um8YhUefHdGZcwHzMN9pcsjiaghs2pzcjQ3dlO9jyCUy3ic11icLTaDiania7NHAnVrrcNjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706605&amp;idx=1&amp;sn=fdecf0b288e4c2d6acb131f542eebd66&amp;chksm=8a38c7b12c21b11f6a216f344454afec3f10f50b7fc9002cd394a24c5a9d496248ca614310c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">两集飙上9分，今年又一神剧出现了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-08 22:00:00">发布日期：2025-11-08 22:00:00</time></div><p class="article-description">没想到在2025年开始走入尾声的时候，突然有一部神剧出现。一集，豆瓣开分8.9。二集，分数直冲9+。烂番茄新鲜指数83%。有人评价它是「有史以来最好的剧集之一」「没有比它更好的」。也有人说这不过是「学</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706605&amp;idx=1&amp;sn=fdecf0b288e4c2d6acb131f542eebd66&amp;chksm=8a38c7b12c21b11f6a216f344454afec3f10f50b7fc9002cd394a24c5a9d496248ca614310c4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706597&amp;idx=1&amp;sn=31e0e1ce9f052722041154c84b77ffd6&amp;chksm=8a1aadb4ca3d60b1b0ef8983cc822ce337929611bec9788f18ceb2a93a852c71dafb26fee624&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7uq4jMibjtXYADIas8R3hbmovScxicDAZMzblk6T87soVicR2CaiayiaIj3ibyjic9wu3TibIibTogz5Dh29A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706597&amp;idx=1&amp;sn=31e0e1ce9f052722041154c84b77ffd6&amp;chksm=8a1aadb4ca3d60b1b0ef8983cc822ce337929611bec9788f18ceb2a93a852c71dafb26fee624&amp;scene=0&amp;xtrack=1#rd" target="_blank">0分开局，今年最炸裂的烂剧来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-07 22:42:52">发布日期：2025-11-07 22:42:52</time></div><p class="article-description">今年最炸裂的烂剧，出现了。IMDB评分3.1，烂番茄开局新鲜度0%。3集之后涨了点，到了6%。意思是，满分100拿了6分。翻遍美剧史，都是少见的烂。国内观众看完也惊呆了。没想到美剧有一天也能输给国产剧</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706597&amp;idx=1&amp;sn=31e0e1ce9f052722041154c84b77ffd6&amp;chksm=8a1aadb4ca3d60b1b0ef8983cc822ce337929611bec9788f18ceb2a93a852c71dafb26fee624&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706579&amp;idx=1&amp;sn=c60b0060847f9292ad06de34beb8685b&amp;chksm=8a7b7d2084fea624c48afd3bb230b67047f73b1a37d622fe6f494749ad88682f9fd57b6dde41&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6sQsv08b8uBQuFcAh4ibCcsPPWPNUo8msMibfcDYDSy7oCOvQ3g1Wt1BT2ZwqkARDH8bBBPlia9iaq8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706579&amp;idx=1&amp;sn=c60b0060847f9292ad06de34beb8685b&amp;chksm=8a7b7d2084fea624c48afd3bb230b67047f73b1a37d622fe6f494749ad88682f9fd57b6dde41&amp;scene=0&amp;xtrack=1#rd" target="_blank">今年最折磨人的电影，出现了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-06 22:00:00">发布日期：2025-11-06 22:00:00</time></div><p class="article-description">大家好，我是香玉。舒淇导演首作《女孩》，绝对是今年华语电影最瞩目的作品之一。先是入围了威尼斯电影节主竞赛，又在釜山电影节拿下最佳导演奖杯。跨界首作，就赢麻了。曾经的灵气少女，性感美人，实力影后，在49</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706579&amp;idx=1&amp;sn=c60b0060847f9292ad06de34beb8685b&amp;chksm=8a7b7d2084fea624c48afd3bb230b67047f73b1a37d622fe6f494749ad88682f9fd57b6dde41&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706574&amp;idx=1&amp;sn=cf4ae97ca799ea85b0b2be5e318f18ed&amp;chksm=8a33e2bf028337b17ca23ebd60c781167852d4db2e296809b068fb0883ac93eb6dd59e1474a7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6sQsv08b8uBQuFcAh4ibCcsU4Wnhj722xYpic5ouwb4VSBQRMcoOOaNcx4PNO072It1hia8ySib95p7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706574&amp;idx=1&amp;sn=cf4ae97ca799ea85b0b2be5e318f18ed&amp;chksm=8a33e2bf028337b17ca23ebd60c781167852d4db2e296809b068fb0883ac93eb6dd59e1474a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">又一个明星被骂到退网，谁赢了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-05 22:00:00">发布日期：2025-11-05 22:00:00</time></div><p class="article-description">郑智化，退网了。他之前发文怒斥深圳机场，这件事儿在微博上闹得沸沸扬扬。前几天，他在抖音发布了一个视频。视频中，郑智化详细讲述了整个事情的经过，并称自己将退出微博并注销账号。于是，11月3日那一天，人们</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706574&amp;idx=1&amp;sn=cf4ae97ca799ea85b0b2be5e318f18ed&amp;chksm=8a33e2bf028337b17ca23ebd60c781167852d4db2e296809b068fb0883ac93eb6dd59e1474a7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706555&amp;idx=1&amp;sn=6a0df254ff353e4736a6026aeae79a33&amp;chksm=8a0e1ed52ffeedb9819cabc32e4cbc9f6fbf6aa677f7486970d61328c7f08785946e0b2c0b0d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4tQYXbP5kWzHykz2KFgV4F8rtsx25sZbFDNI60tzvhyHswic4CicOY1rqoSqpEGyPOpUnicCwEWbX6g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706555&amp;idx=1&amp;sn=6a0df254ff353e4736a6026aeae79a33&amp;chksm=8a0e1ed52ffeedb9819cabc32e4cbc9f6fbf6aa677f7486970d61328c7f08785946e0b2c0b0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">今年内娱最大的瓜，还没扒完</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-04 23:22:52">发布日期：2025-11-04 23:22:52</time></div><p class="article-description">王家卫，又翻车了。继上次「编剧署名权」风波后，又被曝出与编剧秦雯的新录音。这次，情况更严重。涉及金靖、唐嫣、陈道明、游本昌等数名演员。有对女演员的低俗谈论，对资深演员的轻蔑嘲讽，还泄露了主创团队「靠关</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706555&amp;idx=1&amp;sn=6a0df254ff353e4736a6026aeae79a33&amp;chksm=8a0e1ed52ffeedb9819cabc32e4cbc9f6fbf6aa677f7486970d61328c7f08785946e0b2c0b0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706544&amp;idx=1&amp;sn=4c8e1508c1164be88e11a243f1aed25d&amp;chksm=8a8fb52a901a54e879e602bc3220c6a12960c8fa286b1d31a4ee0554385b1bf4fd8852baf92a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4mPutjMTJCKO4aqMxJHyt1Akcqs676uAJX6fdFibaZV6fXOrp7icXkuVicxc6gYIg1X8b83ZcbvR9NQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706544&amp;idx=1&amp;sn=4c8e1508c1164be88e11a243f1aed25d&amp;chksm=8a8fb52a901a54e879e602bc3220c6a12960c8fa286b1d31a4ee0554385b1bf4fd8852baf92a&amp;scene=0&amp;xtrack=1#rd" target="_blank">消失8年，这T0级演员突然复出了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-03 22:41:58">发布日期：2025-11-03 22:41:58</time></div><p class="article-description">说起娱乐圈的星二代，他们一直是关注度与争议齐飞的群体。只要有点动静，就会引起讨论，很多时候还都是负面评价。像是这两年常常被吐槽的黄多多、向佐等人。不过比起内娱这些二代们，国际星二代好像表现不错。坂本龙</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706544&amp;idx=1&amp;sn=4c8e1508c1164be88e11a243f1aed25d&amp;chksm=8a8fb52a901a54e879e602bc3220c6a12960c8fa286b1d31a4ee0554385b1bf4fd8852baf92a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706526&amp;idx=1&amp;sn=e0b3a98ed73f152829aff3dc91ceb660&amp;chksm=8a75e5d1149e6a65185c0a849da6b205a71c182f016213a23b1274f361be4a989a3bd3363bce&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706526&amp;idx=1&amp;sn=e0b3a98ed73f152829aff3dc91ceb660&amp;chksm=8a75e5d1149e6a65185c0a849da6b205a71c182f016213a23b1274f361be4a989a3bd3363bce&amp;scene=0&amp;xtrack=1#rd" target="_blank">又一个熟悉的演员，走了……
+
+
+
+
+
+香港演员冯淬帆于2025年10月31日晚去世，享年81岁。
+
+听名字大家可能会有点陌生，但一看到他的脸，记忆就会一下子唤醒。
+
+他是《五福星》里的一员“犀牛皮”，也是许多香港喜剧片里的熟脸，出演过《最佳损友》《摩登保镖》《精装追女仔》《癫佬正传》等。
+
+曾凭借电影《意外》提名香港金像奖最佳配角。
+
+几日前，“欢喜哥”许绍雄去世，他还曾发文悼念，说“贤弟那边等，愚兄随后来”。
+
+没想到，这个“随后”来得这么快。
+
+说起来，这段时间我们熟悉的明星离世的特别多。
+
+鱼叔也在不知不觉中陆续写了好几篇怀念的文章：
+
+1. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mhhslacw-rgxvrl&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706177&amp;idx=1&amp;sn=c59eed03dc139331c4b9f2c450344c20&amp;scene=21#wechat_redirect&quot;&gt;台湾传奇演员、80年代最火童星，颜正国&lt;/a&gt;
+
+2. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mhhsrb8j-mfum4g&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706312&amp;idx=1&amp;sn=20f8d0da3917b353848e83c739254b8e&amp;scene=21#wechat_redirect&quot;&gt;70年代标志性演员、时尚先锋，黛安基顿&lt;/a&gt;
+
+3. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mhhst8dg-kaclk5&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706496&amp;idx=1&amp;sn=f0dc41a20945bf93b2b86fc30f0129f8&amp;scene=21#wechat_redirect&quot;&gt;香港影视黄金配角、资深演员，许绍雄&lt;/a&gt;
+
+4. &lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mhhsv49h-4up57e&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706524&amp;idx=1&amp;sn=71d48b9fcb5c53d2dbd02d9ca4257025&amp;scene=21#wechat_redirect&quot;&gt;还有一位影视圈外的传奇女子、生物学家，珍·古道尔&lt;/a&gt;
+
+看看你是否漏掉了哪个，不妨点开与我再一次追忆致敬吧。
+
+不禁令人感慨，一个时代真的要过去了。
+
+今天，就让鱼叔静默一天，明天再来和大家聊电影。
+
+不见不散。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-02 22:33:57">发布日期：2025-11-02 22:33:57</time></div><p class="article-description">又一个熟悉的演员，走了……
+
+
+
+
+
+香港演员冯淬帆于2025年10月31日晚去世，享年81岁。
+
+听名字大家可能会有点陌生，但一看到他的脸，记忆就会一下子唤醒。
+
+他是《五福星》里的一员“犀牛皮”，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706526&amp;idx=1&amp;sn=e0b3a98ed73f152829aff3dc91ceb660&amp;chksm=8a75e5d1149e6a65185c0a849da6b205a71c182f016213a23b1274f361be4a989a3bd3363bce&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706524&amp;idx=1&amp;sn=71d48b9fcb5c53d2dbd02d9ca4257025&amp;chksm=8a63ba830f8e560bf3e75401ac08854c7fae71281f3d4c5bab492b179cfe86ebbaf8d2a3c2d8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5sumhqWB0Y0omoFwzY8twMeNiaLUFafwKzXXc9XubKtHZEWoTVnKKXhTGIAfJX1TzzvMY8b8XxsLQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706524&amp;idx=1&amp;sn=71d48b9fcb5c53d2dbd02d9ca4257025&amp;chksm=8a63ba830f8e560bf3e75401ac08854c7fae71281f3d4c5bab492b179cfe86ebbaf8d2a3c2d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">她遗作刚上线，就飙上豆瓣9.4</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-11-01 22:18:03">发布日期：2025-11-01 22:18:03</time></div><p class="article-description">10月初，珍·古道尔博士去世。教科书上走出的传奇人物就此谢幕，人们都感到遗憾、惋惜。 没想到，这么快，网飞就上线了她的纪录片。原以为是蹭热度，没想到拿下豆瓣9.4分。评论区都是一边倒的五星，恨不得安利</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706524&amp;idx=1&amp;sn=71d48b9fcb5c53d2dbd02d9ca4257025&amp;chksm=8a63ba830f8e560bf3e75401ac08854c7fae71281f3d4c5bab492b179cfe86ebbaf8d2a3c2d8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706514&amp;idx=1&amp;sn=7aa5a0a9cac020cc5453a237a6977b8c&amp;chksm=8a17b494699665515ae437d50eae6cf3a3e3f0692278547316da4aec24850bd11a16ad452b71&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5dSpVjvAud1FZEvYKkuD8NOslia4wOKMzMdLficLshTPqJ1Q5ficj8icR1NdaDne4PnNyoO2LZhFrTBg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706514&amp;idx=1&amp;sn=7aa5a0a9cac020cc5453a237a6977b8c&amp;chksm=8a17b494699665515ae437d50eae6cf3a3e3f0692278547316da4aec24850bd11a16ad452b71&amp;scene=0&amp;xtrack=1#rd" target="_blank">豆瓣9.2，今年唯一真神大片，来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-31 22:59:56">发布日期：2025-10-31 22:59:56</time></div><p class="article-description">十月份过去了。虽然假期多多，但电影院的好片屈指可数。国产片引进片通通不灵。好像没什么电影，是观众真正想看的。好在，接下来的11月来了几部真·王炸大片。像是时隔九年回归的现象级动画《疯狂动物城2》。电影</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706514&amp;idx=1&amp;sn=7aa5a0a9cac020cc5453a237a6977b8c&amp;chksm=8a17b494699665515ae437d50eae6cf3a3e3f0692278547316da4aec24850bd11a16ad452b71&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706496&amp;idx=1&amp;sn=f0dc41a20945bf93b2b86fc30f0129f8&amp;chksm=8a2009eeeaeb6a27df9815ca401b3205fc0c090649496557ae812aeada97f524e71a37657fe2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5MlQwEbEO4eJicp41sHRRTsk4LQLmKCfCMFxqX9n4WNvdqdDia3ShfbX4ZswYdC8boj2t5SfRPYuibA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706496&amp;idx=1&amp;sn=f0dc41a20945bf93b2b86fc30f0129f8&amp;chksm=8a2009eeeaeb6a27df9815ca401b3205fc0c090649496557ae812aeada97f524e71a37657fe2&amp;scene=0&amp;xtrack=1#rd" target="_blank">又一位难得的好演员，突然走了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-30 22:00:00">发布日期：2025-10-30 22:00:00</time></div><p class="article-description">娱乐圈又传噩耗……10月28日凌晨，香港演员许绍雄去世。一天前，就有消息称半个港娱都现身医院探病。当时网友们就纷纷表示，希望他挺过难关。可惜天不遂人愿，陪伴了一代人的好演员还是走了。 这一两年，我们似</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706496&amp;idx=1&amp;sn=f0dc41a20945bf93b2b86fc30f0129f8&amp;chksm=8a2009eeeaeb6a27df9815ca401b3205fc0c090649496557ae812aeada97f524e71a37657fe2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706489&amp;idx=1&amp;sn=6f0f1958c68bd4a0ff01c4230d9273e0&amp;chksm=8abe9f0958892925fb1c0ef82d991cf2c629263e34a294d92f78aad52950c8889145ca77a278&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr5K3PBdwnCp2IYMWt7vicEfaoyoT4y7quse8dnNdBwwzVbRbicLiaFBQPLVRH174P6HbCpv8yrnQVZDQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706489&amp;idx=1&amp;sn=6f0f1958c68bd4a0ff01c4230d9273e0&amp;chksm=8abe9f0958892925fb1c0ef82d991cf2c629263e34a294d92f78aad52950c8889145ca77a278&amp;scene=0&amp;xtrack=1#rd" target="_blank">全网围剿，又一位女明星塌房了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-29 22:00:00">发布日期：2025-10-29 22:00:00</time></div><p class="article-description">大家好，我是香玉。最近的内娱，又抽象到新境界了：有一位女明星正在被围剿，不少人甚至呼吁将其封杀雪藏。她就是，出演过《芳华》《好东西》的钟楚曦。香玉本来以为她是犯了什么塌房大事儿。结果一看，是因为被说在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706489&amp;idx=1&amp;sn=6f0f1958c68bd4a0ff01c4230d9273e0&amp;chksm=8abe9f0958892925fb1c0ef82d991cf2c629263e34a294d92f78aad52950c8889145ca77a278&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706484&amp;idx=1&amp;sn=6442fffdad7b10107b81ebac0ab29ffc&amp;chksm=8aebfa74dfa1153e4c2fa92bd48e5e80bd9c406bca6bd10f79c70c0cce690d9ab8c597ec5dbe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6NR2koibGvWr4UxMGDkibibfQkKPD7jh7HPqYNZxzDtHpiaz9gfYQlDwzISic4270pn23Cj8rtZQVibLQA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706484&amp;idx=1&amp;sn=6442fffdad7b10107b81ebac0ab29ffc&amp;chksm=8aebfa74dfa1153e4c2fa92bd48e5e80bd9c406bca6bd10f79c70c0cce690d9ab8c597ec5dbe&amp;scene=0&amp;xtrack=1#rd" target="_blank">可惜了，这世界第一美少年</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-28 22:29:36">发布日期：2025-10-28 22:29:36</time></div><p class="article-description">最近两天，影视圈噩耗频出。早上听闻香港演员许绍雄去世的消息，好一阵伤感。不仅为一位资深的黄金绿叶演员离开，也为一个我们熟悉的时代正在远去。不过，鱼叔已经开始提笔撰写另一位逝者的文章，许绍雄我们改天再聊</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706484&amp;idx=1&amp;sn=6442fffdad7b10107b81ebac0ab29ffc&amp;chksm=8aebfa74dfa1153e4c2fa92bd48e5e80bd9c406bca6bd10f79c70c0cce690d9ab8c597ec5dbe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706472&amp;idx=1&amp;sn=c913e8a98303b33b79878fb08f83fd89&amp;chksm=8aea38bdf2b9d2839deeff6979b6d61e70f1b9de3b38a3c24c09accca85109af6609c6f9bde9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr6dlx1Of1x8e4NpwKlVPCRnwLFkIV7JfQH6IyLGhyIaelibBWm2GKvwwF1vLH1yiaAPTXfciaibZFlLIA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706472&amp;idx=1&amp;sn=c913e8a98303b33b79878fb08f83fd89&amp;chksm=8aea38bdf2b9d2839deeff6979b6d61e70f1b9de3b38a3c24c09accca85109af6609c6f9bde9&amp;scene=0&amp;xtrack=1#rd" target="_blank">全网围观，这年度夫妻撕叉大戏来了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-27 22:16:52">发布日期：2025-10-27 22:16:52</time></div><p class="article-description">大家好，我是香玉。众所周知，婚姻话题热度经久不衰。去年，《再见爱人4》爆红。让全网为麦琳李行亮、黄圣依杨子、葛夕留几手三对夫妻操碎了心。今年，《再见爱人5》更炸裂了。因为嘉宾陷入丑闻，刚播一期就停更。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706472&amp;idx=1&amp;sn=c913e8a98303b33b79878fb08f83fd89&amp;chksm=8aea38bdf2b9d2839deeff6979b6d61e70f1b9de3b38a3c24c09accca85109af6609c6f9bde9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706461&amp;idx=1&amp;sn=7c74280b9394423b111ecfc06e22606e&amp;chksm=8ab1c251e7c8f235d62add50c43112d8f16c81a44f8e70ac103517891902b46ff9e9d011731d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7uwQosibmibs1K4sjRaz6RPkQTQKvvUicy6ibsl4nbb89TrLZHda3ZGozpGlTKMUicibDQm2WdDpPuwGVQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706461&amp;idx=1&amp;sn=7c74280b9394423b111ecfc06e22606e&amp;chksm=8ab1c251e7c8f235d62add50c43112d8f16c81a44f8e70ac103517891902b46ff9e9d011731d&amp;scene=0&amp;xtrack=1#rd" target="_blank">糊了22年，他终于凭借「性张力」火了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-26 22:00:00">发布日期：2025-10-26 22:00:00</time></div><p class="article-description">近两年，出现了一位新晋「性张力」男神：郑成日。因为出演《黑暗荣耀》的河道英一角，成功俘获大众的视线。按照编剧金银淑的话，河道英就是一个「绅士的狗崽子」。郑成日也的确把这个标签演活了。西装油头、表情克制</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706461&amp;idx=1&amp;sn=7c74280b9394423b111ecfc06e22606e&amp;chksm=8ab1c251e7c8f235d62add50c43112d8f16c81a44f8e70ac103517891902b46ff9e9d011731d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706459&amp;idx=1&amp;sn=d6e6801f7e8081f05b4413747d97a5f7&amp;chksm=8adeb8907b144ed354ece4fc53c7993b45f4a44e7a9b0aa4bc959e1b6dcd7bd53b564c5aa88b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7FAxbtUgkBWt4khfQ71pSJBGxCKXCR6VZHaoicLD3wwuhpLyKnAxDLgDD8KOKQiaHSQwwE9IUxtaicw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706459&amp;idx=1&amp;sn=d6e6801f7e8081f05b4413747d97a5f7&amp;chksm=8adeb8907b144ed354ece4fc53c7993b45f4a44e7a9b0aa4bc959e1b6dcd7bd53b564c5aa88b&amp;scene=0&amp;xtrack=1#rd" target="_blank">她复出拿奖，这次没人笑得出来</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-25 23:05:13">发布日期：2025-10-25 23:05:13</time></div><p class="article-description">大S离开8个月后，小S首次公开露面。 10月17日，第60届金钟奖颁奖礼上，「康熙」合体担任节目类颁奖嘉宾，小S也凭《小姐不熙娣》获综艺节目主持人奖。台上，小S一如往常开着玩笑，与蔡康永默契热场。回应</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706459&amp;idx=1&amp;sn=d6e6801f7e8081f05b4413747d97a5f7&amp;chksm=8adeb8907b144ed354ece4fc53c7993b45f4a44e7a9b0aa4bc959e1b6dcd7bd53b564c5aa88b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706449&amp;idx=1&amp;sn=fedcb0b8fc5a493781f733cbb49c3a62&amp;chksm=8a44b47c2969773ea88e308cc12e4db83da6570e49c533e20480791d462f8d39bccfcad21d70&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr7uwQosibmibs1K4sjRaz6RPkpkPb5b6gNWxL0D0AVAjbZtX1wMhAib9U5vOu1s0nbdHMq6ps0JxibaWw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706449&amp;idx=1&amp;sn=fedcb0b8fc5a493781f733cbb49c3a62&amp;chksm=8a44b47c2969773ea88e308cc12e4db83da6570e49c533e20480791d462f8d39bccfcad21d70&amp;scene=0&amp;xtrack=1#rd" target="_blank">内娱男星讲荤段子，居然拿下豆瓣8.9</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-24 22:00:00">发布日期：2025-10-24 22:00:00</time></div><p class="article-description">最近，出了部让人「叹为观止」的神作。豆瓣高达8.9分。赵又廷参与配音和共创。虽然口碑不赖。但，评论区的高频词却是：「猎奇」「不忍直视」「不要吃饭看」什么情况？ 今天就一起来看看这「禽兽大作」—— 《废</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706449&amp;idx=1&amp;sn=fedcb0b8fc5a493781f733cbb49c3a62&amp;chksm=8a44b47c2969773ea88e308cc12e4db83da6570e49c533e20480791d462f8d39bccfcad21d70&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706438&amp;idx=1&amp;sn=e0b39f76c5bca04fb41ea22ab886a876&amp;chksm=8af3704c4a7b3f30c920772a6dc84f181538861da572097fc445e6dd576dbbb0d90683d89a98&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4EA68IXSKpvAibmNDcCe89mIsIAK5X9H4YqkLdLvx2RzCGOkHHFV8iaFgLfOrc1Inu8wIxI7VsYdpg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706438&amp;idx=1&amp;sn=e0b39f76c5bca04fb41ea22ab886a876&amp;chksm=8af3704c4a7b3f30c920772a6dc84f181538861da572097fc445e6dd576dbbb0d90683d89a98&amp;scene=0&amp;xtrack=1#rd" target="_blank">今年最敢拍的喜剧，一次性辱了4国</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-23 23:15:50">发布日期：2025-10-23 23:15:50</time></div><p class="article-description">好吧，鱼叔又来说韩影敢拍了。上周有部新片上线。薛景求主演，政治讽刺的喜剧。众所周知，这类题材算是韩国手拿把掐的领域，已经出现不少优秀的作品。像是去年恨不得火爆一整年的电影《首尔之春》。如此严肃、晦涩的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706438&amp;idx=1&amp;sn=e0b39f76c5bca04fb41ea22ab886a876&amp;chksm=8af3704c4a7b3f30c920772a6dc84f181538861da572097fc445e6dd576dbbb0d90683d89a98&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706423&amp;idx=1&amp;sn=bf1c654d776bd69bfcb3d3d5e3dd36f4&amp;chksm=8aa1d15e2dda6a4247b800d9acecce1ea66f48d9621a5199e928b9ec897a23911e7430c2148e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/qIbgTlV4hr4cuj8EdDjYCZ96qAeGHcKREeKnmcDh2PBeuicFOY3Uj6XpvkxXibfCyK0ARQjXnUF3ibia7ibj5dMnyeg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706423&amp;idx=1&amp;sn=bf1c654d776bd69bfcb3d3d5e3dd36f4&amp;chksm=8aa1d15e2dda6a4247b800d9acecce1ea66f48d9621a5199e928b9ec897a23911e7430c2148e&amp;scene=0&amp;xtrack=1#rd" target="_blank">官方下场，内娱要出大事儿了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/aa94deee33fabdd6c84b6339a011e706/index.html">独立鱼电影</a></span><time class="article-date" datetime="2025-10-22 22:34:56">发布日期：2025-10-22 22:34:56</time></div><p class="article-description">内娱又出了个大事。最近，广电总局在多个平台开通了账号。取名「振兴国剧」，似要实施管理转型，在社交媒体宣传交流。口子一开，网友们立刻热情加入了「如何振兴国剧」的讨论。主要内容，落在了「禁与不禁」上。大致</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDM1MTcyNQ==&amp;mid=2657706423&amp;idx=1&amp;sn=bf1c654d776bd69bfcb3d3d5e3dd36f4&amp;chksm=8aa1d15e2dda6a4247b800d9acecce1ea66f48d9621a5199e928b9ec897a23911e7430c2148e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_2.html" class="pagination-button pagination-prev">上一页</a><a href="index_4.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

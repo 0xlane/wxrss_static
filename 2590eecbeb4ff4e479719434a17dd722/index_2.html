@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>天御攻防实验室</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486352&amp;idx=1&amp;sn=2c2cb69751c40abdba3863de0ccaa657&amp;chksm=faeadcd5d69fd42cf1e36f0f4cf032a9ad7be399d57d8e4ad59c0857d993578940e12d45ec23&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBDhkI9ZLBQSbuSKldS4wdicngYaSfNnaZP8FmI3jrTUvaibW0y4UFwQqr93LGottvic107G1ISpjgh7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486352&amp;idx=1&amp;sn=2c2cb69751c40abdba3863de0ccaa657&amp;chksm=faeadcd5d69fd42cf1e36f0f4cf032a9ad7be399d57d8e4ad59c0857d993578940e12d45ec23&amp;scene=0&amp;xtrack=1#rd" target="_blank">优质网络威胁情报应具备哪些核心特征？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-04-14 11:09:12">发布日期：2025-04-14 11:09:12</time></div><p class="article-description">大家可以对比一下自己买的威胁情报是否具备这些特征？！优质网络威胁情报的核心特征基于20年多维从业经验的CTI领域核心见解网络安全威胁情报专家优质CTI的核心价值在于推动决策制定和降低风险。👍 此即精髓</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486352&amp;idx=1&amp;sn=2c2cb69751c40abdba3863de0ccaa657&amp;chksm=faeadcd5d69fd42cf1e36f0f4cf032a9ad7be399d57d8e4ad59c0857d993578940e12d45ec23&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486342&amp;idx=1&amp;sn=ecb3c631592968480ced965fc0d91462&amp;chksm=fab01f7c3d5ca5cb40eca85ed0ced6843c01c76cb31a3713a27d144a10408366469f6aa7e7e8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBAzrm7N3RFGCOorTQRsDNSP4e9qHib0AQ2Aicv70ibZXSA0TlpKf2mK1NPBsUBRSFwMvKia0rFaS8A3jw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486342&amp;idx=1&amp;sn=ecb3c631592968480ced965fc0d91462&amp;chksm=fab01f7c3d5ca5cb40eca85ed0ced6843c01c76cb31a3713a27d144a10408366469f6aa7e7e8&amp;scene=0&amp;xtrack=1#rd" target="_blank">疯狂！美国安会网络官员扬言要对网络攻击者使用致命武力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-04-10 16:10:22">发布日期：2025-04-10 16:10:22</time></div><p class="article-description">据多个来源的消息透露，美国国家安全委员会（“国安会”，白宫最高权利机构）网络官员JD·沃克在一场关于如何为商业网络入侵能力（CCIC）设计反滥用保护机制的研讨会上，发言中警告称，美国将对从事商业网络恶</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486342&amp;idx=1&amp;sn=ecb3c631592968480ced965fc0d91462&amp;chksm=fab01f7c3d5ca5cb40eca85ed0ced6843c01c76cb31a3713a27d144a10408366469f6aa7e7e8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486337&amp;idx=1&amp;sn=8923fda8c1f614d59101254e61f3bdcb&amp;chksm=fa4eff11d09dd754c92e6fc85812cc1d82f1e687bc4b827a82d7965267f26ad7f140b0c77d18&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBCnbdj9O4ml7QkIhk6Dcj5F9fyugP4Ftrl9K4tZGzml4kSEkO7GGRIVl8NE1eVe4PDZt4fKmmOnwQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486337&amp;idx=1&amp;sn=8923fda8c1f614d59101254e61f3bdcb&amp;chksm=fa4eff11d09dd754c92e6fc85812cc1d82f1e687bc4b827a82d7965267f26ad7f140b0c77d18&amp;scene=0&amp;xtrack=1#rd" target="_blank">美国政府只囤积几十个零日漏洞，你信吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-04-09 11:31:29">发布日期：2025-04-09 11:31:29</time></div><p class="article-description">说起零日漏洞，大家脑海里是不是会蹦出那种黑客电影的画面，情报机构黑客坐在暗室里，手握一大堆秘密武器，随时准备搞乱网络世界？毕竟，美国政府有NSA（国家安全局）这种大佬级别的存在，感觉他们囤个几百上千个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486337&amp;idx=1&amp;sn=8923fda8c1f614d59101254e61f3bdcb&amp;chksm=fa4eff11d09dd754c92e6fc85812cc1d82f1e687bc4b827a82d7965267f26ad7f140b0c77d18&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486332&amp;idx=1&amp;sn=c83bdfd3f7f3b7f530e393ba4be93991&amp;chksm=fa106572ff72ca88e3c07b6a4df0484fea401a5209ffb20e7c97d8c1fa2cba760717afc44c83&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBAmdrE073tnBSsm58ZUkwSlDfPz5772Bia9BnotJsTWtWYyFNIrcgbEJKsXqFnibRftsnUstAST24kw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486332&amp;idx=1&amp;sn=c83bdfd3f7f3b7f530e393ba4be93991&amp;chksm=fa106572ff72ca88e3c07b6a4df0484fea401a5209ffb20e7c97d8c1fa2cba760717afc44c83&amp;scene=0&amp;xtrack=1#rd" target="_blank">“论坛巨魔” - NSA最新网络间谍行动曝光</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-27 15:03:12">发布日期：2025-03-27 15:03:12</time></div><p class="article-description">2025年3月27日事件概述俄罗斯网安公司Kaspersky（下称K公司）披露了一起由国家级APT组织发起的网络间谍行动（简报，未提供详细细节）。根据K公司的简报，攻击者利用Google Chrome</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486332&amp;idx=1&amp;sn=c83bdfd3f7f3b7f530e393ba4be93991&amp;chksm=fa106572ff72ca88e3c07b6a4df0484fea401a5209ffb20e7c97d8c1fa2cba760717afc44c83&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486325&amp;idx=1&amp;sn=b007e2a16f16a368992e9a04becefb3d&amp;chksm=fadf2b6240d4c165655f5b3220fdbee1761bc32e3ab0c0b0e7533a9c1465649a94e3ada94485&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBAohkYtP4ibgwY1LmLsMxcbEbAWFaM5QicZyIWuxHPVIxwygBpPeMyc2L8I86X4CBghdnCwL46ial6pA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486325&amp;idx=1&amp;sn=b007e2a16f16a368992e9a04becefb3d&amp;chksm=fadf2b6240d4c165655f5b3220fdbee1761bc32e3ab0c0b0e7533a9c1465649a94e3ada94485&amp;scene=0&amp;xtrack=1#rd" target="_blank">NSA的零日漏洞使用策略</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-26 15:56:26">发布日期：2025-03-26 15:56:26</time></div><p class="article-description">零日漏洞的“过度崇拜”我们今天要聊的是“零日漏洞”，以及为什么人们总是对它过度关注——甚至可以说是一种“崇拜”。零日漏洞的关注度远远超出了它的实际价值。先简单解释一下，零日漏洞是指那些已经被某些人发现</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486325&amp;idx=1&amp;sn=b007e2a16f16a368992e9a04becefb3d&amp;chksm=fadf2b6240d4c165655f5b3220fdbee1761bc32e3ab0c0b0e7533a9c1465649a94e3ada94485&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486321&amp;idx=1&amp;sn=5d1854e819b52fe2ec86f8a809a67ff8&amp;chksm=fa49e74009fb8803f68106a285ab76a979bcc63fd7a75325e0a7af7d4ae7568ac1a06a5e55e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBBgpOUfgGUxWs9BEP2JUfkAGBVsicl7b6Sian5F0us4RQgxUnKlWT2gTP1p9oJhhWHGpPjDk8XGSsjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486321&amp;idx=1&amp;sn=5d1854e819b52fe2ec86f8a809a67ff8&amp;chksm=fa49e74009fb8803f68106a285ab76a979bcc63fd7a75325e0a7af7d4ae7568ac1a06a5e55e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">特朗普政府意外将“我”拉入群聊。。 - 情报机构数字生态全纪实</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-25 11:52:11">发布日期：2025-03-25 11:52:11</time></div><p class="article-description">事件背景2025年3月11日星期二，特朗普政府通过加密通讯应用Signal意外将《大西洋月刊》主编Jeffrey Goldberg拉入一个高级国家安全群聊展开，该群聊讨论了即将对也门胡塞武装发动的军事</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486321&amp;idx=1&amp;sn=5d1854e819b52fe2ec86f8a809a67ff8&amp;chksm=fa49e74009fb8803f68106a285ab76a979bcc63fd7a75325e0a7af7d4ae7568ac1a06a5e55e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486317&amp;idx=1&amp;sn=62fe68388f58c6e8517031fa5641f429&amp;chksm=fab7ff6c18d3c687c42d9e036208ee2c515fc27919c75da759adb39d52535ce99efe557097c5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBCaYpbvWl32seXsyOZM9DIQskwaTctZLMe8gFbm3IAU4pkTRyiaM3oR1qLotNa1MQicbaYFymUBjaMQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486317&amp;idx=1&amp;sn=62fe68388f58c6e8517031fa5641f429&amp;chksm=fab7ff6c18d3c687c42d9e036208ee2c515fc27919c75da759adb39d52535ce99efe557097c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">美国CISA红队全部被解雇</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-12 13:39:18">发布日期：2025-03-12 13:39:18</time></div><p class="article-description">导读CISA（美国网络防御局，又称网络安全与基础设施局）的红队主要负责&quot;民用&quot;关键基础设施的渗透测试，而NSA（美国国家安全局）红队的主要负责测试高度安全的&quot;军用&quot;和国防领域的渗透测试，主要目标包括：</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486317&amp;idx=1&amp;sn=62fe68388f58c6e8517031fa5641f429&amp;chksm=fab7ff6c18d3c687c42d9e036208ee2c515fc27919c75da759adb39d52535ce99efe557097c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486308&amp;idx=1&amp;sn=8ae4a8ce7b252e88ca8437c6f3f252c7&amp;chksm=fac10f490b74ec7013a9c55c1e48e934a70dde0ec8a8753e59b4c595dea082fabecf568ef94a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBDEGITHAibaTib6GOBhawz7MDwT6NSOB434MBx8YdSYJ2BEKcRO7sV44B8KwTgtROmBiavdMbQICWlAg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486308&amp;idx=1&amp;sn=8ae4a8ce7b252e88ca8437c6f3f252c7&amp;chksm=fac10f490b74ec7013a9c55c1e48e934a70dde0ec8a8753e59b4c595dea082fabecf568ef94a&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞研究和漏洞利用技术领域的本质演变</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-11 14:38:57">发布日期：2025-03-11 14:38:57</time></div><p class="article-description">现代漏洞研究与攻防演变分析现代漏洞研究和漏洞利用技术领域正经历着本质性的演变，反映了网络安全攻防间的&quot;进化竞赛&quot;。本文从多个维度分析这一动态发展过程。（备注：基于漏洞研究员之间的对话整理）现实世界中的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486308&amp;idx=1&amp;sn=8ae4a8ce7b252e88ca8437c6f3f252c7&amp;chksm=fac10f490b74ec7013a9c55c1e48e934a70dde0ec8a8753e59b4c595dea082fabecf568ef94a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486304&amp;idx=1&amp;sn=c2433bc77a94508cb05f265fbfff17ff&amp;chksm=fa9bcda222788a5bcddac805bce99a4feb0abe2aa594846e80aedcc08ef5bea061d62fbb6d43&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBA6Uj5TXhl2yByl1xPRJsUg6OrpYIajEnw8dMb7s0ppVbxqzNpcepiaOYBicdzMxuPdIq7e63FfBY3A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486304&amp;idx=1&amp;sn=c2433bc77a94508cb05f265fbfff17ff&amp;chksm=fa9bcda222788a5bcddac805bce99a4feb0abe2aa594846e80aedcc08ef5bea061d62fbb6d43&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞情报 | 漏洞经纪人、甲方和厂商</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-08 07:02:00">发布日期：2025-03-08 07:02:00</time></div><p class="article-description">1.国外某漏洞经纪人的N-day漏洞情报订阅服务概述我们的N-day漏洞情报订阅服务为您的网络安全团队提供实时洞察，帮助您掌握近期披露且可被主动利用的漏洞（N-day）。该服务提供详细且可操作的情报，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486304&amp;idx=1&amp;sn=c2433bc77a94508cb05f265fbfff17ff&amp;chksm=fa9bcda222788a5bcddac805bce99a4feb0abe2aa594846e80aedcc08ef5bea061d62fbb6d43&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486300&amp;idx=1&amp;sn=2573d0b76e1513120101eff878c088d3&amp;chksm=fa027aba97b733c0c201845ac508813f9eb81a01eb8bd7c29a4d93c622c981e39485a7bfeb9c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBA6Uj5TXhl2yByl1xPRJsUgxGic2qBJmqQJDUU9LmFLgmeBNNUNfYtfSxDkz4yA8Ge6aNMVdcMWavg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486300&amp;idx=1&amp;sn=2573d0b76e1513120101eff878c088d3&amp;chksm=fa027aba97b733c0c201845ac508813f9eb81a01eb8bd7c29a4d93c622c981e39485a7bfeb9c&amp;scene=0&amp;xtrack=1#rd" target="_blank">FBI特工，五花八门的黑客组织命名啊！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-07 09:51:43">发布日期：2025-03-07 09:51:43</time></div><p class="article-description">FBI特工：黑客组织命名混乱加大执法难度FBI特工最近在一次演讲中提到，黑客组织命名乱七八糟，加上他们还专门研究执法部门的调查方法，这让抓人变得更难了。不仅如此，各个执法机构和地区之间还互相较劲，这也</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486300&amp;idx=1&amp;sn=2573d0b76e1513120101eff878c088d3&amp;chksm=fa027aba97b733c0c201845ac508813f9eb81a01eb8bd7c29a4d93c622c981e39485a7bfeb9c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486295&amp;idx=1&amp;sn=31e4f344dccf056d57b0ad0a4de00a69&amp;chksm=fafe04599884ddb907ea4c17b71ecbe3f83d655465f3dfd2d2a1f3b8df6dd5a3136ca1ca8312&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBBj78eThib79KLz6icb5icICFg7hnCYuBK2yZ0F2FcbCa6h2uhWib7wtcXmURfOsAzYx1m3ToQ6GXmvqA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486295&amp;idx=1&amp;sn=31e4f344dccf056d57b0ad0a4de00a69&amp;chksm=fafe04599884ddb907ea4c17b71ecbe3f83d655465f3dfd2d2a1f3b8df6dd5a3136ca1ca8312&amp;scene=0&amp;xtrack=1#rd" target="_blank">美俄网络战：美防长&quot;暂停令&quot;背后的战略黑洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-06 16:26:44">发布日期：2025-03-06 16:26:44</time></div><p class="article-description">美俄网络战：美防长&quot;暂停令&quot;背后的战略黑洞2025年3月1日，美国国防部长皮特·赫格塞斯一纸命令，要求网络司令部（CYBERCOM）停止对俄罗斯的进攻性网络行动。这个看似旨在缓和美俄关系的决策，却在网</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486295&amp;idx=1&amp;sn=31e4f344dccf056d57b0ad0a4de00a69&amp;chksm=fafe04599884ddb907ea4c17b71ecbe3f83d655465f3dfd2d2a1f3b8df6dd5a3136ca1ca8312&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486291&amp;idx=1&amp;sn=de04a9abc8fc3aa3cdbf901068da56e2&amp;chksm=fa834b6a563557b0aeeb96ee05eb0a366ed5d1ad5047fde0916bd42d5cb2e9f28f452ebf8895&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBBMAMHCCibia76icrkXoLjYPf4v9OFcSU2vKdB6I0NNKwkAqsmIXtm2Cbibuja1NBC2DIcwcEI92nexvQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486291&amp;idx=1&amp;sn=de04a9abc8fc3aa3cdbf901068da56e2&amp;chksm=fa834b6a563557b0aeeb96ee05eb0a366ed5d1ad5047fde0916bd42d5cb2e9f28f452ebf8895&amp;scene=0&amp;xtrack=1#rd" target="_blank">军事专家建议组建俄罗斯网络部队</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-05 11:37:57">发布日期：2025-03-05 11:37:57</time></div><p class="article-description">在国防部《军事思想》杂志三月刊中，发表了一篇题为《关于组建俄罗斯联邦武装力量新型部队——网络部队的建议》的文章。作者包括退役上校、军事学博士尤里·斯塔罗杜布采夫（军事通信学院），上校、军事学博士瓦西里</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486291&amp;idx=1&amp;sn=de04a9abc8fc3aa3cdbf901068da56e2&amp;chksm=fa834b6a563557b0aeeb96ee05eb0a366ed5d1ad5047fde0916bd42d5cb2e9f28f452ebf8895&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486287&amp;idx=1&amp;sn=ff08eaf0fe3c2a5e385862456b4ef8e9&amp;chksm=fa42249d2b499d342afe205f6f173fe5ef98cdb5cd24e51aaf2555d86fd965bf2645e2364206&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBD9f1ibibqU4HicFgkMd7vndDvtHscD6l3ibRaQKian4vJsmzxLlXeUicNxO5Vo9IanEoib9x0lqIfYZt2Ug/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486287&amp;idx=1&amp;sn=ff08eaf0fe3c2a5e385862456b4ef8e9&amp;chksm=fa42249d2b499d342afe205f6f173fe5ef98cdb5cd24e51aaf2555d86fd965bf2645e2364206&amp;scene=0&amp;xtrack=1#rd" target="_blank">全球网络武器市场报告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-03-04 10:16:16">发布日期：2025-03-04 10:16:16</time></div><p class="article-description">导读全球网络武器市场有望以9.4%的增长率发展，根据最新报告预计2029年将达到184.9亿美元。网络武器市场的规模和增长率是多少？近年来，网络武器市场规模迅速扩大，从2024年的115.9亿美元增长</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486287&amp;idx=1&amp;sn=ff08eaf0fe3c2a5e385862456b4ef8e9&amp;chksm=fa42249d2b499d342afe205f6f173fe5ef98cdb5cd24e51aaf2555d86fd965bf2645e2364206&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486278&amp;idx=1&amp;sn=22368d03626ec6a6ed639303613d5a9a&amp;chksm=fa1c3d3e925eab655be798169fd73a54d710f88961180a17dc7d04875ba6b82b8df84a0a5e05&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBBmfDHlQ1JfueXSwupWrWuTGnvHoFnKrdz2ngl3z8jJPYofScs1PIPUs6YCj3khKCxK4Krn0B5P6w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486278&amp;idx=1&amp;sn=22368d03626ec6a6ed639303613d5a9a&amp;chksm=fa1c3d3e925eab655be798169fd73a54d710f88961180a17dc7d04875ba6b82b8df84a0a5e05&amp;scene=0&amp;xtrack=1#rd" target="_blank">美国安局长，“美国在网络空间正日益落后于其对手”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-02-26 15:00:59">发布日期：2025-02-26 15:00:59</time></div><p class="article-description">前网络司令部与国家安全局局长于上周六表示，美国在网络空间正&quot;日益落后&quot;于其对手。在华盛顿特区举行的DistrictCon黑客会议上，退役将军保罗·中曾根表示：&quot;我们的对手正在不断扩大他们能够对我们采取</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486278&amp;idx=1&amp;sn=22368d03626ec6a6ed639303613d5a9a&amp;chksm=fa1c3d3e925eab655be798169fd73a54d710f88961180a17dc7d04875ba6b82b8df84a0a5e05&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486272&amp;idx=1&amp;sn=cbfec174bc301d4ce861a0d9b413aef6&amp;chksm=fa7519caa768e2f42254f7e03e7cae41ab800f80d88282ea191314543291042e44070eb76242&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBDbshZ9M4jLt2XI03ZXoM9rK4JQYUm9iaWPcibJhfy7uPW8FI8XoibFgZNLFyrvuJwDSasBenJ73BbIg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486272&amp;idx=1&amp;sn=cbfec174bc301d4ce861a0d9b413aef6&amp;chksm=fa7519caa768e2f42254f7e03e7cae41ab800f80d88282ea191314543291042e44070eb76242&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁狩猎的核心技能与工作方法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-02-24 14:08:53">发布日期：2025-02-24 14:08:53</time></div><p class="article-description">本文将深入探讨威胁狩猎（Threat Hunting）的核心技能与工作方法，揭示该领域常被忽视的关键环节。以下从理论框架、实践要点及扩展建议三个维度进行系统性分析。一、威胁狩猎的本质与核心挑战1. 超</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486272&amp;idx=1&amp;sn=cbfec174bc301d4ce861a0d9b413aef6&amp;chksm=fa7519caa768e2f42254f7e03e7cae41ab800f80d88282ea191314543291042e44070eb76242&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486268&amp;idx=1&amp;sn=768496b28b1a1134a77c378aa605a2ab&amp;chksm=faa73a743b86a5fda83ed8cb2f031c16372c38e575a088b9b9a90c688b6ae595a1fe1a8098f0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBBIYCjaxwbyaAfQJUSR675tjD9LB5jF8gJ7EpCQmnJkmepPwicS0gBFPfye7v7ZgG9K5eRfricndxJw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486268&amp;idx=1&amp;sn=768496b28b1a1134a77c378aa605a2ab&amp;chksm=faa73a743b86a5fda83ed8cb2f031c16372c38e575a088b9b9a90c688b6ae595a1fe1a8098f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">【CISO专栏】 | 企业如何应对后量子密码威胁</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-02-23 12:08:00">发布日期：2025-02-23 12:08:00</time></div><p class="article-description">【CISO】专栏在这个数字化转型加速、地缘政治日趋复杂的时代，网络安全已然成为国家战略和企业发展的重中之重。随着中美战略竞争加剧、全球供应链重构、数据主权意识觉醒，传统的网络安全治理模式正面临前所未有</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486268&amp;idx=1&amp;sn=768496b28b1a1134a77c378aa605a2ab&amp;chksm=faa73a743b86a5fda83ed8cb2f031c16372c38e575a088b9b9a90c688b6ae595a1fe1a8098f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486259&amp;idx=1&amp;sn=8ed19775f261fd65b242b751778bb2b6&amp;chksm=fa9559217043e0f358f25571ea78c487e466f82ef6350447c6ebdbb67909562565712250fb69&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hPq2VZ0zUBANiaPicKicXOeU4t9tbVDhota9hqgz7xJw5or6cHiaBEAdHSFVDIVrdcEKqPia83icbXwdjJAFRn3rnTrQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486259&amp;idx=1&amp;sn=8ed19775f261fd65b242b751778bb2b6&amp;chksm=fa9559217043e0f358f25571ea78c487e466f82ef6350447c6ebdbb67909562565712250fb69&amp;scene=0&amp;xtrack=1#rd" target="_blank">《“黑吃黑” - 劫持其他黑客组织基础设施的风险》</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/2590eecbeb4ff4e479719434a17dd722/index.html">天御攻防实验室</a></span><time class="article-date" datetime="2025-02-20 15:24:45">发布日期：2025-02-20 15:24:45</time></div><p class="article-description">在网络安全的世界中，威胁行为体之间的竞争从未停歇。近年来，一种被称为“黑吃黑”的现象悄然兴起——黑客组织通过劫持其他攻击者的基础设施（如服务器、恶意工具、访问权限等）来扩大自身攻击能力，同时将风险转嫁</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU0MzgyMzM2Nw==&amp;mid=2247486259&amp;idx=1&amp;sn=8ed19775f261fd65b242b751778bb2b6&amp;chksm=fa9559217043e0f358f25571ea78c487e466f82ef6350447c6ebdbb67909562565712250fb69&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

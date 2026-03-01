@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>XCTF联赛</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515723&amp;idx=1&amp;sn=c64e7c3b1b0c90be6f33d5f34bb32321&amp;chksm=a7098c0d87dcbf454b78b625281c45f4f38c3a121e0c35b851349033be8faa9f63973018e5d4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOASOJEroAWxHRjQANsZffUXVzAS49TKzz0ALcYTicrxQvaNT1V0ibpOQEa5zFRdh74RnuTqhVoIyKrA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515723&amp;idx=1&amp;sn=c64e7c3b1b0c90be6f33d5f34bb32321&amp;chksm=a7098c0d87dcbf454b78b625281c45f4f38c3a121e0c35b851349033be8faa9f63973018e5d4&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一届OpenHarmony CTF专题赛决赛即将开启！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-08-14 09:00:00">发布日期：2025-08-14 09:00:00</time></div><p class="article-description">2025年08月23日-08月24日第一届OpenHarmony CTF专题赛线下决赛即将开启来自566支高校1307人经过激烈的线上初赛选拔出的15支顶尖CTF战队、60位优秀选手将汇聚于深圳·香港</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515723&amp;idx=1&amp;sn=c64e7c3b1b0c90be6f33d5f34bb32321&amp;chksm=a7098c0d87dcbf454b78b625281c45f4f38c3a121e0c35b851349033be8faa9f63973018e5d4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515722&amp;idx=1&amp;sn=92398ccccf4684a867492d9102c0ec4e&amp;chksm=a72281ff83cd3df0cf6d7b7d55ff840bbf43dc2d03fcb1094002611a7a1c34b667555dbb4faf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOCQaMmFaUqsbUrwe6cwZFnT12ECC5hxmKG5lnDalKBUBUb872icSr2wSdZicl8wndpIicZq8wz6YvCbw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515722&amp;idx=1&amp;sn=92398ccccf4684a867492d9102c0ec4e&amp;chksm=a72281ff83cd3df0cf6d7b7d55ff840bbf43dc2d03fcb1094002611a7a1c34b667555dbb4faf&amp;scene=0&amp;xtrack=1#rd" target="_blank">SekaiCTF 2025｜倒计时3天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-08-13 16:31:38">发布日期：2025-08-13 16:31:38</time></div><p class="article-description">竞赛详情  竞赛时间 2025年08月16日09:00-2025年08月18日09:00 竞赛奖金 第一名2000 USD+第十届XCTF总决赛名额（或MaltaCTF Finals名额）第二名100</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515722&amp;idx=1&amp;sn=92398ccccf4684a867492d9102c0ec4e&amp;chksm=a72281ff83cd3df0cf6d7b7d55ff840bbf43dc2d03fcb1094002611a7a1c34b667555dbb4faf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515705&amp;idx=1&amp;sn=3c70e179caf610eec0612e95993bc912&amp;chksm=a7a40e1e26f41e470dd115359073f784e8ea2ac1de81c53e1783caee6ab03a62c70e8bebc506&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOB5OLW3XFq35IWlpBibeC8AtbSicKNrfW81pPvX7BTeWwdjGFXzcJ55Os4P5WmLDVCSvbT1bZZzaibNg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515705&amp;idx=1&amp;sn=3c70e179caf610eec0612e95993bc912&amp;chksm=a7a40e1e26f41e470dd115359073f784e8ea2ac1de81c53e1783caee6ab03a62c70e8bebc506&amp;scene=0&amp;xtrack=1#rd" target="_blank">第九届工业信息安全技能大赛人工智能安全锦标赛报名通知</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-08-07 10:21:46">发布日期：2025-08-07 10:21:46</time></div><p class="article-description">党的十八大以来，党中央把发展人工智能提升到战略高度。人工智能带来前所未有发展机遇，也带来前所未遇风险挑战。要把握人工智能发展趋势和规律，加紧制定完善相关法律法规、政策制度、应用规范、伦理准则，构建技术</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515705&amp;idx=1&amp;sn=3c70e179caf610eec0612e95993bc912&amp;chksm=a7a40e1e26f41e470dd115359073f784e8ea2ac1de81c53e1783caee6ab03a62c70e8bebc506&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515700&amp;idx=1&amp;sn=5263f3f638e0c38fb3f43e953328db24&amp;chksm=a7b69e09dd1f98f9afe89db103e164916e8dfebeacb534b9032a6002dd0eb10605b40b2953c0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/heQysib8ctDiaeiaUH7OMJ67AWAFjrNDxsyS2yZGEJyK72E7ia5Mic2PqUf5jniaNWjU1JAmLqUu1FFexVUvXWqNiagZg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515700&amp;idx=1&amp;sn=5263f3f638e0c38fb3f43e953328db24&amp;chksm=a7b69e09dd1f98f9afe89db103e164916e8dfebeacb534b9032a6002dd0eb10605b40b2953c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">守护智慧安全未来 2025年“湾区杯”网络安全大赛启航</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-07-31 14:03:53">发布日期：2025-07-31 14:03:53</time></div><p class="article-description">在数字浪潮席卷全球、科技产业变革加速的当下，网络安全已从单一技术议题，跃升为关乎国家战略、企业发展与个人安全的核心命题。在此背景下，由广东省委网信办、省公安厅、省教育厅、共青团广东省委员会联合指导，公</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515700&amp;idx=1&amp;sn=5263f3f638e0c38fb3f43e953328db24&amp;chksm=a7b69e09dd1f98f9afe89db103e164916e8dfebeacb534b9032a6002dd0eb10605b40b2953c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515694&amp;idx=1&amp;sn=d343a0d84fb92caa7e1b25549f15060b&amp;chksm=a7162711d34ae111a5b4b1952a802bde0d88ac04bff69cb5294dd7c023cd7cb4f6e36dfccc80&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODojEv7B4yRu6bmpo4fYKpZz3ickgag96EgyibVhhcoG1k0eKR6ibDlxT7QOCe4yb3HHWY3WMwiaMSJZQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515694&amp;idx=1&amp;sn=d343a0d84fb92caa7e1b25549f15060b&amp;chksm=a7162711d34ae111a5b4b1952a802bde0d88ac04bff69cb5294dd7c023cd7cb4f6e36dfccc80&amp;scene=0&amp;xtrack=1#rd" target="_blank">国际外卡赛｜SekaiCTF 2025即将开启！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-07-29 17:47:37">发布日期：2025-07-29 17:47:37</time></div><p class="article-description">回望来时路：是无数指尖火苗的汇聚，在较量中积蓄能量；是群体智慧的激烈碰撞，在实战中淬炼锋芒；是时代浪潮的推陈出新，在变革中破局开疆。此刻，我们邀你共赴新程：打破桎梏，拥抱无界视界；跨越山海，剑指全球巅</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515694&amp;idx=1&amp;sn=d343a0d84fb92caa7e1b25549f15060b&amp;chksm=a7162711d34ae111a5b4b1952a802bde0d88ac04bff69cb5294dd7c023cd7cb4f6e36dfccc80&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515679&amp;idx=1&amp;sn=b7074e00ece0dfa2db30f303583e3807&amp;chksm=a7996add161b874158cfff177be7afbba7a0267874b54a278784e1ce2329c8c3c15b3ea01f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOCSVGdgeNmBrXpvkyeH46tx2g20fPOzou3icjyeZSOmS2lpjYx7cQAnallHgxzfWeJGibJ0YnSsxsiaw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515679&amp;idx=1&amp;sn=b7074e00ece0dfa2db30f303583e3807&amp;chksm=a7996add161b874158cfff177be7afbba7a0267874b54a278784e1ce2329c8c3c15b3ea01f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">L3HCTF 2025 | 倒计时1天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-07-11 09:00:00">发布日期：2025-07-11 09:00:00</time></div><p class="article-description">竞赛介绍 L3HCTF 2025由XCTF联赛合作单位L3H_Sec战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛分站赛，本次比赛将采用在线网络安全夺旗挑战赛的形式，面向全球开放。此次</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515679&amp;idx=1&amp;sn=b7074e00ece0dfa2db30f303583e3807&amp;chksm=a7996add161b874158cfff177be7afbba7a0267874b54a278784e1ce2329c8c3c15b3ea01f8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515671&amp;idx=1&amp;sn=9e67194fd10c501c7983fe4cbba0fa34&amp;chksm=a79bf5a75ac55d1a9ccc9725334ae1e7119a02c6b5d2cf3a6c9fdb1245f4a58bbcd3cc554594&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODylt2iaQODnWIGysLgc12gjlU92zg0Ed9L1vFJpX2E0ibVdV2uyfdU9FCmIO4AKmia26fd2qtW5g1fQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515671&amp;idx=1&amp;sn=9e67194fd10c501c7983fe4cbba0fa34&amp;chksm=a79bf5a75ac55d1a9ccc9725334ae1e7119a02c6b5d2cf3a6c9fdb1245f4a58bbcd3cc554594&amp;scene=0&amp;xtrack=1#rd" target="_blank">L3HCTF 2025 | 倒计时3天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-07-09 09:00:00">发布日期：2025-07-09 09:00:00</time></div><p class="article-description">竞赛介绍 L3HCTF 2025由XCTF联赛合作单位L3H_Sec战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛分站赛，本次比赛将采用在线网络安全夺旗挑战赛的形式，面向全球开放。此次</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515671&amp;idx=1&amp;sn=9e67194fd10c501c7983fe4cbba0fa34&amp;chksm=a79bf5a75ac55d1a9ccc9725334ae1e7119a02c6b5d2cf3a6c9fdb1245f4a58bbcd3cc554594&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515657&amp;idx=1&amp;sn=fe788af0ee73ace852df737fa4173f3a&amp;chksm=a7b506020ad44630042cfe188787c99f53c397429a86b562ab6aeafe1def55f21dcc7ecde693&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOBtHo6HTpaTl81LTqlG6neiag01DW1x9OUlFXllVuUDcYcib2JqMYy62lSN3Pf7qbibFibs5GpdsaJj7A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515657&amp;idx=1&amp;sn=fe788af0ee73ace852df737fa4173f3a&amp;chksm=a7b506020ad44630042cfe188787c99f53c397429a86b562ab6aeafe1def55f21dcc7ecde693&amp;scene=0&amp;xtrack=1#rd" target="_blank">L3HCTF 2025 | 悬鼓待擂 竞逐至高</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-06-19 11:38:22">发布日期：2025-06-19 11:38:22</time></div><p class="article-description">2025年07月12日09:00—07月14日09:00第九届XCTF国际联赛分站赛L3HCTF 2025重磅上线!!!、L3HCTF 2025由L3H_Sec战队命题作为XCTF联赛的长期合作战队他</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515657&amp;idx=1&amp;sn=fe788af0ee73ace852df737fa4173f3a&amp;chksm=a7b506020ad44630042cfe188787c99f53c397429a86b562ab6aeafe1def55f21dcc7ecde693&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515646&amp;idx=1&amp;sn=88828c72e10e08716386851d2fd3e8c0&amp;chksm=a724f3ab360626813f7fcba5870fc7f863dab866d2f48067b9811a38a41a14ef02a59d6025a2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODm0fXuUKZpZibI8HJkNCvF4dxoTkT0yWiaYZmUojyE7Hc0ptxzgTnjHcUNVMWYZkDiaFO8Pa0nu15og/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515646&amp;idx=1&amp;sn=88828c72e10e08716386851d2fd3e8c0&amp;chksm=a724f3ab360626813f7fcba5870fc7f863dab866d2f48067b9811a38a41a14ef02a59d6025a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">L3HCTF 2025 | 悬鼓待擂 竞逐至高</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-06-13 14:02:35">发布日期：2025-06-13 14:02:35</time></div><p class="article-description">2025年06月28日09:00—06月30日09:00第九届XCTF国际联赛分站赛L3HCTF 2025重磅上线!!!、L3HCTF 2025由L3H_Sec战队命题作为XCTF国际联赛的长期合作战</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515646&amp;idx=1&amp;sn=88828c72e10e08716386851d2fd3e8c0&amp;chksm=a724f3ab360626813f7fcba5870fc7f863dab866d2f48067b9811a38a41a14ef02a59d6025a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515631&amp;idx=1&amp;sn=50cd43cc2923c8492b7cc6100dde291c&amp;chksm=a7a2b8ac448922e5c6f83042c0bd303587b555f9c6bd37fd523592100a198193cd41a5c774c0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODMqKVlicrBhIZ0KXyAeAZPhKoGZCDib2MQIYvZBobEDFWuYia5fbKCZZMpojutTID85Fbhia07dsepvA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515631&amp;idx=1&amp;sn=50cd43cc2923c8492b7cc6100dde291c&amp;chksm=a7a2b8ac448922e5c6f83042c0bd303587b555f9c6bd37fd523592100a198193cd41a5c774c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一届OpenHarmony CTF专题赛｜线上赛出线名单公布</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-06-12 18:00:00">发布日期：2025-06-12 18:00:00</time></div><p class="article-description">。经过36h的激烈角逐，第一届OpenHarmony CTF线上选拔赛于近日顺利收官。本届赛事由开放原子开源基金会及OpenHarmony项目群工作委员会、OpenHarmony安全委员会主办，香港科</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515631&amp;idx=1&amp;sn=50cd43cc2923c8492b7cc6100dde291c&amp;chksm=a7a2b8ac448922e5c6f83042c0bd303587b555f9c6bd37fd523592100a198193cd41a5c774c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515618&amp;idx=1&amp;sn=4cf8143184902631f3f3137df6953195&amp;chksm=a78f967e578596dd8645ee44657b2bd7367ee8a3b56cd0a0db7a3290d1529b16f37794cf7344&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOAN7yicV9nSkPK8uDCgOBmW9wXNE1OFpKr6U12VdKIkBXxribEsXe8NDFXicibhQ0aO17JS14nBayKAhw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515618&amp;idx=1&amp;sn=4cf8143184902631f3f3137df6953195&amp;chksm=a78f967e578596dd8645ee44657b2bd7367ee8a3b56cd0a0db7a3290d1529b16f37794cf7344&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一届OpenHarmony CTF专题赛线上赛落幕，天枢Dubhe排名第一！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-06-09 17:59:19">发布日期：2025-06-09 17:59:19</time></div><p class="article-description">第一届OpenHarmony CTF专题赛线上赛于06月08日21:00落下帷幕。本场赛题围绕开源操作系统为核心场景，聚焦其底层安全机制、应用防护及生态安全等前沿领域，赛题方向涉及操作系统应用破解和漏</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515618&amp;idx=1&amp;sn=4cf8143184902631f3f3137df6953195&amp;chksm=a78f967e578596dd8645ee44657b2bd7367ee8a3b56cd0a0db7a3290d1529b16f37794cf7344&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515608&amp;idx=1&amp;sn=fdeaa68079bbe71315f75536ea51c1cc&amp;chksm=a73367831028197b47bba11102572981134b1380f7cab4b5b7cbaceb74f35d0872410d6b97f3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODyj8TCc0WPlmxnMSFP4Dcj30QH56icfaiafR9lwlXt05PK0iaBIaaU7tQpf6LiaYb0FbvqHEDChQDgPQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515608&amp;idx=1&amp;sn=fdeaa68079bbe71315f75536ea51c1cc&amp;chksm=a73367831028197b47bba11102572981134b1380f7cab4b5b7cbaceb74f35d0872410d6b97f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一届OpenHarmony CTF专题赛 I 倒计时1天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-06-06 09:00:00">发布日期：2025-06-06 09:00:00</time></div><p class="article-description">初赛平台登录须知成功报名的参赛队选手可通过以下链接获取赛事平台登录/账号信息：导航登录页：https://adnav.xctf.org.cn/page/login1.需使用您报名提供的手机号，通过短信</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515608&amp;idx=1&amp;sn=fdeaa68079bbe71315f75536ea51c1cc&amp;chksm=a73367831028197b47bba11102572981134b1380f7cab4b5b7cbaceb74f35d0872410d6b97f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515595&amp;idx=1&amp;sn=3769bfbdbbf48e40b12be19988d3a1ac&amp;chksm=a7b4032dd5d0a9db93a55e878484a4c1a0f90f70c6107abbfe96cb6cc47450e6a93c5bcdc277&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODeZfpdibLHUFF2ukIsUT63Lm0icvhZqfuzf5btibbbJnjYXOxq9g88ECe6IPnhQfJkMt0F9J0RpJyJg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515595&amp;idx=1&amp;sn=3769bfbdbbf48e40b12be19988d3a1ac&amp;chksm=a7b4032dd5d0a9db93a55e878484a4c1a0f90f70c6107abbfe96cb6cc47450e6a93c5bcdc277&amp;scene=0&amp;xtrack=1#rd" target="_blank">第一届OpenHarmony CTF专题赛报名开启！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-05-26 18:00:00">发布日期：2025-05-26 18:00:00</time></div><p class="article-description">在开源技术日益成为数字生态基石的当下，开源系统安全已成为全球关注的焦点。随着OpenHarmony在智能终端、物联网等领域的广泛应用，其安全边界不断扩展，面临的威胁也愈发复杂多变。 基于此，第一届Op</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515595&amp;idx=1&amp;sn=3769bfbdbbf48e40b12be19988d3a1ac&amp;chksm=a7b4032dd5d0a9db93a55e878484a4c1a0f90f70c6107abbfe96cb6cc47450e6a93c5bcdc277&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515574&amp;idx=1&amp;sn=6340604516ac577bde94063d7f84349c&amp;chksm=a70e8b062a8bbc0a788ab5ee6bae28ca173a07a5858f435657bf72e18e89a8e517b02282c6ea&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOAHZibFgtgzz9mUFctWSvRcSA6gB7ZxJLmwfeErBaaPnOxj6icWcHicc3TgLchlBdyoPoAdnSVPT9prQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515574&amp;idx=1&amp;sn=6340604516ac577bde94063d7f84349c&amp;chksm=a70e8b062a8bbc0a788ab5ee6bae28ca173a07a5858f435657bf72e18e89a8e517b02282c6ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">蓝莲花战队十五周年论坛在京举行 共话网安极客之路</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-05-16 08:26:07">发布日期：2025-05-16 08:26:07</time></div><p class="article-description">2025年5月10日，作为中国网络安全CTF竞赛领域标杆性团队的蓝莲花战队（Blue-Lotus）在京举办成立十五周年主题论坛。这支源自清华大学的国际顶尖网络安全战队，汇聚新老队员及行业专家150余人</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515574&amp;idx=1&amp;sn=6340604516ac577bde94063d7f84349c&amp;chksm=a70e8b062a8bbc0a788ab5ee6bae28ca173a07a5858f435657bf72e18e89a8e517b02282c6ea&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515568&amp;idx=1&amp;sn=cbcf133c5917e08a1db672a3a0ca79d4&amp;chksm=a7bcc43f19d5ed7eef9eb5c782be984aef2fc85bad4dd919b62d1dbea2d95ad21b3b3182c732&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOB1bmlssdiciaXaqzRode0Q7UXDxMAGPWVgHV7fwOibuIJyq0Xbp6FgE9D7mia0oferII3sMF6JaShTTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515568&amp;idx=1&amp;sn=cbcf133c5917e08a1db672a3a0ca79d4&amp;chksm=a7bcc43f19d5ed7eef9eb5c782be984aef2fc85bad4dd919b62d1dbea2d95ad21b3b3182c732&amp;scene=0&amp;xtrack=1#rd" target="_blank">开赛！第四届中国研究生网络安全创新大赛报名开启！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-04-28 09:00:00">发布日期：2025-04-28 09:00:00</time></div><p class="article-description">CPIPC第四届中国研究生网络安全创新大赛正式启动！三大赛道 等你来战！✨ 揭榜挑战赛 ✨直面行业“卡脖子”难题 用技术破局！✨ 创意作品赛 ✨脑洞大开的网络安全方案 让创新闪耀！✨ 实网对抗赛 ✨C</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515568&amp;idx=1&amp;sn=cbcf133c5917e08a1db672a3a0ca79d4&amp;chksm=a7bcc43f19d5ed7eef9eb5c782be984aef2fc85bad4dd919b62d1dbea2d95ad21b3b3182c732&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515564&amp;idx=1&amp;sn=93321dba2468857e1b14d7f57ae2226b&amp;chksm=a7da1c8c8908cd178414f5e38e380528304fcc38aa0f548481c69fdbcd3820954321a2652717&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOB1bmlssdiciaXaqzRode0Q7Utfz1M0ic7RcPbicbMZgxOxesGewaLm06qiacAtK9COtShYNLXicXia8tk9Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515564&amp;idx=1&amp;sn=93321dba2468857e1b14d7f57ae2226b&amp;chksm=a7da1c8c8908cd178414f5e38e380528304fcc38aa0f548481c69fdbcd3820954321a2652717&amp;scene=0&amp;xtrack=1#rd" target="_blank">ACTF 2025 落幕，N0wayBack战队夺冠！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-04-27 17:30:00">发布日期：2025-04-27 17:30:00</time></div><p class="article-description">2025年04月27日09:00，经过24小时激烈比拼，第九届XCTF国际联赛分站赛：ACTF 2025圆满落幕。本场赛事由XCTF国际联赛主办，浙江大学AAA战队组织&amp;命题，赛宁网安提供技术支持。本</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515564&amp;idx=1&amp;sn=93321dba2468857e1b14d7f57ae2226b&amp;chksm=a7da1c8c8908cd178414f5e38e380528304fcc38aa0f548481c69fdbcd3820954321a2652717&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515554&amp;idx=1&amp;sn=76858bd8fdd875a73b1891a65b47ad2a&amp;chksm=a74b7d27a56326f9b1624a3dbef919744952211407b94ba416539237ff19ead6461f53eb5a32&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODAnxicCC2r4rCDIHfL2BDmaqHLQuZmGVDN1jN8cQ5GuyURFgxyTaSC43f8Jhib8tVPhuEpicMdK2mLw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515554&amp;idx=1&amp;sn=76858bd8fdd875a73b1891a65b47ad2a&amp;chksm=a74b7d27a56326f9b1624a3dbef919744952211407b94ba416539237ff19ead6461f53eb5a32&amp;scene=0&amp;xtrack=1#rd" target="_blank">ACTF 2025 | 倒计时1天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-04-25 09:00:00">发布日期：2025-04-25 09:00:00</time></div><p class="article-description">竞赛介绍 本届ACTF 2025由XCTF联赛的合作单位浙江大学AAA战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛的分站赛，本次比赛将采用在线网络安全夺旗挑战赛的形式，面向全球开放。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515554&amp;idx=1&amp;sn=76858bd8fdd875a73b1891a65b47ad2a&amp;chksm=a74b7d27a56326f9b1624a3dbef919744952211407b94ba416539237ff19ead6461f53eb5a32&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515549&amp;idx=1&amp;sn=9d7a37fca54b6935d2fb86c3eddfe617&amp;chksm=a7687cb14c3201cb9ba3c87425f8b4f0ac3dfd69b595760dcba105f3cb8765b899b721ef9c8a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOAF1V1iaFVM8JkLhWia6PhyS8VL98YTLic1IlveIE1fUCO3ibLbXBmeFiaC70hfBQAjLK2aeLN7IPQTX9w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515549&amp;idx=1&amp;sn=9d7a37fca54b6935d2fb86c3eddfe617&amp;chksm=a7687cb14c3201cb9ba3c87425f8b4f0ac3dfd69b595760dcba105f3cb8765b899b721ef9c8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">ACTF 2025 | 倒计时3天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-04-23 09:00:00">发布日期：2025-04-23 09:00:00</time></div><p class="article-description">竞赛介绍 本届ACTF 2025由XCTF联赛的合作单位浙江大学AAA战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛的分站赛，本次比赛将采用在线网络安全夺旗挑战赛的形式，面向全球开放。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515549&amp;idx=1&amp;sn=9d7a37fca54b6935d2fb86c3eddfe617&amp;chksm=a7687cb14c3201cb9ba3c87425f8b4f0ac3dfd69b595760dcba105f3cb8765b899b721ef9c8a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515541&amp;idx=1&amp;sn=73a5fe3728c6505c3f42f9a839179770&amp;chksm=a772617de821bb76d41ad81adf4d6f9695e6f1391db4818f3dc5dfba43ca0103f3be66fb6eab&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODQBjRlCuMeqSicvPgqdHqYLVBL66xO0HI9ibxoLBqyChfIM4VzLmXNOJYdN7icJ7lkpBsB9z3jdvBFQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515541&amp;idx=1&amp;sn=73a5fe3728c6505c3f42f9a839179770&amp;chksm=a772617de821bb76d41ad81adf4d6f9695e6f1391db4818f3dc5dfba43ca0103f3be66fb6eab&amp;scene=0&amp;xtrack=1#rd" target="_blank">ACTF 2025 | 实战砺剑，破晓争锋！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-04-10 17:30:00">发布日期：2025-04-10 17:30:00</time></div><p class="article-description">04月26日09:00-27日09:00ACTF 2025极客再燃 | GEEK REIGNITE 🔥由浙江大学AAA战队操刀出题将前沿安全技术凝练为实战场景以创新题型突破常规框架赛题涵盖多领域技术栈</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515541&amp;idx=1&amp;sn=73a5fe3728c6505c3f42f9a839179770&amp;chksm=a772617de821bb76d41ad81adf4d6f9695e6f1391db4818f3dc5dfba43ca0103f3be66fb6eab&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515533&amp;idx=1&amp;sn=97f092614214b6ab73d1632a5c457289&amp;chksm=a782096bcf7f61df27a88a83e14f7bebe65db3c386a17a709f45c68d79c2ed1e6c5f2aeda60f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOBr9nWL6pLsIl5BUXyPEMgNHe0Yq2429ACtKLc3vA9h36tKVyfc5VlyYCZdqAZe1wdgdyfSs2251A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515533&amp;idx=1&amp;sn=97f092614214b6ab73d1632a5c457289&amp;chksm=a782096bcf7f61df27a88a83e14f7bebe65db3c386a17a709f45c68d79c2ed1e6c5f2aeda60f&amp;scene=0&amp;xtrack=1#rd" target="_blank">TPCTF2025 落幕，0ops战队夺冠！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-03-10 17:57:43">发布日期：2025-03-10 17:57:43</time></div><p class="article-description">2025年03月10日09:00，经过48小时激烈比拼，第九届XCTF国际联赛分站赛TPCTF 2025圆满落幕。本场赛事由XCTF国际联赛主办，清华大学Redbud战队及北京大学pkucc战队共同组</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515533&amp;idx=1&amp;sn=97f092614214b6ab73d1632a5c457289&amp;chksm=a782096bcf7f61df27a88a83e14f7bebe65db3c386a17a709f45c68d79c2ed1e6c5f2aeda60f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515513&amp;idx=1&amp;sn=d8348efca66fd37bd3521ad05307634e&amp;chksm=a792abc4d379ec75faac1b2e009252d7ec0f17b3111c3d78120b52d65352d8be7ee62bda6453&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOAOB9YFvJb8X6wy0wjw9aMVKbYTecQwQ9hibrmpcSWPyZiashIEmicqtTJnSGg65RGXDbO1vk9W6Q5SQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515513&amp;idx=1&amp;sn=d8348efca66fd37bd3521ad05307634e&amp;chksm=a792abc4d379ec75faac1b2e009252d7ec0f17b3111c3d78120b52d65352d8be7ee62bda6453&amp;scene=0&amp;xtrack=1#rd" target="_blank">TPCTF 2025｜倒计时1天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-03-07 09:00:00">发布日期：2025-03-07 09:00:00</time></div><p class="article-description">TPCTF 2025竞赛详情本届TPCTF由XCTF国际联赛合作单位清华大学Redbud战队及北京大学pkucc战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛的分站赛，本次比赛将采用在线</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515513&amp;idx=1&amp;sn=d8348efca66fd37bd3521ad05307634e&amp;chksm=a792abc4d379ec75faac1b2e009252d7ec0f17b3111c3d78120b52d65352d8be7ee62bda6453&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515508&amp;idx=1&amp;sn=02603364959caf80ad3d90bd19669d45&amp;chksm=a7eeaf563635b6c2f24b397924d37a862156640f40eee9188e2a799bd56d449ee3a4b9c9f9fd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYODiaMib6lia5Nwd65ssLhjLdF9BwM00d723XlJRKMzTjp8rf1mYnjibMFTsP2b7dg9EUbc7NxFiamYgiblw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515508&amp;idx=1&amp;sn=02603364959caf80ad3d90bd19669d45&amp;chksm=a7eeaf563635b6c2f24b397924d37a862156640f40eee9188e2a799bd56d449ee3a4b9c9f9fd&amp;scene=0&amp;xtrack=1#rd" target="_blank">TPCTF 2025｜倒计时3天！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-03-05 09:00:00">发布日期：2025-03-05 09:00:00</time></div><p class="article-description">TPCTF 2025竞赛详情本届TPCTF由XCTF国际联赛合作单位清华大学Redbud战队及北京大学pkucc战队组织，由赛宁网安提供技术支持。作为第九届XCTF国际联赛的分站赛，本次比赛将采用在线</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515508&amp;idx=1&amp;sn=02603364959caf80ad3d90bd19669d45&amp;chksm=a7eeaf563635b6c2f24b397924d37a862156640f40eee9188e2a799bd56d449ee3a4b9c9f9fd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515494&amp;idx=1&amp;sn=0ada1274e178c3e56fad01aad6d82aec&amp;chksm=a7ed57b99fe3089957bc1c1a36c0765869f570e4d7f8073e8fb3fe5076d53c650e05345df4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/SKIEJia7jYOBQXFljupibWerHvCg4cJ9y8HUZjt9BD66CjjrDtbqJmUlFibaNUXs22dr53yxggqY0hhcCuxVgFGJQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515494&amp;idx=1&amp;sn=0ada1274e178c3e56fad01aad6d82aec&amp;chksm=a7ed57b99fe3089957bc1c1a36c0765869f570e4d7f8073e8fb3fe5076d53c650e05345df4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">TPCTF 2025｜清北联袂 硬核赛场</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/797ff8f71df2cbd6ff695a4ab9767f6f/index.html">XCTF联赛</a></span><time class="article-date" datetime="2025-02-21 17:30:00">发布日期：2025-02-21 17:30:00</time></div><p class="article-description">TPCTF 2025 TPCTF 2025 TPCTF 2025 TPCTF 2025 TPCTF 2025 无论技术如何迭代攻防对抗的核心永远是人类智慧的对决在机器的逻辑洪流中你仍是那个执剑的破壁者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDU3MjExNw==&amp;mid=2247515494&amp;idx=1&amp;sn=0ada1274e178c3e56fad01aad6d82aec&amp;chksm=a7ed57b99fe3089957bc1c1a36c0765869f570e4d7f8073e8fb3fe5076d53c650e05345df4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

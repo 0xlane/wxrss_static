@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>钛媒体AGI</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=2&amp;sn=369c6667d349cf829212b8d25a4edc59&amp;chksm=86241011c9fc8cfd2dfa22fd871f08d6e44380c71e5592d045c185dc6662a54088dd8fa114f4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicMJ1BgdA6F6P7zyKiaNWlicPf0NbhKdbYD0iaqjbzXAQ2OgKIpX2HNYaN8sUA2YgCU1jSncjAfh9eo3w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=2&amp;sn=369c6667d349cf829212b8d25a4edc59&amp;chksm=86241011c9fc8cfd2dfa22fd871f08d6e44380c71e5592d045c185dc6662a54088dd8fa114f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">开源RISC-V消息引发芯片股暴涨，英伟达、高通、华为等大厂早已入局｜硅基世界</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-03-04 23:12:08">发布日期：2025-03-04 23:12:08</time></div><p class="article-description">中国将加大对开源RISC-V芯片领域的支持。钛媒体App 3月4日消息，据报道，中国最早将于本月发布一份指导意见，鼓励全国使用开源RISC-V芯片，由8个机构联合起草，以减少对海外芯片技术的依赖。这份</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=2&amp;sn=369c6667d349cf829212b8d25a4edc59&amp;chksm=86241011c9fc8cfd2dfa22fd871f08d6e44380c71e5592d045c185dc6662a54088dd8fa114f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=3&amp;sn=1be339b1e5b6b49383d9838889d2a59e&amp;chksm=864f4b6863a85a9901c3210925f72ed379b12bc15e0e7143bd6b123896e9a9089deb6c97c1f0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicMJ1BgdA6F6P7zyKiaNWlicPfAjkk1tmS8nP3MiaDcjJwVhdtydjRFnSGYo0RF3fQRY40TEuJlbOPgow/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=3&amp;sn=1be339b1e5b6b49383d9838889d2a59e&amp;chksm=864f4b6863a85a9901c3210925f72ed379b12bc15e0e7143bd6b123896e9a9089deb6c97c1f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">国内第一款服务器级CPU问世，阿里玄铁开源RISC-V架构芯片将加速AGI目标｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-03-04 23:12:08">发布日期：2025-03-04 23:12:08</time></div><p class="article-description">随着今年2月DeepSeek爆火，AI芯片行业迎来新机遇，而阿里也在加速提升 AI 算力技术能力。钛媒体AGI获悉，2月28日，阿里巴巴达摩院旗下品牌玄铁（XuanTie）宣布其基于开源RISC-V架</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779596&amp;idx=3&amp;sn=1be339b1e5b6b49383d9838889d2a59e&amp;chksm=864f4b6863a85a9901c3210925f72ed379b12bc15e0e7143bd6b123896e9a9089deb6c97c1f0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779567&amp;idx=1&amp;sn=71801b8e00fb74ed82481e3643b93105&amp;chksm=865a13b24735ee66709dc9137319991b05553a42f3c2b7be2ebf42405822357b6f9f30d71f82&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicN6LGPSHsLysHgQhicWsYqWQicyrTE9LpcTTN6GRZKS6ZOtRKaUbFad5H0MJkxIyXUj3mibR9HJ8Q0aw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779567&amp;idx=1&amp;sn=71801b8e00fb74ed82481e3643b93105&amp;chksm=865a13b24735ee66709dc9137319991b05553a42f3c2b7be2ebf42405822357b6f9f30d71f82&amp;scene=0&amp;xtrack=1#rd" target="_blank">杭州国资参投，智谱完成超10亿元人民币战略融资｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-03-03 09:17:52">发布日期：2025-03-03 09:17:52</time></div><p class="article-description">杭州国有资本首次投资大模型“六小虎”。3月3日消息，钛媒体AGI获悉，国内AI“大模型六虎”之一、估值200亿元的智谱，日前完成一笔金额超10亿元人民币的战略融资，参与投资方包括杭州城投产业基金、上城</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779567&amp;idx=1&amp;sn=71801b8e00fb74ed82481e3643b93105&amp;chksm=865a13b24735ee66709dc9137319991b05553a42f3c2b7be2ebf42405822357b6f9f30d71f82&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779552&amp;idx=1&amp;sn=53f2d891d1c1bdbefc80241242ba0faa&amp;chksm=86d5a352d6ced6d07af9094050f3059774f83a2826a5782660efabd8b4a1ba1958f3126b04a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicNyvGcqu5SQz5MiaXPy9If0nLWS8bs8cazMWbVBrAFyOoyxBfeTRsB7Dw3HHUUHHPMmSsFWJrws1YA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779552&amp;idx=1&amp;sn=53f2d891d1c1bdbefc80241242ba0faa&amp;chksm=86d5a352d6ced6d07af9094050f3059774f83a2826a5782660efabd8b4a1ba1958f3126b04a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">钛媒体AGI独家｜小米、华为争夺AI大模型研发人才，年薪最高120万元</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-03-01 14:05:10">发布日期：2025-03-01 14:05:10</time></div><p class="article-description">进入“金三银四”春招求职旺季，在DeepSeek热潮下，多家企业对AI人才求贤若渴，开始高薪争夺 AI 大模型人才。3月1日消息，钛媒体AGI独家获悉，小米集团近日招聘大量“AI大模型”相关工程师和研</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779552&amp;idx=1&amp;sn=53f2d891d1c1bdbefc80241242ba0faa&amp;chksm=86d5a352d6ced6d07af9094050f3059774f83a2826a5782660efabd8b4a1ba1958f3126b04a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779541&amp;idx=1&amp;sn=6987d8f7cccea2433600e0b4d146291a&amp;chksm=8610050ea22f76dfcfff768caaacdf4f25d2070aba08c7124c37dce9dfa0463c480a55c15b5f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicNxGpvpicdOKMKm1OiaibKYuzQIyYHSwxSiayQRKFWnFsP79zed9u4Sfib2In7fbqYWYfDQXnRZKlXicP4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779541&amp;idx=1&amp;sn=6987d8f7cccea2433600e0b4d146291a&amp;chksm=8610050ea22f76dfcfff768caaacdf4f25d2070aba08c7124c37dce9dfa0463c480a55c15b5f&amp;scene=0&amp;xtrack=1#rd" target="_blank">杀疯了！6年来最强模型GPT-4.5登场：更贵、更高情商、更少幻觉｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-28 08:29:57">发布日期：2025-02-28 08:29:57</time></div><p class="article-description">今晨4点，GPT-4.5突然上线。2月27日消息，钛媒体AGI获悉，美国OpenAI公司今天推出GPT-4.5模型（代号Orion），这是该公司有史以来算力和数据规模最大、最佳的 AI 基座模型，本周</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779541&amp;idx=1&amp;sn=6987d8f7cccea2433600e0b4d146291a&amp;chksm=8610050ea22f76dfcfff768caaacdf4f25d2070aba08c7124c37dce9dfa0463c480a55c15b5f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779518&amp;idx=1&amp;sn=91a6846ebdcd0b9f4a5b8d467e4628d5&amp;chksm=868932860c9f999718499845e98c0a45079da5477ad3f9dd4bf10f68a1a1a238af2fdd7d5105&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicPL4OyQPs88J0ibKkPvoQ3ouqFXuhK0npHYSpiaVVPmd9HeZRgtToJT5GxwXqicUzLias0qM6AUwnf3bg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779518&amp;idx=1&amp;sn=91a6846ebdcd0b9f4a5b8d467e4628d5&amp;chksm=868932860c9f999718499845e98c0a45079da5477ad3f9dd4bf10f68a1a1a238af2fdd7d5105&amp;scene=0&amp;xtrack=1#rd" target="_blank">全年营收暴增114%，但股价不涨反跌，市场不相信黄仁勋还能造“英伟达泡沫”｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-27 08:20:41">发布日期：2025-02-27 08:20:41</time></div><p class="article-description">（图片来源：钛媒体AGI编辑林志佳拍摄）英伟达迎来了有史以来业绩最佳的一年。北京时间2月27日上午，全球市值最高的 AI 芯片巨头英伟达（NVIDIA）发布截至今年1月26日的2025财年第四季度（2</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779518&amp;idx=1&amp;sn=91a6846ebdcd0b9f4a5b8d467e4628d5&amp;chksm=868932860c9f999718499845e98c0a45079da5477ad3f9dd4bf10f68a1a1a238af2fdd7d5105&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779502&amp;idx=1&amp;sn=ee3d9895b346a00f9efff268df324df3&amp;chksm=86b0267e7215c4cad6e4ab4a9e1eb1cc22d8153ab631bea60ad1882f00b9972df5bf87dc7861&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicPKSrQQRwLmC4jy0QpNjONf2yZ3LzW3jZuWkjVUUrOR11Tic3zLQ8h5ibBTvCQtyr93q7UuLcIk3D8A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779502&amp;idx=1&amp;sn=ee3d9895b346a00f9efff268df324df3&amp;chksm=86b0267e7215c4cad6e4ab4a9e1eb1cc22d8153ab631bea60ad1882f00b9972df5bf87dc7861&amp;scene=0&amp;xtrack=1#rd" target="_blank">德勤：2025年全球AI芯片规模预计超1500亿美元，2027年增至4000亿美元｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-26 22:45:21">发布日期：2025-02-26 22:45:21</time></div><p class="article-description">新一轮 AI 热潮将引发芯片半导体产业波动。2月26日消息，钛媒体AGI获悉，德勤中国日前发布的《技术趋势2025》中文版报告显示，预估2024年，全球芯片市场规模5760亿美元，其中，AI芯片销售额</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779502&amp;idx=1&amp;sn=ee3d9895b346a00f9efff268df324df3&amp;chksm=86b0267e7215c4cad6e4ab4a9e1eb1cc22d8153ab631bea60ad1882f00b9972df5bf87dc7861&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779496&amp;idx=1&amp;sn=979512d18d49914a7a5f52325c440546&amp;chksm=869858f0db4a9a97c58b1eef22c306f4bac82aab623b64b048b35e5e1172f62bdcd732509a88&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OaFsUa11r0BQrFfQDZxC8Qw8uzw0ibenITSoybVgQcIDXgFW7M0nby6VTXVp8BBXWGkD8WzXRbUyPeTbic5WeiaYg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779496&amp;idx=1&amp;sn=979512d18d49914a7a5f52325c440546&amp;chksm=869858f0db4a9a97c58b1eef22c306f4bac82aab623b64b048b35e5e1172f62bdcd732509a88&amp;scene=0&amp;xtrack=1#rd" target="_blank">百度，是时候想“开”了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-24 17:39:06">发布日期：2025-02-24 17:39:06</time></div><p class="article-description">▎“百度一下”，还是14亿人的第一选择吗？“百度一下，你就知道。”这是一句带有国民级别记忆色彩的话，不过，很少人会意识到，它的存在已有20年。最近，用户打开百度APP会发现，这句slogan又出现在了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779496&amp;idx=1&amp;sn=979512d18d49914a7a5f52325c440546&amp;chksm=869858f0db4a9a97c58b1eef22c306f4bac82aab623b64b048b35e5e1172f62bdcd732509a88&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779478&amp;idx=1&amp;sn=203c668b8c8822e866f6938db483d677&amp;chksm=860572ee521eb2ea8dc2ef4620ddc472e37060f178e957cd45e8521ac5b2f09a929462f0cfde&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicMwKjvicibiaMrIUE7c3P6uN59iccvCcH0oLiafV3olHKLJOOYSov9zTaK9M2rtbB5F6VR3iatTenDzZ0Yw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779478&amp;idx=1&amp;sn=203c668b8c8822e866f6938db483d677&amp;chksm=860572ee521eb2ea8dc2ef4620ddc472e37060f178e957cd45e8521ac5b2f09a929462f0cfde&amp;scene=0&amp;xtrack=1#rd" target="_blank">沈向洋、漆远在2025 GDC谈开源和智能体展望，商汤发力AGI软件和应用平台｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-23 14:06:00">发布日期：2025-02-23 14:06:00</time></div><p class="article-description">2月21日-23日，2025 GDC全球开发者先锋大会在上海徐汇举办。大会以“模塑全球 无限可能”为主题，围绕金融、医疗、教育智能制造等各类场景公司，AI开发工具、多模态大模型、企业级服务以及开源生态</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779478&amp;idx=1&amp;sn=203c668b8c8822e866f6938db483d677&amp;chksm=860572ee521eb2ea8dc2ef4620ddc472e37060f178e957cd45e8521ac5b2f09a929462f0cfde&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=1&amp;sn=5282d4438922a0f30129b579f364bfdc&amp;chksm=86037f2322fc71115a9ce87ead8ae91b6b3f3b83ca212b11a375aec1d5bebac3cf08233f7963&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicM2yzD3klicYb5vG8QeXibY8tytPmTFHKUwBh0tJwfnUhkGlnIcbeg70ibo1LfgicGql3FETUlyfZsqAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=1&amp;sn=5282d4438922a0f30129b579f364bfdc&amp;chksm=86037f2322fc71115a9ce87ead8ae91b6b3f3b83ca212b11a375aec1d5bebac3cf08233f7963&amp;scene=0&amp;xtrack=1#rd" target="_blank">“大模型六虎”阶跃星辰3月将开源图生视频模型｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-22 00:00:31">发布日期：2025-02-22 00:00:31</time></div><p class="article-description">阶跃星辰创始人、CEO姜大昕DeepSeek热潮下，“大模型六虎”们逐步开始“分化”，更多转向产业界和落地商业化阶段。钛媒体AGI 2月21日消息，今天举行的首届Step UP生态开放日上，AI“大模</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=1&amp;sn=5282d4438922a0f30129b579f364bfdc&amp;chksm=86037f2322fc71115a9ce87ead8ae91b6b3f3b83ca212b11a375aec1d5bebac3cf08233f7963&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=2&amp;sn=4bae2bc4deb391a6e4a02b1cc6d01691&amp;chksm=8678649f8d37b58c4179bb591ea72e2d2bb7801de8971e61b72ded1909c2824d0f6802b4b24b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicM2yzD3klicYb5vG8QeXibY8tBNTe7l8JicOMKW5tbKYWj5TCvB6ucbuUlF3tfRwFPmYceCXswIdVI3w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=2&amp;sn=4bae2bc4deb391a6e4a02b1cc6d01691&amp;chksm=8678649f8d37b58c4179bb591ea72e2d2bb7801de8971e61b72ded1909c2824d0f6802b4b24b&amp;scene=0&amp;xtrack=1#rd" target="_blank">中国首个“AI算力生态超市”发布，企业将获100万元补贴｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-22 00:00:31">发布日期：2025-02-22 00:00:31</time></div><p class="article-description">上海加速推进“算力券”补贴力度，以减少预期空置挑战，从而实现到2025年末上海全市智能算力规模突破1万亿亿次浮点运算（100EFL0PS）。钛媒体App 2月21日消息，今天举行的2025年全球开发者</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779462&amp;idx=2&amp;sn=4bae2bc4deb391a6e4a02b1cc6d01691&amp;chksm=8678649f8d37b58c4179bb591ea72e2d2bb7801de8971e61b72ded1909c2824d0f6802b4b24b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=1&amp;sn=64f9c768d6096736e81041847d872eba&amp;chksm=86e6b77a4fc8619bb9cca278a83da3816dec3c91cd10d9f0bbafde6b1d45321089f6c0703d9e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicPiboImIVy2zY8UEKa5YWypjTTUoZ4R1qNsjJx6Ey3Sztic7RibXg1UKvdw2agJnSCmzHDGCeulibradQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=1&amp;sn=64f9c768d6096736e81041847d872eba&amp;chksm=86e6b77a4fc8619bb9cca278a83da3816dec3c91cd10d9f0bbafde6b1d45321089f6c0703d9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">钛媒体AGI独家｜小红书将接入DeepSeek，AI搜索“点点”iOS版下载量总计约20万</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-21 10:00:47">发布日期：2025-02-21 10:00:47</time></div><p class="article-description">一款拥有超过3亿月活用户的“国民级应用”将接入DeepSeek。2月21日消息，钛媒体AGI独家获悉，小红书即将接入DeepSeek-R1开源模型，其AI搜索产品“点点”App将推出”深度思考“功能，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=1&amp;sn=64f9c768d6096736e81041847d872eba&amp;chksm=86e6b77a4fc8619bb9cca278a83da3816dec3c91cd10d9f0bbafde6b1d45321089f6c0703d9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=2&amp;sn=4957b7da3785dcf3d497cb0a193e567a&amp;chksm=86518a99c7812aef07e87f4b1164c6840f220b72cf2b7b9f2b5845056c167f07f192cca0aece&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicM2yzD3klicYb5vG8QeXibY8tnTav7MFm5CclzG6uVa3GLdZVWScichxFicFMQvL5083FiajxopJ1WWM1w/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=2&amp;sn=4957b7da3785dcf3d497cb0a193e567a&amp;chksm=86518a99c7812aef07e87f4b1164c6840f220b72cf2b7b9f2b5845056c167f07f192cca0aece&amp;scene=0&amp;xtrack=1#rd" target="_blank">中国清华AIR和美国的“生物学DeepSeek时刻”撞车了｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-21 10:00:47">发布日期：2025-02-21 10:00:47</time></div><p class="article-description">中国、美国研究人员发布的两款AI生物学模型同日“撞车”。钛媒体AGI获悉，2月20日，美国 AI 巨头英伟达（NVIDIA）宣布，其与美国弧形研究所、斯坦福大学、加州大学伯克利分校、加州大学旧金山分校</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779445&amp;idx=2&amp;sn=4957b7da3785dcf3d497cb0a193e567a&amp;chksm=86518a99c7812aef07e87f4b1164c6840f220b72cf2b7b9f2b5845056c167f07f192cca0aece&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779431&amp;idx=1&amp;sn=7a9bc19098da13cb8a0ffe6c94de84f0&amp;chksm=8667b54ecaad5575179600c5235fcc314640580530d85e029948dca87971575da6415656a3f1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicPiboImIVy2zY8UEKa5YWypjicVc3sf58H3A7Ae7VIeMicjia5AFQ61pHtWiaRpVaRiaduIE7edUzib43wJQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779431&amp;idx=1&amp;sn=7a9bc19098da13cb8a0ffe6c94de84f0&amp;chksm=8667b54ecaad5575179600c5235fcc314640580530d85e029948dca87971575da6415656a3f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek冲击之下，生成式AI如何加速科学研究？｜钛媒体AGI</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-20 12:16:20">发布日期：2025-02-20 12:16:20</time></div><p class="article-description">（图片来源：unsplash）“DeepSeek热潮对AI行业有促进作用。春节前，我联系了一位顶尖科学家，我要推荐他使用通义大模型，当时他说对我们用处不大，但春节之后，他马上就联系我，说过来和我们深入</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779431&amp;idx=1&amp;sn=7a9bc19098da13cb8a0ffe6c94de84f0&amp;chksm=8667b54ecaad5575179600c5235fcc314640580530d85e029948dca87971575da6415656a3f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779405&amp;idx=1&amp;sn=93a615b300d1d9b71c7d3b60d7d68c89&amp;chksm=8659739019f140c673e24893110f00f41ada58b33b5dcfb06449f389ccf35c752ea65b176ace&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TgjHo4IzJicOCXWc7671aUmibgYslLn5ptHP4srfJJSQl32JNkCZUicx7ApR6Dg5eGeMWxLgEnscAp00dUVFfVvsg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779405&amp;idx=1&amp;sn=93a615b300d1d9b71c7d3b60d7d68c89&amp;chksm=8659739019f140c673e24893110f00f41ada58b33b5dcfb06449f389ccf35c752ea65b176ace&amp;scene=0&amp;xtrack=1#rd" target="_blank">钛媒体AGI独家｜MiniMax副总裁魏伟离职，曾任腾讯云副总裁</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a9455f979558ee5fc9adfcf70baadcd2/index.html">钛媒体AGI</a></span><time class="article-date" datetime="2025-02-19 19:22:10">发布日期：2025-02-19 19:22:10</time></div><p class="article-description">2月19日消息，钛媒体AGI独家获悉，中国AI大模型独角兽MiniMax（稀宇科技）合伙人、公司副总裁、开放平台负责人魏伟，已经于近期离职。对上述消息，MiniMax向钛媒体AGI独家回应：消息属实，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA3NzMxNTI1MQ==&amp;mid=2649779405&amp;idx=1&amp;sn=93a615b300d1d9b71c7d3b60d7d68c89&amp;chksm=8659739019f140c673e24893110f00f41ada58b33b5dcfb06449f389ccf35c752ea65b176ace&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_9.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

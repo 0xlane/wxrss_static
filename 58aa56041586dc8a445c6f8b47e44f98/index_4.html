@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GitHubDaily</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989381&amp;idx=1&amp;sn=1d5ba27028d353f5b92c7bd8af3611e8&amp;chksm=8d7ec44157a0a4ecfce2425581e09b5624c56c120ee0b0bd3d6773c08dcb578b40e28f740a8f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28gItIGL3e8N0ibybDvYu1luKuWNrZYqZjRHXh18Q25ibhvh4dD8lTu8A7rzPKfMD0qLiadEdbLe5SvNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989381&amp;idx=1&amp;sn=1d5ba27028d353f5b92c7bd8af3611e8&amp;chksm=8d7ec44157a0a4ecfce2425581e09b5624c56c120ee0b0bd3d6773c08dcb578b40e28f740a8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek 接入知识库，真的太香了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-14 17:05:00">发布日期：2025-03-14 17:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！2025 年开年，DeepSeek-R1 的发布在全球市场掀起了 AI 效率变革的浪潮。在过去的一个月内，相信每个人都从</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989381&amp;idx=1&amp;sn=1d5ba27028d353f5b92c7bd8af3611e8&amp;chksm=8d7ec44157a0a4ecfce2425581e09b5624c56c120ee0b0bd3d6773c08dcb578b40e28f740a8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989370&amp;idx=1&amp;sn=8355c58f41087fb7f500fbadd06c6dcb&amp;chksm=8d34e6e585aa31faedc0b58b97646682ee885e814524692c6904b0e676902209e9cf00b6a9d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28iauOdpvm1LHgkNKs554c1xUibs7TKMguUdSttXWSFLcrBmCP7EFgH60xw1otMFyicghzFKR8xCA1gog/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989370&amp;idx=1&amp;sn=8355c58f41087fb7f500fbadd06c6dcb&amp;chksm=8d34e6e585aa31faedc0b58b97646682ee885e814524692c6904b0e676902209e9cf00b6a9d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">太快了！Open-Sora 2.0 重磅开源！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-13 11:05:00">发布日期：2025-03-13 11:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！潞晨科技正式推出 Open-Sora 2.0 —— 一款全新开源的 SOTA 视频生成模型，仅20万美元（224张GPU</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989370&amp;idx=1&amp;sn=8355c58f41087fb7f500fbadd06c6dcb&amp;chksm=8d34e6e585aa31faedc0b58b97646682ee885e814524692c6904b0e676902209e9cf00b6a9d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989308&amp;idx=1&amp;sn=e34b37ad7c16f4f665f1de37243f9bb0&amp;chksm=8dbe547499bb8b7e9bed25d3685f155b51a3426e8ce3818bd0cfc15d965bc70c8adfa4e91350&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28grd5GaBiaqFcSSicwjtz5zx337beuWakI0NV4my3FiaYiaheFlUDFdxI8eW44sSP5iaYI3hB6knmibIzsA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989308&amp;idx=1&amp;sn=e34b37ad7c16f4f665f1de37243f9bb0&amp;chksm=8dbe547499bb8b7e9bed25d3685f155b51a3426e8ce3818bd0cfc15d965bc70c8adfa4e91350&amp;scene=0&amp;xtrack=1#rd" target="_blank">Manus 一码难求？快来试试这个开源平替</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-12 17:05:00">发布日期：2025-03-12 17:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！上周 Manus 横空出世，引爆了整个 AI 行业，但至今仍然一码难求。在看到它的诸多应用场景后，有个演示案例让我印象深</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989308&amp;idx=1&amp;sn=e34b37ad7c16f4f665f1de37243f9bb0&amp;chksm=8dbe547499bb8b7e9bed25d3685f155b51a3426e8ce3818bd0cfc15d965bc70c8adfa4e91350&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989278&amp;idx=1&amp;sn=2e9fde22c644c4f1b468d601368c137e&amp;chksm=8de92499e32c39caacd59f46ec21ab3320d6527e4ee5fe8f0f276038b7710777516b8f36eabf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28jianVEHLmlXVDDWhQoaYBPhEQZQCiblF187x5t1hCmRmTYoOS9uMKssONHcVQIe0zcMBUYUb8kyHwQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989278&amp;idx=1&amp;sn=2e9fde22c644c4f1b468d601368c137e&amp;chksm=8de92499e32c39caacd59f46ec21ab3320d6527e4ee5fe8f0f276038b7710777516b8f36eabf&amp;scene=0&amp;xtrack=1#rd" target="_blank">3 个令人惊艳的 DeepSeek 项目，诞生了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-10 19:19:58">发布日期：2025-03-10 19:19:58</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！DeepSeek 引爆的 AI 科技热潮正在持续升温，各大互联网巨头也纷纷在 AI 赛道上激烈角逐，竞争日益白热化。作为</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989278&amp;idx=1&amp;sn=2e9fde22c644c4f1b468d601368c137e&amp;chksm=8de92499e32c39caacd59f46ec21ab3320d6527e4ee5fe8f0f276038b7710777516b8f36eabf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989257&amp;idx=1&amp;sn=6547d7a7b7af972183ad9103b0c89b5d&amp;chksm=8dd0b0303db42cc04bd304176382bded5f04ec9ac552f94a46dc0868be9be8d72549939d3dab&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28iazpVKO9oWXbibFDokJOTiaZIfrQuK74Mtv255ia2vUU6wTSQmnfbUVfllgDdZNP5WZUzsXt3pZ2T4dA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989257&amp;idx=1&amp;sn=6547d7a7b7af972183ad9103b0c89b5d&amp;chksm=8dd0b0303db42cc04bd304176382bded5f04ec9ac552f94a46dc0868be9be8d72549939d3dab&amp;scene=0&amp;xtrack=1#rd" target="_blank">更快更强！满血版 DeepSeek 再次升级！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-03 18:09:11">发布日期：2025-03-03 18:09:11</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！上周，DeepSeek 接连开源多个王炸项目，以一己之力，将 AI 浪潮推至一个新的高度，让诸多 AI 应用功能得以再度</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989257&amp;idx=1&amp;sn=6547d7a7b7af972183ad9103b0c89b5d&amp;chksm=8dd0b0303db42cc04bd304176382bded5f04ec9ac552f94a46dc0868be9be8d72549939d3dab&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989221&amp;idx=1&amp;sn=6cb6ad00f8846fa5a631fe4934b2aaac&amp;chksm=8d992c714c50021e00b560ef6718bb452cb4c5d4ce5641d6a4fc7cd83c11ae36473e1c0e9074&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28jichibmoYSHichTzyjk0XUFsNicAl19aWvO6lwe5qF98K4Hrib3Y6aMtY1QPdQPy3AB8rHPUSEiaZahRng/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989221&amp;idx=1&amp;sn=6cb6ad00f8846fa5a631fe4934b2aaac&amp;chksm=8d992c714c50021e00b560ef6718bb452cb4c5d4ce5641d6a4fc7cd83c11ae36473e1c0e9074&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek，连续开源王炸！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-03-01 17:05:00">发布日期：2025-03-01 17:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！当 ChatGPT、Claude 这些闭源大模型严防死守技术秘密时，DeepSeek 却反其道而行，选择了全面开源，为整</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989221&amp;idx=1&amp;sn=6cb6ad00f8846fa5a631fe4934b2aaac&amp;chksm=8d992c714c50021e00b560ef6718bb452cb4c5d4ce5641d6a4fc7cd83c11ae36473e1c0e9074&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989197&amp;idx=1&amp;sn=3f4ecf32a943264aebeb66281abbcb55&amp;chksm=8de769b8840bc5449099818e83b28ace821933040278028d26f02c89a3a4382ed352c0776611&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28jdJvhdKQ9a16XkLw0b1iayz2trV6icDcOf1xbpIfq5TOtibhT0TLP936ic9HQKMeibIYLvke4ibtNkD2YQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989197&amp;idx=1&amp;sn=3f4ecf32a943264aebeb66281abbcb55&amp;chksm=8de769b8840bc5449099818e83b28ace821933040278028d26f02c89a3a4382ed352c0776611&amp;scene=0&amp;xtrack=1#rd" target="_blank">3 个令人惊艳的 DeepSeek 项目，诞生了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-02-26 18:05:09">发布日期：2025-02-26 18:05:09</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！开年以来 DeepSeek 热度一直居高不下，这周更是连续每天开源一个项目，持续推动整个 AI 行业的发展。待 Deep</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989197&amp;idx=1&amp;sn=3f4ecf32a943264aebeb66281abbcb55&amp;chksm=8de769b8840bc5449099818e83b28ace821933040278028d26f02c89a3a4382ed352c0776611&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989185&amp;idx=1&amp;sn=f2975a2e66f892886ab0a5835e575760&amp;chksm=8d4d1404ed12ccadb6e537a13128eb54a55f8e984a13b960d5c59bb528cf5c19f2480e9e533e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28g3XHIbMMEmsXd6edyZicicBIm8GMselswAtIcb3s1J58jAvRpNiabVVQcfzfVfLgJoh9rvIaFrxTVHQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989185&amp;idx=1&amp;sn=f2975a2e66f892886ab0a5835e575760&amp;chksm=8d4d1404ed12ccadb6e537a13128eb54a55f8e984a13b960d5c59bb528cf5c19f2480e9e533e&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek 装进 VSCode，一秒变身编程神器！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-02-21 17:05:00">发布日期：2025-02-21 17:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！自 DeepSeek 横空出世以来，AI 正以前所未有的速度重塑着软件开发领域。在此期间，国内的各大科技公司也在悄然发力</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989185&amp;idx=1&amp;sn=f2975a2e66f892886ab0a5835e575760&amp;chksm=8d4d1404ed12ccadb6e537a13128eb54a55f8e984a13b960d5c59bb528cf5c19f2480e9e533e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989135&amp;idx=1&amp;sn=df447e87b4e1e3182c284cfef7add363&amp;chksm=8d9eb841f3323fa38cd03594649add910c9150d3a8b21987795f71dc6216e179c8057db241f1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28j2JvIlYichgybaMnR9REdPic3mY51B4pCKzrib7HjFszEicgBd32X7Vld4dUypnjbmdeAthLowkEw73A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989135&amp;idx=1&amp;sn=df447e87b4e1e3182c284cfef7add363&amp;chksm=8d9eb841f3323fa38cd03594649add910c9150d3a8b21987795f71dc6216e179c8057db241f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">一键解锁升级版 DeepSeek 全家桶，AI 玩家狂喜！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-02-19 11:05:00">发布日期：2025-02-19 11:05:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！DeepSeek V3/ R1 火爆全网，基于原始模型的解决方案和 API 服务已随处可见，陷入低价和免费内卷。如何站在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989135&amp;idx=1&amp;sn=df447e87b4e1e3182c284cfef7add363&amp;chksm=8d9eb841f3323fa38cd03594649add910c9150d3a8b21987795f71dc6216e179c8057db241f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989114&amp;idx=1&amp;sn=346cac20ba7bdd46f5cab6fb7e0c5a83&amp;chksm=8dd17d8f02fb5a26864805a3210392b226d05d951d870879a4b76408af7021936f848c5ebd70&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/uDRkMWLia28j2JvIlYichgybaMnR9REdPicQulCWLAicR93XZ6Uy0GcbAq29axiaYgohFPXzuOSq5PZJMksEibxucFIA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989114&amp;idx=1&amp;sn=346cac20ba7bdd46f5cab6fb7e0c5a83&amp;chksm=8dd17d8f02fb5a26864805a3210392b226d05d951d870879a4b76408af7021936f848c5ebd70&amp;scene=0&amp;xtrack=1#rd" target="_blank">太快了！DeepSeek 满血版来了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/58aa56041586dc8a445c6f8b47e44f98/index.html">GitHubDaily</a></span><time class="article-date" datetime="2025-02-18 18:13:00">发布日期：2025-02-18 18:13:00</time></div><p class="article-description">公众号关注 “GitHubDaily”设为 “星标”，每天带你逛 GitHub！自 Deepseek 问世之后，随着越来越多用户的加入，其功能也在疯狂的迭代优化，即便如此，依旧挡不住大家对新一轮 AI</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxOTcxNTIwNQ==&amp;mid=2457989114&amp;idx=1&amp;sn=346cac20ba7bdd46f5cab6fb7e0c5a83&amp;chksm=8dd17d8f02fb5a26864805a3210392b226d05d951d870879a4b76408af7021936f848c5ebd70&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_3.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

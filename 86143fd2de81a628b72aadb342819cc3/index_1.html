@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>渗透Xiao白帽</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501441&amp;idx=1&amp;sn=df3978de973bf338d121b7d9de3cd6ef&amp;chksm=eb856b9970a0ce82943d3a391e5724ed42dd0b0d37463c7770179f23080febb1d3a908139224&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTHBanyO0ic0jBhiaKsgguzJxB3rIiaXldibFfwZKg5vbTQdRjAIe5h6V6Ymbc3wJmZ5CiaYQiadjnyGlbfA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501441&amp;idx=1&amp;sn=df3978de973bf338d121b7d9de3cd6ef&amp;chksm=eb856b9970a0ce82943d3a391e5724ed42dd0b0d37463c7770179f23080febb1d3a908139224&amp;scene=0&amp;xtrack=1#rd" target="_blank">神兵利器 | GUI红队单兵渗透Tools无影v2.9.5（附激活Key）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-08-13 09:54:37">发布日期：2025-08-13 09:54:37</time></div><p class="article-description">无影(TscanPlus)一款综合性网络安全检测和运维工具，旨在快速资产发现、识别、检测，构建基础资产信息库，协助甲方安全团队或者安全运维人员有效侦察和检索资产，发现存在的薄弱点和攻击面。工具来自，T</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501441&amp;idx=1&amp;sn=df3978de973bf338d121b7d9de3cd6ef&amp;chksm=eb856b9970a0ce82943d3a391e5724ed42dd0b0d37463c7770179f23080febb1d3a908139224&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501435&amp;idx=1&amp;sn=9bceb338f2f837a3ffa7853f2f043ed3&amp;chksm=eb089e6d2867967730f02fc7ea73d764fd00441465e766ca5eb308b3c8509ec9fcfafd34dce1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTGhH7pqg9UXdfkibjFdPqCpw3oM7Ko3bUY4NMoq9VRalpYymzMsyPJWdWlHbfDc07coMTKXhXWn2HQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501435&amp;idx=1&amp;sn=9bceb338f2f837a3ffa7853f2f043ed3&amp;chksm=eb089e6d2867967730f02fc7ea73d764fd00441465e766ca5eb308b3c8509ec9fcfafd34dce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递｜CVE-2025-54424 1Panel 面板 RCE 漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-08-04 19:26:19">发布日期：2025-08-04 19:26:19</time></div><p class="article-description">文章来源：知攻善防实验室1Panel面板就不介绍了，各位师傅都熟悉情报来源：Github，1Panel 项目官方https://github.com/1Panel-dev/1Panel/securit</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501435&amp;idx=1&amp;sn=9bceb338f2f837a3ffa7853f2f043ed3&amp;chksm=eb089e6d2867967730f02fc7ea73d764fd00441465e766ca5eb308b3c8509ec9fcfafd34dce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501391&amp;idx=1&amp;sn=d7d59fa8789b9b499680ba16642dbbb0&amp;chksm=eb35cea6aa0acd2ea9c832a8d12ad7eaccf1df4cc764b9ad5b7910f3f2ff0efec3077e172097&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFQ6mqdB0CewqtdJdicjkJMhsAhKl1Wf2v3LXiaRUUfTqPFpsLianBKJlunqrxTwk6PPm40Dic9xPDWpA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501391&amp;idx=1&amp;sn=d7d59fa8789b9b499680ba16642dbbb0&amp;chksm=eb35cea6aa0acd2ea9c832a8d12ad7eaccf1df4cc764b9ad5b7910f3f2ff0efec3077e172097&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递｜Redis CVE-2025-32023 RCE漏洞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-07-08 19:10:47">发布日期：2025-07-08 19:10:47</time></div><p class="article-description">Redis（全称为 Remote Dictionary Server）是一种开源的内存数据存储系统，也被称为数据结构服务器。它提供了多种数据结构（如字符串、哈希表、列表、集合、有序集合等）的存储和操作</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501391&amp;idx=1&amp;sn=d7d59fa8789b9b499680ba16642dbbb0&amp;chksm=eb35cea6aa0acd2ea9c832a8d12ad7eaccf1df4cc764b9ad5b7910f3f2ff0efec3077e172097&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501384&amp;idx=1&amp;sn=3cec04e7bdf7a2845b7e97cda4363b33&amp;chksm=ebfcdb770eb9720e9f68dc8f7e36625b2d5b183bcdaba2d2a6696d0aa34687c70fb442fcf471&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTEGTjNo1AsUrKxQN4LxrJ2UkDlDO7BJB3bA90fMyzFld0HSZR9nlZGwflFVCUf7E3sXyfuS5gGOCA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501384&amp;idx=1&amp;sn=3cec04e7bdf7a2845b7e97cda4363b33&amp;chksm=ebfcdb770eb9720e9f68dc8f7e36625b2d5b183bcdaba2d2a6696d0aa34687c70fb442fcf471&amp;scene=0&amp;xtrack=1#rd" target="_blank">神兵利器｜GUI红队单兵渗透Tools无影v2.9.2（附下载）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-07-06 13:03:12">发布日期：2025-07-06 13:03:12</time></div><p class="article-description">无影(TscanPlus)，一款综合性网络安全检测和运维工具，旨在快速资产发现、识别、检测，构建基础资产信息库，协助甲方安全团队或者安全运维人员有效侦察和检索资产，发现存在的薄弱点和攻击面。【主要功能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501384&amp;idx=1&amp;sn=3cec04e7bdf7a2845b7e97cda4363b33&amp;chksm=ebfcdb770eb9720e9f68dc8f7e36625b2d5b183bcdaba2d2a6696d0aa34687c70fb442fcf471&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501375&amp;idx=1&amp;sn=054bf9c5538f2124c694bc503efdf2e8&amp;chksm=eba71ee67a5afb3808960666507ab948c41655544887f2be580771e1fd147cdba7f684541f8f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFge6nnhYOhmeEDo9Dcmo2odh6jjN1ajwMn96YfYibYn3XE99xnrficg7hEyaicHf6XInFe90Oc8EKcg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501375&amp;idx=1&amp;sn=054bf9c5538f2124c694bc503efdf2e8&amp;chksm=eba71ee67a5afb3808960666507ab948c41655544887f2be580771e1fd147cdba7f684541f8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">错过再等半年！高级免杀对抗&amp;红队武器开发六期即将开课！速上车</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-06-12 08:42:26">发布日期：2025-06-12 08:42:26</time></div><p class="article-description">高级免杀对抗&amp;红队武器化开发六期来袭本次培训解释权归鬼屋女鬼所有，与公众号运营者无关公众号不参与盈利，仅帮宣传！高级杀软对抗与红队武器化开发课程加入我们，直面真实对抗，锻造攻防利刃 !真实环境对抗演</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501375&amp;idx=1&amp;sn=054bf9c5538f2124c694bc503efdf2e8&amp;chksm=eba71ee67a5afb3808960666507ab948c41655544887f2be580771e1fd147cdba7f684541f8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501364&amp;idx=1&amp;sn=e670725dec9b3e40c2b7dde119c7148b&amp;chksm=eb72fc5e18f8fe10becc2c44e23f5987909b320b5983b7183dd13a0098abf748dbeec1161d65&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/fz2w0o92Q2RIVURdIHcEKD7HrsYy4IOjQhdxRmEINg1iaEkccbdqgpYOWglvRCeib6NBXicAC0tO02meFibsECN8sA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501364&amp;idx=1&amp;sn=e670725dec9b3e40c2b7dde119c7148b&amp;chksm=eb72fc5e18f8fe10becc2c44e23f5987909b320b5983b7183dd13a0098abf748dbeec1161d65&amp;scene=0&amp;xtrack=1#rd" target="_blank">免杀 | 从Sleep Mask到Beacon Gate看现代EDR规避技术（建议收藏）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-06-11 10:43:54">发布日期：2025-06-11 10:43:54</time></div><p class="article-description">好久没写文章了，开始今年的第一篇，顺便吐槽下，公众号这个排版真难用啊，话不多说，正文开始，今天主要来聊聊Cobalt Strike中的Sleep Mask一、什么是Sleep MaskSleep Ma</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501364&amp;idx=1&amp;sn=e670725dec9b3e40c2b7dde119c7148b&amp;chksm=eb72fc5e18f8fe10becc2c44e23f5987909b320b5983b7183dd13a0098abf748dbeec1161d65&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501358&amp;idx=1&amp;sn=060e9e807c03348e28d5893a272a4490&amp;chksm=eb8cb79311eb9a4fc9b4cf8a2814de5b437e233df2663bcf87b1c0eb48c7c149d48073ee9070&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFy8Flw2WiajqOtFnoTdfibIibW6X1emoszhTiaGSgVn2QJao8iamqN73eB2tOD0rSISxvBqicFqLJwrYlQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501358&amp;idx=1&amp;sn=060e9e807c03348e28d5893a272a4490&amp;chksm=eb8cb79311eb9a4fc9b4cf8a2814de5b437e233df2663bcf87b1c0eb48c7c149d48073ee9070&amp;scene=0&amp;xtrack=1#rd" target="_blank">高级免杀对抗&amp;红队武器化开发六期来袭！！！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-06-01 09:39:05">发布日期：2025-06-01 09:39:05</time></div><p class="article-description">高级免杀对抗&amp;红队武器化开发六期来袭本次培训解释权归鬼屋女鬼所有，与公众号运营者无关公众号不参与盈利，仅帮宣传！高级杀软对抗与红队武器化开发课程加入我们，直面真实对抗，锻造攻防利刃 !真实环境对抗演</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501358&amp;idx=1&amp;sn=060e9e807c03348e28d5893a272a4490&amp;chksm=eb8cb79311eb9a4fc9b4cf8a2814de5b437e233df2663bcf87b1c0eb48c7c149d48073ee9070&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501353&amp;idx=1&amp;sn=ed87bc0c8cb2ec96a48a449037c96406&amp;chksm=eb4f3c0ed23b004da9ff3684a2986c5af7f747ffb9a490cc418869738669a612ba5a746c9e6b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTHI6wrdMzdxEP7icBaTy95cr1iaIQYIbR5oRXWw04eFlf3k4LfSDicGhwymVKIFDibBtdDZGiawWdTowjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501353&amp;idx=1&amp;sn=ed87bc0c8cb2ec96a48a449037c96406&amp;chksm=eb4f3c0ed23b004da9ff3684a2986c5af7f747ffb9a490cc418869738669a612ba5a746c9e6b&amp;scene=0&amp;xtrack=1#rd" target="_blank">临近HVV，各类社工武器弹药库分享</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-05-23 09:31:23">发布日期：2025-05-23 09:31:23</time></div><p class="article-description">推荐以下几个公众号，不仅内容丰富，而且干货满满！长期更新高质量文章，涉及红蓝对抗、内外网渗透、代码审计、SRC赏金、APP 安全测试、应急响应、漏洞挖掘、常用安全工具等，你想要的内容这里都有！以下排名</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501353&amp;idx=1&amp;sn=ed87bc0c8cb2ec96a48a449037c96406&amp;chksm=eb4f3c0ed23b004da9ff3684a2986c5af7f747ffb9a490cc418869738669a612ba5a746c9e6b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501350&amp;idx=1&amp;sn=ebf4178a51e69ff7028825f78d0fb3d0&amp;chksm=eb9cddb676afb34acdd8fa30d27adc597e5105ebd4e7f32ca41f681b8a1fe9d76489d8d52a4d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTHrLiaMZaALG7bab3e2WcGniclJ3Kov8y5oibxabJ736112kfyq2Yhibw2nHcEGUwcGDEOiaJy0bWzT0Pg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501350&amp;idx=1&amp;sn=ebf4178a51e69ff7028825f78d0fb3d0&amp;chksm=eb9cddb676afb34acdd8fa30d27adc597e5105ebd4e7f32ca41f681b8a1fe9d76489d8d52a4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递 | CVE-2025-0868 RCE漏洞（附EXP）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-05-21 12:03:59">发布日期：2025-05-21 12:03:59</time></div><p class="article-description">0x01 前言    DocsGPT 中存在导致远程代码执行 （RCE） 的漏洞。由于使用 eval（） 对 JSON 数据进行解析不当，未经授权的攻击者可发送任意 Python 代码以通过 /api</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501350&amp;idx=1&amp;sn=ebf4178a51e69ff7028825f78d0fb3d0&amp;chksm=eb9cddb676afb34acdd8fa30d27adc597e5105ebd4e7f32ca41f681b8a1fe9d76489d8d52a4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501349&amp;idx=1&amp;sn=59bf10bba063b60bdb410a2b2227295e&amp;chksm=ebc1d3cd4e9b5c23249211f1bd15c97eed8f16d8d1419853279ab57ea645e19e397a834f8d1d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTHrLiaMZaALG7bab3e2WcGnicYs8gaCsAjM0jaLBTrMxvodCkBQNjmcAHEhtiasviccEkwng3evmbFibcQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501349&amp;idx=1&amp;sn=59bf10bba063b60bdb410a2b2227295e&amp;chksm=ebc1d3cd4e9b5c23249211f1bd15c97eed8f16d8d1419853279ab57ea645e19e397a834f8d1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递 | CVE-2025-29927漏洞（附EXP）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-05-20 23:52:40">发布日期：2025-05-20 23:52:40</time></div><p class="article-description">网安引领时代，弥天点亮未来    0x00写在前面      本次测试仅供学习使用，如若非法他用，与平台和本文作者无关，需自行负责！0x01漏洞介绍Next.js是Vercel开源的一个 React</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501349&amp;idx=1&amp;sn=59bf10bba063b60bdb410a2b2227295e&amp;chksm=ebc1d3cd4e9b5c23249211f1bd15c97eed8f16d8d1419853279ab57ea645e19e397a834f8d1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501332&amp;idx=1&amp;sn=518ba3ccc4dbdf3f1557b1e63e770ad7&amp;chksm=ebcef35e5d5152efde68c6fddb5b1d2174c5a40428c476f528b5f0d677705e16778b33a6fec9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTEXx2qtLEPw7d8rfmHXRvR9IzQoOwoKIESVKH1pvbCuxlltSs6XS2JQmoNBACib8ic5YMWWMjpS9DRA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501332&amp;idx=1&amp;sn=518ba3ccc4dbdf3f1557b1e63e770ad7&amp;chksm=ebcef35e5d5152efde68c6fddb5b1d2174c5a40428c476f528b5f0d677705e16778b33a6fec9&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递 | CVE-2025-1974 Kubernetes RCE漏洞（附EXP）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-04-21 13:25:53">发布日期：2025-04-21 13:25:53</time></div><p class="article-description">文章来源：TtTeamKubernetes 中发现了一个安全问题。在某些情况下，未经身份验证且能够访问 Pod 网络的攻击者可以在 ingress-nginx 控制器上下文中执行任意代码。这可能导致控</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501332&amp;idx=1&amp;sn=518ba3ccc4dbdf3f1557b1e63e770ad7&amp;chksm=ebcef35e5d5152efde68c6fddb5b1d2174c5a40428c476f528b5f0d677705e16778b33a6fec9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501323&amp;idx=1&amp;sn=1c19edc972c4a5990d9572b59ab76f8c&amp;chksm=eb1cf2d7d5ebef53ae2009256bcd8e957c1e88b48ae0649a073fdc0d153d3b11a2bb7ba1d91e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/aPmkR80bcV3N8DiazBcCmJHZN6XVmy9IibibGoQTJHM6D1FgzdOibExFSZmDYwiaKngQfarhS5WDMbz2jKP0icVH2dxw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501323&amp;idx=1&amp;sn=1c19edc972c4a5990d9572b59ab76f8c&amp;chksm=eb1cf2d7d5ebef53ae2009256bcd8e957c1e88b48ae0649a073fdc0d153d3b11a2bb7ba1d91e&amp;scene=0&amp;xtrack=1#rd" target="_blank">知名博主被黑客攻击</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-04-10 10:29:09">发布日期：2025-04-10 10:29:09</time></div><p class="article-description">当你面对黑客攻击，还在感到无助、不知如何是好的时候，我已经用上了 SafeLine - 雷池这款强大的 Web 应用防火墙。或许你会疑惑，我为什么如此推荐它？原因很简单，雷池不仅开源免费，可以一键安装</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501323&amp;idx=1&amp;sn=1c19edc972c4a5990d9572b59ab76f8c&amp;chksm=eb1cf2d7d5ebef53ae2009256bcd8e957c1e88b48ae0649a073fdc0d153d3b11a2bb7ba1d91e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501316&amp;idx=1&amp;sn=cca9ee6096e660e474f0f754e321a01c&amp;chksm=eb3122a16839445186f8a17d63e01a187ad87445b17ecd1702d4e8293071aa4aea03643e9733&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTE6fzq3O8w5X3vbicuQ0cDeickLZxtNJysXeemQmXGfhYVIiaYxuu4nIvANSiasJlwlZX42S704ZGGqlw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501316&amp;idx=1&amp;sn=cca9ee6096e660e474f0f754e321a01c&amp;chksm=eb3122a16839445186f8a17d63e01a187ad87445b17ecd1702d4e8293071aa4aea03643e9733&amp;scene=0&amp;xtrack=1#rd" target="_blank">600+历年攻防演练漏洞汇编！千起实战案例还原漏洞攻击链</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-04-03 08:47:58">发布日期：2025-04-03 08:47:58</time></div><p class="article-description">随着国家攻防演练行动进入实战化深水区，攻击方技术手段持续升级，传统基于漏洞评分的&quot;打补丁式防御&quot;已难以应对复杂攻击链威胁。在2025攻防演练即将开启之际，360漏洞云基于对2023-2024年1372</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501316&amp;idx=1&amp;sn=cca9ee6096e660e474f0f754e321a01c&amp;chksm=eb3122a16839445186f8a17d63e01a187ad87445b17ecd1702d4e8293071aa4aea03643e9733&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501307&amp;idx=1&amp;sn=023fd8044146569ef94d59acb25a9d1c&amp;chksm=eb628a2ab5c8d89770e630448e1d7ea68103de06c19c2c0eaa61badedac563b7569126b51f0b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTGZHPMZiaGxWiaiaUV44FibFassLCcPrbpIOTx737LgyDkwvcBXns6Ixk1twmDlfbBLoLO6YeibDDndX4Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501307&amp;idx=1&amp;sn=023fd8044146569ef94d59acb25a9d1c&amp;chksm=eb628a2ab5c8d89770e630448e1d7ea68103de06c19c2c0eaa61badedac563b7569126b51f0b&amp;scene=0&amp;xtrack=1#rd" target="_blank">漏洞速递 | CVE-2025-30208 漏洞（附EXP）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-03-28 15:56:57">发布日期：2025-03-28 15:56:57</time></div><p class="article-description">0x01 前言    Vite 是一个现代化的前端构建工具，旨在提供快速的开发服务器和优化的构建流程，广泛用于开发 JavaScript 和 TypeScript 的 Web 应用程序。攻击者可读取服</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501307&amp;idx=1&amp;sn=023fd8044146569ef94d59acb25a9d1c&amp;chksm=eb628a2ab5c8d89770e630448e1d7ea68103de06c19c2c0eaa61badedac563b7569126b51f0b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501297&amp;idx=1&amp;sn=187336593f4001be45458d88c8ccc474&amp;chksm=eb475dedd72ba83cc50dd7a11e590093aaa313725fc1add46ea1e0ae11315658f6a784a8fde1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/6XVKAUnbCxe89YhiaCU4mX7P6XkrVqKvz9MHRhiaHA1VLcvQgpz9RxJdjJ57dLovT8Iwkt04et5fkHJOlxHrLB4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501297&amp;idx=1&amp;sn=187336593f4001be45458d88c8ccc474&amp;chksm=eb475dedd72ba83cc50dd7a11e590093aaa313725fc1add46ea1e0ae11315658f6a784a8fde1&amp;scene=0&amp;xtrack=1#rd" target="_blank">【2025HW招聘】- 河南宁云志</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-03-17 10:02:28">发布日期：2025-03-17 10:02:28</time></div><p class="article-description">河南宁云志25年国HW招聘前言：2025国家级护网将要开始，我们开启人才筹备计划。此计划旨在为甲方提供高质量安全服务，为师傅们提供稳定可靠的HW项目岗位。公司简介河南宁云志科技有限公司，是一家专注网络</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501297&amp;idx=1&amp;sn=187336593f4001be45458d88c8ccc474&amp;chksm=eb475dedd72ba83cc50dd7a11e590093aaa313725fc1add46ea1e0ae11315658f6a784a8fde1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501295&amp;idx=1&amp;sn=78dfb2522070cd193a453e80652dfee9&amp;chksm=eb19335a0de40759d57fdf91eff82fd7daca556759753966d5c97eb74b50deba6ba030eb81e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFaH2ktkxjiaicGf03FkGxNf3sIIFQOrkuSYS4GQtG5cfON5HVMT1ScV5vegU4eUubHfQgsYzoPe9GA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501295&amp;idx=1&amp;sn=78dfb2522070cd193a453e80652dfee9&amp;chksm=eb19335a0de40759d57fdf91eff82fd7daca556759753966d5c97eb74b50deba6ba030eb81e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">最新专刊 | 《奇安信攻防社区·2024年度专刊》赠书福利</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-03-14 09:07:19">发布日期：2025-03-14 09:07:19</time></div><p class="article-description">内容介绍 | 专刊亮点 | 感谢福利 | 获取专刊2024年刊《奇安信攻防社区·年度专刊》奇安信攻防社区是奇安信补天漏洞响应平台为用户打造的技术交流分享平台，社区以促进攻防技术的切磋与交流为目标，将安</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501295&amp;idx=1&amp;sn=78dfb2522070cd193a453e80652dfee9&amp;chksm=eb19335a0de40759d57fdf91eff82fd7daca556759753966d5c97eb74b50deba6ba030eb81e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501289&amp;idx=1&amp;sn=cfb7cb8ac3d66175bf93201aebc1ac30&amp;chksm=ebc8421ce916aa41d91dc9e64b1053fe0d36d3009c7adf9c13bc305bfe76ab73dcc74f3f880c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFjrE40icvdHrYoBMmOBGJlaiaV4m1b0Fo3YDic9teKNOEHF5JS8A8wI3P6ObYBXFjCOXWmQgPwlaXeg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501289&amp;idx=1&amp;sn=cfb7cb8ac3d66175bf93201aebc1ac30&amp;chksm=ebc8421ce916aa41d91dc9e64b1053fe0d36d3009c7adf9c13bc305bfe76ab73dcc74f3f880c&amp;scene=0&amp;xtrack=1#rd" target="_blank">【漏洞速递】VMware ESXi新型漏洞CVE-2025-22224-22226利用链已出现在野利用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-03-05 17:07:00">发布日期：2025-03-05 17:07:00</time></div><p class="article-description">VMware ESXi 是一款虚拟化平台，广泛应用于企业数据中心及云环境，旨在提供高效、灵活的虚拟化解决方案。近期互联网披露，ESXi 中存在三个严重漏洞（CVE-2025-22224、CVE-202</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501289&amp;idx=1&amp;sn=cfb7cb8ac3d66175bf93201aebc1ac30&amp;chksm=ebc8421ce916aa41d91dc9e64b1053fe0d36d3009c7adf9c13bc305bfe76ab73dcc74f3f880c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501282&amp;idx=1&amp;sn=19d97b09c909f943e525951bc38fa3e9&amp;chksm=eb32172ed10576ceb8b8732957cda16eee1ae5aea80f98c96a4c446bfd3e42b4b7f9b726e580&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/EpH648MgPYZWliaOMsXibSBwhnia5jR9R6kicqUNlYldRsISeLlIJPprul8vjVDe6b8zGwmIQD64uEQtFeLRh46bzA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501282&amp;idx=1&amp;sn=19d97b09c909f943e525951bc38fa3e9&amp;chksm=eb32172ed10576ceb8b8732957cda16eee1ae5aea80f98c96a4c446bfd3e42b4b7f9b726e580&amp;scene=0&amp;xtrack=1#rd" target="_blank">沈阳深蓝25HW一轮统招启动！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-03-03 14:29:28">发布日期：2025-03-03 14:29:28</time></div><p class="article-description">愿您的第一次hw从沈阳深蓝开启！2025沈阳深蓝  HW一轮招录（统招）启动！ 单位简介沈阳深蓝安全信息科技有限公司是一家专业的安全服务公司，我单位自2020年以公司的形式开展业务，至今已是第六年，因</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501282&amp;idx=1&amp;sn=19d97b09c909f943e525951bc38fa3e9&amp;chksm=eb32172ed10576ceb8b8732957cda16eee1ae5aea80f98c96a4c446bfd3e42b4b7f9b726e580&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501275&amp;idx=1&amp;sn=697fd036c001b489a779f5a3600d4a07&amp;chksm=eb8a7d2ac0a67a8d44dc370991ecf9091d1eaeca77b18e91fb75b9ed3789f7c0637a2289cad8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7D2JPvxqDTFBpR2X58lge81kkMPxr0asB5WV2oLc16QpNnvo7wbt1COJY91ZufksiamIEQqd8pcLaj56FEotDOQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501275&amp;idx=1&amp;sn=697fd036c001b489a779f5a3600d4a07&amp;chksm=eb8a7d2ac0a67a8d44dc370991ecf9091d1eaeca77b18e91fb75b9ed3789f7c0637a2289cad8&amp;scene=0&amp;xtrack=1#rd" target="_blank">顺丰SRC第三届白帽技术沙龙预约开启！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-02-20 12:19:21">发布日期：2025-02-20 12:19:21</time></div><p class="article-description">【全国各省及国际白帽给顺丰SRC发来祝福！】赶紧扫码预约本技术沙龙直播吧！大咖干货分享及80+份豪礼在线等你！【文末福利】参与方式1：转发本文到朋友圈+集赞20个参与方式2：转发本文到200+人以上大</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501275&amp;idx=1&amp;sn=697fd036c001b489a779f5a3600d4a07&amp;chksm=eb8a7d2ac0a67a8d44dc370991ecf9091d1eaeca77b18e91fb75b9ed3789f7c0637a2289cad8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501270&amp;idx=1&amp;sn=f59638aea02dcad626a2cf4fa79d7edf&amp;chksm=eba99674964d1c0424604ca59ba90ee76af05f2c37d0036b8cb71a7c464075b1a6bea2502fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/3k9IT3oQhT2IVxDPAj0QTqQWfriaMBxkfbjSFhZQICc4IRVM1I8N15jmXjhusdxQHibThhwXfthlrEEqbzjyQpaw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501270&amp;idx=1&amp;sn=f59638aea02dcad626a2cf4fa79d7edf&amp;chksm=eba99674964d1c0424604ca59ba90ee76af05f2c37d0036b8cb71a7c464075b1a6bea2502fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">本地化 AI 审计工具落地小试牛刀</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-02-19 09:30:00">发布日期：2025-02-19 09:30:00</time></div><p class="article-description">作者：wh0am1i@知道创宇404实验室时间：2025年2月18日本文为知道创宇404实验室内部分享沙龙“404 Open Day”的议题内容，作为目前团队AI安全研究系列的一部分，分享出来与大家一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501270&amp;idx=1&amp;sn=f59638aea02dcad626a2cf4fa79d7edf&amp;chksm=eba99674964d1c0424604ca59ba90ee76af05f2c37d0036b8cb71a7c464075b1a6bea2502fd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501244&amp;idx=1&amp;sn=80649cb3e5190372ad58e30992f89d99&amp;chksm=ebb8a6516e8ccdeebe68c839435ff9e45bc7db74b54dfc8af8611465b1fb4c6ecbf1e61fc24f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/JMH1pEQ7qP5zBOhplgtLPSeLtib6pe2JMLXkicBTEoMnRojhDBE8MXHjib7Cv1UOdQtkDic0oh2tkkNc5GU3VjibnNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501244&amp;idx=1&amp;sn=80649cb3e5190372ad58e30992f89d99&amp;chksm=ebb8a6516e8ccdeebe68c839435ff9e45bc7db74b54dfc8af8611465b1fb4c6ecbf1e61fc24f&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek本地化部署有风险！快来看看你中招了吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/86143fd2de81a628b72aadb342819cc3/index.html">渗透Xiao白帽</a></span><time class="article-date" datetime="2025-02-18 10:09:39">发布日期：2025-02-18 10:09:39</time></div><p class="article-description">2025年伊始，AI领域迎来一个重要变革 - DeepSeek R1开源发布，凭借着低成本、性能出众的优势，这个模型在短短几周内就获得空前关注。由于官网服务经常繁忙，大家开始选择使用Ollama+Op</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1NTM4ODIxMw==&amp;mid=2247501244&amp;idx=1&amp;sn=80649cb3e5190372ad58e30992f89d99&amp;chksm=ebb8a6516e8ccdeebe68c839435ff9e45bc7db74b54dfc8af8611465b1fb4c6ecbf1e61fc24f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

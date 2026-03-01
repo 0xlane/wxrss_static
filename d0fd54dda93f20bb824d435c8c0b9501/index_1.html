@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AI训驼师</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485375&amp;idx=1&amp;sn=a926a0fea73f1fb41d0dfe26490221aa&amp;chksm=eb0c84eafbea2e90de5d56653300e6c960e7da46c5c6cab90e866d47ce1367d4970306fe8957&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTDO1gVjA2GFpVDRrYR6FwypxWyBtfVSaHQsGmneG85coWDm6LRRibSe1YnMsWRwd8v7s6tnDrgyEQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485375&amp;idx=1&amp;sn=a926a0fea73f1fb41d0dfe26490221aa&amp;chksm=eb0c84eafbea2e90de5d56653300e6c960e7da46c5c6cab90e866d47ce1367d4970306fe8957&amp;scene=0&amp;xtrack=1#rd" target="_blank">（附源码）Dify+RAGFlow搭建通信传输网智能优化AI智能体Agent，快速实现网络故障预测与自动化运维</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-31 10:12:24">发布日期：2025-08-31 10:12:24</time></div><p class="article-description">&gt; 请关注本公众号私信获取本文Agent源码。本文基于 Dify 的工作流编排能力和 RAGFlow 知识库，构建了一套电信运营商传输网络的智能故障预测与自动化运维场景的AI智能体Agent和MCP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485375&amp;idx=1&amp;sn=a926a0fea73f1fb41d0dfe26490221aa&amp;chksm=eb0c84eafbea2e90de5d56653300e6c960e7da46c5c6cab90e866d47ce1367d4970306fe8957&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485355&amp;idx=1&amp;sn=ad0e255eba6bafcfbd54c61552ff1214&amp;chksm=ebfb97eb391fb8377aab94730bb9a541cff2cd68359945933a723f142f467293ad21472dd025&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtRAbA2OVIRmVW6xE8OXDA9gJ1ZciaLQZbnAyUvnWAibM3EWhLdA5D3fdicicA5G81nib1SX329ITfQDwibw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485355&amp;idx=1&amp;sn=ad0e255eba6bafcfbd54c61552ff1214&amp;chksm=ebfb97eb391fb8377aab94730bb9a541cff2cd68359945933a723f142f467293ad21472dd025&amp;scene=0&amp;xtrack=1#rd" target="_blank">自智网络最佳实践案例：构建面向5G切片商业化落地的智能运维新范式</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-26 17:17:44">发布日期：2025-08-26 17:17:44</time></div><p class="article-description">背景介绍为上万球迷在某体育赛事决赛现场提供4K超清多角度直播是5G网络切片的核心承诺，更是5G商业化浪潮中电信运营商面临的严峻考验。5G切片技术，作为实现“一网多能、按需定制”的关键，旨在为增强型移</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485355&amp;idx=1&amp;sn=ad0e255eba6bafcfbd54c61552ff1214&amp;chksm=ebfb97eb391fb8377aab94730bb9a541cff2cd68359945933a723f142f467293ad21472dd025&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485350&amp;idx=1&amp;sn=c1732631185564ef29b8a3b6500d763d&amp;chksm=ebdca3ab8c4b568a156bd5c2aadc82dcf5af9f39c7d4363b860ecc6fe6f10bfabcd152495f07&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtRVoQkcwjbLHNTgWQibpfeiccialnVWfIPGyGNhjM239klqepBQ18jV6aVUBmWNaMb7973VHHJ0bkrnA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485350&amp;idx=1&amp;sn=c1732631185564ef29b8a3b6500d763d&amp;chksm=ebdca3ab8c4b568a156bd5c2aadc82dcf5af9f39c7d4363b860ecc6fe6f10bfabcd152495f07&amp;scene=0&amp;xtrack=1#rd" target="_blank">万物皆可MCP：教你如何从零手撸MCP服务，让AI智能体Agent秒变行业大脑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-22 22:34:10">发布日期：2025-08-22 22:34:10</time></div><p class="article-description">博主上一篇文章（附源码）Dify+RAGFlow搭建工业互联网MCP服务和AI智能体Agent，快速实现水泵企业数控机床预测性维护，是基于 Dify 的工作流编排能力和 RAGFlow 知识库，构建</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485350&amp;idx=1&amp;sn=c1732631185564ef29b8a3b6500d763d&amp;chksm=ebdca3ab8c4b568a156bd5c2aadc82dcf5af9f39c7d4363b860ecc6fe6f10bfabcd152495f07&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485340&amp;idx=1&amp;sn=442e6630bb203f6384ffd0c2c3a9a028&amp;chksm=eb1ddb992ea6eb2f8a16ac5d53e1d86bff02757bcf2569d0301fdf8dfe9ad9e9ae9e49e21966&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtSvGasKiasXP9JK8GeiaagCz3Yl1OficzDRGnhjlTzwPW3AO0tZeibhCRYeGZUCOqSGDvpcZEg6LchEfw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485340&amp;idx=1&amp;sn=442e6630bb203f6384ffd0c2c3a9a028&amp;chksm=eb1ddb992ea6eb2f8a16ac5d53e1d86bff02757bcf2569d0301fdf8dfe9ad9e9ae9e49e21966&amp;scene=0&amp;xtrack=1#rd" target="_blank">从工单驱动到人工智能驱动的范式转变，华为式AI创新赋能5G时代OSS演进的“野路子”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-19 01:00:00">发布日期：2025-08-19 01:00:00</time></div><p class="article-description">随着云原生、AI原生、数智化与开放生态加速演进，AI+OSS 的出现标志着电信行业的一次范式转移，它承诺带来更高的灵活性、互操作性和成本效益。而要成功实现 AI+OSS，人工智能 (AI) 和机器学</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485340&amp;idx=1&amp;sn=442e6630bb203f6384ffd0c2c3a9a028&amp;chksm=eb1ddb992ea6eb2f8a16ac5d53e1d86bff02757bcf2569d0301fdf8dfe9ad9e9ae9e49e21966&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485333&amp;idx=1&amp;sn=885f62bb5dedf483426cf716bc3aa9bd&amp;chksm=ebcad2b378f5c276231e47055adf3ed6fd51beb867adc32e7e4b97d4e42c12734a8eebb4ecf6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTfoicMF2PV445oNhkJnCBDGCxmTh5ZkCnsBvRSLrPP3mMHdNHYiaWjbn9icxkcxdEIcndHlMcxZHveA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485333&amp;idx=1&amp;sn=885f62bb5dedf483426cf716bc3aa9bd&amp;chksm=ebcad2b378f5c276231e47055adf3ed6fd51beb867adc32e7e4b97d4e42c12734a8eebb4ecf6&amp;scene=0&amp;xtrack=1#rd" target="_blank">当AI智能体Agent'读懂'3GPP规范后，5G网络优化专家慌了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-13 01:00:00">发布日期：2025-08-13 01:00:00</time></div><p class="article-description">本文介绍的AI+OSS平台解决方案是网络工程师进行5G RAN优化的“Copilot”。本文结合Apache Airflow工作流引擎、LangChain智能体和精调的大型语言模型，提出AI驱动的解</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485333&amp;idx=1&amp;sn=885f62bb5dedf483426cf716bc3aa9bd&amp;chksm=ebcad2b378f5c276231e47055adf3ed6fd51beb867adc32e7e4b97d4e42c12734a8eebb4ecf6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485325&amp;idx=1&amp;sn=af375efaa6b69bc486f1b641dcec6d2f&amp;chksm=ebab770c00f849598d863592beab009169117b1a51d09cdaff572a7d9ab719917b828e34e754&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTfoicMF2PV445oNhkJnCBDGflNL1hgiaN6KyWN4aW1roicPMTKowy1o1DwTgJd7HicvWvPq6HDUKsUOw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485325&amp;idx=1&amp;sn=af375efaa6b69bc486f1b641dcec6d2f&amp;chksm=ebab770c00f849598d863592beab009169117b1a51d09cdaff572a7d9ab719917b828e34e754&amp;scene=0&amp;xtrack=1#rd" target="_blank">Langchain+Airflow构建AI+OSS智能体Agent平台，让电信运营商的NOC效率翻倍</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-12 12:39:03">发布日期：2025-08-12 12:39:03</time></div><p class="article-description">本文基于博主之前的文章构建TMF合规的通信网络质量优化AI+OSS智能体Agent平台，快速生成业务性能优化方案，实现从被动响应到主动预测的智能化转型让AI+OSS智能体Agent在电信网络'大海捞</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485325&amp;idx=1&amp;sn=af375efaa6b69bc486f1b641dcec6d2f&amp;chksm=ebab770c00f849598d863592beab009169117b1a51d09cdaff572a7d9ab719917b828e34e754&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485319&amp;idx=1&amp;sn=4804b8d57dd0f6fa956fccac877b51ff&amp;chksm=eb94699be1c08c98cdaaf767c7dde61ba1c264199e63c245bd1eefbd0d0301aca5ae5709d678&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtRmBvY0q7VOK0ZPfhybLU76KE2GwWia3d50ic91UfjXKaCM2yDeEdTpe1YlEu4Z9QjbQf0jmc9Vz5bA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485319&amp;idx=1&amp;sn=4804b8d57dd0f6fa956fccac877b51ff&amp;chksm=eb94699be1c08c98cdaaf767c7dde61ba1c264199e63c245bd1eefbd0d0301aca5ae5709d678&amp;scene=0&amp;xtrack=1#rd" target="_blank">让AI+OSS智能体Agent在电信网络'大海捞针'，实现多电路级联故障秒级关联和质量优化，重新定义网络运维边界</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-10 13:03:30">发布日期：2025-08-10 13:03:30</time></div><p class="article-description">📋 引言本文基于博主上一篇文章构建TMF合规的通信网络质量优化AI+OSS智能体Agent平台，快速生成业务性能优化方案，实现从被动响应到主动预测的智能化转型，针对传输电路（PTN/SPN/OTN）</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485319&amp;idx=1&amp;sn=4804b8d57dd0f6fa956fccac877b51ff&amp;chksm=eb94699be1c08c98cdaaf767c7dde61ba1c264199e63c245bd1eefbd0d0301aca5ae5709d678&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485310&amp;idx=1&amp;sn=266d70d9693710c1c87ad24c83fdc943&amp;chksm=ebf298bb6487c63e51d06d5e6a540adf7ee585f2e3a530f11ab1e65d55eaeac7c609650efd0e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtQqIyQtCoYMVWRlJVicNH7SOXJJdJVbDREx7nDECaea80AibxEXsw2rS8gnnqAzSPAdnMkndRuxwfNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485310&amp;idx=1&amp;sn=266d70d9693710c1c87ad24c83fdc943&amp;chksm=ebf298bb6487c63e51d06d5e6a540adf7ee585f2e3a530f11ab1e65d55eaeac7c609650efd0e&amp;scene=0&amp;xtrack=1#rd" target="_blank">构建TMF合规的通信网络质量优化AI+OSS智能体Agent平台，快速生成业务性能优化方案，实现从被动响应到主动预测的智能化转型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-08 22:17:02">发布日期：2025-08-08 22:17:02</time></div><p class="article-description">本文深度解析TMF合规的AI+OSS智能体平台架构，创新性地采用四阶段递进式处理流程——事件检测→多异常关联分析→LLM深度推理→智能解决方案推荐，形成完整的自动化运维闭环。系统全面支持PTN/SP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485310&amp;idx=1&amp;sn=266d70d9693710c1c87ad24c83fdc943&amp;chksm=ebf298bb6487c63e51d06d5e6a540adf7ee585f2e3a530f11ab1e65d55eaeac7c609650efd0e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485292&amp;idx=1&amp;sn=f18363bbd950c5121e8d95786a36daf9&amp;chksm=ebf18f682cfa4be278524bd4dc769d9295975829a45eb1b21eb7431e1460b6d7511010429944&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTJuPPpEZ3hTPibLoPe9ZwQJydG0Y43I7TGtDqdw3pl3blKiaqvbdFRuf6ZIUiazGa8TQUQJDWZ39GYg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485292&amp;idx=1&amp;sn=f18363bbd950c5121e8d95786a36daf9&amp;chksm=ebf18f682cfa4be278524bd4dc769d9295975829a45eb1b21eb7431e1460b6d7511010429944&amp;scene=0&amp;xtrack=1#rd" target="_blank">（附源码）Dify+RAGFlow搭建工业互联网MCP服务和AI智能体Agent，快速实现水泵企业数控机床预测性维护</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-08-06 08:36:30">发布日期：2025-08-06 08:36:30</time></div><p class="article-description">点击下方名片关注公众号本文根据博主前几年在某省水泵产业园落地智能制造和工业互联网重点项目的经验，基于 Dify 的工作流编排能力和 RAGFlow 知识库，构建了一套水泵制造企业机加车间的数控机床的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485292&amp;idx=1&amp;sn=f18363bbd950c5121e8d95786a36daf9&amp;chksm=ebf18f682cfa4be278524bd4dc769d9295975829a45eb1b21eb7431e1460b6d7511010429944&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485270&amp;idx=1&amp;sn=3a3ff1bea9fe303581aa769e99b14ce1&amp;chksm=ebf0c7f83bd3859e3f8ecbeba82afc79013b9c334e06ff0b9b1e43a8d3892663a062758a6449&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtSWTstAuulZeSwIpy4JNbA8CAHLSHiajLz6YfFM0GiaecAiaia3VDrJ7Q71QbBNia4UchS7zNUsAG5JP4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485270&amp;idx=1&amp;sn=3a3ff1bea9fe303581aa769e99b14ce1&amp;chksm=ebf0c7f83bd3859e3f8ecbeba82afc79013b9c334e06ff0b9b1e43a8d3892663a062758a6449&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文搞懂AI与区块链的区别：AI是生产力工具，区块链是生产关系工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-06-11 11:04:22">发布日期：2025-06-11 11:04:22</time></div><p class="article-description">。 点击下方名片关注公众号，找我领取一份DeepSeek资料大礼包。导语：我们正处在一个技术爆炸的时代。AI和区块链，这两个词汇像两颗耀眼的星辰，频繁出现在我们的视野里。很多人将它们混为一谈，或视作相</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485270&amp;idx=1&amp;sn=3a3ff1bea9fe303581aa769e99b14ce1&amp;chksm=ebf0c7f83bd3859e3f8ecbeba82afc79013b9c334e06ff0b9b1e43a8d3892663a062758a6449&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485258&amp;idx=1&amp;sn=6cdccdc61c7495aa2b630fbe2b969b27&amp;chksm=eb7bcbc24d8bb9c0cb788bac2344d7f7b6a0e59938d06eba117bb44bb90cdbb5f35e25475cad&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTHvjDl70Eq70v1BKCwMSjqpuicNEvzyM9QvLichWzG2900GpMbFtbmrs98c4Zz8c2H2OIvj1ShhyZg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485258&amp;idx=1&amp;sn=6cdccdc61c7495aa2b630fbe2b969b27&amp;chksm=eb7bcbc24d8bb9c0cb788bac2344d7f7b6a0e59938d06eba117bb44bb90cdbb5f35e25475cad&amp;scene=0&amp;xtrack=1#rd" target="_blank">谷歌CEO万字访谈精华：从小镇青年到全球科技领袖之巅，皮猜首次揭秘AI终局，以及对人性与未来的7个思考（高考文科专业的启发）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-06-08 23:28:14">发布日期：2025-06-08 23:28:14</time></div><p class="article-description">深夜，一场长达两小时的对话，在科技圈引发了巨震。一边是谷歌和Alphabet的掌舵人，桑达尔·皮猜（Sundar Pichai）。他手握着全球最强大的技术基础设施和人才储备。另一边是AI领域的“深度</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485258&amp;idx=1&amp;sn=6cdccdc61c7495aa2b630fbe2b969b27&amp;chksm=eb7bcbc24d8bb9c0cb788bac2344d7f7b6a0e59938d06eba117bb44bb90cdbb5f35e25475cad&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485252&amp;idx=1&amp;sn=ec8a3fbb6fcbbae8f70d4deef9d0eed8&amp;chksm=eb282d09101e7e24102a67f8134c5cc5e6be6b5aac75c15238d335c224309bd5fa12ebd6374b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtQykMLgJALeibEoDibfm709w79CtnJLYic1ySwuEibNC0Mu4JuQ3kUOuAx48t5yck8oq3jHMVrPRXoGHQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485252&amp;idx=1&amp;sn=ec8a3fbb6fcbbae8f70d4deef9d0eed8&amp;chksm=eb282d09101e7e24102a67f8134c5cc5e6be6b5aac75c15238d335c224309bd5fa12ebd6374b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Qwen3大模型AI Agent智能体模仿「人类记忆力」的秘密武器——开源动态知识图谱Graphiti</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-05-13 18:31:05">发布日期：2025-05-13 18:31:05</time></div><p class="article-description">如果一位没有记忆的 AI Agent智能体 被部署到生产环境中，每一次与它的对话都像是全新开始。• 无论用户 5 秒前刚刚说过自己的名字……它也会立刻忘记。• 上一次帮你解决的问题，这次它也毫无印象</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485252&amp;idx=1&amp;sn=ec8a3fbb6fcbbae8f70d4deef9d0eed8&amp;chksm=eb282d09101e7e24102a67f8134c5cc5e6be6b5aac75c15238d335c224309bd5fa12ebd6374b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485195&amp;idx=1&amp;sn=cf48660d131c3789ff618e290ded283d&amp;chksm=eb8325b4ba238b7a15bf4f20065eada5c2fdd70ec87dbbe3626980d51a85b68371c7a5f74530&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtROBucfe6zM8icXske97yylE8hEJsVvWYrqIxozicxVMjZbFQNrfPMQ4BRTE0I2cK6wfnkicGdRsByrg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485195&amp;idx=1&amp;sn=cf48660d131c3789ff618e290ded283d&amp;chksm=eb8325b4ba238b7a15bf4f20065eada5c2fdd70ec87dbbe3626980d51a85b68371c7a5f74530&amp;scene=0&amp;xtrack=1#rd" target="_blank">一文彻底搞懂最近爆火的MCP与Function calling之间的区别</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2025-04-28 15:06:04">发布日期：2025-04-28 15:06:04</time></div><p class="article-description">Function calling 与 MCP曾几何时，当我们谈论 AI 大模型使用外部工具时，大家首先想到的几乎都是函数调用 (Function Calling)。可以说，在 MCP（模型上下文协议</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485195&amp;idx=1&amp;sn=cf48660d131c3789ff618e290ded283d&amp;chksm=eb8325b4ba238b7a15bf4f20065eada5c2fdd70ec87dbbe3626980d51a85b68371c7a5f74530&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485185&amp;idx=1&amp;sn=9b39aad976af6642371314f4d091fabc&amp;chksm=ebf69ced7c9c64c4cb275362b3821120e8eb040ea68d7d7ab98533e0ecae3345451c4a2a93d9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtTdB9RtScdwcE3AefYnsLuoK2mbmEucGGmAHGrvuWfpWiaVbpmw1fIVvCwaFAuS4LsZO9ZsDWmXPTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485185&amp;idx=1&amp;sn=9b39aad976af6642371314f4d091fabc&amp;chksm=ebf69ced7c9c64c4cb275362b3821120e8eb040ea68d7d7ab98533e0ecae3345451c4a2a93d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">【5万字长文，含案例】基于DeepSeek私有化部署RAGFlow行业知识库和智能体Agent，完美实现知识图谱和低代码开发</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c79ae3b844b9d1f210c01ceac21ad467/index.html">AI训驼师马智</a></span><time class="article-date" datetime="2025-04-24 17:28:17">发布日期：2025-04-24 17:28:17</time></div><p class="article-description">在信息爆炸的时代，每个与知识打交道的从业者都曾经历过这样的“至暗时刻”：• 法律行业：为了一份诉状，不得不在堆积如山的纸质卷宗、邮件和聊天记录中大海捞针，还要在多个法律数据库中反复检索相似判例，耗时耗</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247485185&amp;idx=1&amp;sn=9b39aad976af6642371314f4d091fabc&amp;chksm=ebf69ced7c9c64c4cb275362b3821120e8eb040ea68d7d7ab98533e0ecae3345451c4a2a93d9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247484750&amp;idx=1&amp;sn=a909985416684231606e1ff905248b76&amp;chksm=eb6a4d111afb7ea6781b846f83a7f15ba99fca489d0d5082711a067c2123c8723c900f8ebf13&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/bHdE9SRgCtRxbzpMNKWtWp7bvOtyaDoaiaPkdUHnIvmVjUKibwblH8eReCQW8rBBFLyYEHklNqT4FAoDIJGq4NQg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247484750&amp;idx=1&amp;sn=a909985416684231606e1ff905248b76&amp;chksm=eb6a4d111afb7ea6781b846f83a7f15ba99fca489d0d5082711a067c2123c8723c900f8ebf13&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何低成本租用服务器私有化本地部署DeepSeek</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c79ae3b844b9d1f210c01ceac21ad467/index.html">AI训驼师马智</a></span><time class="article-date" datetime="2025-03-14 09:24:39">发布日期：2025-03-14 09:24:39</time></div><p class="article-description">上一篇文章LangChain+RAG+Agent本地部署DeepSeek-R1商用级知识库，完美实现低代码可视化流程编排发布后，有不少读者留言向博主咨询如何低成本租用GPU主机部署DeepSeek。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247484750&amp;idx=1&amp;sn=a909985416684231606e1ff905248b76&amp;chksm=eb6a4d111afb7ea6781b846f83a7f15ba99fca489d0d5082711a067c2123c8723c900f8ebf13&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

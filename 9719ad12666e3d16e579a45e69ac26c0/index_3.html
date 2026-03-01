@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>六边形攻防安全</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486228&amp;idx=1&amp;sn=eaf2b378fb3eb4da68635253190f4d86&amp;chksm=ed5cb9cdb5a204d29d2f206b5245c934c4e18c893f0ef5aa770a31cdd7686cd2ee4fe8b9f093&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hMZ0ictzVvTuQtcpvUq645t1SLVU0ZSeV7CW9tMnPBZpI17kdgQqib0rucazcEj4oS2lV5icS7JNicUnRyIye74u6g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486228&amp;idx=1&amp;sn=eaf2b378fb3eb4da68635253190f4d86&amp;chksm=ed5cb9cdb5a204d29d2f206b5245c934c4e18c893f0ef5aa770a31cdd7686cd2ee4fe8b9f093&amp;scene=0&amp;xtrack=1#rd" target="_blank">python扫描器基础理论加代码实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-19 12:23:42">发布日期：2025-04-19 12:23:42</time></div><p class="article-description">基础理论实际上玩计算机的，尤其在ai时代，无论是干啥，包括网络安全挖洞，玩计算机的终极目的就是自动化，所有的编程就是为了替代有规律且重复的人工，所以挖洞最理想的状态就是自动化挖洞躺赚，但是理想毕竟是理</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486228&amp;idx=1&amp;sn=eaf2b378fb3eb4da68635253190f4d86&amp;chksm=ed5cb9cdb5a204d29d2f206b5245c934c4e18c893f0ef5aa770a31cdd7686cd2ee4fe8b9f093&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486226&amp;idx=1&amp;sn=237078bb3b637a76f4515e84af38dc78&amp;chksm=ed816a051cd0ea14a09e515c8288be00ede9457512ac282da4ecdb24afdcec9acc4d1dbe41b9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/7L8JZW0ISEDPTvPRE6CtgdI2BzQs3IkTFI9uZKh7ndS3lkvHSD1LiazTichJhuIoS1qxbbacQEXSXh6vM5ZJfPIQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486226&amp;idx=1&amp;sn=237078bb3b637a76f4515e84af38dc78&amp;chksm=ed816a051cd0ea14a09e515c8288be00ede9457512ac282da4ecdb24afdcec9acc4d1dbe41b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">RSAC 2025 创新沙盒10强全面分析报告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-16 21:02:11">发布日期：2025-04-16 21:02:11</time></div><p class="article-description">由Gemini DeepReasearch生成，顺带一说，知识库已经超过了6000多篇文章了，新上了不少AI安全相关的内容，还有卡巴斯基的seclist的全量文章。本报告旨在深入探讨这些公司的技术独</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486226&amp;idx=1&amp;sn=237078bb3b637a76f4515e84af38dc78&amp;chksm=ed816a051cd0ea14a09e515c8288be00ede9457512ac282da4ecdb24afdcec9acc4d1dbe41b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486224&amp;idx=1&amp;sn=74e7f05903725ccdabc69989e60f32bb&amp;chksm=edf753ea7c687344df9b31b5f001d158276d8768c0b041d0a2947703b6a72c95bd058419d273&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9qM7NQ3lGkAV2E9WLKy2dUCcNtVNNcmlm5dGWxlyoRDXop66VsV6oaQWoqdNiaopRk3brjJJeXCPtY7ibiceiabbAw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486224&amp;idx=1&amp;sn=74e7f05903725ccdabc69989e60f32bb&amp;chksm=edf753ea7c687344df9b31b5f001d158276d8768c0b041d0a2947703b6a72c95bd058419d273&amp;scene=0&amp;xtrack=1#rd" target="_blank">紧急通知</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-13 20:34:03">发布日期：2025-04-13 20:34:03</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486224&amp;idx=1&amp;sn=74e7f05903725ccdabc69989e60f32bb&amp;chksm=edf753ea7c687344df9b31b5f001d158276d8768c0b041d0a2947703b6a72c95bd058419d273&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486215&amp;idx=1&amp;sn=069508ab98752320108a865aefeb1a92&amp;chksm=edce90e200d600970533336fe07ad9339446f8b162f73d80823d486ae6e8ccd6c94842f03f6e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9qM7NQ3lGkCOxfPEAANKCKeNbLLWY7GcibicJIlG8kXMkWQwfiaMRF4ibLVglWsDgMsFFSkZGY3n2hiagUH0P5Aw1pw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486215&amp;idx=1&amp;sn=069508ab98752320108a865aefeb1a92&amp;chksm=edce90e200d600970533336fe07ad9339446f8b162f73d80823d486ae6e8ccd6c94842f03f6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">国外C2工具整理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-11 08:10:14">发布日期：2025-04-11 08:10:14</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486215&amp;idx=1&amp;sn=069508ab98752320108a865aefeb1a92&amp;chksm=edce90e200d600970533336fe07ad9339446f8b162f73d80823d486ae6e8ccd6c94842f03f6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486209&amp;idx=1&amp;sn=2b05d1cd9ce0af638e2163e013ad0953&amp;chksm=ed5cca995b96bbbd86d7a02c66ce8a54413765a9cb5f2c8836cea01827961d9c9aa8b83757c6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9qM7NQ3lGkBONtuhmQ1Y4wsGFcR6GDy7Mmmf15EDMSrJXcbI8jNmomHw3icBQia0cIZOuaAzLb5FPcdgGZyTgxNg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486209&amp;idx=1&amp;sn=2b05d1cd9ce0af638e2163e013ad0953&amp;chksm=ed5cca995b96bbbd86d7a02c66ce8a54413765a9cb5f2c8836cea01827961d9c9aa8b83757c6&amp;scene=0&amp;xtrack=1#rd" target="_blank">恶意软件常用的六种持久性机制</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-09 11:41:24">发布日期：2025-04-09 11:41:24</time></div><p class="article-description">恶意软件常用的六种持久化机制在信息安全领域，“持久性”（Persistence）是攻击者入侵系统后最关键的一步。为了确保在系统重启、用户登出或其他中断后，恶意代码依旧能够自动运行、保持控制权，攻击者往</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486209&amp;idx=1&amp;sn=2b05d1cd9ce0af638e2163e013ad0953&amp;chksm=ed5cca995b96bbbd86d7a02c66ce8a54413765a9cb5f2c8836cea01827961d9c9aa8b83757c6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486199&amp;idx=1&amp;sn=5d87f7d658acb08c27ac108c4bd4d983&amp;chksm=ed5971835952422436a272878b56b1fd19e89b79ce32b60823189fb522ad2b73736eab20feee&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/gibrvkjiaP4XcsT8OKtuSxibuIWQvp90Alkwfs2GhncKeUcSkVdoG3VfjDZxFeP7gRNicia6XJ2pLMTjsbmcoibtVhzA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486199&amp;idx=1&amp;sn=5d87f7d658acb08c27ac108c4bd4d983&amp;chksm=ed5971835952422436a272878b56b1fd19e89b79ce32b60823189fb522ad2b73736eab20feee&amp;scene=0&amp;xtrack=1#rd" target="_blank">渗透测试|RPC技术+yakit热加载的JS加密解决方案分享</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-08 11:10:00">发布日期：2025-04-08 11:10:00</time></div><p class="article-description">1.前言近几年，越来越多网站流行起来sign值防篡改、添加http头字段防重放、数据包加密等机制，这类型机制本质上是为了与爬虫做对抗，随着安全渗透场景和要求不断变高，这类型机制往往对安全人员测试造成极</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486199&amp;idx=1&amp;sn=5d87f7d658acb08c27ac108c4bd4d983&amp;chksm=ed5971835952422436a272878b56b1fd19e89b79ce32b60823189fb522ad2b73736eab20feee&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486197&amp;idx=1&amp;sn=ba727613bcddfa282d487a9433c8d115&amp;chksm=ed8e881cf64b2485d1c2d140ec8b6cb2c27542441737657e89fa479ad686f189271d0a290845&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9qM7NQ3lGkCMNiaLudgwxckVedCkZpoT1laSx8iavWLdUC1Fu0tKI7pFLYZnryTTVRP3d6T0BhA0dXOAKbaEfFlg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486197&amp;idx=1&amp;sn=ba727613bcddfa282d487a9433c8d115&amp;chksm=ed8e881cf64b2485d1c2d140ec8b6cb2c27542441737657e89fa479ad686f189271d0a290845&amp;scene=0&amp;xtrack=1#rd" target="_blank">OffSec蓝队课程IR-200及OSIR考证之旅</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-06 22:00:39">发布日期：2025-04-06 22:00:39</time></div><p class="article-description">TL；DR近期参加了OffSec蓝队方向应急响应相关的学习课程IR-200，以及参加了OSIR认证并获取了证书，在整个过程中感觉还是学到了很多应急方面的知识技能，简单总结一下这次的OSIR学习和考证之</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486197&amp;idx=1&amp;sn=ba727613bcddfa282d487a9433c8d115&amp;chksm=ed8e881cf64b2485d1c2d140ec8b6cb2c27542441737657e89fa479ad686f189271d0a290845&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486186&amp;idx=1&amp;sn=b87089dcd6402fb7040a4bfe90528d43&amp;chksm=ed8aaaad6fc9f5c8a53e930b06209ef0c38bd7f0c2b14b6e0256d9d10dc4d6d88a9179e6b24a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/apmYTPAKhlVjGDcq7325ZqWKrzvwV4dwYvJclhyibDibicFuTDWXAUwNR6pEWa47ic91RQa3libicZibog0rFKb26lDew/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486186&amp;idx=1&amp;sn=b87089dcd6402fb7040a4bfe90528d43&amp;chksm=ed8aaaad6fc9f5c8a53e930b06209ef0c38bd7f0c2b14b6e0256d9d10dc4d6d88a9179e6b24a&amp;scene=0&amp;xtrack=1#rd" target="_blank">怎么从受限容器到拿下集群：#BrokenSesame</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-04-03 13:19:57">发布日期：2025-04-03 13:19:57</time></div><p class="article-description">云上攻防TOP级案例分析从0到1 - #BrokenSesame前几天 Wiz Research 团队分享了Ingress NGINX 中未经身份验证的远程代码执行漏洞，感兴趣大家可以去看：http</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486186&amp;idx=1&amp;sn=b87089dcd6402fb7040a4bfe90528d43&amp;chksm=ed8aaaad6fc9f5c8a53e930b06209ef0c38bd7f0c2b14b6e0256d9d10dc4d6d88a9179e6b24a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486184&amp;idx=1&amp;sn=67f35eb1e84c41891623e56430756d54&amp;chksm=edb0c79d043613effd1ea39d8224134edaad62121695d395390941eb8984ec5ee6f0ad28571b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iceZAzI9Y5nucsia3ZDicd7MXFGGN1pfS2ZxQ9PcnIFz35YBWdsSNYRicDj8SbwG7Fuaz18fmN3XzKnt9ggwNvHbsA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486184&amp;idx=1&amp;sn=67f35eb1e84c41891623e56430756d54&amp;chksm=edb0c79d043613effd1ea39d8224134edaad62121695d395390941eb8984ec5ee6f0ad28571b&amp;scene=0&amp;xtrack=1#rd" target="_blank">所有的无用，都是有用的</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-03-27 17:13:01">发布日期：2025-03-27 17:13:01</time></div><p class="article-description">2021 年 8 月，我在腾讯做了一个面向全员的分享，主题是《有用·无用》。因为是访谈形式，所以内容略显零碎。我尽量整理成了下面这篇文章。好读书不求甚解陶渊明说“好读书不求甚解”，很多时候学习并不一定</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486184&amp;idx=1&amp;sn=67f35eb1e84c41891623e56430756d54&amp;chksm=edb0c79d043613effd1ea39d8224134edaad62121695d395390941eb8984ec5ee6f0ad28571b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486182&amp;idx=1&amp;sn=2add35c4bee30176cb7ea2ab9814d136&amp;chksm=edf730fc0af56bb46c114973f6957960fabd7efc3b821ed64c7c1dd026ba8c3e72c5a876948d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ZmiaibBst1BVStFJC6ZDEK2MMiaiaiaenpmIS0DEkXMse84amicib7YXRMWovXXXf7c79WRanOricgHv0K7z8vbhRprsjQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486182&amp;idx=1&amp;sn=2add35c4bee30176cb7ea2ab9814d136&amp;chksm=edf730fc0af56bb46c114973f6957960fabd7efc3b821ed64c7c1dd026ba8c3e72c5a876948d&amp;scene=0&amp;xtrack=1#rd" target="_blank">高危逻辑漏洞-Web3+Web2前端结合的ABI任意调用实现链上交易免gas</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-03-26 22:24:43">发布日期：2025-03-26 22:24:43</time></div><p class="article-description">01—前言这次的漏洞案例依旧是Defi场景的漏洞，漏洞来源为测试环境的真实业务案例，本漏洞案例仅用于技术学习，禁止用于非法入侵行为，于此内容采取的任何行动均由个人全权负责, 使用这些信息应遵守适用的法</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486182&amp;idx=1&amp;sn=2add35c4bee30176cb7ea2ab9814d136&amp;chksm=edf730fc0af56bb46c114973f6957960fabd7efc3b821ed64c7c1dd026ba8c3e72c5a876948d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486180&amp;idx=1&amp;sn=9d8076478082cc891d8eb4156246bc7a&amp;chksm=ed15f1785011d51826f03411d84f80ed41f48dd71cb870bbc7bfddeab9641f85d721ba95257b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/wpkib3J60o2ibxPCszLcsBCibwkA9aEdGgJQ4KXMiaFbKOU1XlFampDn4GsCbTMlJBeFibz1TTHhibxwDyadxCCpj5SA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486180&amp;idx=1&amp;sn=9d8076478082cc891d8eb4156246bc7a&amp;chksm=ed15f1785011d51826f03411d84f80ed41f48dd71cb870bbc7bfddeab9641f85d721ba95257b&amp;scene=0&amp;xtrack=1#rd" target="_blank">Authenticode签名伪造——PE文件的签名伪造与签名验证劫持</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-03-25 09:01:00">发布日期：2025-03-25 09:01:00</time></div><p class="article-description">0x00 前言在上一篇文章《CAT文件数字签名使用技巧》介绍了证书签名的基础知识，Windows系统下向文件签名有两种方法：添加在文件末尾(Authenticode)和CAT文件(catalog)，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486180&amp;idx=1&amp;sn=9d8076478082cc891d8eb4156246bc7a&amp;chksm=ed15f1785011d51826f03411d84f80ed41f48dd71cb870bbc7bfddeab9641f85d721ba95257b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486177&amp;idx=1&amp;sn=95b386a781c60eb4f80d04187e07d937&amp;chksm=ed14f90d2b259ecd1c2763c7adc040eb2ae7aa4cac6503bc01f23e89a9c3490ad3296a572314&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/6aFicjrXnvghe6OiaIN55zjib1zRNEicLeCFic2kUVicH4Yvestbt8dIN1vQSw3XZyibiaXgfvdfVib7wSwAJsPG98UUdUQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486177&amp;idx=1&amp;sn=95b386a781c60eb4f80d04187e07d937&amp;chksm=ed14f90d2b259ecd1c2763c7adc040eb2ae7aa4cac6503bc01f23e89a9c3490ad3296a572314&amp;scene=0&amp;xtrack=1#rd" target="_blank">攻防速写｜我们还原了朝鲜黑客窃取Bybit 15亿美元加密货币的过程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-03-24 11:42:12">发布日期：2025-03-24 11:42:12</time></div><p class="article-description">《深蓝洞察 | 攻防速写》技术革新正重塑世界——智能设备渗透生活、机器人接管产线，但繁荣背后，攻防博弈的暗流从未停息。当行业狂奔时，安全往往成为“隐秘的代价”：通信协议或许暗藏指令劫持的陷阱，加密防</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486177&amp;idx=1&amp;sn=95b386a781c60eb4f80d04187e07d937&amp;chksm=ed14f90d2b259ecd1c2763c7adc040eb2ae7aa4cac6503bc01f23e89a9c3490ad3296a572314&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486175&amp;idx=1&amp;sn=a970775aa0ee3423620e0d6ae90a5628&amp;chksm=ed14d7671c318293dd6a701f131bccf883dbc7d3d69006ad16af89410307d0ac611d089dcab4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9qM7NQ3lGkB3AfXWBIViatqiaUxYLiauWHCGrr17uUEkKkQagDXb7bGhf4GB4N28A88NiaVBaPCMh7aO61Fq4mNkibA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486175&amp;idx=1&amp;sn=a970775aa0ee3423620e0d6ae90a5628&amp;chksm=ed14d7671c318293dd6a701f131bccf883dbc7d3d69006ad16af89410307d0ac611d089dcab4&amp;scene=0&amp;xtrack=1#rd" target="_blank">docker pull image 设置代理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-03-05 14:40:19">发布日期：2025-03-05 14:40:19</time></div><p class="article-description">今天在拉取镜像的时候出现连接超时的问题，一看原来是长城防火墙拦截导致的，所以需要设置代理，设置代理的方式有很多，可以全局 可以终端代理等等，最快捷方便的方式还是给docker设置代理，看了几篇国内的文</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486175&amp;idx=1&amp;sn=a970775aa0ee3423620e0d6ae90a5628&amp;chksm=ed14d7671c318293dd6a701f131bccf883dbc7d3d69006ad16af89410307d0ac611d089dcab4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486168&amp;idx=1&amp;sn=54f0aa6460aa7c667d09a92e8764ff56&amp;chksm=ed459710362776a56af45c55e7764763d4283d6c8eeed065886966eb9221b1a99802782c262a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/fZT30hrVgRdeicyKT82abFZrZXMKIgNNcria2D8ph5Qf4Esd6mCsuhHettmiciclONUUJ8HRhhkgtULPLKibPGDYVibA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486168&amp;idx=1&amp;sn=54f0aa6460aa7c667d09a92e8764ff56&amp;chksm=ed459710362776a56af45c55e7764763d4283d6c8eeed065886966eb9221b1a99802782c262a&amp;scene=0&amp;xtrack=1#rd" target="_blank">Linux 应急响应手册 2.0 发布！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-02-27 17:14:15">发布日期：2025-02-27 17:14:15</time></div><p class="article-description">简介 大家好，《Linux 应急响应手册 v2.0》 发布啦！本次更新主要是为各个应急响应场景添加了应急响应流程图，完善了各个场景的处置流程，新增了 TCP Wrappers 后门排查、udev 后门</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486168&amp;idx=1&amp;sn=54f0aa6460aa7c667d09a92e8764ff56&amp;chksm=ed459710362776a56af45c55e7764763d4283d6c8eeed065886966eb9221b1a99802782c262a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486166&amp;idx=1&amp;sn=1da65f1d797a14d3d9a8576e9f22b26a&amp;chksm=ede229b5cc0e1e862b5916c9262c5465bd51e4d71715b0ed8fd8f6a42e8ea76bdb3aa2033cf0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/w5LtdQbOj8kOgQXYWadEDZIoSGbcn8iaxUOzjUU4Hr2yro52fShJjcZFenEdR8HYmttc2VciafHk2Vajt1hBVRkA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486166&amp;idx=1&amp;sn=1da65f1d797a14d3d9a8576e9f22b26a&amp;chksm=ede229b5cc0e1e862b5916c9262c5465bd51e4d71715b0ed8fd8f6a42e8ea76bdb3aa2033cf0&amp;scene=0&amp;xtrack=1#rd" target="_blank">提升SIEM技能：从Splunk BOTS实战开始</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-02-21 15:38:39">发布日期：2025-02-21 15:38:39</time></div><p class="article-description">全文共计2910字，预计阅读14分钟自从上次分享了拿下！第九届全球Splunk BOTS竞赛第二名！的比赛结果，我们后台收到了粉丝的留言，想学习下IR和Splunk，于是就有了今天这篇文章。写在前面对</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486166&amp;idx=1&amp;sn=1da65f1d797a14d3d9a8576e9f22b26a&amp;chksm=ede229b5cc0e1e862b5916c9262c5465bd51e4d71715b0ed8fd8f6a42e8ea76bdb3aa2033cf0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486164&amp;idx=1&amp;sn=3d20dc3eee92df87dac12db169bb9d40&amp;chksm=ed2065cacfa77c74f4baa842a8417990776a6af6770b38d1fd2bbde71d6d39cfb64e02c96663&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/JMH1pEQ7qP5zBOhplgtLPSeLtib6pe2JMLXkicBTEoMnRojhDBE8MXHjib7Cv1UOdQtkDic0oh2tkkNc5GU3VjibnNA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486164&amp;idx=1&amp;sn=3d20dc3eee92df87dac12db169bb9d40&amp;chksm=ed2065cacfa77c74f4baa842a8417990776a6af6770b38d1fd2bbde71d6d39cfb64e02c96663&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek本地化部署有风险！快来看看你中招了吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7d9e470c9fc6da618e2fff1e711fe909/index.html">格格巫和蓝精灵</a></span><time class="article-date" datetime="2025-02-18 12:35:00">发布日期：2025-02-18 12:35:00</time></div><p class="article-description">2025年伊始，AI领域迎来一个重要变革 - DeepSeek R1开源发布，凭借着低成本、性能出众的优势，这个模型在短短几周内就获得空前关注。由于官网服务经常繁忙，大家开始选择使用Ollama+Op</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI5NDg0ODkwMQ==&amp;mid=2247486164&amp;idx=1&amp;sn=3d20dc3eee92df87dac12db169bb9d40&amp;chksm=ed2065cacfa77c74f4baa842a8417990776a6af6770b38d1fd2bbde71d6d39cfb64e02c96663&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_2.html" class="pagination-button pagination-prev">上一页</a></div></body></html>
