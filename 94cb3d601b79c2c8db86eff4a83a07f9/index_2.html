@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hugging Face</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494668&amp;idx=1&amp;sn=b41ca7c7a9c53bb79abe45dbe6f8650d&amp;chksm=c369e1bf43d1642304852114e0f9251ad7b5fabe258d2382ea9545ae115416ddd3da987de060&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2rVkb2zatwAIzq3WeWskoGpD0LFeoZABjYiaxWacJKVt9dsr6yD1zTI8g6j7mLjefU9W5HvuVx07qw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494668&amp;idx=1&amp;sn=b41ca7c7a9c53bb79abe45dbe6f8650d&amp;chksm=c369e1bf43d1642304852114e0f9251ad7b5fabe258d2382ea9545ae115416ddd3da987de060&amp;scene=0&amp;xtrack=1#rd" target="_blank">设计即合规: 开放AI生态中的用户数据治理实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-30 22:00:00">发布日期：2025-04-30 22:00:00</time></div><p class="article-description">Hugging Face Hub 已成为 AI 协作的核心平台，托管了数万个模型、数据集以及交互式应用程序 (Hugging Face Space)。 在开放生态系统中，用户知情同意的管理方式与那些更</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494668&amp;idx=1&amp;sn=b41ca7c7a9c53bb79abe45dbe6f8650d&amp;chksm=c369e1bf43d1642304852114e0f9251ad7b5fabe258d2382ea9545ae115416ddd3da987de060&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494640&amp;idx=1&amp;sn=ce651e68903651ebd1fedc5156d25845&amp;chksm=c3c2578159f325b58904e789f431d327589b378b5e33459aba946db74338fd2cb73b89c98cec&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2piaicX5c8ezwHN7yjgdT7HcEMWiarr7OjuWM0B9qlKNFOgkzarUm7icTbaxSDOAWUgWzn2LUiabEFbNrA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494640&amp;idx=1&amp;sn=ce651e68903651ebd1fedc5156d25845&amp;chksm=c3c2578159f325b58904e789f431d327589b378b5e33459aba946db74338fd2cb73b89c98cec&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区供稿 | 阶跃星辰开源图像编辑模型 Step1X-Edit: 人人都能用的“改图大师”！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-29 22:00:00">发布日期：2025-04-29 22:00:00</time></div><p class="article-description">阶跃星辰正式发布并开源图像编辑大模型 Step1X-Edit，性能达到开源 SOTA。该模型总参数量为 19B (7B MLLM + 12B DiT)，具备语义精准解析、身份一致性保持、高精度区域级控</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494640&amp;idx=1&amp;sn=ce651e68903651ebd1fedc5156d25845&amp;chksm=c3c2578159f325b58904e789f431d327589b378b5e33459aba946db74338fd2cb73b89c98cec&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494635&amp;idx=1&amp;sn=2ab54e03ce453f5fbe8e8fd0ebbb9db5&amp;chksm=c3de8e0cfefb32eb1754d8f9190a5a0dcc4c76b0db19bbe774ecba904e3ee75093738db0708d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2rZ2GwibNzvj4XpqNafBRibwsyXKzvvUIeQzicNAQRjXlGVkBCBR9yhocKN53uCic0eZEgOLsLUxB8BVw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494635&amp;idx=1&amp;sn=2ab54e03ce453f5fbe8e8fd0ebbb9db5&amp;chksm=c3de8e0cfefb32eb1754d8f9190a5a0dcc4c76b0db19bbe774ecba904e3ee75093738db0708d&amp;scene=0&amp;xtrack=1#rd" target="_blank">大模型评估排障指南 | 关于推理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-24 23:00:00">发布日期：2025-04-24 23:00:00</time></div><p class="article-description">这是 大模型评估排障指南 系列文章的第一篇，敬请关注系列文章:关于推理关于  公式解析关于可复现性模型运行非常慢怎么办？调整 batch size如果你想要评估结果完全可复现 (在特定的输入 prom</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494635&amp;idx=1&amp;sn=2ab54e03ce453f5fbe8e8fd0ebbb9db5&amp;chksm=c3de8e0cfefb32eb1754d8f9190a5a0dcc4c76b0db19bbe774ecba904e3ee75093738db0708d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494624&amp;idx=1&amp;sn=5444e6caf442a5751ed9a1ddfd747f30&amp;chksm=c327f8c2c8d0fd5b16f12c7331a3cfb918c36ea892fa4aeb2b2b888736fd34846f01280d3b4f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2oXRsoicLcFbKOfkYTmMGs9RvCc9RNJfY7qrPZJVtGerTlK1jImEmOv2qC8TaGumlbp0rcfEq6mPMQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494624&amp;idx=1&amp;sn=5444e6caf442a5751ed9a1ddfd747f30&amp;chksm=c327f8c2c8d0fd5b16f12c7331a3cfb918c36ea892fa4aeb2b2b888736fd34846f01280d3b4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区供稿 | 书生·万象 3.0 升级发布，创新预训练方法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-18 21:30:00">发布日期：2025-04-18 21:30:00</time></div><p class="article-description">驱动科学研究的人工智能正逐渐改变科学研究的模式，在探索以通专融合实现通用人工智能 (AGI) 的进程中，通用基座大模型，尤其是具备跨模态理解能力的多模态大模型至关重要——多模态大模型的创新突破，将大幅</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494624&amp;idx=1&amp;sn=5444e6caf442a5751ed9a1ddfd747f30&amp;chksm=c327f8c2c8d0fd5b16f12c7331a3cfb918c36ea892fa4aeb2b2b888736fd34846f01280d3b4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494619&amp;idx=1&amp;sn=3c679a192800fd51c2ce81da4c17661a&amp;chksm=c3554f2349b610de9625c023ae4e5c137ccbc39d9a77553a67963ba14fb66df0e0cad17452db&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2o3Z0hOVFczfK7SC054N9rwWWWSwBiatXjfsbmeEY2rN0EtoWEL6wK7ElxtIakLp11JfZoIJWr7mMQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494619&amp;idx=1&amp;sn=3c679a192800fd51c2ce81da4c17661a&amp;chksm=c3554f2349b610de9625c023ae4e5c137ccbc39d9a77553a67963ba14fb66df0e0cad17452db&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区供稿 | 3700 次预训练总结超参规律，开源海量实验，告别盲猜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-17 10:30:00">发布日期：2025-04-17 10:30:00</time></div><p class="article-description">近年来，大语言模型 LLMs 在多种任务上的卓越表现已得到广泛认可。然而，要实现其高效部署，精细的超参数优化至关重要。为了探究最佳超参数的规律，我们开展了大规模的实证研究，通过在不同配置上进行网格搜索</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494619&amp;idx=1&amp;sn=3c679a192800fd51c2ce81da4c17661a&amp;chksm=c3554f2349b610de9625c023ae4e5c137ccbc39d9a77553a67963ba14fb66df0e0cad17452db&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494614&amp;idx=1&amp;sn=ec940792ea43e15429e7bd7ba67cb547&amp;chksm=c3847777948be6a47f2aa317a7bb290abfa13e43759ee0c2aa7d33f3b922e583991b5b910c4d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/3EjVEqjYF3KOblyY2I0DH8yWhtHoiawpbBbFvCgswAGRv6ttpxoUqYrWiad57jnKdp9U1yK4RWnXC1HFFm4e3uHw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494614&amp;idx=1&amp;sn=ec940792ea43e15429e7bd7ba67cb547&amp;chksm=c3847777948be6a47f2aa317a7bb290abfa13e43759ee0c2aa7d33f3b922e583991b5b910c4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区供稿 | jina-reranker-m0 全新多模态多语言重排器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-10 10:30:00">发布日期：2025-04-10 10:30:00</time></div><p class="article-description">今天，我们正式发布jina-reranker-m0。这是一款多模态、多语言重排器 (reranker)，其核心能力在于 对包含丰富视觉元素的文档进行重排和精排，同时兼容跨语言场景。当用户输入一个查询</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494614&amp;idx=1&amp;sn=ec940792ea43e15429e7bd7ba67cb547&amp;chksm=c3847777948be6a47f2aa317a7bb290abfa13e43759ee0c2aa7d33f3b922e583991b5b910c4d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494609&amp;idx=1&amp;sn=28cff6626cd93577ffcaba62a6376992&amp;chksm=c3a795ae64289dc673e4e12d9198671ad36962d18753314fb3563aac38c4b50873baabdb5ade&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2rAkbX2cYvmS18XqfaHNkWm7xy62xcSjxAn3JwN6bxpibnAxdRiacKSibSDkNWjBx0QfMI3RWTzcChew/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494609&amp;idx=1&amp;sn=28cff6626cd93577ffcaba62a6376992&amp;chksm=c3a795ae64289dc673e4e12d9198671ad36962d18753314fb3563aac38c4b50873baabdb5ade&amp;scene=0&amp;xtrack=1#rd" target="_blank">让 LLM 来评判 | 技巧与提示</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-09 10:30:00">发布日期：2025-04-09 10:30:00</time></div><p class="article-description">这是 让 LLM 来评判 系列文章的第六篇，敬请关注系列文章:基础概念选择 LLM 评估模型设计你自己的评估 prompt评估你的评估结果奖励模型相关内容技巧与提示LLM 评估模型已知偏差及缓解措施缺</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494609&amp;idx=1&amp;sn=28cff6626cd93577ffcaba62a6376992&amp;chksm=c3a795ae64289dc673e4e12d9198671ad36962d18753314fb3563aac38c4b50873baabdb5ade&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494605&amp;idx=1&amp;sn=550294c356734a34597ce6b647c0b1ff&amp;chksm=c3340b2876f680d8e27f3524348f070d85af7fdd4c4182bcb17b457e302fcc2da64b06e34129&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2p0wibf4NrZSkf0lALInt6phSClaVRuwmcibNqO2XFLxjSVOnzKjpH2nfovvC4TyCAomXopDzDMFtrQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494605&amp;idx=1&amp;sn=550294c356734a34597ce6b647c0b1ff&amp;chksm=c3340b2876f680d8e27f3524348f070d85af7fdd4c4182bcb17b457e302fcc2da64b06e34129&amp;scene=0&amp;xtrack=1#rd" target="_blank">Open R1 项目进展第三期</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-04-03 10:30:00">发布日期：2025-04-03 10:30:00</time></div><p class="article-description">原文发布于 2025 年 3 月 11 日本次更新带来三大突破性进展:CodeForces-CoTs 数据集: 通过 R1 模型蒸馏生成近 10 万条高质量编程思维链样本，同时包含 C++ 和 Pyt</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494605&amp;idx=1&amp;sn=550294c356734a34597ce6b647c0b1ff&amp;chksm=c3340b2876f680d8e27f3524348f070d85af7fdd4c4182bcb17b457e302fcc2da64b06e34129&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494570&amp;idx=1&amp;sn=aa4b15954068d3e223c026769847a5cd&amp;chksm=c32745a8e5143ba8718458afd28a4fd1460495626000f0d054518c5ec3b22d55f2cee46c4bff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2p0wibf4NrZSkf0lALInt6phZaLS2mlFUVOV0uAJKFzRlicqwTsrs10Ab0HynA5ZeOGoAQevjpch9oA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494570&amp;idx=1&amp;sn=aa4b15954068d3e223c026769847a5cd&amp;chksm=c32745a8e5143ba8718458afd28a4fd1460495626000f0d054518c5ec3b22d55f2cee46c4bff&amp;scene=0&amp;xtrack=1#rd" target="_blank">Open R1 项目进展第二期</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-31 20:30:00">发布日期：2025-03-31 20:30:00</time></div><p class="article-description">原文发布于 2025 年 2 月 10 日我们启动 Open R1 项目已经两周了，这个项目是为了把 DeepSeek R1 缺失的部分补齐，特别是训练流程和合成数据。https://github.c</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494570&amp;idx=1&amp;sn=aa4b15954068d3e223c026769847a5cd&amp;chksm=c32745a8e5143ba8718458afd28a4fd1460495626000f0d054518c5ec3b22d55f2cee46c4bff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494568&amp;idx=1&amp;sn=5bdd4bd7bd743586c2b23017c80c70a7&amp;chksm=c35a9d2055ee04f27f134c278592db760289434f6aaffac6eb02fec2588db8655aeb1abaf393&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2p0wibf4NrZSkf0lALInt6phB3acGykBcQIWv7bWYbQTjCeJQhORxkDZmNlJtHicNblcO1sWPoDFEEw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494568&amp;idx=1&amp;sn=5bdd4bd7bd743586c2b23017c80c70a7&amp;chksm=c35a9d2055ee04f27f134c278592db760289434f6aaffac6eb02fec2588db8655aeb1abaf393&amp;scene=0&amp;xtrack=1#rd" target="_blank">Open R1 项目进展第一期</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-28 10:30:00">发布日期：2025-03-28 10:30:00</time></div><p class="article-description">DeepSeek R1 发布已经两周了，而我们启动 open-r1 项目——试图补齐它缺失的训练流程和合成数据——也才过了一周。这篇文章简单聊聊:https://github.com/huggingf</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494568&amp;idx=1&amp;sn=5bdd4bd7bd743586c2b23017c80c70a7&amp;chksm=c35a9d2055ee04f27f134c278592db760289434f6aaffac6eb02fec2588db8655aeb1abaf393&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494506&amp;idx=1&amp;sn=36567330dd1b9e65ceab218b98d26bea&amp;chksm=c34a2216b1bc0954b23b43132e1180acf9ee8e710627313957d026bf8dd06f2caf720c55916e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2rBzd9YW6xpuL08rAZ3y7UFTCsThR57IJYryRibratv8OuJLickRgyc6ibxzlF8EW0VZYMZ5BkFd3gBg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494506&amp;idx=1&amp;sn=36567330dd1b9e65ceab218b98d26bea&amp;chksm=c34a2216b1bc0954b23b43132e1180acf9ee8e710627313957d026bf8dd06f2caf720c55916e&amp;scene=0&amp;xtrack=1#rd" target="_blank">为什么 AI 模型离科学革命还差得很远？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-26 23:31:16">发布日期：2025-03-26 23:31:16</time></div><p class="article-description">作者：Thomas Wolf, Hugging Face 联合创始人和首席科学家发布日期：2025 年 2 月 26 日原文链接：🔭 The Einstein AI modelhttps://thom</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494506&amp;idx=1&amp;sn=36567330dd1b9e65ceab218b98d26bea&amp;chksm=c34a2216b1bc0954b23b43132e1180acf9ee8e710627313957d026bf8dd06f2caf720c55916e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494492&amp;idx=1&amp;sn=49997c031857a0a8a6f68cef1d976eb3&amp;chksm=c33e06b09d720a02fd9d26d0c2930830e463839707c204f98feeadb697b027e93dbaa02158f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2qHqwYDEQ7AmxhLpbkeSeMlvLZzB4tgatIicfcSpOziboKW2dFxXSGwUVIhtLS9y4Wbvg6expLzjiatA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494492&amp;idx=1&amp;sn=49997c031857a0a8a6f68cef1d976eb3&amp;chksm=c33e06b09d720a02fd9d26d0c2930830e463839707c204f98feeadb697b027e93dbaa02158f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">常见的 AI 模型格式</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-25 20:30:00">发布日期：2025-03-25 20:30:00</time></div><p class="article-description">来源:https://blog.ngxson.com/common-ai-model-formats过去两年，开源 AI 社区一直在热烈讨论新 AI 模型的开发。每天都有越来越多的模型在Hugging</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494492&amp;idx=1&amp;sn=49997c031857a0a8a6f68cef1d976eb3&amp;chksm=c33e06b09d720a02fd9d26d0c2930830e463839707c204f98feeadb697b027e93dbaa02158f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494471&amp;idx=1&amp;sn=379a48aafa6d99b846219e69f9dced3b&amp;chksm=c301d621f96bb933e1e8ce3e07327e488ab5517837f0dd5375a86957703b785a36064565caef&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2oLKcMEDJXbcRFC6B8bgukapl2hwibz8AWQ8nF9UAQicCgewAdu532LZmqhGR4e9k4vs8G9XTUQmlFw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494471&amp;idx=1&amp;sn=379a48aafa6d99b846219e69f9dced3b&amp;chksm=c301d621f96bb933e1e8ce3e07327e488ab5517837f0dd5375a86957703b785a36064565caef&amp;scene=0&amp;xtrack=1#rd" target="_blank">SmolVLM2: 让视频理解能力触手可及</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-21 23:00:00">发布日期：2025-03-21 23:00:00</time></div><p class="article-description">一句话总结: SmolVLM 现已具备更强的视觉理解能力📺SmolVLM2 标志着视频理解技术的根本性转变——从依赖海量计算资源的巨型模型，转向可在任何设备运行的轻量级模型。我们的目标很简单: 让视频</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494471&amp;idx=1&amp;sn=379a48aafa6d99b846219e69f9dced3b&amp;chksm=c301d621f96bb933e1e8ce3e07327e488ab5517837f0dd5375a86957703b785a36064565caef&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494470&amp;idx=1&amp;sn=162bf4477f95d8db07f4b939e57ea174&amp;chksm=c39f8191128a7a6f6ce323518694190b759547d69771d8b74d683d62c9739055cd60c0aaf601&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/0LDJQiaWfxzl9dFnsQQjHByYe8nic5wBWMOQFlNJzwP4sMlTcyVZJscVfHMdwIiaYGMfQYgCzue2xjqia8tE3PGbqw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494470&amp;idx=1&amp;sn=162bf4477f95d8db07f4b939e57ea174&amp;chksm=c39f8191128a7a6f6ce323518694190b759547d69771d8b74d683d62c9739055cd60c0aaf601&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区供稿 | 阶跃星辰 Step-Video-TI2V 图生视频模型开源，运动可控，动漫效果尤佳！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-20 19:00:00">发布日期：2025-03-20 19:00:00</time></div><p class="article-description">在今年 2 月，阶跃星辰开源了两款 Step 系列多模态大模型——Step-Video-T2V 视频生成模型和 Step-Audio 语音模型，为开源社区贡献了自己的多模态力量。今天，我们再接再厉，继</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494470&amp;idx=1&amp;sn=162bf4477f95d8db07f4b939e57ea174&amp;chksm=c39f8191128a7a6f6ce323518694190b759547d69771d8b74d683d62c9739055cd60c0aaf601&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494467&amp;idx=1&amp;sn=35b85f858932c1e30d9d89c518cab726&amp;chksm=c3744d915574a85ce9e4a4776ded3a0ace2fdf9da7e7f9de014181c072d918ef42bb040c8c95&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2oA6H5ZIsf94qQA6OkkmtaypDqgicCWFHSGaslySjibfsbqicdEuSO7cnd7CTcJmb65IYA2k3OAoxYdw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494467&amp;idx=1&amp;sn=35b85f858932c1e30d9d89c518cab726&amp;chksm=c3744d915574a85ce9e4a4776ded3a0ace2fdf9da7e7f9de014181c072d918ef42bb040c8c95&amp;scene=0&amp;xtrack=1#rd" target="_blank">在 Hugging Face Spaces 上使用 Gradio 免费运行 ComfyUI 工作流</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-18 22:30:00">发布日期：2025-03-18 22:30:00</time></div><p class="article-description">简介在本教程中，我将逐步指导如何将一个复杂的 ComfyUI 工作流转换为一个简单的 Gradio 应用程序，并讲解如何将其部署在 Hugging Face Spaces 的 ZeroGPU 无服务器</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494467&amp;idx=1&amp;sn=35b85f858932c1e30d9d89c518cab726&amp;chksm=c3744d915574a85ce9e4a4776ded3a0ace2fdf9da7e7f9de014181c072d918ef42bb040c8c95&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494344&amp;idx=1&amp;sn=2619b79c72bcc42a4f9fc5ed4cc5515e&amp;chksm=c342c9f44fe68b8eeec50b56ca082cdc1f081abca876f0c6c64966626949f1968544e3b05806&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2pdKib2kHMDmtXWNibvUNIIAYsbA6nPCFFdI4Wsfbp7Qd1wsqtiazicqdRqQc51fBwNRYbXLjxzV8icVzg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494344&amp;idx=1&amp;sn=2619b79c72bcc42a4f9fc5ed4cc5515e&amp;chksm=c342c9f44fe68b8eeec50b56ca082cdc1f081abca876f0c6c64966626949f1968544e3b05806&amp;scene=0&amp;xtrack=1#rd" target="_blank">在 Hugging Face 上部署语音转语音模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-11 10:30:00">发布日期：2025-03-11 10:30:00</time></div><p class="article-description">介绍S2S (语音到语音)是 Hugging Face 社区内存在的一个令人兴奋的新项目，它结合了多种先进的模型，创造出几乎天衣无缝的体验: 你输入语音，系统会用合成的声音进行回复。https://g</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494344&amp;idx=1&amp;sn=2619b79c72bcc42a4f9fc5ed4cc5515e&amp;chksm=c342c9f44fe68b8eeec50b56ca082cdc1f081abca876f0c6c64966626949f1968544e3b05806&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494343&amp;idx=1&amp;sn=038e055cb11ba3712ef64e7f1f4d9e61&amp;chksm=c319a398ee33e1d165dbfe3c6f4ecf0782d334740b832b63293f7f5723bd28e1d078c8d3bdbe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/5LJDib8HPR2pdKib2kHMDmtXWNibvUNIIAYnNRkWePO242MISHIHeObbsQV4AVicctIAggCWn40VfyeAWnIpAhGPow/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494343&amp;idx=1&amp;sn=038e055cb11ba3712ef64e7f1f4d9e61&amp;chksm=c319a398ee33e1d165dbfe3c6f4ecf0782d334740b832b63293f7f5723bd28e1d078c8d3bdbe&amp;scene=0&amp;xtrack=1#rd" target="_blank">LayerSkip: 使用自推测解码加速大模型推理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/94cb3d601b79c2c8db86eff4a83a07f9/index.html">Hugging Face</a></span><time class="article-date" datetime="2025-03-10 10:30:00">发布日期：2025-03-10 10:30:00</time></div><p class="article-description">自推测解码是一种新颖的文本生成方法，它结合了推测解码 (Speculative Decoding) 的优势和大语言模型 (LLM) 的提前退出 (Early Exit) 机制。该方法出自论文Layer</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0MDQyNTY4Mw==&amp;mid=2247494343&amp;idx=1&amp;sn=038e055cb11ba3712ef64e7f1f4d9e61&amp;chksm=c319a398ee33e1d165dbfe3c6f4ecf0782d334740b832b63293f7f5723bd28e1d078c8d3bdbe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

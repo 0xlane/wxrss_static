@@ -1,0 +1,292 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>0xArgus</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=1&amp;sn=80b9bd8aa2dd73a8c2ee28a9be76e08f&amp;chksm=fc0c1bfa8355b2a2624e147372703400f29798e195b02a1047ad5b7284a64c90916a9791a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VVp3Ez2hKibLOAOQiaicsKHCLSeBE9ialggEJJ9SuSwzKM0ZMIF1Em5Zbx3H8r4GkJAnrJScKzzicyhd7ZLV7aXtOuYYBupdHibAdp2k/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=1&amp;sn=80b9bd8aa2dd73a8c2ee28a9be76e08f&amp;chksm=fc0c1bfa8355b2a2624e147372703400f29798e195b02a1047ad5b7284a64c90916a9791a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Ai24小时｜AI越狱，一个输入干翻全模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-06 07:39:22">发布日期：2026-03-06 07:39:22</time></div><p class="article-description">Ai24小时｜AI越狱，一个输入干翻全模型
+
+灵思 · AiSEC｜2026-03-06 · 每日 8:00 更新
+
+
+
+01｜AI安全研究员炸场：一招让所有模型集体越狱
+
+
+
+一句话概括：安全研究员</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=1&amp;sn=80b9bd8aa2dd73a8c2ee28a9be76e08f&amp;chksm=fc0c1bfa8355b2a2624e147372703400f29798e195b02a1047ad5b7284a64c90916a9791a93e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=2&amp;sn=6aeda45462ed3d9003a90f98e7068f30&amp;chksm=fc7afad9c476b745dcb07788df311e9293b21f7b81915ce4eb7d2c8b4ea9669dba8d27a39de7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TX9L6oxn1VXDYfd7s9NWVsfVNSYAUvjZwnqPn1cYUfl9aY3NVvaRMJ4tZPOr0LBiaDB5P8EwW1rvr6ZnuTzzibjmW513pOiaTWGBgB1OGKEAC8/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=2&amp;sn=6aeda45462ed3d9003a90f98e7068f30&amp;chksm=fc7afad9c476b745dcb07788df311e9293b21f7b81915ce4eb7d2c8b4ea9669dba8d27a39de7&amp;scene=0&amp;xtrack=1#rd" target="_blank">Skill 推荐｜解决 AI “上下文失忆症”：持久化记忆插件 claude-mem 深度拆解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-06 07:39:22">发布日期：2026-03-06 07:39:22</time></div><p class="article-description">Skill 推荐｜解决 AI “上下文失忆症”：持久化记忆插件 claude-mem 深度拆解
+
+灵思 · AiSEC｜2026-03-06 · 极客专刊
+
+0x00 痛点：Agent 的“短期记忆”</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=2&amp;sn=6aeda45462ed3d9003a90f98e7068f30&amp;chksm=fc7afad9c476b745dcb07788df311e9293b21f7b81915ce4eb7d2c8b4ea9669dba8d27a39de7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=3&amp;sn=8f8a5c23aaccbf358a8f36438b589bb2&amp;chksm=fcf0906cffb36b5fbc34f13de8e9aa2ec5c68ffb278779c783ef05f9fe5342669b19a3c81b4e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TX9L6oxn1VXG7u6qwic8skUBeBjswibB7c1oKpWKskXn5cgM6Z2N4hCBlIW0dUesncXjTu7iaeQiaQALqqaGM03sqibx2Ryw7Qru86RUPQY9WLxQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=3&amp;sn=8f8a5c23aaccbf358a8f36438b589bb2&amp;chksm=fcf0906cffb36b5fbc34f13de8e9aa2ec5c68ffb278779c783ef05f9fe5342669b19a3c81b4e&amp;scene=0&amp;xtrack=1#rd" target="_blank">[RCE] 14行JSON，接管你的Langflow工作流引擎</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-06 07:39:22">发布日期：2026-03-06 07:39:22</time></div><p class="article-description">[RCE] 14行JSON，接管你的Langflow工作流引擎
+
+0xArgus · 2026-03-06 · 白帽视角 · 一款AI工作流引擎的致命反序列化漏洞，已在野利用
+
+
+
+一、今日高危漏洞一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484366&amp;idx=3&amp;sn=8f8a5c23aaccbf358a8f36438b589bb2&amp;chksm=fcf0906cffb36b5fbc34f13de8e9aa2ec5c68ffb278779c783ef05f9fe5342669b19a3c81b4e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=1&amp;sn=413d48752cad17e0544f73792911b471&amp;chksm=fc7a72ad8f377229dd7b578dd3c5b10ebad09246b8b14243446041132860ec771babd44a8c13&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VXwSZhVtk1wlx2wibjd7ac6QfM5G1XcrQYMdtZNd5m7GXMQbGd7b8nhic73PEwjwqtvHWjppZa6oicdQ39JD7tSicxAYF28S2FL2uc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=1&amp;sn=413d48752cad17e0544f73792911b471&amp;chksm=fc7a72ad8f377229dd7b578dd3c5b10ebad09246b8b14243446041132860ec771babd44a8c13&amp;scene=0&amp;xtrack=1#rd" target="_blank">Ai24小时｜机器人进工厂，你的工作还剩几年？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-05 09:46:16">发布日期：2026-03-05 09:46:16</time></div><p class="article-description">Ai24小时｜机器人进工厂，你的工作还剩几年？
+
+灵思 · AiSEC｜2026.03.05 · 每日 8:00 更新
+
+
+
+
+
+01｜GPT-4o 正式&quot;退休&quot;——OpenAI 强制升级时代来了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=1&amp;sn=413d48752cad17e0544f73792911b471&amp;chksm=fc7a72ad8f377229dd7b578dd3c5b10ebad09246b8b14243446041132860ec771babd44a8c13&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=2&amp;sn=5db82e49d43ed870eaed88ee7a446830&amp;chksm=fc50176180e6179fee51957eb335a5663d5ec7c4fecabafd9966eb8445d10c692412493e6d30&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VVy5icdwOUI4NII8D6PxYrafH4XvLDGibWkiatdI2vickOMvicIIICnDtaRYNrDujT8vfYOgMqiavF3j9NE5Sz04zfM3IWZx9eOsfJq0/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=2&amp;sn=5db82e49d43ed870eaed88ee7a446830&amp;chksm=fc50176180e6179fee51957eb335a5663d5ec7c4fecabafd9966eb8445d10c692412493e6d30&amp;scene=0&amp;xtrack=1#rd" target="_blank">[RCE] n8n未授权RCE+Chrome UAF 0day，今日双杀</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-05 09:46:16">发布日期：2026-03-05 09:46:16</time></div><p class="article-description">[RCE] n8n未授权RCE+Chrome UAF 0day，今日双杀
+
+0xArgus · 2026-03-05 · 白帽视角 · 今日两条严重RCE同时爆出PoC，企业自动化平台与浏览器内核双双</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=2&amp;sn=5db82e49d43ed870eaed88ee7a446830&amp;chksm=fc50176180e6179fee51957eb335a5663d5ec7c4fecabafd9966eb8445d10c692412493e6d30&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=3&amp;sn=905c37efd889a376e1460fd7e098a2a4&amp;chksm=fce2f50302b8188e6f1094d5e09a06ea205b69f356eee4fd05344387877f5858d9afab15ae49&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VUzysUstZgmjwmxv1XjYlZdPWOhod3OuvSn5tib08vZ4vfXRa4a2g3KWuDLic04x0MK7oM9Uic7Tuic20N38cR7FPvLzkvMJd1QxKw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=3&amp;sn=905c37efd889a376e1460fd7e098a2a4&amp;chksm=fce2f50302b8188e6f1094d5e09a06ea205b69f356eee4fd05344387877f5858d9afab15ae49&amp;scene=0&amp;xtrack=1#rd" target="_blank">[AI安全] Opus 4.6 被通杀越狱，AI对齐防线正在系统性崩溃</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-05 09:46:16">发布日期：2026-03-05 09:46:16</time></div><p class="article-description">[AI安全] Opus 4.6 被通杀越狱，AI对齐防线正在系统性崩溃
+
+0xArgus · 2026-03-05 · AI前沿 · 一个通用越狱技术可以批量生成任意危害类别输出，这不是漏洞，这是对齐</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484336&amp;idx=3&amp;sn=905c37efd889a376e1460fd7e098a2a4&amp;chksm=fce2f50302b8188e6f1094d5e09a06ea205b69f356eee4fd05344387877f5858d9afab15ae49&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=1&amp;sn=67da0e849477f6d0106252d593d87261&amp;chksm=fcf00e73ef30ad93d91b71fe961b631a31cc287e97cc87e5dc0a9466f8d0a308d9f5afc47bb7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VWMCAmEcGUKrpIaa1nQUTIibqT5sT7aXGZNvq6JBSz6hibXY1mfaicKYW4QExt9DleL28ISym8r1BjbOicM6BhrDEeLIAR9X73vG0Y/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=1&amp;sn=67da0e849477f6d0106252d593d87261&amp;chksm=fcf00e73ef30ad93d91b71fe961b631a31cc287e97cc87e5dc0a9466f8d0a308d9f5afc47bb7&amp;scene=0&amp;xtrack=1#rd" target="_blank">谄媚AI正在制造虚假确定性，扭曲用户信念</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-04 07:20:28">发布日期：2026-03-04 07:20:28</time></div><p class="article-description">[AI安全] 谄媚AI扭曲认知，对齐防线再次告急
+
+0xArgus · 2026-03-04 · AI前沿 · 从谄媚性幻觉到越狱防线，AI安全的多条战线同时告急
+
+
+
+一、24h AI事件速览
+
+事</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=1&amp;sn=67da0e849477f6d0106252d593d87261&amp;chksm=fcf00e73ef30ad93d91b71fe961b631a31cc287e97cc87e5dc0a9466f8d0a308d9f5afc47bb7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=2&amp;sn=1c948421efa8d0d791af66a918c7fa45&amp;chksm=fc87dcaf4dd0affb2d98e3a5928186eb1ae0b03be782edeb23ec1708bee3cbf02c07ba85b7af&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VWJ12PPbLkfztca5ZHx7WRh1vk0o0QJNouIubAIOmt6ibfRyEcOa7iaQaO5qzKibxP2kq9mgG0qWR7JchG14XbvPxC3vT44l3d5M8/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=2&amp;sn=1c948421efa8d0d791af66a918c7fa45&amp;chksm=fc87dcaf4dd0affb2d98e3a5928186eb1ae0b03be782edeb23ec1708bee3cbf02c07ba85b7af&amp;scene=0&amp;xtrack=1#rd" target="_blank">[0day] Chrome Blink引擎UAF+渲染器逃逸，全链RCE已在野</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-04 07:20:28">发布日期：2026-03-04 07:20:28</time></div><p class="article-description">[0day] Chrome Blink引擎UAF+渲染器逃逸，全链RCE已在野
+
+0xArgus · 2026-03-04 · 白帽视角 · 今日最高危：Chrome 0day与telnetd认证绕过</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484315&amp;idx=2&amp;sn=1c948421efa8d0d791af66a918c7fa45&amp;chksm=fc87dcaf4dd0affb2d98e3a5928186eb1ae0b03be782edeb23ec1708bee3cbf02c07ba85b7af&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=1&amp;sn=c62df2112a90f3542c4f92c930e58ad2&amp;chksm=fc79b3c63618c5544653b6c5da8a8bf5c6b959da458a1d3130dc35885512e44d7d65b5cad9de&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TX9L6oxn1VUn0PDpSqibx1mMI5iakiaibeFaswsibcYvHBDnibV7BR5ACu5kydLTqtqUlTiatZ6BibFtbXiaqGoG1q03bAvVJtR5r98KUusVEciaRbicHM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=1&amp;sn=c62df2112a90f3542c4f92c930e58ad2&amp;chksm=fc79b3c63618c5544653b6c5da8a8bf5c6b959da458a1d3130dc35885512e44d7d65b5cad9de&amp;scene=0&amp;xtrack=1#rd" target="_blank">你的 AI 助手正在出卖你——ClawJacked（CVE-2026-25253）完整攻击链拆解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-03 09:11:42">发布日期：2026-03-03 09:11:42</time></div><p class="article-description">你的 AI 助手正在出卖你——ClawJacked（CVE-2026-25253）完整攻击链拆解
+
+By 灵思 · AiSEC | 2026-03-03
+
+CVSS 3.1: 8.8 HIGH | C</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=1&amp;sn=c62df2112a90f3542c4f92c930e58ad2&amp;chksm=fc79b3c63618c5544653b6c5da8a8bf5c6b959da458a1d3130dc35885512e44d7d65b5cad9de&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=2&amp;sn=06b43c2a2f2b727dabe97d3f0bf71119&amp;chksm=fc4b591430278bbba40e2d0fad72f831dda59fb55dfc420e8eb5017150a24ebb0bf3292dadc8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TX9L6oxn1VXicbzBbsYicQk2sxr7ATU4P4Z37epibWqfcgJVww2c1nvqvImoGAhwmZGmp2mxhWYCYuxr4HTO95QY4Lf6pXicJA6uehfqhXLuC1I/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=2&amp;sn=06b43c2a2f2b727dabe97d3f0bf71119&amp;chksm=fc4b591430278bbba40e2d0fad72f831dda59fb55dfc420e8eb5017150a24ebb0bf3292dadc8&amp;scene=0&amp;xtrack=1#rd" target="_blank">安全速报|[0day] Cisco SD-WAN认证绕过+APT28微软Office零日，双链在野利用</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-03 09:11:42">发布日期：2026-03-03 09:11:42</time></div><p class="article-description">[0day] Cisco SD-WAN认证绕过+APT28微软Office零日，双链在野利用
+
+0xArgus · 2026-03-03 · 白帽视角 · 本周两条高危0day同步在野，网络边界设备与</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484303&amp;idx=2&amp;sn=06b43c2a2f2b727dabe97d3f0bf71119&amp;chksm=fc4b591430278bbba40e2d0fad72f831dda59fb55dfc420e8eb5017150a24ebb0bf3292dadc8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484286&amp;idx=1&amp;sn=58e564f5bbdabaa5aeba05744d2657a1&amp;chksm=fc885cb9c7a7fa12734e8aa4f4feb90e6f338f1e1e18a2daa1371c178b0230dd96e9f7e3efd7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/TX9L6oxn1VX7vjXcpc5YPsGl0LiaM0ls6UFga4hjP8LkXIEbjgW3QGR3DVUInX7Pic8nt0lu7qmrbWuSXeRRamw3j1qhc9NTWabNQSkLBKYxQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484286&amp;idx=1&amp;sn=58e564f5bbdabaa5aeba05744d2657a1&amp;chksm=fc885cb9c7a7fa12734e8aa4f4feb90e6f338f1e1e18a2daa1371c178b0230dd96e9f7e3efd7&amp;scene=0&amp;xtrack=1#rd" target="_blank">WiFi也能&quot;透视&quot;？GitHub爆火项目：用信号追踪你的每一个动作</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5fec32b6e16224617ea7de595e2a0b25/index.html">0xArgus</a></span><time class="article-date" datetime="2026-03-02 13:54:20">发布日期：2026-03-02 13:54:20</time></div><p class="article-description">WiFi也能&quot;透视&quot;？GitHub爆火项目：用信号追踪你的每一个动作
+
+0xArgus 安全观察 | 灵思·AiSEC   你家的 WiFi 信号，正在成为一双看不见的眼睛。
+
+一个名为 wifi-d</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484286&amp;idx=1&amp;sn=58e564f5bbdabaa5aeba05744d2657a1&amp;chksm=fc885cb9c7a7fa12734e8aa4f4feb90e6f338f1e1e18a2daa1371c178b0230dd96e9f7e3efd7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484258&amp;idx=1&amp;sn=09609a4ffde3c5a7a5915acbfec8fb24&amp;chksm=fcb44f83bfa460fe3404a2b147ba220719ba3ca81e3eccafc4035dbed5138f2bc3d6b88e3e51&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/TX9L6oxn1VUic9jr2mib5bVVbhtgx6jibl7MlbaFgOEDVV36K5UNg7xXmjczy4gjibrE4h0Iib3mrjOZPR14yO5c8w7fIlGewia7hQfupoz1zLDL0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484258&amp;idx=1&amp;sn=09609a4ffde3c5a7a5915acbfec8fb24&amp;chksm=fcb44f83bfa460fe3404a2b147ba220719ba3ca81e3eccafc4035dbed5138f2bc3d6b88e3e51&amp;scene=0&amp;xtrack=1#rd" target="_blank">[AI安全] Claude越狱只要30分钟，护栏比你想的脆</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d6001c96db5562348bbd956daec2521c/index.html">401SecNote</a></span><time class="article-date" datetime="2026-03-01 13:16:05">发布日期：2026-03-01 13:16:05</time></div><p class="article-description">Cisco SD-WAN零日三年潜伏+Claude越狱30分钟，AI安全危机全面爆发
+
+0xArgus· 2026-03-01 · 白帽视角 · Cisco SD-WAN管理面沦陷与大模型安全防线崩塌</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU4NzAyMDM4Mw==&amp;mid=2247484258&amp;idx=1&amp;sn=09609a4ffde3c5a7a5915acbfec8fb24&amp;chksm=fcb44f83bfa460fe3404a2b147ba220719ba3ca81e3eccafc4035dbed5138f2bc3d6b88e3e51&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

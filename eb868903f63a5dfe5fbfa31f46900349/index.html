@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CKCsec安全研究院</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496048&amp;idx=1&amp;sn=ca4ab3c9bf525f784cd5ee94db40453f&amp;chksm=c0c731f5f9bb0885743f1087168f8a0f0b53da09c25feab6df7059906f9a16c064545885c13d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/eGLK5ewXfq5ZXicVvC28bpl0Ah3XhU9oVBgstlUn49btryzEyxEl8AV9G2s43sywxxlIEvhughwcAL7ibuibMlz9zY26iaOuWS7KyUCzTmfMPuE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496048&amp;idx=1&amp;sn=ca4ab3c9bf525f784cd5ee94db40453f&amp;chksm=c0c731f5f9bb0885743f1087168f8a0f0b53da09c25feab6df7059906f9a16c064545885c13d&amp;scene=0&amp;xtrack=1#rd" target="_blank">网络安全意识篇：网咖“双重二维码”盗号全纪实</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2026-02-24 13:34:51">发布日期：2026-02-24 13:34:51</time></div><p class="article-description">01 引子：安全专家的“滑铁卢”作为一名常年与漏洞、CTF打交道的安全从业者，我从未想过自己会以这种方式“翻车”。近日在网吧的一次随手扫码，让我深刻体会到了什么叫“大道至简”。黑客没有利用什么 0-d</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496048&amp;idx=1&amp;sn=ca4ab3c9bf525f784cd5ee94db40453f&amp;chksm=c0c731f5f9bb0885743f1087168f8a0f0b53da09c25feab6df7059906f9a16c064545885c13d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496030&amp;idx=1&amp;sn=ecd10117af9cdb72a84dc20813a8e59f&amp;chksm=c0783d84e31526a4507c0bf8f5aa2e87f23bed7a106f7b528f92df505fd3943d420396d8394a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacUxexgHnma7pX1RMaaFSP5jPNKUDCDuiaHfI2KX2ia5RBXSsZ6Rsnp7eTcvNFsjdMxzSeOdg1dDvERg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496030&amp;idx=1&amp;sn=ecd10117af9cdb72a84dc20813a8e59f&amp;chksm=c0783d84e31526a4507c0bf8f5aa2e87f23bed7a106f7b528f92df505fd3943d420396d8394a&amp;scene=0&amp;xtrack=1#rd" target="_blank">干安服你就干吧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2026-01-26 18:56:11">发布日期：2026-01-26 18:56:11</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496030&amp;idx=1&amp;sn=ecd10117af9cdb72a84dc20813a8e59f&amp;chksm=c0783d84e31526a4507c0bf8f5aa2e87f23bed7a106f7b528f92df505fd3943d420396d8394a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496024&amp;idx=1&amp;sn=81b065bf7827360de96cebf61f36f900&amp;chksm=c0f07ce26e20c45e9d6231a5e888f2c310df774c1b861fab6a35f52bce845914a845d0551992&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacWrLBxWia3yWbOckvDxQIvafQBBarkVlSKa80icYGf7t3X3M3RrapbPficx1xdwVnoK7IhkcicgbepzrA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496024&amp;idx=1&amp;sn=81b065bf7827360de96cebf61f36f900&amp;chksm=c0f07ce26e20c45e9d6231a5e888f2c310df774c1b861fab6a35f52bce845914a845d0551992&amp;scene=0&amp;xtrack=1#rd" target="_blank">基于“灰盒”蒸馏的大语言模型攻击研究</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2026-01-12 11:22:55">发布日期：2026-01-12 11:22:55</time></div><p class="article-description">基于“灰盒”蒸馏的大语言模型攻击研究探讨一种结合模型窃取与拒绝服务攻击的组合路径，希望发现AI安全领域新型攻击思路。本文首发地址为https://forum.butian.net/share/4717</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496024&amp;idx=1&amp;sn=81b065bf7827360de96cebf61f36f900&amp;chksm=c0f07ce26e20c45e9d6231a5e888f2c310df774c1b861fab6a35f52bce845914a845d0551992&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496001&amp;idx=1&amp;sn=0740dcc12e8d79a12d790a47146de75a&amp;chksm=c0b919b308a1746f93b2b9e496481491e62230a370cb78db4f78fa5bb11446f15f8ede6b130f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacUxuxM9sAu7syTLpOnhqia1DwgYaymtVicqR2JCWX1Q7iaB1nl3mefxSDYibhhXW2H0B77iatJOp8fqmsA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496001&amp;idx=1&amp;sn=0740dcc12e8d79a12d790a47146de75a&amp;chksm=c0b919b308a1746f93b2b9e496481491e62230a370cb78db4f78fa5bb11446f15f8ede6b130f&amp;scene=0&amp;xtrack=1#rd" target="_blank">通过微调与拒绝向量消融实现大模型越狱的实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2026-01-09 11:54:21">发布日期：2026-01-09 11:54:21</time></div><p class="article-description">AI突破限制的多种手段 前言：目前看到过很多越狱AI的手法，绝大多数都是使用提示词注入来对互联网上现有AI进行越狱，本文章中介绍另外两个方法进行越狱。本文首发地址为 奇安信攻防社区：https://f</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247496001&amp;idx=1&amp;sn=0740dcc12e8d79a12d790a47146de75a&amp;chksm=c0b919b308a1746f93b2b9e496481491e62230a370cb78db4f78fa5bb11446f15f8ede6b130f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495888&amp;idx=1&amp;sn=49708ff4b94162d120ecc3ff584bc425&amp;chksm=c0023f670212b15d91ae6a47c716e59ea87d13bb7b32e783b289fc38518eb7d20d774b227e94&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacXz6EugYt4IkGcvsr4FIkTMdU4AVD45uQlfvnonMCJaE128ia6nThO0cNkn53hNslibfsJ3nbPas03w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495888&amp;idx=1&amp;sn=49708ff4b94162d120ecc3ff584bc425&amp;chksm=c0023f670212b15d91ae6a47c716e59ea87d13bb7b32e783b289fc38518eb7d20d774b227e94&amp;scene=0&amp;xtrack=1#rd" target="_blank">ChatGPT Plus &quot;美国大兵&quot;认证领取教程</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2026-01-05 18:28:09">发布日期：2026-01-05 18:28:09</time></div><p class="article-description">最近，AI 巨头 OpenAI 搞了个“大动作”。为了支持军方人员向平民职场转型，官方推出了一项专项计划：符合条件的现役及退伍军人可以免费领取价值 240 美金（约 1700+ 人民币）的 ChatG</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495888&amp;idx=1&amp;sn=49708ff4b94162d120ecc3ff584bc425&amp;chksm=c0023f670212b15d91ae6a47c716e59ea87d13bb7b32e783b289fc38518eb7d20d774b227e94&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495881&amp;idx=1&amp;sn=c6f30efafa5d0fb50ba7cb0419f83177&amp;chksm=c07e5609e712299b5a9cabb07b48df001c84163571ccb2de7ed815b66222d6b51ed13cc6b9a2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacVXQsCXzK1HZqkR8GIn9wSibUGRibuQo84VziaG7icYplCbVSMFLS5AgNV2NEZw1ZvOqdVapScISNpclA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495881&amp;idx=1&amp;sn=c6f30efafa5d0fb50ba7cb0419f83177&amp;chksm=c07e5609e712299b5a9cabb07b48df001c84163571ccb2de7ed815b66222d6b51ed13cc6b9a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">白话AI安全：32个故事带你读懂AI的攻防博弈（文末赠书）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-12-09 23:40:46">发布日期：2025-12-09 23:40:46</time></div><p class="article-description">关注我们丨文末赠书如今，AI已为人类的生活带来巨大的改变，我们在享受着AI带来便利的同时，却很少想过：如果它失控怎么办？诺贝尔物理学奖、图灵奖得主，“AI教父”杰弗里·辛顿（Geoffrey Hint</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495881&amp;idx=1&amp;sn=c6f30efafa5d0fb50ba7cb0419f83177&amp;chksm=c07e5609e712299b5a9cabb07b48df001c84163571ccb2de7ed815b66222d6b51ed13cc6b9a2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495872&amp;idx=1&amp;sn=fdc625bf5e37979713634384ebe67b8c&amp;chksm=c03f27fb252154a10f690e1771996264b624628e26c81ef23747cb1eb01f2165af9f73391720&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacW0PenJsGSHQzPjAEwJwA77u0ImjRWOkCTDlDanwbfcYzOQkIAoKRFE42Qibia8PqqU70jQhxEJh9og/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495872&amp;idx=1&amp;sn=fdc625bf5e37979713634384ebe67b8c&amp;chksm=c03f27fb252154a10f690e1771996264b624628e26c81ef23747cb1eb01f2165af9f73391720&amp;scene=0&amp;xtrack=1#rd" target="_blank">Next.js &amp; React 满分RCE漏洞 (CVSS 10.0) 现已公开（附PoC与自查工具）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-12-05 16:20:31">发布日期：2025-12-05 16:20:31</time></div><p class="article-description">漏洞编号： CVE-2025-55182 / CVE-2025-66478风险等级： CRITICAL (10.0)利用难度： 极低 (无需认证/0-Click)受影响资产： Next.js, Dif</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495872&amp;idx=1&amp;sn=fdc625bf5e37979713634384ebe67b8c&amp;chksm=c03f27fb252154a10f690e1771996264b624628e26c81ef23747cb1eb01f2165af9f73391720&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495861&amp;idx=1&amp;sn=34557a83ca0af6db1ce4962f1bb41368&amp;chksm=c0e7b3c0f21f58331130a331e1969c0ef538c0584259b3b0e7fd0116d3c502be4fb5f1c01375&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacURp4NicMdibuhJcOG7HI2bZLjyOq4jkC3BicSsBVaSCQ7NBPFBwF9WicGILD3tM2UOeYegEeaLRGUAQg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495861&amp;idx=1&amp;sn=34557a83ca0af6db1ce4962f1bb41368&amp;chksm=c0e7b3c0f21f58331130a331e1969c0ef538c0584259b3b0e7fd0116d3c502be4fb5f1c01375&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 代打 CTF？用 Cursor + MCP 打造你的全栈自动化攻防智能体</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-11-26 14:57:34">发布日期：2025-11-26 14:57:34</time></div><p class="article-description">🧐 引言：当 AI 拿起了“手术刀”我们都知道 Claude很强，但它通常被困在聊天框里。它能写出完美的 Payload，却无法发送请求；它懂逆向逻辑，如果给 AI 装上“手”（执行命令）和“海马体”</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495861&amp;idx=1&amp;sn=34557a83ca0af6db1ce4962f1bb41368&amp;chksm=c0e7b3c0f21f58331130a331e1969c0ef538c0584259b3b0e7fd0116d3c502be4fb5f1c01375&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495837&amp;idx=1&amp;sn=1c28b7039586fba2bc1ccacde4fe654b&amp;chksm=c07f11b09f3d672cf83c7e928cc4b57f715dfd792e543b9cefadec50e1fd9c9b18eccaaf341d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacURH2PIBGGdwFDkrBR2B7R0asZxZbnicblIoe1viaibPH7HlmxBoiamB6Vey88sr7mZyCW9FrVZ9PRG8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495837&amp;idx=1&amp;sn=1c28b7039586fba2bc1ccacde4fe654b&amp;chksm=c07f11b09f3d672cf83c7e928cc4b57f715dfd792e543b9cefadec50e1fd9c9b18eccaaf341d&amp;scene=0&amp;xtrack=1#rd" target="_blank">请认准CISP官方授权维持机构（科普）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-11-18 17:22:26">发布日期：2025-11-18 17:22:26</time></div><p class="article-description">CISP官方授权维持机构名录查询地址#官微https://mp.weixin.qq.com/s/WHSnZtjFMB4crhjsYhiEoQ#官网https://www.itsec.gov.cn/ry</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495837&amp;idx=1&amp;sn=1c28b7039586fba2bc1ccacde4fe654b&amp;chksm=c07f11b09f3d672cf83c7e928cc4b57f715dfd792e543b9cefadec50e1fd9c9b18eccaaf341d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495795&amp;idx=1&amp;sn=ab920749d60017bb4bdd788a178bd1c4&amp;chksm=c0881880d8c7edd1ae4ecb1b6b5acb6620111f50a580eaf34c0da9ac555290c1607805242b47&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacX0KB17jjeTtTks5libqJdkrlDniaibPhxLzeTQ6daaPM2V8O8UQsBwSiaWsR34LLicUmgZI0Q79epYiamQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495795&amp;idx=1&amp;sn=ab920749d60017bb4bdd788a178bd1c4&amp;chksm=c0881880d8c7edd1ae4ecb1b6b5acb6620111f50a580eaf34c0da9ac555290c1607805242b47&amp;scene=0&amp;xtrack=1#rd" target="_blank">赠书：【内网攻防实战图谱-红队视角实战手册】</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-09-23 17:58:22">发布日期：2025-09-23 17:58:22</time></div><p class="article-description">关注我们丨文末赠书在数字化的世界里，信息已成为最具战略价值的资产之一，而与之相伴的信息安全威胁也愈发复杂多样，黑客攻击、恶意软件感染、数据泄露等安全事件频繁发生，给个人、企业乃至国家带来了巨大的损失和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495795&amp;idx=1&amp;sn=ab920749d60017bb4bdd788a178bd1c4&amp;chksm=c0881880d8c7edd1ae4ecb1b6b5acb6620111f50a580eaf34c0da9ac555290c1607805242b47&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495787&amp;idx=1&amp;sn=81aeb215bee81d1d825c9fd3afe58782&amp;chksm=c067e566e2c3a502642f4839fb284d62d5d2be3a4bd086bd041ae4024cd7255d1b148389a4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacWCze3UteCJxAUn9uZenOWQ2HuN0Kut4erLeceHVxrGMJC4gFKdcib4bogwAic7d3UWUhyFzvhqUrbw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495787&amp;idx=1&amp;sn=81aeb215bee81d1d825c9fd3afe58782&amp;chksm=c067e566e2c3a502642f4839fb284d62d5d2be3a4bd086bd041ae4024cd7255d1b148389a4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">警惕！你的云也许并不安全！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-09-11 15:33:20">发布日期：2025-09-11 15:33:20</time></div><p class="article-description">关注我们丨文末赠书随着企业纷纷将核心业务与数据迁移至云端，云安全这一隐形的“达摩克利斯之剑”也悄然悬于头顶，成为制约企业云战略深入发展的关键因素。云环境的开放性、虚拟化与动态性等特点，也使得云安全面临</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495787&amp;idx=1&amp;sn=81aeb215bee81d1d825c9fd3afe58782&amp;chksm=c067e566e2c3a502642f4839fb284d62d5d2be3a4bd086bd041ae4024cd7255d1b148389a4cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495782&amp;idx=1&amp;sn=b7df102f3f5f4d32f645f50dad0c23f5&amp;chksm=c0329a182a2a80f0775501ac813d3a5626a6c325e561b4abd810632ccdd95bd8f24e80511984&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacXAlE3K1CIPcsBcKmAf9cPfyoXAkXI8DqVSFGibBcNx0a1ItiaYK0Zx6jJFaD5cTYqhYDscCxxLJaYg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495782&amp;idx=1&amp;sn=b7df102f3f5f4d32f645f50dad0c23f5&amp;chksm=c0329a182a2a80f0775501ac813d3a5626a6c325e561b4abd810632ccdd95bd8f24e80511984&amp;scene=0&amp;xtrack=1#rd" target="_blank">2025年IT人必看的安全应急响应指南！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-08-07 15:00:00">发布日期：2025-08-07 15:00:00</time></div><p class="article-description">关注我们丨文末赠书2025年6月15日夜间，加拿大第二大航空运营商西捷航空遭遇针对性网络攻击，攻击者利用第三方地勤软件漏洞植入恶意脚本，并通过航空公司OT系统与IT系统未完全隔离的缺陷横向移动，最终获</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495782&amp;idx=1&amp;sn=b7df102f3f5f4d32f645f50dad0c23f5&amp;chksm=c0329a182a2a80f0775501ac813d3a5626a6c325e561b4abd810632ccdd95bd8f24e80511984&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495776&amp;idx=1&amp;sn=b8d5ba2c1848e63b93fd1abfca45619b&amp;chksm=c06eb2ab08e245800a3f259da000293e7d843e4e1019f0536289a5912e145c6bdf50d2f89823&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/XrCEd6bYW7JHwOYVck3BW6JC21Ea7FAJU6dInZuRIxdzIB1Qm6hGOJjmwYm6kaTTLykNgficUf3ltlFkIh5rdng/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495776&amp;idx=1&amp;sn=b8d5ba2c1848e63b93fd1abfca45619b&amp;chksm=c06eb2ab08e245800a3f259da000293e7d843e4e1019f0536289a5912e145c6bdf50d2f89823&amp;scene=0&amp;xtrack=1#rd" target="_blank">身披合法外衣，利用QQ游戏的白加黑样本分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-07-31 20:08:28">发布日期：2025-07-31 20:08:28</time></div><p class="article-description">点击上方蓝字关注清秋01前言在上一期恶意代码分析02：经典白加黑组合（下）我们通过对样本中获取的Payload进行分析，发现了在线沙箱无法跑出的恶意行为，更好地掌握恶意样本的目的。作为《恶意代码分析系</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495776&amp;idx=1&amp;sn=b8d5ba2c1848e63b93fd1abfca45619b&amp;chksm=c06eb2ab08e245800a3f259da000293e7d843e4e1019f0536289a5912e145c6bdf50d2f89823&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495774&amp;idx=1&amp;sn=9f31103e0e114e89806b4e8a55b97939&amp;chksm=c0f31456a110d2fed65cba7dcea079952a6b6187114ba9624f43e0c40ffb3a76ac26d4847f0d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacVPZ4DnsjOTybsCj7STWLAZtdudOeZojJMAC0yknrZdO25ia4xLVcaJTZo4UltgwuF6k4gsLibt4QlQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495774&amp;idx=1&amp;sn=9f31103e0e114e89806b4e8a55b97939&amp;chksm=c0f31456a110d2fed65cba7dcea079952a6b6187114ba9624f43e0c40ffb3a76ac26d4847f0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">真正的自主可控，“零信任”是关键？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-06-28 02:39:22">发布日期：2025-06-28 02:39:22</time></div><p class="article-description">关注我们丨文末赠书在数字化转型浪潮中，网络安全是企业发展的生命线和关键。随着信息技术的发展，网络环境复杂多变，网络威胁呈现出多样、隐蔽且高强度的特征。黑客攻击手段不断翻新，如恶意软件感染、网络钓鱼、高</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495774&amp;idx=1&amp;sn=9f31103e0e114e89806b4e8a55b97939&amp;chksm=c0f31456a110d2fed65cba7dcea079952a6b6187114ba9624f43e0c40ffb3a76ac26d4847f0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495770&amp;idx=1&amp;sn=bf9b4d19d561f3a167dd614346a65b4f&amp;chksm=c0908200706d3b898e1dd961f2cf732db30da3ab73977574a7d7a900fce0d5b291faa91649f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacUrkMw5JmEC8aiaZnO8ZMhVxicBlfDcdofVVh2qvanHkbn7HqtKzadtibHicPSkXbEXvibS42Tiac8nMotg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495770&amp;idx=1&amp;sn=bf9b4d19d561f3a167dd614346a65b4f&amp;chksm=c0908200706d3b898e1dd961f2cf732db30da3ab73977574a7d7a900fce0d5b291faa91649f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">当漏洞成为“数字战争”的弹药，谁能改写攻防规则？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-05-27 09:00:00">发布日期：2025-05-27 09:00:00</time></div><p class="article-description">关注我们丨文末赠书在虚拟与现实交织的数字战场，一次协议漏洞的触发，可能会让银行系统沦陷、电网瘫痪、国家机密泄露；而一个顶尖漏洞猎人的发现，却能让攻击链在萌芽时被斩断，让亿万用户免于暴露在暗处的屠刀之下</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495770&amp;idx=1&amp;sn=bf9b4d19d561f3a167dd614346a65b4f&amp;chksm=c0908200706d3b898e1dd961f2cf732db30da3ab73977574a7d7a900fce0d5b291faa91649f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495765&amp;idx=1&amp;sn=ff3d9edff8103f0d5effd622e0edbc7c&amp;chksm=c07414a7d6e0cb27382f333f7818128d3be646a6269a5152a033d26a4b5830c3ffa8a08edafb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacX15wFVicUe8q69SiaUDcfGDUkQN31LFsecVwYJeynrI1tXAzcF3o5Xj2iaDGZRy2kZwZgJTKqkiaKfRQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495765&amp;idx=1&amp;sn=ff3d9edff8103f0d5effd622e0edbc7c&amp;chksm=c07414a7d6e0cb27382f333f7818128d3be646a6269a5152a033d26a4b5830c3ffa8a08edafb&amp;scene=0&amp;xtrack=1#rd" target="_blank">安全岗位需求发布(HW+驻场)</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-05-25 10:28:25">发布日期：2025-05-25 10:28:25</time></div><p class="article-description">热门岗位招聘中简历投递方式：以word或者pdf格式发送至邮箱 admin@ckcsec.com ，文件命名：面试岗位+姓名+工作经验，均在两周内面试CKCsec安全研究院知识文库同步更新：https</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495765&amp;idx=1&amp;sn=ff3d9edff8103f0d5effd622e0edbc7c&amp;chksm=c07414a7d6e0cb27382f333f7818128d3be646a6269a5152a033d26a4b5830c3ffa8a08edafb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495759&amp;idx=1&amp;sn=e8df65a828e64cebb86eaedea934c4f1&amp;chksm=c05dfed3e4dd34a91ec65b341b5172c96abc93fe2ffe212923382c7e63b9b6a15103a1e4958b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacW2pscl0giaq2f8mzrKPH7QkPwTkTjC0h0bJDJ4ahIVgr3PticWXARA9YRPX81LYtAYQp3icDxgwSnhw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495759&amp;idx=1&amp;sn=e8df65a828e64cebb86eaedea934c4f1&amp;chksm=c05dfed3e4dd34a91ec65b341b5172c96abc93fe2ffe212923382c7e63b9b6a15103a1e4958b&amp;scene=0&amp;xtrack=1#rd" target="_blank">请立即拿下软考证书（政策风口）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-04-23 12:30:00">发布日期：2025-04-23 12:30:00</time></div><p class="article-description">重大利好！！如今80%的网安人都在冲软考证：国家认证、报名费更低、含金量更高。🔥而且今年正值改革变动期，考试难度最小，是最好拿证的一年。如果想今年一次拿下软考证书，强烈建议大家考【高级-系统规划与管理</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495759&amp;idx=1&amp;sn=e8df65a828e64cebb86eaedea934c4f1&amp;chksm=c05dfed3e4dd34a91ec65b341b5172c96abc93fe2ffe212923382c7e63b9b6a15103a1e4958b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495740&amp;idx=1&amp;sn=ead556225be806d4c9ac0e69daf233ef&amp;chksm=c016f1a1e55eb3dcb1c5a1e36a49422f8a71af13761c29d415ab2d00d3ab17f4b6c56129febe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacUtttrZgicBdoYN681yCN4b5LcGg057649g0EMLcI2Ic8kH9kykiavMA60G54o88IQN4fBFS8CI0dQQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495740&amp;idx=1&amp;sn=ead556225be806d4c9ac0e69daf233ef&amp;chksm=c016f1a1e55eb3dcb1c5a1e36a49422f8a71af13761c29d415ab2d00d3ab17f4b6c56129febe&amp;scene=0&amp;xtrack=1#rd" target="_blank">记录hw使用无问AI收集资产</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-03-21 10:32:35">发布日期：2025-03-21 10:32:35</time></div><p class="article-description">点击上方蓝字关注我们很快啊~马上又到了各大单位搞HW的时间段了，这不，为了面临即将到来的hw，我这边的客户，又让我针对单位资产开展一波渗透测试了，而且让我先对资产在进行一波探测，哎，作为苦逼的乙方，能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495740&amp;idx=1&amp;sn=ead556225be806d4c9ac0e69daf233ef&amp;chksm=c016f1a1e55eb3dcb1c5a1e36a49422f8a71af13761c29d415ab2d00d3ab17f4b6c56129febe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495725&amp;idx=1&amp;sn=cec4560567fff74608fde35cc7c008bb&amp;chksm=c0ae6057308dd39acc432e7dd6f4c730e6d4f047394f2421a094c2564d0b31477c84ea9d70f1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/05AlicrBviacWFicPAbQ2uDLBctb7FAwQ1xNibV2HhEFJcZR6Gpv6AJSbDBlw0xiaSbwZpxaJORG9yY2etMKTg82gTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495725&amp;idx=1&amp;sn=cec4560567fff74608fde35cc7c008bb&amp;chksm=c0ae6057308dd39acc432e7dd6f4c730e6d4f047394f2421a094c2564d0b31477c84ea9d70f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">驻场安全服务需求发布</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb868903f63a5dfe5fbfa31f46900349/index.html">CKCsec安全研究院</a></span><time class="article-date" datetime="2025-03-13 10:57:56">发布日期：2025-03-13 10:57:56</time></div><p class="article-description">公司热门岗位招聘中简历投递方式：以word或者pdf格式发送至邮箱 admin@ckcsec.com ，文件命名：面试岗位+姓名+工作经验CKCsec安全研究院知识文库同步更新：https://wik</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&amp;mid=2247495725&amp;idx=1&amp;sn=cec4560567fff74608fde35cc7c008bb&amp;chksm=c0ae6057308dd39acc432e7dd6f4c730e6d4f047394f2421a094c2564d0b31477c84ea9d70f1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>
