@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>AGI Hunt</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464573&amp;idx=1&amp;sn=a494357db7f8fe3e9e5f7ac3916dfc51&amp;chksm=86ba27dbda60d2f30e6894c776555e7927b0a77f321fbd0128b5e6549c2298fadcf165c67176&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEeH8967ctbaaIID9JHPicyGYg3WEbmtjIu6TVQicv5iaicoqJFEnco13neGkKV6LyNwdshM9oIzATZibg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464573&amp;idx=1&amp;sn=a494357db7f8fe3e9e5f7ac3916dfc51&amp;chksm=86ba27dbda60d2f30e6894c776555e7927b0a77f321fbd0128b5e6549c2298fadcf165c67176&amp;scene=0&amp;xtrack=1#rd" target="_blank">当deepseek接管了直播间，董宇辉们可以失业了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-23 17:31:05">发布日期：2025-02-23 17:31:05</time></div><p class="article-description">这是我用 deepseek 模仿的 AI 董宇辉：（目光悠远望向远方，指尖轻抚茶盏边缘）&quot;秋锦啊，你看这安溪的茶山，朝露未晞时采下的青叶在竹筛里舒展，像不像少年人初见天地时清澈的眼神？（停顿，茶汤注入</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464573&amp;idx=1&amp;sn=a494357db7f8fe3e9e5f7ac3916dfc51&amp;chksm=86ba27dbda60d2f30e6894c776555e7927b0a77f321fbd0128b5e6549c2298fadcf165c67176&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464501&amp;idx=1&amp;sn=13ec36428666e6869740a77e9ba5284d&amp;chksm=86228819699d1ce79b92e3584746b10a63b1a6a41c572e57412a5f0d93f44d48deb82e3d7eff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEsqN0bLmd9ZNmtxN2VAfAScxNMicP3vUUH22L4icAleTsGMa2T05X72U7ZVqmeBBLPz4AmvGEBHiasQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464501&amp;idx=1&amp;sn=13ec36428666e6869740a77e9ba5284d&amp;chksm=86228819699d1ce79b92e3584746b10a63b1a6a41c572e57412a5f0d93f44d48deb82e3d7eff&amp;scene=0&amp;xtrack=1#rd" target="_blank">我用Devin做的deepseek直播嘴替，让老舅成了福建董宇辉</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-22 15:31:39">发布日期：2025-02-22 15:31:39</time></div><p class="article-description">这是一个关于我用 DeepSeek 让在县城卖茶的老舅，摇身一变成了直播间“福建董宇辉”的故事。而要不是刚看到他在亲戚群里发「刚下播，今天成交128单，累！」的凡尔赛文学，我都快忘了还有这件事了。一个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464501&amp;idx=1&amp;sn=13ec36428666e6869740a77e9ba5284d&amp;chksm=86228819699d1ce79b92e3584746b10a63b1a6a41c572e57412a5f0d93f44d48deb82e3d7eff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464323&amp;idx=1&amp;sn=dadd9282e1e0e61cdd6ee29e66786525&amp;chksm=86303b9243f42a86834d82f93bde2928694f955dc7916ae1c8b2428fbb3debaa1a07515aced5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEyVsmKiaNCJicRDP4I4NjcwYPw3gBqLMkyYu6ekaYWw5p2bupHIVU86bNmKG90KuiaSliaTYrAI8dumA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464323&amp;idx=1&amp;sn=dadd9282e1e0e61cdd6ee29e66786525&amp;chksm=86303b9243f42a86834d82f93bde2928694f955dc7916ae1c8b2428fbb3debaa1a07515aced5&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI：未受DeepSeek影响，周活用户已破4亿！马上推出GPT-5</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-21 00:38:18">发布日期：2025-02-21 00:38:18</time></div><p class="article-description">虽然竞争不断，但OpenAI 的用户增长正势如破竹！OpenAI 刚刚宣布ChatGPT 周活跃用户突破了4亿，短短不到三个月就增长了33%！OpenAI 首席运营官Brad Lightcap 发文称</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464323&amp;idx=1&amp;sn=dadd9282e1e0e61cdd6ee29e66786525&amp;chksm=86303b9243f42a86834d82f93bde2928694f955dc7916ae1c8b2428fbb3debaa1a07515aced5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464224&amp;idx=1&amp;sn=c13c0f304f10de255631c30e119087d5&amp;chksm=86215555dfc3dbe384339c6ef407e4096aa1d78447891555c413f1b807bde764c1aa27cbf4e3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEFG1oibd8qJvuJldSicoIwXtvT2H7Y72LqP2w0gFmDUTzUXqekYOqXIV5QFaz9VHFZYtqg2riaKqx1Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464224&amp;idx=1&amp;sn=c13c0f304f10de255631c30e119087d5&amp;chksm=86215555dfc3dbe384339c6ef407e4096aa1d78447891555c413f1b807bde764c1aa27cbf4e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">重磅！继Google Willow之后，微软宣布量子计算突破！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-20 01:21:21">发布日期：2025-02-20 01:21:21</time></div><p class="article-description">微软刚刚创造出了一种全新的物质状态，这或将彻底改变量子计算的未来！还记得初中物理课本上的那三种物质状态吗？——固态、液态、气态。但从今天起，教科书可能要改写了！微软CEO萨提亚·纳德拉（Satya N</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464224&amp;idx=1&amp;sn=c13c0f304f10de255631c30e119087d5&amp;chksm=86215555dfc3dbe384339c6ef407e4096aa1d78447891555c413f1b807bde764c1aa27cbf4e3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=1&amp;sn=64354407e89d9768dd320aa57e3c6a8d&amp;chksm=8604822e3d2610b868ca80c77952819e7bd7b63fddae1e38b9ce3c21c96024d6c8014fee7232&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEFG1oibd8qJvuJldSicoIwXtlEsIE6kPahfOicaEdic453eHh0yXgARkXgCUh0xOBCzodVXp2HWsVvvg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=1&amp;sn=64354407e89d9768dd320aa57e3c6a8d&amp;chksm=8604822e3d2610b868ca80c77952819e7bd7b63fddae1e38b9ce3c21c96024d6c8014fee7232&amp;scene=0&amp;xtrack=1#rd" target="_blank">Deepseek 发布了一篇新论文，梁文峰署名。网友：英伟达要跌！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-19 12:03:49">发布日期：2025-02-19 12:03:49</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=1&amp;sn=64354407e89d9768dd320aa57e3c6a8d&amp;chksm=8604822e3d2610b868ca80c77952819e7bd7b63fddae1e38b9ce3c21c96024d6c8014fee7232&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=2&amp;sn=57b51387d18d65b4fb6853bcc079f982&amp;chksm=8688e3873eea933c7460d66ac426696d6dce112d7f332f7c69b5cdb9a54c66238c83a3f08502&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEFG1oibd8qJvuJldSicoIwXt8aJZBmLdjKbH3iaundokZTnu6Xlfnd1Z2Da05GeE8fq6RgozvPeFA7Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=2&amp;sn=57b51387d18d65b4fb6853bcc079f982&amp;chksm=8688e3873eea933c7460d66ac426696d6dce112d7f332f7c69b5cdb9a54c66238c83a3f08502&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI前CTO宣布创办「思考机器实验室」</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-19 12:03:49">发布日期：2025-02-19 12:03:49</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=2&amp;sn=57b51387d18d65b4fb6853bcc079f982&amp;chksm=8688e3873eea933c7460d66ac426696d6dce112d7f332f7c69b5cdb9a54c66238c83a3f08502&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=3&amp;sn=1e35190f8c9ff071829cfddc5ce42d40&amp;chksm=86cd01151fe82f513f333ec932fa29218c0f04858efcc14eb4af5a9f54ed19cb84ecb6a6b667&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/M3PrhSUICnEFG1oibd8qJvuJldSicoIwXtr0GrLrDLpbwZDo6hMhLeUXBLNwOGuRkLJb3Kovv3PESLRUOpXylqrw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=3&amp;sn=1e35190f8c9ff071829cfddc5ce42d40&amp;chksm=86cd01151fe82f513f333ec932fa29218c0f04858efcc14eb4af5a9f54ed19cb84ecb6a6b667&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI推出价值百万美元新基准：SWE-Lancer</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1e62d3672bcccb32d693d4041f76d7ff/index.html">AGI Hunt</a></span><time class="article-date" datetime="2025-02-19 12:03:49">发布日期：2025-02-19 12:03:49</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NzgzMjA4MQ==&amp;mid=2453464105&amp;idx=3&amp;sn=1e35190f8c9ff071829cfddc5ce42d40&amp;chksm=86cd01151fe82f513f333ec932fa29218c0f04858efcc14eb4af5a9f54ed19cb84ecb6a6b667&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_9.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

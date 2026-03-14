@@ -1,0 +1,326 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>开发</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=1&amp;sn=395dc0f8c3907e960deb83ce0d338d59&amp;chksm=97bf9f204f64bfadfb516f845485d488ffc4b62455da8160a5e3a647a6e828756783f104b123&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/keV4LgFsRDuia4rZB7PxxwykL3uVbxibiaLicficyZRoELiaGPX0ibNgPtAsibyLFTj2JaM58Zgq9JibEUib1r8wjCQgXyKA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=1&amp;sn=395dc0f8c3907e960deb83ce0d338d59&amp;chksm=97bf9f204f64bfadfb516f845485d488ffc4b62455da8160a5e3a647a6e828756783f104b123&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek 正式发布 DeepSeek-V3.2-Exp 模型，价格离谱</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-09-30 11:00:00">发布日期：2025-09-30 11:00:00</time></div><p class="article-description">DeepSeek 29日正式发布 DeepSeek-V3.2-Exp 模型，这是一个实验性（Experimental）的版本。作为迈向新一代架构的中间步骤，V3.2-Exp 在 V3.1-Termin</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=1&amp;sn=395dc0f8c3907e960deb83ce0d338d59&amp;chksm=97bf9f204f64bfadfb516f845485d488ffc4b62455da8160a5e3a647a6e828756783f104b123&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=2&amp;sn=51c20439e61b16526c67c83eee273c26&amp;chksm=97e85560f65abd0e865024eab5ec25719b288de99668f3fafc8cbedf509360826813dfb4923a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/kibwfTuPM4licKs9bhZmP7gGDMTP28NCH4JVJibNCxZX6FJ4AITqgZIibj1ZHZ2n2OeGDbp4oG42R4ZCc1ia4fMOqjQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=2&amp;sn=51c20439e61b16526c67c83eee273c26&amp;chksm=97e85560f65abd0e865024eab5ec25719b288de99668f3fafc8cbedf509360826813dfb4923a&amp;scene=0&amp;xtrack=1#rd" target="_blank">【机器学习】融合Transformer+LSTM+TCN+XGBoost时间序列预测 ！！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-09-30 11:00:00">发布日期：2025-09-30 11:00:00</time></div><p class="article-description">咱们先大概概括一下：把 Transformer、LSTM、TCN、XGBoost 结合起来做时间序列预测，可以把：长程依赖（Transformer）序列记忆和门控建模（LSTM）稳健的局部/多尺度卷积</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=2&amp;sn=51c20439e61b16526c67c83eee273c26&amp;chksm=97e85560f65abd0e865024eab5ec25719b288de99668f3fafc8cbedf509360826813dfb4923a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=3&amp;sn=37d86fa39e1ea6ea4d9104aa81870643&amp;chksm=97d814c53897831a57c1712de05df42b3a8790091b2e3c8bdc2ccd8de4c977773e00125d902d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/keV4LgFsRDuia4rZB7PxxwykL3uVbxibiaLhvjCEnboxibt5kxia0xOZAvr01zNFPAWPHcia9jepvuJUWrI1bTIrJiaKg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=3&amp;sn=37d86fa39e1ea6ea4d9104aa81870643&amp;chksm=97d814c53897831a57c1712de05df42b3a8790091b2e3c8bdc2ccd8de4c977773e00125d902d&amp;scene=0&amp;xtrack=1#rd" target="_blank">10位离职华为的“天才少年”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/345d4561c269ad3db8e89ee3bb5df8c9/index.html">机器学习初学者</a></span><time class="article-date" datetime="2025-09-30 11:00:00">发布日期：2025-09-30 11:00:00</time></div><p class="article-description">Jay 发自 凹非寺  量子位 | 公众号 QbitAI聚是「天才少年」，散是满天星。说「天才少年」不可谓不贴切。这个在华为最艰难时期被推出的人才计划，一度备受瞩目，一度千金市骨，一度吸引了最具才华和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzE5OTIyODc3OA==&amp;mid=2247519932&amp;idx=3&amp;sn=37d86fa39e1ea6ea4d9104aa81870643&amp;chksm=97d814c53897831a57c1712de05df42b3a8790091b2e3c8bdc2ccd8de4c977773e00125d902d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506292&amp;idx=1&amp;sn=8424e04ca410d2cfaf8e10a60e1ff30a&amp;chksm=9e40d4d16447f8ab1a04b705c1140a826cc116e714be9bb344d571a8f4e359c79d973876e458&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDlMY2m7CUcXfMFmxf49FUINjnPIcGcSnRXUyRvcvLyo1P3nkoMHDr1IB6c3TbFtgSgHlf7DM2921w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506292&amp;idx=1&amp;sn=8424e04ca410d2cfaf8e10a60e1ff30a&amp;chksm=9e40d4d16447f8ab1a04b705c1140a826cc116e714be9bb344d571a8f4e359c79d973876e458&amp;scene=0&amp;xtrack=1#rd" target="_blank">Python 自动化神器 - DrissionPage</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-09-30 09:00:00">发布日期：2025-09-30 09:00:00</time></div><p class="article-description">搞爬虫的不会没听过拽神这个项目吧引言之前一直玩整站采集，采集所有ebay,amazon,taobao,tiktok,dy,xhs，搞大数据采集的优点鄙视链，鄙视这种操控系列的。然而后面发现反而是这种小</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506292&amp;idx=1&amp;sn=8424e04ca410d2cfaf8e10a60e1ff30a&amp;chksm=9e40d4d16447f8ab1a04b705c1140a826cc116e714be9bb344d571a8f4e359c79d973876e458&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692320&amp;idx=1&amp;sn=bb4c89eaeb6ea153ca5d793d5f62840d&amp;chksm=eb66db09b4d35df54d63d654d4f224c665976b38b57c661f654d7c102eed97083ac5422924e7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692320&amp;idx=1&amp;sn=bb4c89eaeb6ea153ca5d793d5f62840d&amp;chksm=eb66db09b4d35df54d63d654d4f224c665976b38b57c661f654d7c102eed97083ac5422924e7&amp;scene=0&amp;xtrack=1#rd" target="_blank">都给我读！
+
+
+                               
+
+ 
+各位彦祖亦菲们，提前祝大家国庆中秋双节快乐！
+ 
+当日历翻到10月，一年中最后一个季度就要开始了。无论你在祖国乃至世界的哪个角落，当度过这一年中最后一个长假，2025就渐入尾声了。
+ 
+万千个你，有的今年很顺利，有的偶有波澜，但不变的，应该都是在这个时代下，对知识的追求。因为只有知识，不会亏待你的人生。
+ 
+腾讯云开发者双节精选文章送给你，希望你能读有所得！
+ 
+凡人饮水处，皆言AI
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692189&amp;idx=1&amp;sn=8092da8e58fcb61c7d3c07130c7fbe43&amp;scene=21#wechat_redirect&quot;&gt;为什么Claude Code放弃代码索引，使用50年前的grep技术？&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692094&amp;idx=1&amp;sn=f1b815754dc97f3d025fbb549a58b1b7&amp;scene=21#wechat_redirect&quot;&gt;程序员必备！Prompt三大进阶技巧和实用模板&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692063&amp;idx=1&amp;sn=c340c3117927abf9d3b58cd4689d8ca5&amp;scene=21#wechat_redirect&quot;&gt;万字详解让大模型写出好代码：上下文窗口的工程化实践&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691799&amp;idx=1&amp;sn=56d6c463deecd0b3788cb1479731226a&amp;scene=21#wechat_redirect&quot;&gt;CodeBuddy AI Coding 企业场景落地实践与思考&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691580&amp;idx=1&amp;sn=f1b04f712b4ef7c7edc3cf95505d0eab&amp;scene=21#wechat_redirect&quot;&gt;与Cursor结对编程四个月，我顿悟了！&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691355&amp;idx=1&amp;sn=e5507521f4e135aa9127f82757476b29&amp;scene=21#wechat_redirect&quot;&gt;一文读懂AI Search：从RAG到DeepSearch&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691279&amp;idx=1&amp;sn=5da2fbe1159f12e45d3d7f4b673a0108&amp;scene=21#wechat_redirect&quot;&gt;每个程序员都必须了解的AI系统设计与挑战&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691254&amp;idx=1&amp;sn=263d45ead345138acd55c241efef7609&amp;scene=21#wechat_redirect&quot;&gt;AI智能体全面爆发：一文吃透多Agent技术发展与进化&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691198&amp;idx=1&amp;sn=5ea88928822519e1638dc431b62618f2&amp;scene=21#wechat_redirect&quot;&gt;RAG彻底爆了！一文读懂其架构演进及核心要点&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690930&amp;idx=1&amp;sn=263b511dc0264982953f6c5d784cbaea&amp;scene=21#wechat_redirect&quot;&gt;彻底爆了！一文吃透AIGC、Agent、MCP的概念和关系&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247689518&amp;idx=1&amp;sn=542ea1a0bf7778c4b5af133958562a15&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;AI 编程神器 Cursor 十大使用技巧：让代码更听你的话&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247688986&amp;idx=1&amp;sn=13fe66cfed8b59edc262a1e2002667f2&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;一文讲透大模型应用开发&lt;/a&gt;
+ 
+架构师系列文集
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690708&amp;idx=1&amp;sn=d1290b30ae41bce52736081b29cc9a94&amp;chksm=eaa7f384ddd07a925c33961457060cdd913501841649b4034e78aecb67610431fad5f5215e81&amp;cur_album_id=4044482280910372883&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个支付系统&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690922&amp;idx=1&amp;sn=a906834509a831650975bd5fbb9ff352&amp;chksm=eaa7f0faddd079ec1445f6e8d6fa1b5ef587eea8fb216565e780c8db4a4c17e92cbafe59de87&amp;cur_album_id=4044482280910372883&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个支付系统：核心交易系统架构&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691682&amp;idx=1&amp;sn=8eac13cc848ee0779e1a4ab85142d87a&amp;chksm=eaa7f7f2ddd07ee4165cb4a6dd350c0cb4f97e081cdb8be109a510e030270cbfc59de82afd06&amp;cur_album_id=4044482280910372883&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个支付系统：链路优化详解&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691971&amp;idx=1&amp;sn=e83176ff298393d997ffa7bb814bcae1&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个企业级消息推送系统架构？&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690870&amp;idx=1&amp;sn=03b502a16a6ce51883c27e326c2007bb&amp;chksm=eaa7f026ddd07930c8bf017526273ff79b233742ee38b86801e5e7eb58c64eec12c598b580c2&amp;cur_album_id=4044482280910372883&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个低代码平台系统&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691925&amp;idx=1&amp;sn=82352013a258bf08bbd69f38c57cef6b&amp;chksm=eaa7f4c5ddd07dd3571cf362fa392cf9266f4ea5d79d2d3159ef9105a72c9a863d4760700fec&amp;cur_album_id=4044482280910372883&amp;scene=21#wechat_redirect&quot;&gt;如何设计一个推荐调度系统：算法平台核心架构&lt;/a&gt;
+ 
+架构经典
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691940&amp;idx=1&amp;sn=250af1ab3f1de25e68f706a89bc5f89f&amp;scene=21#wechat_redirect&quot;&gt;万字详解架构设计：业务架构、应用架构、数据架构、技术架构、单体、分布式、微服务都是什么？&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691511&amp;idx=1&amp;sn=1a85a79a209a85a7d49437180c228050&amp;scene=21#wechat_redirect&quot;&gt;架构师必备的15条定律，条条经典！&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691331&amp;idx=1&amp;sn=497ad0b3f27d241bd8f020901f4926ad&amp;scene=21#wechat_redirect&quot;&gt;不画一张架构图讲透架构思维&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690919&amp;idx=1&amp;sn=374e8c83fc0e33ba2f4a3b8290d214bd&amp;scene=21#wechat_redirect&quot;&gt;每个程序员都应该了解的GPU工作原理：从硬件到架构&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690508&amp;idx=1&amp;sn=7862e4bb77047d0fdd8ab4f9c8005366&amp;scene=21#wechat_redirect&quot;&gt;如何画好架构图：架构思维的三大底层逻辑&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690447&amp;idx=1&amp;sn=8d4aa1c7ce5e21fd502f98c28e348179&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;微信读书后台架构演进之路&lt;/a&gt;
+ 
+奇怪的知识增加了
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247688195&amp;idx=1&amp;sn=a2ba7737825e9a82d816323338a21b88&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;篡改微信余额技术可刑性研讨 2.0&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247691949&amp;idx=1&amp;sn=5868dec447eb4ca2602dec8f872eb0df&amp;scene=21#wechat_redirect&quot;&gt;程序员如何避免面向监狱编程？&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690645&amp;idx=1&amp;sn=ab526205c1d0c3d907b9ff81274c550f&amp;scene=21#wechat_redirect&quot;&gt;分享一个讲透任意知识点的万能框架&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247690045&amp;idx=1&amp;sn=57cddf2d9128ad2290191407027a0562&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;程序员核心竞争力：代码外的关键软技能&lt;/a&gt;
+ 
+&lt;a class=&quot;normal_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247688273&amp;idx=1&amp;sn=943c343e98bbb4a7e4d597e8ad86c89c&amp;token=534768672&amp;lang=zh_CN&amp;scene=21#wechat_redirect&quot;&gt;技术人核心竞争力：超越代码的思考&lt;/a&gt;
+ 
+你的国庆计划是怎样的？留言分享，我们将抽取一条评论送出社区周边一份。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-09-30 08:45:00">发布日期：2025-09-30 08:45:00</time></div><p class="article-description">都给我读！
+
+
+                               
+
+ 
+各位彦祖亦菲们，提前祝大家国庆中秋双节快乐！
+ 
+当日历翻到10月，一年中最后一个季度就要开始了。无论你在祖国乃至</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692320&amp;idx=1&amp;sn=bb4c89eaeb6ea153ca5d793d5f62840d&amp;chksm=eb66db09b4d35df54d63d654d4f224c665976b38b57c661f654d7c102eed97083ac5422924e7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553523&amp;idx=1&amp;sn=a55dbdc4479fcbc45ce51aa54294b1bb&amp;chksm=e87f5d4d901dc762e37a5fb129d5d002d295402ce229d6279a1a5cada35dec4384aad92742a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z6bicxIx5naJXfnT1osPI0Udr0lMvYU0bMSALZJW1aboyvMXVoO4neQWDz3D6zoNEXov1oCpVDAZx4rXlwtVaTw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553523&amp;idx=1&amp;sn=a55dbdc4479fcbc45ce51aa54294b1bb&amp;chksm=e87f5d4d901dc762e37a5fb129d5d002d295402ce229d6279a1a5cada35dec4384aad92742a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">【万字长文】大模型训练推理和性能优化算法总结和实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15cb3cb3f3936c2b4ea943a483aecb84/index.html">阿里云开发者</a></span><time class="article-date" datetime="2025-09-30 08:30:00">发布日期：2025-09-30 08:30:00</time></div><p class="article-description">我们是阿里云公共云 AI 汽车行业大模型技术团队，致力于通过专业的全栈 AI 技术推动 AI 的落地应用。引言本文主要总结了大模型落地过程中的训练、推理和性能优化相关算法和实践，并重点分享了大模型在推</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553523&amp;idx=1&amp;sn=a55dbdc4479fcbc45ce51aa54294b1bb&amp;chksm=e87f5d4d901dc762e37a5fb129d5d002d295402ce229d6279a1a5cada35dec4384aad92742a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490150&amp;idx=1&amp;sn=6f774585729c1fdcd091a5b34672c21c&amp;chksm=c0c1619599717d87a8e12d09c7c391213904aeb77eaa95b1038b0925c713bec5ab62e8f465b9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UCBunT7CibYZGKKGibQ11iaAsicpXFstzIrbT8CKfkVibfXHvackKBPqvChkYeeiaxLrP9EPn9rvrc9ia4qgSiaDm91YicQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490150&amp;idx=1&amp;sn=6f774585729c1fdcd091a5b34672c21c&amp;chksm=c0c1619599717d87a8e12d09c7c391213904aeb77eaa95b1038b0925c713bec5ab62e8f465b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust 搜索引擎的基础与前沿，2025年必学</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb805035657334107a0620e58aeacd9f/index.html">Rust开发笔记</a></span><time class="article-date" datetime="2025-09-30 08:00:00">发布日期：2025-09-30 08:00:00</time></div><p class="article-description">关注我们丨文末赠书搜索技术从20世纪90年代开始逐渐走入大众视野，随着互联网的快速发展而不断演进，从早期依赖人工编制的启发式规则，到后来引入机器学习模型处理大规模数据，再到如今的大语言模型时代利用生成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490150&amp;idx=1&amp;sn=6f774585729c1fdcd091a5b34672c21c&amp;chksm=c0c1619599717d87a8e12d09c7c391213904aeb77eaa95b1038b0925c713bec5ab62e8f465b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991019&amp;idx=1&amp;sn=088920f268bf8e3234c6144e7fa75317&amp;chksm=f3cf33b88f6bbd79b1bd5f7311a9180dfa099e4ea69a603e280e0c660e7e7d548a96b269b1e2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/z4pQ0O5h0f4iaGv0J5nOe2YrsTwld3eBPXsVZpDferNm25ZOWmXRpQuibpwKmaozxcjgic2fOSiayN61icTxy120stg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991019&amp;idx=1&amp;sn=088920f268bf8e3234c6144e7fa75317&amp;chksm=f3cf33b88f6bbd79b1bd5f7311a9180dfa099e4ea69a603e280e0c660e7e7d548a96b269b1e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">这两个AI编程习惯，你中招了吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ca412d192e267c3197fcdac0ae98d7b9/index.html">未闻Code</a></span><time class="article-date" datetime="2025-09-29 21:00:00">发布日期：2025-09-29 21:00:00</time></div><p class="article-description">2025年下半年了，不知道咱们中还有没有不用AI编程工具完全靠手敲写代码的大佬，反正我自从用惯了让AI辅助编程以后已经完全不习惯靠自己手敲的方式一行行地写代码了，有的时候我甚至觉得我是辅助AI的。今天</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991019&amp;idx=1&amp;sn=088920f268bf8e3234c6144e7fa75317&amp;chksm=f3cf33b88f6bbd79b1bd5f7311a9180dfa099e4ea69a603e280e0c660e7e7d548a96b269b1e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NTY4MjcxNg==&amp;mid=2247488479&amp;idx=1&amp;sn=6740e03f76e11d385333eb81d782113f&amp;chksm=ea3ee20cd8cab506852742aaab417d78d065d6e2de458360d154f306f66e3355938d869ddca3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/IbSwDcwia5iccuzkdPIlB8p1PDgmEHVH9V8xosRmcXxApoa5zfQQbSbCULhxGvUJHmXZLYeCHib3e6CBBfNoAY61g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI3NTY4MjcxNg==&amp;mid=2247488479&amp;idx=1&amp;sn=6740e03f76e11d385333eb81d782113f&amp;chksm=ea3ee20cd8cab506852742aaab417d78d065d6e2de458360d154f306f66e3355938d869ddca3&amp;scene=0&amp;xtrack=1#rd" target="_blank">懒猫算力仓初探（四）：如何高效的向算力仓传输文件？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/8a82fd9202c244e72927047036ad6f53/index.html">忘机山人</a></span><time class="article-date" datetime="2025-09-29 20:03:00">发布日期：2025-09-29 20:03:00</time></div><p class="article-description">在日常使用 懒猫 AI 算力仓 的过程中，文件传输是一个绕不开的话题。和微服不一样的是，算力仓没有运行专门的网盘服务。在使用过程中，不管你是想把本地写好的程序同步到算力仓里运行，还是需要把推理结果、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI3NTY4MjcxNg==&amp;mid=2247488479&amp;idx=1&amp;sn=6740e03f76e11d385333eb81d782113f&amp;chksm=ea3ee20cd8cab506852742aaab417d78d065d6e2de458360d154f306f66e3355938d869ddca3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODYwMjI2MA==&amp;mid=2649796004&amp;idx=1&amp;sn=5bc9617314a6e8223b3debd0a0893e3f&amp;chksm=bfddd4aa11642e165b9153a102e68210dd5afe069bc66de4c01624775204fbdf2455c381f972&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/j3gficicyOvavdKopZ76pMjWgYDR2zoibzfEHWocwhrVC9ic1OP93A11HQFOqb2lNJpNObiaefNE7iaicnJS5yjvnNbhw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODYwMjI2MA==&amp;mid=2649796004&amp;idx=1&amp;sn=5bc9617314a6e8223b3debd0a0893e3f&amp;chksm=bfddd4aa11642e165b9153a102e68210dd5afe069bc66de4c01624775204fbdf2455c381f972&amp;scene=0&amp;xtrack=1#rd" target="_blank">10000+免费鹅厂中秋红包封面！速抢！！！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/32626f89106d206e9ee7489132923f5b/index.html">腾讯技术工程</a></span><time class="article-date" datetime="2025-09-29 18:55:28">发布日期：2025-09-29 18:55:28</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5ODYwMjI2MA==&amp;mid=2649796004&amp;idx=1&amp;sn=5bc9617314a6e8223b3debd0a0893e3f&amp;chksm=bfddd4aa11642e165b9153a102e68210dd5afe069bc66de4c01624775204fbdf2455c381f972&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=1&amp;sn=3935bb3ff757622a7b67cf314b54bbc1&amp;chksm=bce22a7bb32b699fa952481a7203e900e2898b585dd854eaa3365597d7365c0a1a5e94200aa6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/LGh7bn8KbYA5msRHlgKKk6wVr9djdBkuGakauwXAW11wRNkUZTAIqZ4bg5TsmNwYZWHiaqB4t3PR6Leia1t0IwDg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=1&amp;sn=3935bb3ff757622a7b67cf314b54bbc1&amp;chksm=bce22a7bb32b699fa952481a7203e900e2898b585dd854eaa3365597d7365c0a1a5e94200aa6&amp;scene=0&amp;xtrack=1#rd" target="_blank">所有软件公司的通病，无一例外。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/df3c358914f782bf68ddb3c3b0f27d0f/index.html">脚本之家</a></span><time class="article-date" datetime="2025-09-29 17:00:00">发布日期：2025-09-29 17:00:00</time></div><p class="article-description">将 脚本之家 设为“星标⭐”第一时间收到文章更新出处：不会笑青年（ID：laughyouth）END  推荐阅读：小时候电脑课穿鞋套的真相，看完我落泪了正是闯的年纪！雷军与小米的改变之路首批iPhon</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=1&amp;sn=3935bb3ff757622a7b67cf314b54bbc1&amp;chksm=bce22a7bb32b699fa952481a7203e900e2898b585dd854eaa3365597d7365c0a1a5e94200aa6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=2&amp;sn=042102e0f30a4f78336089a454093233&amp;chksm=bcd7b9e215c6d4cc1cdea6417e827fdb58199ffab01e4ff57aa24c647987a0091d7adcf8bc69&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/tpzwaqMCicQxjKQOicQ0O1DRYp7OnfkWZMRZ5licib30icclBicj06TCcS3euL08fHVAMksv3SgRMYRAhHSnE4fzmm9A/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=2&amp;sn=042102e0f30a4f78336089a454093233&amp;chksm=bcd7b9e215c6d4cc1cdea6417e827fdb58199ffab01e4ff57aa24c647987a0091d7adcf8bc69&amp;scene=0&amp;xtrack=1#rd" target="_blank">iPhone 17只是开胃菜，苹果一大波新品在路上了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/df3c358914f782bf68ddb3c3b0f27d0f/index.html">脚本之家</a></span><time class="article-date" datetime="2025-09-29 17:00:00">发布日期：2025-09-29 17:00:00</time></div><p class="article-description">将 脚本之家 设为“星标⭐”第一时间收到文章更新本文来自电手（ID:AoMeiDianShou），未经授权不得二次转载就在安卓各大厂还忙着憋今年第一波大招时，人苹果早已处在大气层——第二轮狠活儿就要杀</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=2&amp;sn=042102e0f30a4f78336089a454093233&amp;chksm=bcd7b9e215c6d4cc1cdea6417e827fdb58199ffab01e4ff57aa24c647987a0091d7adcf8bc69&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=3&amp;sn=061f5436a561cf8e445c6586c65c1235&amp;chksm=bc5a4ecb07553ad0443df970925116daec932e22b844d43e272df0a137b33e28f73bfa7e488e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/a1gicTYmvicd8tDlRTNN5WrVXyNa2al8gkLFlFWsH9jbYicHwuJBevu3HiaicAicxAll3eWoS3TraKZMMoYKZ9BeAoEg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=3&amp;sn=061f5436a561cf8e445c6586c65c1235&amp;chksm=bc5a4ecb07553ad0443df970925116daec932e22b844d43e272df0a137b33e28f73bfa7e488e&amp;scene=0&amp;xtrack=1#rd" target="_blank">面试官：MySQL 使用多表 JOIN 有哪些危害？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/df3c358914f782bf68ddb3c3b0f27d0f/index.html">脚本之家</a></span><time class="article-date" datetime="2025-09-29 17:00:00">发布日期：2025-09-29 17:00:00</time></div><p class="article-description">脚本之家 设为“星标⭐”第一时间收到文章更新来源 | 君哥聊技术（ID：gh_1f109b82d301）多表 JOIN 是好多公司严格禁止的  SQL 写法，那它到底有哪些危害呢？今天来聊一下这个话题</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NTY1MjY0MQ==&amp;mid=2650910567&amp;idx=3&amp;sn=061f5436a561cf8e445c6586c65c1235&amp;chksm=bc5a4ecb07553ad0443df970925116daec932e22b844d43e272df0a137b33e28f73bfa7e488e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI1MzYzMjE0MQ==&amp;mid=2247516824&amp;idx=1&amp;sn=22a7a69cfe9891296d15a9bd53f74443&amp;chksm=e8d0e20f02193eada458e46c9e14265cb1c0e013d034b0394c495e59acd95e4d22c637f87f5e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5EcwYhllQOhwjibFXdn8NXJlicx5CkXImH1ytxjurOTa5AL4s0fCRce81W8I2Vv8n9FzOib9OSibfAJSRX5juJopGw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI1MzYzMjE0MQ==&amp;mid=2247516824&amp;idx=1&amp;sn=22a7a69cfe9891296d15a9bd53f74443&amp;chksm=e8d0e20f02193eada458e46c9e14265cb1c0e013d034b0394c495e59acd95e4d22c637f87f5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Kotlin 与 ArkTS 交互性能与效率优化实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/8c3665c80f252c1992ad12e6e3161f4f/index.html">字节跳动技术团队</a></span><time class="article-date" datetime="2025-09-29 17:01:40">发布日期：2025-09-29 17:01:40</time></div><p class="article-description">本文编写：@吴霖鹏合作伙伴：@王明哲、@刘潇背景ByteKMP 是字节内部基于 KMP(Kotlin Multiplatform) 建设的客户端跨平台方案，希望通过 KMP 技术实现 Android、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI1MzYzMjE0MQ==&amp;mid=2247516824&amp;idx=1&amp;sn=22a7a69cfe9891296d15a9bd53f74443&amp;chksm=e8d0e20f02193eada458e46c9e14265cb1c0e013d034b0394c495e59acd95e4d22c637f87f5e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=1&amp;sn=c8aadb19c712d69a9303126abe1bb945&amp;chksm=c3251dae9a7ddd7cccb23f9dfb0dfac46cab62e02393657204fcb4c2cefa84fd1b029549a694&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/q7kM1wTg0eiaaIP2DwYIwBhnJTKELbzBmPokRFVSTSNomM2XoGBgPTZ2zjFTwmicMFBay3PbR0glERZjllj6TshA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=1&amp;sn=c8aadb19c712d69a9303126abe1bb945&amp;chksm=c3251dae9a7ddd7cccb23f9dfb0dfac46cab62e02393657204fcb4c2cefa84fd1b029549a694&amp;scene=0&amp;xtrack=1#rd" target="_blank">以开发者为核，共筑智能世界生态新未来</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3b398f1fc784a46f612c14e0fd9c4b1f/index.html">CSDN</a></span><time class="article-date" datetime="2025-09-29 14:34:58">发布日期：2025-09-29 14:34:58</time></div><p class="article-description">智能时代的技术变革早已跳出“单点突破” 的局限，当人工智能与金融、交通、能源等千行百业深度融合时，催生的是海量个性化、场景化的需求——这些需求既需要底层算力的灵活适配，也依赖上层应用的定制化开发，其复</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=1&amp;sn=c8aadb19c712d69a9303126abe1bb945&amp;chksm=c3251dae9a7ddd7cccb23f9dfb0dfac46cab62e02393657204fcb4c2cefa84fd1b029549a694&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=2&amp;sn=81fbf956071fbec4874c9fdfc7998bdd&amp;chksm=c3652f3e135c68bf29fda4feff11eb35c9a212769e542f036c787ff634a15538bd8107de5b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/q7kM1wTg0ehHaQXWMxgjRnScib6Ecl73yx8crGOgI3tECoVOLM8mCHGDHqHPhAwOt8SffhNXticAVcdLYpj04PFA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=2&amp;sn=81fbf956071fbec4874c9fdfc7998bdd&amp;chksm=c3652f3e135c68bf29fda4feff11eb35c9a212769e542f036c787ff634a15538bd8107de5b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">三个月裁员11000+人！CEO给全球70+万员工下「最后通牒」：学会AI的留下，学不会的走人</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3b398f1fc784a46f612c14e0fd9c4b1f/index.html">CSDN</a></span><time class="article-date" datetime="2025-09-29 14:34:58">发布日期：2025-09-29 14:34:58</time></div><p class="article-description">整理 | 郑丽媛出品 | CSDN（ID：CSDNnews）上周，全球最大的科技咨询公司之一埃森哲（Accenture） 公布了最新财报，并对外明确了一项颇具争议的战略：如果员工无法掌握AI技能，那么</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=2&amp;sn=81fbf956071fbec4874c9fdfc7998bdd&amp;chksm=c3652f3e135c68bf29fda4feff11eb35c9a212769e542f036c787ff634a15538bd8107de5b7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=3&amp;sn=117594cacc90bc9b8ce51cabb486e383&amp;chksm=c334a451ba8f5c6df66a490d32fee2a8ccebbad8df364184a270e49498a2addd713e2f135d6a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/q7kM1wTg0ehHaQXWMxgjRnScib6Ecl73yZ657XiaUzIibnSSIFSHEODpfdzAyuicwpzj3zRycWzCNUUUbxnp7vCfgg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=3&amp;sn=117594cacc90bc9b8ce51cabb486e383&amp;chksm=c334a451ba8f5c6df66a490d32fee2a8ccebbad8df364184a270e49498a2addd713e2f135d6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">“10倍速度，0倍理解？”AI代写代码的那些坑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3b398f1fc784a46f612c14e0fd9c4b1f/index.html">CSDN</a></span><time class="article-date" datetime="2025-09-29 14:34:58">发布日期：2025-09-29 14:34:58</time></div><p class="article-description">2025 年，AI 编程助手已经能在几秒钟内写出成百上千行代码，看起来好像能把开发效率提升好几倍。但真实情况并没有那么简单——写代码只是软件开发的一小部分，理解需求、设计架构、测试验证、团队协作才是大</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247823025&amp;idx=3&amp;sn=117594cacc90bc9b8ce51cabb486e383&amp;chksm=c334a451ba8f5c6df66a490d32fee2a8ccebbad8df364184a270e49498a2addd713e2f135d6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490145&amp;idx=1&amp;sn=5a0d4ea90d8cdfced980836965e1df3d&amp;chksm=c0944978c8befd56873df4e847608342d97fdcb9660057cecfbd5a8de92e5286450a3dcbf9bb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UCBunT7CibYZGKKGibQ11iaAsicpXFstzIrbIhs0d9BdEqial4L6pwddia7DsXMPHmbEvYxvCg5y1EP6zhI3YX8icP8PQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490145&amp;idx=1&amp;sn=5a0d4ea90d8cdfced980836965e1df3d&amp;chksm=c0944978c8befd56873df4e847608342d97fdcb9660057cecfbd5a8de92e5286450a3dcbf9bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">掌握Rust十大核心概念，提升工程能力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb805035657334107a0620e58aeacd9f/index.html">Rust开发笔记</a></span><time class="article-date" datetime="2025-09-29 13:19:56">发布日期：2025-09-29 13:19:56</time></div><p class="article-description">Rust作为一门现代系统编程语言，凭借其独特的设计理念和强大的工具链，正逐渐成为构建高性能、高可靠性软件的首选。它不仅解决了传统系统编程中常见的内存安全和并发问题，还通过一系列创新概念提升了代码的可维</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247490145&amp;idx=1&amp;sn=5a0d4ea90d8cdfced980836965e1df3d&amp;chksm=c0944978c8befd56873df4e847608342d97fdcb9660057cecfbd5a8de92e5286450a3dcbf9bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjI3ODkyNQ==&amp;mid=2247497670&amp;idx=1&amp;sn=f443437b695f85196e11573c6343583f&amp;chksm=c33d69ca94378b15b115ec2f773fd11b5c36736cfbb461d83b5e8231e89d3c560b787b1486da&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/CibM5VmPwqwD3Qib5k07HcAlvGyLHkwFK6W1XjEazKGz7gVFujicFnQJ3Fq4iacKzPUy0FV1iaiaLB7Yw7KSkddyFr5g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjI3ODkyNQ==&amp;mid=2247497670&amp;idx=1&amp;sn=f443437b695f85196e11573c6343583f&amp;chksm=c33d69ca94378b15b115ec2f773fd11b5c36736cfbb461d83b5e8231e89d3c560b787b1486da&amp;scene=0&amp;xtrack=1#rd" target="_blank">别再靠libuv了：这个C++11定时器设计认知让你秒懂千万级并发</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9bcc597d1870fec628549ffc0374d382/index.html">讳疾忌医-note</a></span><time class="article-date" datetime="2025-09-29 11:40:21">发布日期：2025-09-29 11:40:21</time></div><p class="article-description">创作不易，方便的话点点关注，谢谢点击上方“讳疾忌医-note”，选择“关注/置顶/星标公众号” 干货福利，第一时间送达！最近有小伙伴说没有收到当天的文章推送，这是因为微信更改了推送机制，导致没有星标公</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzNjI3ODkyNQ==&amp;mid=2247497670&amp;idx=1&amp;sn=f443437b695f85196e11573c6343583f&amp;chksm=c33d69ca94378b15b115ec2f773fd11b5c36736cfbb461d83b5e8231e89d3c560b787b1486da&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=1&amp;sn=b1464624c5d4ae1120c7076edcd161bb&amp;chksm=bf088739f69df68cc16d6439429874ed39e88929b7652f817545405eb7c4c5a440ac96d2b78e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/dkwuWwLoRKib8dWSAA6qChAarXjEslnJYKvrXMSGZSSMcibyZ5kTHYuiaVRd0kXdfo8q8D3LKIiaCSOZBVCBbUmD4Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=1&amp;sn=b1464624c5d4ae1120c7076edcd161bb&amp;chksm=bf088739f69df68cc16d6439429874ed39e88929b7652f817545405eb7c4c5a440ac96d2b78e&amp;scene=0&amp;xtrack=1#rd" target="_blank">澳大利亚认为GitHub存在“危害未成年人”的风险</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/54759c04b5d5e291f307ba6bbe8faa62/index.html">OSC开源社区</a></span><time class="article-date" datetime="2025-09-29 11:00:00">发布日期：2025-09-29 11:00:00</time></div><p class="article-description">根据 Cybernews 的报道，澳大利亚将于 2025 年 12 月 10 日 起实施新规，禁止 16 岁以下青少年使用被认定为对儿童有害的社交媒体。除了常见的 Facebook、Instagram</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=1&amp;sn=b1464624c5d4ae1120c7076edcd161bb&amp;chksm=bf088739f69df68cc16d6439429874ed39e88929b7652f817545405eb7c4c5a440ac96d2b78e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=2&amp;sn=897bff33d6e14d27fce996ac3402dad1&amp;chksm=bf8206e978ece613dcd2454d8fa516b982d3385ae3917d71f0031fe792806bb3dc6e9c108976&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/dkwuWwLoRKibdgLr2QMfHyCr4iaceTxOyWw0ibNYNuiaRiaiahia42xWW3es8dIG0slju8qaicib0lICMpfKDA8HeAU2PIQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=2&amp;sn=897bff33d6e14d27fce996ac3402dad1&amp;chksm=bf8206e978ece613dcd2454d8fa516b982d3385ae3917d71f0031fe792806bb3dc6e9c108976&amp;scene=0&amp;xtrack=1#rd" target="_blank">共筑生态繁荣 | 鸿蒙达人招募计划</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/54759c04b5d5e291f307ba6bbe8faa62/index.html">OSC开源社区</a></span><time class="article-date" datetime="2025-09-29 11:00:00">发布日期：2025-09-29 11:00:00</time></div><p class="article-description">当数字浪潮席卷产业革命，鸿蒙生态正以智慧互联的基因拓展着智能世界的边界。从终端设备的无缝协同到千行万业的场景创新，鸿蒙生态这片土壤的繁荣，从来都不是单点突破的奇迹，而是无数创新者以战略远见共绘的蓝图。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232239&amp;idx=2&amp;sn=897bff33d6e14d27fce996ac3402dad1&amp;chksm=bf8206e978ece613dcd2454d8fa516b982d3385ae3917d71f0031fe792806bb3dc6e9c108976&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506291&amp;idx=1&amp;sn=9132655c237950f57a951f8b69d8374d&amp;chksm=9eb64b1fcdb918cbb662ab7cc38df1b492c380cb157f3778ad24b558ea523f1262586047b61b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/k2FwYYrGoDn3z9icPiafftfWUu4BZGVhd2bpLhZ3YxNEUcjsD9L6LYWtaliaedcKDotdTahz1o1Nbjbzev8tn8hSQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506291&amp;idx=1&amp;sn=9132655c237950f57a951f8b69d8374d&amp;chksm=9eb64b1fcdb918cbb662ab7cc38df1b492c380cb157f3778ad24b558ea523f1262586047b61b&amp;scene=0&amp;xtrack=1#rd" target="_blank">GitHub 上最牛逼的 OCR 开源项目，5万人点赞！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2025-09-29 09:00:00">发布日期：2025-09-29 09:00:00</time></div><p class="article-description">在大模型刷屏的今天，似乎无论什么任务都可以 all in 大模型，但这真的是最好的解决方案吗？今天我想聊点可能被大家冷落的好东西。当大模型致力于卷精度、拼参数量时，其实有一个能决定AI理解能力的关键任</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247506291&amp;idx=1&amp;sn=9132655c237950f57a951f8b69d8374d&amp;chksm=9eb64b1fcdb918cbb662ab7cc38df1b492c380cb157f3778ad24b558ea523f1262586047b61b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692303&amp;idx=1&amp;sn=f574a69e187ac887a57ead6a912dff5d&amp;chksm=eb55960390d5377156148577be28e9f93cbf68b864daa32dc2f2edb333e9cdd6aece414345cf&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/VY8SELNGe94lk15v3CZq71sh3Ykqdt5TI5SYEAdempAx4TtZFkm2VUQ6tyBBwiamZG17v6icSqsyDIZUOPTwfBdQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692303&amp;idx=1&amp;sn=f574a69e187ac887a57ead6a912dff5d&amp;chksm=eb55960390d5377156148577be28e9f93cbf68b864daa32dc2f2edb333e9cdd6aece414345cf&amp;scene=0&amp;xtrack=1#rd" target="_blank">与Cursor结对编程，掌握这个方法效率起飞！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/450b975445f1f132ebb3c53fb3e2b49d/index.html">腾讯云开发者</a></span><time class="article-date" datetime="2025-09-29 08:45:00">发布日期：2025-09-29 08:45:00</time></div><p class="article-description">👉目录1 前言2 与 AI 协同的方式3 不同场景下的AI实践4 提示词工程（Prompt Engineering）5 上下文工程（Context Engineering）6 个人观点7 结语本文系统</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2NDU4OTExOQ==&amp;mid=2247692303&amp;idx=1&amp;sn=f574a69e187ac887a57ead6a912dff5d&amp;chksm=eb55960390d5377156148577be28e9f93cbf68b864daa32dc2f2edb333e9cdd6aece414345cf&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508827&amp;idx=1&amp;sn=bb373a00ba71ea65f4b31441ff3d56cb&amp;chksm=ce7142fcd61989879cd5115b364be203b18f92d14bc67c3f8b3b08e8969aaaecc683dcdeb9aa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OmCbZ5JK30FF2vcF6wE97he0r2SkgwCKAFlxycEtlzw75gVEkyRUsXuOKRw5XhkhzxeNSMDCZvFSHr6u2xbRbg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508827&amp;idx=1&amp;sn=bb373a00ba71ea65f4b31441ff3d56cb&amp;chksm=ce7142fcd61989879cd5115b364be203b18f92d14bc67c3f8b3b08e8969aaaecc683dcdeb9aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">淘天联合爱橙开源深度学习框架RecIS，专为超大规模稀疏+稠密计算设计</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/bb2c31f2e600240096d4b6c619ccf775/index.html">阿里技术</a></span><time class="article-date" datetime="2025-09-29 08:30:00">发布日期：2025-09-29 08:30:00</time></div><p class="article-description">这是2025年的第110篇文章（ 本文阅读时间：15分钟 ）RecIS是一个专为超大规模稀疏-稠密计算设计的统一架构深度学习开源框架，由爱橙科技智能引擎团队与淘天集团算法技术、阿里妈妈技术团队联合推出</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg4NTczNzg2OA==&amp;mid=2247508827&amp;idx=1&amp;sn=bb373a00ba71ea65f4b31441ff3d56cb&amp;chksm=ce7142fcd61989879cd5115b364be203b18f92d14bc67c3f8b3b08e8969aaaecc683dcdeb9aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553382&amp;idx=1&amp;sn=12550abdd5a77903d831a91c4c3f5863&amp;chksm=e8db40b4ff9a80c60463f1cc39f8eec7c91e01158275c27bc0bff3807ad098fdb7978d00bedd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/Z6bicxIx5naKMMh0hcVrtKXuZlExMibTKhicSiaUsibzfibZ4GkMFAXbQz3d2mcNicMcQToa5yLIVDvTeDpM31LeWnevw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553382&amp;idx=1&amp;sn=12550abdd5a77903d831a91c4c3f5863&amp;chksm=e8db40b4ff9a80c60463f1cc39f8eec7c91e01158275c27bc0bff3807ad098fdb7978d00bedd&amp;scene=0&amp;xtrack=1#rd" target="_blank">一场由AI拯救的数据重构之战</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/15cb3cb3f3936c2b4ea943a483aecb84/index.html">阿里云开发者</a></span><time class="article-date" datetime="2025-09-29 08:30:00">发布日期：2025-09-29 08:30:00</time></div><p class="article-description">本文作者：畅月、化溟、景廷、言亭、元执一、引言：数据研发的烦恼又是一个美好的周一上午，我们的校招新人小D同学来到了工位，刚打开电脑就收到了一条上周遗留的工单消息来催赶紧解决，原来是有业务方看不懂宽表上</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzOTU0NTQ0MA==&amp;mid=2247553382&amp;idx=1&amp;sn=12550abdd5a77903d831a91c4c3f5863&amp;chksm=e8db40b4ff9a80c60463f1cc39f8eec7c91e01158275c27bc0bff3807ad098fdb7978d00bedd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991016&amp;idx=1&amp;sn=ee66088190132964c6b280a91862c519&amp;chksm=f37704fdaa2ea322e401ae9c6566f44f4d1bc4f7e23f7a9c7ccc9bf7c9131b90d6e9df26c76a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/NjA8gwicXyeJyTHjvlTuwHuTJrl2kGjaoiar32eibKxVUGXhRUB5vWP4eibsoh1y3X4rZNzbKxJ2vM17zoE9VCVaIA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991016&amp;idx=1&amp;sn=ee66088190132964c6b280a91862c519&amp;chksm=f37704fdaa2ea322e401ae9c6566f44f4d1bc4f7e23f7a9c7ccc9bf7c9131b90d6e9df26c76a&amp;scene=0&amp;xtrack=1#rd" target="_blank">全自动AI内容工厂！全网内容到公众号一键转化，内容创作效率提升10倍！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ca412d192e267c3197fcdac0ae98d7b9/index.html">未闻Code</a></span><time class="article-date" datetime="2025-09-28 21:10:09">发布日期：2025-09-28 21:10:09</time></div><p class="article-description">在AI时代，内容运营是战场：X/WeiBo上AI趋势瞬息万变，网站文章海量却难筛选，手动抓取、总结、排版、发布，一周下来可能只产出一篇高质量公众号。开源社区里不断冒出各种工具，甚至连论文更新的频率都</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MzEwNTY3OQ==&amp;mid=2648991016&amp;idx=1&amp;sn=ee66088190132964c6b280a91862c519&amp;chksm=f37704fdaa2ea322e401ae9c6566f44f4d1bc4f7e23f7a9c7ccc9bf7c9131b90d6e9df26c76a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247485036&amp;idx=1&amp;sn=71dcfc8ff6f651604bf97f9bdb88b026&amp;chksm=c24bf472470031fd192b24154401c780628ae2d9c6d901f818e358ce85248a93fdfdc844f237&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/IEBCD2JTx8LBNXOhpVVeK7B77ib5Yn4TdCJl0z1Se243jEwYQR77U3YAKickVJhgqa6kZBW5yXdEhphHib4k9R8TA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247485036&amp;idx=1&amp;sn=71dcfc8ff6f651604bf97f9bdb88b026&amp;chksm=c24bf472470031fd192b24154401c780628ae2d9c6d901f818e358ce85248a93fdfdc844f237&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust + Python 强强联合：内存省97%，速度翻倍的秘密在这里！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d9ec234a6e62db2f5f7cc3832d0928b4/index.html">Rust技术前沿</a></span><time class="article-date" datetime="2025-09-28 17:14:00">发布日期：2025-09-28 17:14:00</time></div><p class="article-description">如果你的 Python 代码运行得不够快，你可以选择用其他语言来加速它。其中一种方法是使用 Rust 来编写扩展模块。Rust 有着现代化的工具链，包括一个包管理器 Cargo 和内置的构建系统。更重</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0Njg2NTg2OA==&amp;mid=2247485036&amp;idx=1&amp;sn=71dcfc8ff6f651604bf97f9bdb88b026&amp;chksm=c24bf472470031fd192b24154401c780628ae2d9c6d901f818e358ce85248a93fdfdc844f237&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzUxMDQxMDMyNg==&amp;mid=2247517996&amp;idx=1&amp;sn=f61baf85b84703755474024c976bd9fc&amp;chksm=f88f8724afe59365824e9458be933f3c026e0dd3ec12cbc435ff0ec7e5e0466eeadad16094e2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/Re4KW51oYRpiavvjHk9DnOLFxXMiblvKLwbk2Wg8cUVQaYfr21N1rRkNd2z7icUDyp95TICTNJScn0qk8GeyIfkjw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzUxMDQxMDMyNg==&amp;mid=2247517996&amp;idx=1&amp;sn=f61baf85b84703755474024c976bd9fc&amp;chksm=f88f8724afe59365824e9458be933f3c026e0dd3ec12cbc435ff0ec7e5e0466eeadad16094e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">小米汽车座舱声学语音技术喜获“2025汽车智能座舱领先科技成果”奖</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a71c4f3170de7ab655e077f26ce022b0/index.html">小米技术</a></span><time class="article-date" datetime="2025-09-28 17:00:00">发布日期：2025-09-28 17:00:00</time></div><p class="article-description">2025 年 9 月 16 日，由中国汽车工程学会和江苏省科学技术协会联合主办的2025国际汽车智能座舱大会（ICIC 2025）在苏州环秀湖畔盛大开幕。“汽车智能座舱领先科技成果”评选答辩于本届20</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzUxMDQxMDMyNg==&amp;mid=2247517996&amp;idx=1&amp;sn=f61baf85b84703755474024c976bd9fc&amp;chksm=f88f8724afe59365824e9458be933f3c026e0dd3ec12cbc435ff0ec7e5e0466eeadad16094e2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232228&amp;idx=1&amp;sn=81038a63a5696e704f0c087fdf5a1299&amp;chksm=bf94b134bfb684084f0fc92bf8b4b2910fa134d6a0d6f2957cee200b61dac0e77e704414b302&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/dkwuWwLoRKibdgLr2QMfHyCr4iaceTxOyWbhYUcwOcD2VibwEowwicsGF7iaGEZoIfiadI2Y91g7nMviaia7ibh0lCEn1Xw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232228&amp;idx=1&amp;sn=81038a63a5696e704f0c087fdf5a1299&amp;chksm=bf94b134bfb684084f0fc92bf8b4b2910fa134d6a0d6f2957cee200b61dac0e77e704414b302&amp;scene=0&amp;xtrack=1#rd" target="_blank">macOS 26运行“Electron系应用”导致系统全局性严重卡顿</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/54759c04b5d5e291f307ba6bbe8faa62/index.html">OSC开源社区</a></span><time class="article-date" datetime="2025-09-28 16:46:00">发布日期：2025-09-28 16:46:00</time></div><p class="article-description">开发者 ToxicLand 反馈称，基于 Electron 开发的软件在 macOS 26（Tahoe RC） 系统中会导致“严重全局卡顿（huge system-wide lag）”问题。实测设备为</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzM0MjcyMQ==&amp;mid=2650232228&amp;idx=1&amp;sn=81038a63a5696e704f0c087fdf5a1299&amp;chksm=bf94b134bfb684084f0fc92bf8b4b2910fa134d6a0d6f2957cee200b61dac0e77e704414b302&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247822963&amp;idx=1&amp;sn=cbf40893a09d4d4249820e5679bfbcd0&amp;chksm=c380914b7417deec81cb2074ebd6100984272b83d79b8c3037c60f81046cfd16d04c403b346f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/q7kM1wTg0eiaaIP2DwYIwBhnJTKELbzBma9nWPLTIBlJ8AicuRkEOKNhumh7ib0SiaVUj8ibD9dw57RvhmDINmPdQDg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247822963&amp;idx=1&amp;sn=cbf40893a09d4d4249820e5679bfbcd0&amp;chksm=c380914b7417deec81cb2074ebd6100984272b83d79b8c3037c60f81046cfd16d04c403b346f&amp;scene=0&amp;xtrack=1#rd" target="_blank">最好的时代，也是最坏的时代：深度解析华为数据存储的AI突围之路</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/3b398f1fc784a46f612c14e0fd9c4b1f/index.html">CSDN</a></span><time class="article-date" datetime="2025-09-28 14:22:41">发布日期：2025-09-28 14:22:41</time></div><p class="article-description">“这是最好的时代，也是最坏的时代。”在近日举办的华为全联接大会2025数据存储峰会上，华为公司副总裁、数据存储产品线总裁周跃峰博士以狄更斯的名言开场，分享了华为对AI时代数据存储产业变革的深刻思考。“</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDY1NDgyOQ==&amp;mid=2247822963&amp;idx=1&amp;sn=cbf40893a09d4d4249820e5679bfbcd0&amp;chksm=c380914b7417deec81cb2074ebd6100984272b83d79b8c3037c60f81046cfd16d04c403b346f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_89.html" class="pagination-button pagination-prev">上一页</a><a href="index_91.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

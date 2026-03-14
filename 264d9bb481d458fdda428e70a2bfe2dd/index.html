@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DeepSeek</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485726&amp;idx=1&amp;sn=7f5677c06000e9759574057c91a86a49&amp;chksm=c2c741e8d5b4cd8c0ed6f08d2b9c4ffad6ee4ba2de0c9785ed88c666d96bdf3e03c8945e8a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/T5aPbYwzUBNoC2SKMfeqjcObcRnRaexpJyykk2KoCs9G7gg1WrbnVkwBjPePmutaaztmuufaTibcbPwPhUiau7GBicLiaICMCV0KTQPnNMXxHuc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485726&amp;idx=1&amp;sn=7f5677c06000e9759574057c91a86a49&amp;chksm=c2c741e8d5b4cd8c0ed6f08d2b9c4ffad6ee4ba2de0c9785ed88c666d96bdf3e03c8945e8a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">骏骥迎春，同驰新境 | DeepSeek 丙午新年春节 AI 贺词</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2026-02-16 18:00:00">发布日期：2026-02-16 18:00:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485726&amp;idx=1&amp;sn=7f5677c06000e9759574057c91a86a49&amp;chksm=c2c741e8d5b4cd8c0ed6f08d2b9c4ffad6ee4ba2de0c9785ed88c666d96bdf3e03c8945e8a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485698&amp;idx=1&amp;sn=dda3056163436134b46ce6ceeb243f9a&amp;chksm=c2900babf7d26f58d7a119f61c3af4719e36a1a5d9f7cb09fa2b2a7ae6fe9563c202cd0698c6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkmkWUpqHRFeNvCZJ4dbmZuo8FXCEKQFL8ibtQnXubHmZ3ofy46yxPwA24BfF2tXadEJ8OtticxicvnDA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485698&amp;idx=1&amp;sn=dda3056163436134b46ce6ceeb243f9a&amp;chksm=c2900babf7d26f58d7a119f61c3af4719e36a1a5d9f7cb09fa2b2a7ae6fe9563c202cd0698c6&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek V3.2 正式版：强化 Agent 能力，融入思考推理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-12-01 18:52:21">发布日期：2025-12-01 18:52:21</time></div><p class="article-description">两个月前，我们发布了实验性的 DeepSeek-V3.2-Exp，并收到了众多热心用户反馈的对比测试结果。目前未发现 V3.2-Exp 在任何特定场景中显著差于 V3.1-Terminus，这验证了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485698&amp;idx=1&amp;sn=dda3056163436134b46ce6ceeb243f9a&amp;chksm=c2900babf7d26f58d7a119f61c3af4719e36a1a5d9f7cb09fa2b2a7ae6fe9563c202cd0698c6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485670&amp;idx=1&amp;sn=a5b347ee6f39b646e21e0c649f197c1f&amp;chksm=c255d8d21fd7f0f53554dd112a4c0c30bf5f37b2f348d0f3ede09b5850d24bbe740085050592&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkmiaA2zOcIBnlSe6w5RxdV6SNCXRwbyZXIZEX3iac3tKtq6DJPcHIJvNPru2xt3waF4aLia6aibZo2tVA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485670&amp;idx=1&amp;sn=a5b347ee6f39b646e21e0c649f197c1f&amp;chksm=c255d8d21fd7f0f53554dd112a4c0c30bf5f37b2f348d0f3ede09b5850d24bbe740085050592&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek-V3.2-Exp 发布，训练推理提效，API 同步降价</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-09-29 18:01:39">发布日期：2025-09-29 18:01:39</time></div><p class="article-description">今天，我们正式发布 DeepSeek-V3.2-Exp 模型，这是一个实验性（Experimental）的版本。作为迈向新一代架构的中间步骤，V3.2-Exp 在 V3.1-Terminus 的基础上</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485670&amp;idx=1&amp;sn=a5b347ee6f39b646e21e0c649f197c1f&amp;chksm=c255d8d21fd7f0f53554dd112a4c0c30bf5f37b2f348d0f3ede09b5850d24bbe740085050592&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485658&amp;idx=1&amp;sn=f615a233b0293782dee10d6db2311e23&amp;chksm=c2a7f6bf0b90c416824b0d0f134867645e9501bc015868c38cdc07e63c4de37a63c5c64648d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkmN24ic1edsuJZ3nZyicOvFlIj6ycewibuwWM6WFoHVibx0bnN7TZAeUYHLYauWfLg6biaNpjmIQDN3agw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485658&amp;idx=1&amp;sn=f615a233b0293782dee10d6db2311e23&amp;chksm=c2a7f6bf0b90c416824b0d0f134867645e9501bc015868c38cdc07e63c4de37a63c5c64648d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek-V3.1 版本更新</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-09-22 21:15:07">发布日期：2025-09-22 21:15:07</time></div><p class="article-description">DeepSeek-V3.1 现已更新至 DeepSeek-V3.1-Terminus 版本。此次更新在保持模型原有能力的基础上，针对用户反馈的问题进行了改进，包括：语言一致性：缓解了中英文混杂、偶发异</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485658&amp;idx=1&amp;sn=f615a233b0293782dee10d6db2311e23&amp;chksm=c2a7f6bf0b90c416824b0d0f134867645e9501bc015868c38cdc07e63c4de37a63c5c64648d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485641&amp;idx=1&amp;sn=eee94eeeb44501336f2703578c5c307f&amp;chksm=c28fd9fe2bf143e6c46da6df02bb94e99309b5d39e94fb397b908cf924833b6126c7ab1722f6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkkzHicnc3yYQtiaReJIG84YPl0xI82y1Sy9kl4uCmKwichxZLuK7BtiaBUlCT4rwiaqqXUpOvQgebsIJLA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485641&amp;idx=1&amp;sn=eee94eeeb44501336f2703578c5c307f&amp;chksm=c28fd9fe2bf143e6c46da6df02bb94e99309b5d39e94fb397b908cf924833b6126c7ab1722f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek 关于 AI 生成合成内容标识的公告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-09-01 17:30:43">发布日期：2025-09-01 17:30:43</time></div><p class="article-description">DeepSeek 始终高度重视 AI 的安全问题。为贯彻落实《人工智能生成合成内容标识办法》（2025 年 9 月 1 日起施行）及《网络安全技术 人工智能生成合成内容标识方法》等国家标准的相关要求，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485641&amp;idx=1&amp;sn=eee94eeeb44501336f2703578c5c307f&amp;chksm=c28fd9fe2bf143e6c46da6df02bb94e99309b5d39e94fb397b908cf924833b6126c7ab1722f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485630&amp;idx=1&amp;sn=2957eed7db6d3ecfc75b1dd18404225d&amp;chksm=c22174286f4d4cae7c2b1a4f04aca1c02d3c3faf78a7ab3be9979befe1ac092159e5e082ae63&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwklCXHy2YlMmYQGgN68DIDCA4KR1oeC4KgFe70a6Ln215PBSNhicmr7ELWxTTqCRSdX2NjCm4ttZ1lQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485630&amp;idx=1&amp;sn=2957eed7db6d3ecfc75b1dd18404225d&amp;chksm=c22174286f4d4cae7c2b1a4f04aca1c02d3c3faf78a7ab3be9979befe1ac092159e5e082ae63&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek-V3.1 发布，迈向 Agent 时代的第一步</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-08-21 14:25:01">发布日期：2025-08-21 14:25:01</time></div><p class="article-description">今天，我们正式发布 DeepSeek-V3.1。本次升级包含以下主要变化：混合推理架构：一个模型同时支持思考模式与非思考模式；更高的思考效率：相比 DeepSeek-R1-0528，DeepSeek-</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485630&amp;idx=1&amp;sn=2957eed7db6d3ecfc75b1dd18404225d&amp;chksm=c22174286f4d4cae7c2b1a4f04aca1c02d3c3faf78a7ab3be9979befe1ac092159e5e082ae63&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485612&amp;idx=1&amp;sn=5f2055ef2c38762a6d2f2b6059fd292f&amp;chksm=c28d3222233d452507d6e508e65d54850e9a09f81282e161d02867b1870f0e3880a13fc7e50a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkn1ypP8EWib4r36XeQlrkXBus6pPo7d5rGC4P4wUfQJRXW1Ba1MJNUYtp3xeyTlM4Lh0IAPRh40IhA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485612&amp;idx=1&amp;sn=5f2055ef2c38762a6d2f2b6059fd292f&amp;chksm=c28d3222233d452507d6e508e65d54850e9a09f81282e161d02867b1870f0e3880a13fc7e50a&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek-R1 更新，思考更深，推理更强</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-05-29 20:06:56">发布日期：2025-05-29 20:06:56</time></div><p class="article-description">DeepSeek R1 模型已完成小版本升级，当前版本为 DeepSeek-R1-0528。用户通过官方网站、APP 或小程序进入对话界面后，开启“深度思考”功能即可体验最新版本。API 也已同步更新</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485612&amp;idx=1&amp;sn=5f2055ef2c38762a6d2f2b6059fd292f&amp;chksm=c28d3222233d452507d6e508e65d54850e9a09f81282e161d02867b1870f0e3880a13fc7e50a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485588&amp;idx=1&amp;sn=bd0b603d9eb14ba39030ee41b79bc0e0&amp;chksm=c251eff7fda0f214d0bca8d026eadb02b409e4c0e5eb47a730ddb70ce35139b112def63e4e08&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkm9XAlB8yvX46GqTRb2qfvtC7blsbkxcuDI4zG0uCibqGM0hCq55SDpicamia0K67gL1btBspgGIDj3Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485588&amp;idx=1&amp;sn=bd0b603d9eb14ba39030ee41b79bc0e0&amp;chksm=c251eff7fda0f214d0bca8d026eadb02b409e4c0e5eb47a730ddb70ce35139b112def63e4e08&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek-V3 模型更新，各项能力全面进阶</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-03-25 21:23:55">发布日期：2025-03-25 21:23:55</time></div><p class="article-description">DeepSeek V3 模型已完成小版本升级，目前版本号 DeepSeek-V3-0324，用户登录官方网页、APP、小程序进入对话界面后，关闭深度思考即可体验。API 接口和使用方式保持不变。如非复</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485588&amp;idx=1&amp;sn=bd0b603d9eb14ba39030ee41b79bc0e0&amp;chksm=c251eff7fda0f214d0bca8d026eadb02b409e4c0e5eb47a730ddb70ce35139b112def63e4e08&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485530&amp;idx=1&amp;sn=e4dc0994736a365dd1e36167d2baed7f&amp;chksm=c2818c8b778627fae34485ea625e0cb813c576cf13d63d542769809cf76f62fcffa6436830bb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/pkWC42uvwkn70RAeO9diaNvAViaDfiacPCDiaAwvxqqJcZ4hiaSXNiaSdDct98FtFZ8Hlv4heE4zt6IvhDKPFZ9Swdkw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485530&amp;idx=1&amp;sn=e4dc0994736a365dd1e36167d2baed7f&amp;chksm=c2818c8b778627fae34485ea625e0cb813c576cf13d63d542769809cf76f62fcffa6436830bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">DeepSeek API 错峰优惠，R1 价格降至1/4</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/264d9bb481d458fdda428e70a2bfe2dd/index.html">DeepSeek</a></span><time class="article-date" datetime="2025-02-26 19:15:33">发布日期：2025-02-26 19:15:33</time></div><p class="article-description">即日起，北京时间每日 00:30 至 08:30 的夜间空闲时段，DeepSeek 开放平台推出错峰优惠活动。在此期间，API 调用价格大幅下调：DeepSeek-V3 降至原价的 50%，DeepS</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk0OTYwNzc3NQ==&amp;mid=2247485530&amp;idx=1&amp;sn=e4dc0994736a365dd1e36167d2baed7f&amp;chksm=c2818c8b778627fae34485ea625e0cb813c576cf13d63d542769809cf76f62fcffa6436830bb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>
