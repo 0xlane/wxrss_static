@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Desync InfoSec</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=1&amp;sn=88c1945092361c7fd8136c7cd0c63d7d&amp;chksm=c34ea0d78d6fe302bc40bf7160abd7b9ec4ca988374765db2816a1d2d548b038600fe36ca780&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYB1wcgg08Ghz4JlxyVVlI6AtIr4Luj1rw6eI3Irbds08tdh7UtGMvbD8MJgUb2udwZDRrMNREiacF5iaxXGW9Bme921icvibNZibx7c/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=1&amp;sn=88c1945092361c7fd8136c7cd0c63d7d&amp;chksm=c34ea0d78d6fe302bc40bf7160abd7b9ec4ca988374765db2816a1d2d548b038600fe36ca780&amp;scene=0&amp;xtrack=1#rd" target="_blank">开发者凭据经济：为什么暴露数据是供应链战争的新前线</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-05 16:05:22">发布日期：2026-04-05 16:05:22</time></div><p class="article-description">近期一系列供应链攻击事件揭示了一个令人不安的新趋势：开发者凭据经济正在成为网络犯罪的新兴蓝海市场。攻击者不再仅仅入侵软件供应链，而是系统性地利用供应链攻击来收割安全团队最信任的工具中的&quot;王国钥匙&quot;——</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=1&amp;sn=88c1945092361c7fd8136c7cd0c63d7d&amp;chksm=c34ea0d78d6fe302bc40bf7160abd7b9ec4ca988374765db2816a1d2d548b038600fe36ca780&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=2&amp;sn=1cf23d3bbd9a3c71844ad6f16b5e90b0&amp;chksm=c3c971672bfc065a1a315119bff464b7479e3935861bd78629c3c8db237b94a1b592922aed74&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYCg7YocQPWm6I7giakV0WV2l2QxNV9PSLZSLJJKn37LuCdfRp2Dn8vKTjquc5KK3RT67HibqzV9OIoJx8EUKicNCyvDJwOnAq2ibbE/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=2&amp;sn=1cf23d3bbd9a3c71844ad6f16b5e90b0&amp;chksm=c3c971672bfc065a1a315119bff464b7479e3935861bd78629c3c8db237b94a1b592922aed74&amp;scene=0&amp;xtrack=1#rd" target="_blank">从 Bing 搜索到勒索软件：Bumblebee 与 AdaptixC2 联手部署 Akira</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-05 16:05:22">发布日期：2026-04-05 16:05:22</time></div><p class="article-description">一次看似普通的 Bing 搜索，如何在 44 小时内演变为全面的勒索软件攻击？The DFIR Report 最新披露了一起真实入侵案例：攻击者通过 Bing SEO 投毒手段，将用户引导至伪造的 M</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489787&amp;idx=2&amp;sn=1cf23d3bbd9a3c71844ad6f16b5e90b0&amp;chksm=c3c971672bfc065a1a315119bff464b7479e3935861bd78629c3c8db237b94a1b592922aed74&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=1&amp;sn=d3cd4326321c27774f49ec645d46acf1&amp;chksm=c3f7be3b7449202c5ea1413f4a52b06278a39056011b2eeda2138be5156009edaa8213f1da4c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/PO9bjOzlHYAKojvsRdbdXmburolGMtm4kKibnQu1icUhznTUiaEhF5iceTJSbjwKHMqqx7YbZv9Jsiaib3iccujt69KmqItUw226bNicicMCUkVJeNtc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=1&amp;sn=d3cd4326321c27774f49ec645d46acf1&amp;chksm=c3f7be3b7449202c5ea1413f4a52b06278a39056011b2eeda2138be5156009edaa8213f1da4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">一次点击的代价：Lunar Spider 发动近两个月入侵完整分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-04 22:16:05">发布日期：2026-04-04 22:16:05</time></div><p class="article-description">一次点击的代价：Lunar Spider 如何发动近两个月的入侵来源：The DFIR Report · 2025-09-29 · 案例编号 #28761📌 核心要点攻击始于用户执行恶意 JavaSc</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=1&amp;sn=d3cd4326321c27774f49ec645d46acf1&amp;chksm=c3f7be3b7449202c5ea1413f4a52b06278a39056011b2eeda2138be5156009edaa8213f1da4c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=2&amp;sn=29aa882d0eb41dc812d8864aaf4426cd&amp;chksm=c32041507674d19b991f48edb89a8ee2a8a14894cb4767d20fb56fe46eac579df973fdc6512c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYDjibNlkwCKJknJQYUKcC6Ficlwibm7Qd8qMc5wscL4VIMB1xRtfy2Lx8mmkQEz8bibialNggJ3wEgE3okaRxTMfGwsWxVyfn3micnaw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=2&amp;sn=29aa882d0eb41dc812d8864aaf4426cd&amp;chksm=c32041507674d19b991f48edb89a8ee2a8a14894cb4767d20fb56fe46eac579df973fdc6512c&amp;scene=0&amp;xtrack=1#rd" target="_blank">从 Bing 搜索到勒索软件：Bumblebee 投递 Akira 完整分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-04 22:16:05">发布日期：2026-04-04 22:16:05</time></div><p class="article-description">从 Bing 搜索到勒索软件：Bumblebee 与 AdaptixC2 如何投递 Akira 勒索软件来源：The DFIR Report · 2025-11-04 · 案例编号 #TB36726📌</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489769&amp;idx=2&amp;sn=29aa882d0eb41dc812d8864aaf4426cd&amp;chksm=c32041507674d19b991f48edb89a8ee2a8a14894cb4767d20fb56fe46eac579df973fdc6512c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489707&amp;idx=1&amp;sn=570ead353d64a241f595b5dc32ec49d5&amp;chksm=c3b4c03c6e3b1cc958bb7aabbd3d5495b75fc9d2650998708b9f28d93bf598863f72cd0fbeb1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/PO9bjOzlHYBUbEdguvoicz4VstqTGFiaiabGGs9icAn2xA6FqCEO4UxMSDo2lJVNtzmsYxnNamY3s4ekNBMqqBIudZCYUny7Z35WRGs9yActpA0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489707&amp;idx=1&amp;sn=570ead353d64a241f595b5dc32ec49d5&amp;chksm=c3b4c03c6e3b1cc958bb7aabbd3d5495b75fc9d2650998708b9f28d93bf598863f72cd0fbeb1&amp;scene=0&amp;xtrack=1#rd" target="_blank">微软深度分析：威胁行为者将AI从工具升级为网络攻击表面</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-03 20:28:59">发布日期：2026-04-03 20:28:59</time></div><p class="article-description">在过去一年中，&quot;速度&quot;这个词代表了 AI 与网络安全交汇处的核心讨论。速度固然重要，但它并非当前威胁态势中最关键的转变。如今，从国家级威胁组织到网络犯罪团伙，攻击者正在将 AI 深度嵌入其攻击的规划、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489707&amp;idx=1&amp;sn=570ead353d64a241f595b5dc32ec49d5&amp;chksm=c3b4c03c6e3b1cc958bb7aabbd3d5495b75fc9d2650998708b9f28d93bf598863f72cd0fbeb1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489698&amp;idx=1&amp;sn=de4390b4361fc519fba77404d79e9cb2&amp;chksm=c314d63589cac10d329518633bb94526d7c566ca2c0e3b06becef4b31e5a39578603955c4fa2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYCMBbxdicyMFHEbrn3CSC1YzXic2vcBoNAvYCNWIEh49Giaeqw0kBZUcohwM9AUUOE4SEWXXXeey20pwWS3gA6ibLJ7oxesHmYwDgg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489698&amp;idx=1&amp;sn=de4390b4361fc519fba77404d79e9cb2&amp;chksm=c314d63589cac10d329518633bb94526d7c566ca2c0e3b06becef4b31e5a39578603955c4fa2&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rapid7深度分析：2025年暗网初始访问代理市场趋势、定价与论坛格局</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-02 20:24:18">发布日期：2026-04-02 20:24:18</time></div><p class="article-description">初始访问代理（Initial Access Brokers, IABs）是网络犯罪生态系统的关键组成部分，为勒索软件、数据窃取和敲诈勒索提供即插即用的基础设施。Rapid7 对 2025 年下半年五大</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489698&amp;idx=1&amp;sn=de4390b4361fc519fba77404d79e9cb2&amp;chksm=c314d63589cac10d329518633bb94526d7c566ca2c0e3b06becef4b31e5a39578603955c4fa2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=1&amp;sn=6200ce58db624337b9fb359fb0665db7&amp;chksm=c3112e874cd4e0e4db8f1a4cc37a257ab4578a8c9336fc234204a9dc2430bb5d69822ea76165&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYAnN70QLibBtcNdzukQ7gqdJ88dVLvgK8G1ibKyM336rTEEXNibBxXhHYjfluHVqus5ZtfI59wcPCAiaW7t8dxQLUwmdKbSD9F9ruU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=1&amp;sn=6200ce58db624337b9fb359fb0665db7&amp;chksm=c3112e874cd4e0e4db8f1a4cc37a257ab4578a8c9336fc234204a9dc2430bb5d69822ea76165&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rapid7深度剖析：BPFdoor内核级后门如何潜伏在电信网络中</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-01 18:20:21">发布日期：2026-04-01 18:20:21</time></div><p class="article-description">Rapid7 Labs 数月调查发现，高级中国关联威胁组织 Red Menshen 在全球电信网络中植入了前所未有的隐蔽数字&quot;休眠单元&quot;，目标包括政府网络，旨在实施高级情报收集行动。🔍 核心发现：攻击</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=1&amp;sn=6200ce58db624337b9fb359fb0665db7&amp;chksm=c3112e874cd4e0e4db8f1a4cc37a257ab4578a8c9336fc234204a9dc2430bb5d69822ea76165&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=2&amp;sn=d6f62be37a92f10ad580438803cb4ee0&amp;chksm=c35485ed5e40d2f7e966c91873cbc2d427f3937dd408c65eb6a052269b2b5047b3a03e5b7d06&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYBY3UUhTJHEeewmJnPAsDep05gP3wIalgEwNaFDZQSMCwkCtfRzyDjkicVia6T2SFRE9ib9GxbkADwrHpYehyKrcKN28icwncVQqEs/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=2&amp;sn=d6f62be37a92f10ad580438803cb4ee0&amp;chksm=c35485ed5e40d2f7e966c91873cbc2d427f3937dd408c65eb6a052269b2b5047b3a03e5b7d06&amp;scene=0&amp;xtrack=1#rd" target="_blank">Axios 供应链攻击深度剖析：维护者账户被劫持，投毒版本植入跨平台 RAT</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-04-01 18:20:21">发布日期：2026-04-01 18:20:21</time></div><p class="article-description">2026 年 3 月 31 日，全球使用最广泛的 HTTP 客户端库 Axios（周下载量超 3 亿次）遭遇供应链攻击。两个被投毒版本 axios@1.14.1 和 axios@0.30.4 通过被劫</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489632&amp;idx=2&amp;sn=d6f62be37a92f10ad580438803cb4ee0&amp;chksm=c35485ed5e40d2f7e966c91873cbc2d427f3937dd408c65eb6a052269b2b5047b3a03e5b7d06&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489567&amp;idx=1&amp;sn=5c889af11a9bc19ab48a004f33807adb&amp;chksm=c3e285dbb732fd81498424882c814d146659fe8521d887c28179ab337dbb732d7bb5e96f1d32&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYDFXkEC1JryicW4LKYdUDxJktibMf8Df95jNJxROKXu1vLEwu1cwHp4cJyemul4THXCr4X6VeLB8PWGN0leTMDPF6YKqaVTp7c9k/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489567&amp;idx=1&amp;sn=5c889af11a9bc19ab48a004f33807adb&amp;chksm=c3e285dbb732fd81498424882c814d146659fe8521d887c28179ab337dbb732d7bb5e96f1d32&amp;scene=0&amp;xtrack=1#rd" target="_blank">Axios 遭遇供应链攻击：被投毒版本植入 RAT 远控木马</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-03-31 12:05:39">发布日期：2026-03-31 12:05:39</time></div><p class="article-description">npm 生态系统再次遭受重击。全球最流行的 HTTP 客户端库 Axios（周下载量超过 1.5 亿次）被曝遭受供应链攻击——多个被投毒的版本被发布到 npm 仓库，其中嵌入了远程访问木马（RAT）。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489567&amp;idx=1&amp;sn=5c889af11a9bc19ab48a004f33807adb&amp;chksm=c3e285dbb732fd81498424882c814d146659fe8521d887c28179ab337dbb732d7bb5e96f1d32&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489546&amp;idx=1&amp;sn=c5c6a044f6ddc321b2897d9ce70a3c9b&amp;chksm=c35ae9c29ab60428f7fab57c760c53e7d625127b31837861d9c50a717811f9cf25aed275e5c0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYCgKyZH0ejBNMRibCUI0slD2hsHdmOIuCOtiaick8hiasRFk2Z2abb4iaQdhzGJibI0V1CQPacN9EFaaQ57q8dqxfsx8ibHuicx2wWUnia0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489546&amp;idx=1&amp;sn=c5c6a044f6ddc321b2897d9ce70a3c9b&amp;chksm=c35ae9c29ab60428f7fab57c760c53e7d625127b31837861d9c50a717811f9cf25aed275e5c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">Apache ActiveMQ漏洞导致LockBit勒索软件攻击事件分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-03-30 22:58:56">发布日期：2026-03-30 22:58:56</time></div><p class="article-description">Apache ActiveMQ 漏洞利用导致 LockBit 勒索软件攻击
+
+原文：The DFIR Report | 翻译整理：雨
+核心要点：攻击者利用 CVE-2023-46604 漏洞入侵 A</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489546&amp;idx=1&amp;sn=c5c6a044f6ddc321b2897d9ce70a3c9b&amp;chksm=c35ae9c29ab60428f7fab57c760c53e7d625127b31837861d9c50a717811f9cf25aed275e5c0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489519&amp;idx=1&amp;sn=d9afbc30b7030a0e40965f68d67fb144&amp;chksm=c3df31cc6b94cb77f833dd58ea98af35b14f83b45e19d91f277997758c5fb21d411d552aeb38&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/PO9bjOzlHYCIIBTA7lwavTff51F56rOceoWoUfw6sv6coIsicLxTZSTdr6syeDYiauvJLXVaeePTAoj7dU31KCsHckHWTEvia8slEa8GdqeV1Y/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489519&amp;idx=1&amp;sn=d9afbc30b7030a0e40965f68d67fb144&amp;chksm=c3df31cc6b94cb77f833dd58ea98af35b14f83b45e19d91f277997758c5fb21d411d552aeb38&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw 安全风险分析与网络流量检测方案</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-03-15 13:12:49">发布日期：2026-03-15 13:12:49</time></div><p class="article-description">OpenClaw 安全风险分析与网络流量检测方案摘要本文分析了开源个人AI助手框架 OpenClaw 在企业网络环境中可能引入的安全风险，并提供了基于 Suricata（网络入侵检测系统） 的网络流量</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489519&amp;idx=1&amp;sn=d9afbc30b7030a0e40965f68d67fb144&amp;chksm=c3df31cc6b94cb77f833dd58ea98af35b14f83b45e19d91f277997758c5fb21d411d552aeb38&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489514&amp;idx=1&amp;sn=60d5f8bdd3c9187e2eb47ba5e2787a27&amp;chksm=c3a55a63df48b971866177f8a1a691b2bc790d7ad2ec08b94d42bc17d15e3644d4f9b48e55c2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0FkfT4FgDmJcxvJjMfrAHG7333Jro1wICDQnnK70JfX2bxvibNKvziaibj6364x8l7iatsQtj49vSHE8ANQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489514&amp;idx=1&amp;sn=60d5f8bdd3c9187e2eb47ba5e2787a27&amp;chksm=c3a55a63df48b971866177f8a1a691b2bc790d7ad2ec08b94d42bc17d15e3644d4f9b48e55c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">应急案例分享-利用UEMS作为远控</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2026-01-31 18:05:46">发布日期：2026-01-31 18:05:46</time></div><p class="article-description">点击蓝字 关注我们事发某同事突然在微信工作群里发送关于补助办理以及二维码的通知。随后群里的同事以及受害者本人看到消息，判断出可疑并立刻通知到安全团队。遂上机排查。分析与排查受害者A记录同样是从网络外联</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489514&amp;idx=1&amp;sn=60d5f8bdd3c9187e2eb47ba5e2787a27&amp;chksm=c3a55a63df48b971866177f8a1a691b2bc790d7ad2ec08b94d42bc17d15e3644d4f9b48e55c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489473&amp;idx=1&amp;sn=ec8eb0aec4e26a4c5fc38941a971ac57&amp;chksm=c397a34f4c9097d983687fcadc3e312e52b2ab56580173ff1c78fe14c6812738c137c24f99ed&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0FkeuibNfp8QbA7CbicogNtWzukhMlD5TiaQSBQfnrJJfJKbnVLzha9YKsB5hkNWq9ibjm1wFS4qCibFr6fQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489473&amp;idx=1&amp;sn=ec8eb0aec4e26a4c5fc38941a971ac57&amp;chksm=c397a34f4c9097d983687fcadc3e312e52b2ab56580173ff1c78fe14c6812738c137c24f99ed&amp;scene=0&amp;xtrack=1#rd" target="_blank">从必应搜索到勒索软件：Bumblebee 和 AdaptixC2 植入 Akira</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2025-10-18 11:31:28">发布日期：2025-10-18 11:31:28</time></div><p class="article-description">jackgreen译自：https://thedfirreport.com/PART0序言    Bumblebee恶意软件自2021年底以来一直被威胁行为者用作初始访问工具。2023年，该恶意软件首</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489473&amp;idx=1&amp;sn=ec8eb0aec4e26a4c5fc38941a971ac57&amp;chksm=c397a34f4c9097d983687fcadc3e312e52b2ab56580173ff1c78fe14c6812738c137c24f99ed&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489298&amp;idx=1&amp;sn=b2c5146cf1c2f0d8692a6ec049bf30c7&amp;chksm=c3adfad82631401ae2577a6eb4f212f0f85990f1c0354c37e4d040a2c7b7fae4756f16852441&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0FkcQLYoZPLHKNVHL06jcWGfllC3n1fatE2MLibFJRUdCnuiaUm0zMEIRO5EbEmWLjzh5U3NKw6sCHia9A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489298&amp;idx=1&amp;sn=b2c5146cf1c2f0d8692a6ec049bf30c7&amp;chksm=c3adfad82631401ae2577a6eb4f212f0f85990f1c0354c37e4d040a2c7b7fae4756f16852441&amp;scene=0&amp;xtrack=1#rd" target="_blank">BlackSuit勒索活动伪造Zoom钓鱼</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2025-05-05 15:52:37">发布日期：2025-05-05 15:52:37</time></div><p class="article-description">关键要点• 2024 年 12 月发现了一个与勒索软件附属公司相关的开放目录，可能与 Fog 勒索软件组织有关。它包含用于侦察、利用、横向移动和持久性的工具和脚本。• 初始访问权限是使用泄露的 So</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489298&amp;idx=1&amp;sn=b2c5146cf1c2f0d8692a6ec049bf30c7&amp;chksm=c3adfad82631401ae2577a6eb4f212f0f85990f1c0354c37e4d040a2c7b7fae4756f16852441&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489267&amp;idx=1&amp;sn=cea8bd5568f2c8bd97c6e9d63ae82adc&amp;chksm=c3915a0dc4ea4b2506d89c209a644c56d80c8e6bb2884f128da57422cf4ba27db1e89eea5197&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0FkdVUI45oREfUBlXuGdWmytmUqTy3Il7fe3sAmhtNoLY5OGFKDZhso1SntjYaE3HPUEjyhlFl2BzEA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489267&amp;idx=1&amp;sn=cea8bd5568f2c8bd97c6e9d63ae82adc&amp;chksm=c3915a0dc4ea4b2506d89c209a644c56d80c8e6bb2884f128da57422cf4ba27db1e89eea5197&amp;scene=0&amp;xtrack=1#rd" target="_blank">BlackSuit勒索活动伪造Zoom钓鱼</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2025-04-04 21:44:21">发布日期：2025-04-04 21:44:21</time></div><p class="article-description">关键要点• 攻击者通过一个伪造的 Zoom 安装程序成功突破了网络边界，该程序利用 d3f@ckloader 和 IDAT 加载器投放 SectopRAT。• 经过九天的潜伏期后，SectopRAT</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489267&amp;idx=1&amp;sn=cea8bd5568f2c8bd97c6e9d63ae82adc&amp;chksm=c3915a0dc4ea4b2506d89c209a644c56d80c8e6bb2884f128da57422cf4ba27db1e89eea5197&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489202&amp;idx=1&amp;sn=089ad3e5762ec80d69be559db94b4bec&amp;chksm=c380f8fc82d5dcb8d18490c5e47891ec08a81c9e53f1ab6463b06b560a60f64683e76810405c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0Fke6bibS0icJiaFDKtyyDCFYuT8yT2TUuauEN5PTTNwyuGL7QRG6nOD60PibnEwIsQme8ZDWDnqWMuzoGQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489202&amp;idx=1&amp;sn=089ad3e5762ec80d69be559db94b4bec&amp;chksm=c380f8fc82d5dcb8d18490c5e47891ec08a81c9e53f1ab6463b06b560a60f64683e76810405c&amp;scene=0&amp;xtrack=1#rd" target="_blank">reCAPTCHA Phishing: Ι Am Nοt A Rοbοt, Are You?</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2025-03-05 23:11:08">发布日期：2025-03-05 23:11:08</time></div><p class="article-description">概述微软活动目录域环境在当今的网络环境中扮演着重要的角色，尤其是外企，基本都会使用活动目录域环境来管理用户对象，计算机对象，打印机对象以及一些网络设备。通过使用活动目录，管理员能够中心化、批量地更新和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489202&amp;idx=1&amp;sn=089ad3e5762ec80d69be559db94b4bec&amp;chksm=c380f8fc82d5dcb8d18490c5e47891ec08a81c9e53f1ab6463b06b560a60f64683e76810405c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489169&amp;idx=1&amp;sn=a0cf0056a8b49c0e12f4f4c342e7cba5&amp;chksm=c3fae43b9c5a5976099ed207fd6f956b169160294f16d705fa6d167f4a8a6117280d08f61aa9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9DhkvTR0FkfgXHdPCiaicyzuUQyibbOMI466p2hOcEE8SSAiaoBWjTBXicqH3lA3twUh39yalaA7o9XF9NH7UlJ6hng/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489169&amp;idx=1&amp;sn=a0cf0056a8b49c0e12f4f4c342e7cba5&amp;chksm=c3fae43b9c5a5976099ed207fd6f956b169160294f16d705fa6d167f4a8a6117280d08f61aa9&amp;scene=0&amp;xtrack=1#rd" target="_blank">LockBit勒索软件案例</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/5ecf661f034fcc31ecdfada95bbcd54f/index.html">Desync InfoSec</a></span><time class="article-date" datetime="2025-03-02 13:53:06">发布日期：2025-03-02 13:53:06</time></div><p class="article-description">关键要点• 攻击者最初利用CVE-2023-22527漏洞成功获取到部署在公网中的Confluence服务器权限，最终导致 LockBit 勒索软件在整个环境中部署。• 攻击者利用了各种工具，包括 M</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkzMDE3ODc1Mw==&amp;mid=2247489169&amp;idx=1&amp;sn=a0cf0056a8b49c0e12f4f4c342e7cba5&amp;chksm=c3fae43b9c5a5976099ed207fd6f956b169160294f16d705fa6d167f4a8a6117280d08f61aa9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Security for AI</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484489&amp;idx=1&amp;sn=dd374dcbe4d2eca3bdb40e5636c7e513&amp;chksm=c02e2cc679b5fe7b6115440ab283b2b8c2605bbd91bc9593afd468b6a08d2b6bcbb9e7bf0b12&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicbeQM5s79ibRJibR3w8JliczknNcbicHvDzR9YHPVbIRdRQVTiacBLGy7YDGSWp5HEFhKCHNyj5IzsGWMAIJibbySDh0NZn9NiaibGPlyY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484489&amp;idx=1&amp;sn=dd374dcbe4d2eca3bdb40e5636c7e513&amp;chksm=c02e2cc679b5fe7b6115440ab283b2b8c2605bbd91bc9593afd468b6a08d2b6bcbb9e7bf0b12&amp;scene=0&amp;xtrack=1#rd" target="_blank">解析ISC代表的越狱新范式与对未来新型越狱形式的推演</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-04-01 09:30:00">发布日期：2026-04-01 09:30:00</time></div><p class="article-description">引言近日，有一个新的越狱论文arXiv2603.23509有了很高的热度，在经过拜读后。本文将对这个论文带来新的越狱范式做一个简要的解析。论文arXiv2603.23509最重要的创新，体现在它没有把</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484489&amp;idx=1&amp;sn=dd374dcbe4d2eca3bdb40e5636c7e513&amp;chksm=c02e2cc679b5fe7b6115440ab283b2b8c2605bbd91bc9593afd468b6a08d2b6bcbb9e7bf0b12&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484479&amp;idx=1&amp;sn=5760300c65f9439f04ce2170ada6b031&amp;chksm=c0cfbae091248b7ce97de984af8ff6ae5b30802af84dc71fc4570b6494f1c5d96f88b3b88fd2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OnZibpCQ9LicbXch8gXAzNI7V2A589jTXicgeP5UOqx5iajoCefKiaj4w3DTjaKDjYgVlBBepwO6QmWVl4GTxZK3skP08JLrBNsPOEZS07uUDkOI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484479&amp;idx=1&amp;sn=5760300c65f9439f04ce2170ada6b031&amp;chksm=c0cfbae091248b7ce97de984af8ff6ae5b30802af84dc71fc4570b6494f1c5d96f88b3b88fd2&amp;scene=0&amp;xtrack=1#rd" target="_blank">深入浅出世界模型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-31 15:51:21">发布日期：2026-03-31 15:51:21</time></div><p class="article-description">本文阅读难度较大，推荐先阅读前置文章具身智能安全入门引言世界模型已经从强化学习里的样本效率工具，逐步演化为具身系统中的预测层、模拟层、计划层和安全关键层。今天讨论具身智能安全，已经很难把世界模型当成一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484479&amp;idx=1&amp;sn=5760300c65f9439f04ce2170ada6b031&amp;chksm=c0cfbae091248b7ce97de984af8ff6ae5b30802af84dc71fc4570b6494f1c5d96f88b3b88fd2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484465&amp;idx=1&amp;sn=699a103277c79d171da43c97962063e7&amp;chksm=c08594911e7ba67eecab9e2d09e85d2d10d268d98b5ded358cfe97c1f366173f7649be19f6fa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicYgxETFkEgrOxiaYuveU1dOYibvibJuEiapVx7spqQCUtVptOYunibHlO1KMA6gUrhIqmF6M4ibeIP3Geat2ibNQVy1sWODDwLq5uxadw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484465&amp;idx=1&amp;sn=699a103277c79d171da43c97962063e7&amp;chksm=c08594911e7ba67eecab9e2d09e85d2d10d268d98b5ded358cfe97c1f366173f7649be19f6fa&amp;scene=0&amp;xtrack=1#rd" target="_blank">CrowdStrike整理的提示词注入分类</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-29 15:35:44">发布日期：2026-03-29 15:35:44</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484465&amp;idx=1&amp;sn=699a103277c79d171da43c97962063e7&amp;chksm=c08594911e7ba67eecab9e2d09e85d2d10d268d98b5ded358cfe97c1f366173f7649be19f6fa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484461&amp;idx=1&amp;sn=faf39fc566910057360b97b044c2b7db&amp;chksm=c01dcf552734a98f9abebd384ce1ec1e4973b97716e2fff0385fa666151ab479ef7b631f9d0d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OnZibpCQ9LicZDdXqd3qmOsBGMymgiallk3p9iaYLfKIgxdquOc6RTvjTt4ab0TzdIfvUCia1hAwicQTUgpanlbibR6a9R1Z27I7Xm0ZOlmBbuFZTE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484461&amp;idx=1&amp;sn=faf39fc566910057360b97b044c2b7db&amp;chksm=c01dcf552734a98f9abebd384ce1ec1e4973b97716e2fff0385fa666151ab479ef7b631f9d0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">浅谈语义安全检测</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-28 21:53:56">发布日期：2026-03-28 21:53:56</time></div><p class="article-description">引言简单讲解一下语义安全检测，语义安全检测处理的是危险意图在文本、上下文、工具调用、执行计划和模型表征里的连续投影。它很难靠单条规则解决，也很难靠单个模型裁决。真正可用的方案，通常是一组分层控制：前置</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484461&amp;idx=1&amp;sn=faf39fc566910057360b97b044c2b7db&amp;chksm=c01dcf552734a98f9abebd384ce1ec1e4973b97716e2fff0385fa666151ab479ef7b631f9d0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484456&amp;idx=1&amp;sn=06e1dbbc9b6b720967d0474ad7822ff1&amp;chksm=c03b4c41570f9e250de623d11c37fd6da44ded8b1e16a0f29ed0d3f35aae2e7d61976d923a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/OnZibpCQ9Lica7LCNkOeBmD780qt5z58ZPfvzgu0d9Sppic7dNb1WTe5DUSMK7Ps1hRrI3iaMRsibjTyFK1to8KHfL6wOwaZD9gDXZ1upibHKCy8A/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484456&amp;idx=1&amp;sn=06e1dbbc9b6b720967d0474ad7822ff1&amp;chksm=c03b4c41570f9e250de623d11c37fd6da44ded8b1e16a0f29ed0d3f35aae2e7d61976d923a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">冰凌：提示词注入辅助工具</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-24 09:30:00">发布日期：2026-03-24 09:30:00</time></div><p class="article-description">最近对以前的提示词注入工具进行了迭代整合，并总结融合了一些手法，最后完成了上线测试。我取名为冰凌，可能应是目前公开最好用的提示词注入辅助工具之一了。基于大神修改而来：https://elder-pli</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484456&amp;idx=1&amp;sn=06e1dbbc9b6b720967d0474ad7822ff1&amp;chksm=c03b4c41570f9e250de623d11c37fd6da44ded8b1e16a0f29ed0d3f35aae2e7d61976d923a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484450&amp;idx=1&amp;sn=d89a4c88ec7b5e9e9e6dc3d0e5d4b9aa&amp;chksm=c09320d3ff3dfd538dd7cbf65ef32644f05dfb0547b3bbb8505e9d83804a72b72dcbeb9f1a45&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicYzUibZUVltB2c4miapiatYibgxDnATqTiawPapb3CId4ADnTMtUEWqPcR6VCWjJXiaeB0C7HHj8YejmhBkN55XDDicQIPbdj8OIdOsp8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484450&amp;idx=1&amp;sn=d89a4c88ec7b5e9e9e6dc3d0e5d4b9aa&amp;chksm=c09320d3ff3dfd538dd7cbf65ef32644f05dfb0547b3bbb8505e9d83804a72b72dcbeb9f1a45&amp;scene=0&amp;xtrack=1#rd" target="_blank">具身智能安全入门</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-23 12:35:48">发布日期：2026-03-23 12:35:48</time></div><p class="article-description">最近看了点具身智能的资料，记录了点笔记引言如果说大模型安全关注回答是否被操纵，机器人安全关注控制链是否被接管，功能安全关注危险动作是否被及时阻断，那么具身智能安全就是把这三件点结合了起来也正因为如此，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484450&amp;idx=1&amp;sn=d89a4c88ec7b5e9e9e6dc3d0e5d4b9aa&amp;chksm=c09320d3ff3dfd538dd7cbf65ef32644f05dfb0547b3bbb8505e9d83804a72b72dcbeb9f1a45&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484440&amp;idx=1&amp;sn=0e9043e1b70c5dd1270cbf8ff7f88a98&amp;chksm=c0cf83aec25dd79cdba3a9d3dfc8ef9df275b415c7f2ec9835cbd6b6811a72c9b1432b4fb919&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicYvgcBvtdBBf1pRqTStjnEIwgVhsVib85dDajibQU7wVE4ejcuHK6KyhEnfGZrdxQ9GqrYR3ADjDAa2ar0MYHBgKvXV5tnCvCnqA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484440&amp;idx=1&amp;sn=0e9043e1b70c5dd1270cbf8ff7f88a98&amp;chksm=c0cf83aec25dd79cdba3a9d3dfc8ef9df275b415c7f2ec9835cbd6b6811a72c9b1432b4fb919&amp;scene=0&amp;xtrack=1#rd" target="_blank">OWASP GenAI 2026数据安全风险解析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-22 12:32:45">发布日期：2026-03-22 12:32:45</time></div><p class="article-description">引言OWASP GenAI Data Security Risks and Mitigations 2026的发布，把LLM、GenAI与Agentic AI场景中那些与数据直接相关的特有风险单独拎出</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484440&amp;idx=1&amp;sn=0e9043e1b70c5dd1270cbf8ff7f88a98&amp;chksm=c0cf83aec25dd79cdba3a9d3dfc8ef9df275b415c7f2ec9835cbd6b6811a72c9b1432b4fb919&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484434&amp;idx=1&amp;sn=4b271b68948b97d622fdd8a39f57c502&amp;chksm=c0a37e13d8afbf9c7493425e0fc900c72400bfe57c89f50c7e87a6f10818f21b5e995d4a3124&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicaJENVw5MIzTkqEkYFuAaUwcVQzHgHo8XWFkKmvGbbAqq3yS6CNBO7ric2IDnic3spXZicnpxXeRKmhQia0yTSqC2sGbD5mCicgxQEs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484434&amp;idx=1&amp;sn=4b271b68948b97d622fdd8a39f57c502&amp;chksm=c0a37e13d8afbf9c7493425e0fc900c72400bfe57c89f50c7e87a6f10818f21b5e995d4a3124&amp;scene=0&amp;xtrack=1#rd" target="_blank">一个提示词注入防御简化图</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-21 00:08:09">发布日期：2026-03-21 00:08:09</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484434&amp;idx=1&amp;sn=4b271b68948b97d622fdd8a39f57c502&amp;chksm=c0a37e13d8afbf9c7493425e0fc900c72400bfe57c89f50c7e87a6f10818f21b5e995d4a3124&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484428&amp;idx=1&amp;sn=474a75e969420d765951742cde677c31&amp;chksm=c003d22f6390b31f773ca9c71338ab644b0a86f64087bf4c882c03b17ef997feefc25d5d4c1d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/OnZibpCQ9LicblOe21AsCDjESDXkfUibiaBEDia9XhDnWOBAnictspcVmdda3LFCtSBF1HdmKb6HicDe7LM2BGuczSyhvqgYU0UsKibM7zc2Jib6Bic50/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484428&amp;idx=1&amp;sn=474a75e969420d765951742cde677c31&amp;chksm=c003d22f6390b31f773ca9c71338ab644b0a86f64087bf4c882c03b17ef997feefc25d5d4c1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">OWASP Top 10 for LLM 2026可能修订的风险详解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/6bfc4502d6e4481cbc88a392cd188d92/index.html">Security for AI</a></span><time class="article-date" datetime="2026-03-18 16:17:28">发布日期：2026-03-18 16:17:28</time></div><p class="article-description">引言最近OWASP Top 10 for LLM 2026版本开启了修订征集工作，我一直在关注新版修订风险变化，发现2026年的变化可能有点大。这同时说明从2025年到2026年，AI自身安全经历了一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkxNDMxMTM2NA==&amp;mid=2247484428&amp;idx=1&amp;sn=474a75e969420d765951742cde677c31&amp;chksm=c003d22f6390b31f773ca9c71338ab644b0a86f64087bf4c882c03b17ef997feefc25d5d4c1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

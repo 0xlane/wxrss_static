@@ -1,0 +1,298 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>开发者阿橙</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588040&amp;idx=1&amp;sn=47d9900bb5fc7013e3340225d3e42060&amp;chksm=81c1b3ea3a81ec98742670f2eed94daa745b63e9a3c79590b841e00e833af004c29ccf97529f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588040&amp;idx=1&amp;sn=47d9900bb5fc7013e3340225d3e42060&amp;chksm=81c1b3ea3a81ec98742670f2eed94daa745b63e9a3c79590b841e00e833af004c29ccf97529f&amp;scene=0&amp;xtrack=1#rd" target="_blank">最近 Claude Code 源码泄露，下面是分析了4756个源文件得出的10个秘密：
+
+1、多入口架构与快速分发：Claude Code 有 4 个入口（cli.tsx、init.ts、mcp.ts、sdk/），通过 fast-path dispatch 实现毫秒级路由，不同场景走不同初始化路径。
+
+2、101 个命令构成控制平面：src/commands/ 下 101 个命令文件，覆盖从 /init 到 /review 的全部交互，是用户意图到系统行为的核心映射层，每个用户意图都能找到对应的处理逻辑。
+
+3、流式工具执行：不等模型输出完整响应，一边流式接收输出一边把工具调用扔出去执行。响应快不快，这个设计说了算。
+
+4、提示词切成两段：静态部分和动态部分用 SYSTEM_PROMPT_DYNAMIC_BOUNDARY 隔开。为什么？因为前缀缓存要求字节完全一致，把会变的和不变的拆开，才能最大化命中缓存、压低成本。
+
+5、14 步工具执行管线：从查找工具 → MCP 元数据 → Zod 校验 → Speculative Classifier → PreToolUse Hook → 权限决策 → 执行 → PostToolUse Hook，中间每一步都能拦截。
+
+6、投机分类器：BashTool 的命令还没弹确认框，分类器就已经在后台跑完了风险评级，跟 Hook 并行执行。
+
+7、6+ 内置 Agent 的调度体系：General、Explore、Plan、Verification、Guide、Statusline 等子 Agent，通过 runAgent.ts（973 行）管理完整生命周期。
+
+8、Explore Agent 的严格只读约束：探索型 Agent 被限制为只能读取文件和搜索，不能编辑、写入或执行命令，从架构层面防止副作用。不是靠提示词说&quot;你别改文件&quot;，是从代码层面锁死的，只能读和搜，写不了也执行不了。
+
+9、Fork 路径缓存优化：子 Agent 继承父级的系统提示词时，一个字节都不差，目的是命中 API 的 prefix cache。省的是真金白银。
+
+10、三层安全模型：Speculative Classifier（风险预判）→ Hook 策略层（用户自定义规则）→ Permission Decision（最终放行/拒绝），形成纵深防御。三层各管各的，不是一关到底。
+
+看完之后再看市面上任何一个 AI Agent 产品，你判断的不再是&quot;它说了什么&quot;，而是&quot;它底下那套管线是怎么跑的&quot;。这个视角的差异，比任何一个具体功能都值钱。
+
+你如果也在做 Agent 产品，或者正在选型，欢迎在评论区聊聊——你更看重上面哪一条？有没有哪个设计跟你现在的做法完全不同？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-04-02 21:51:15">发布日期：2026-04-02 21:51:15</time></div><p class="article-description">最近 Claude Code 源码泄露，下面是分析了4756个源文件得出的10个秘密：
+
+1、多入口架构与快速分发：Claude Code 有 4 个入口（cli.tsx、init.ts、mcp.ts</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588040&amp;idx=1&amp;sn=47d9900bb5fc7013e3340225d3e42060&amp;chksm=81c1b3ea3a81ec98742670f2eed94daa745b63e9a3c79590b841e00e833af004c29ccf97529f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588010&amp;idx=1&amp;sn=b4a214a4a11dc35d647b4ad5d6988d84&amp;chksm=819351e6c63dba45f867151bb900f833425fdc211cf2c86d902c8d7c7241f51c3a322b078d71&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2kG3hGywVX55XrqqR53edIib7RBZcUic3auicTGahicMth6v9QFLRXT18ice8ibHfhgEpZ4Edo4HMzMc882a0Cg6Ta810MlIsFzFS0lc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588010&amp;idx=1&amp;sn=b4a214a4a11dc35d647b4ad5d6988d84&amp;chksm=819351e6c63dba45f867151bb900f833425fdc211cf2c86d902c8d7c7241f51c3a322b078d71&amp;scene=0&amp;xtrack=1#rd" target="_blank">地铁上处理Excel、发邮件：WorkBuddy小程序远程指挥AI自动搞定</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-31 08:30:00">发布日期：2026-03-31 08:30:00</time></div><p class="article-description">最近我用腾讯AI在微信小程序上指挥电脑干活，这体验有点绝。手机微信小程序里发一条消息：&quot;帮我打开销售数据Excel，做三个可视化图表，统计Top10产品，发到我的邮箱&quot;然后就可以把手机揣兜里该干嘛干</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653588010&amp;idx=1&amp;sn=b4a214a4a11dc35d647b4ad5d6988d84&amp;chksm=819351e6c63dba45f867151bb900f833425fdc211cf2c86d902c8d7c7241f51c3a322b078d71&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587989&amp;idx=1&amp;sn=224776cad75e3be4b9b0c525a0b3cc70&amp;chksm=810992c2b07a3f6cf716f3cd723116c4e55ec03d27c8dccfae7051c60dd296cd616df2be96a6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2nGhvrNPjjhWhZj3q4kME46pMibHia2rTgicW9QuXUko79LN6dQNnXVu8nAgpFPsF270Snic7fWrFYMZhhzDuqZZ1bHdIDFK3La8sc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587989&amp;idx=1&amp;sn=224776cad75e3be4b9b0c525a0b3cc70&amp;chksm=810992c2b07a3f6cf716f3cd723116c4e55ec03d27c8dccfae7051c60dd296cd616df2be96a6&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code进阶指南：装这9个Skill才算真正上手</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-25 08:15:00">发布日期：2026-03-25 08:15:00</time></div><p class="article-description">Claude Code生态发展很快，头部项目已经有10万star了。我整理了9个值得关注的开源项目，从技能框架到记忆系统到工作流自动化，基本覆盖了当前热门的方向。按star数排序：1、Superpo</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587989&amp;idx=1&amp;sn=224776cad75e3be4b9b0c525a0b3cc70&amp;chksm=810992c2b07a3f6cf716f3cd723116c4e55ec03d27c8dccfae7051c60dd296cd616df2be96a6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587968&amp;idx=1&amp;sn=91ad6974aaf4c7b84db4ad3cbfd44ee0&amp;chksm=819d69c08bea6fa8763772e0a0a9a1813953e2a84c55c1199adfac51b9556890a30e3f017e54&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2kv92tEgPIfI4NdwEjhaFjDSiaXIwQV0ELLzlVHZTiaVFBu3JORHNBbF91AJib6qhQkA1pVEgkr5Jic7Xib3sjU3vhc0pFibx6RBIjLE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587968&amp;idx=1&amp;sn=91ad6974aaf4c7b84db4ad3cbfd44ee0&amp;chksm=819d69c08bea6fa8763772e0a0a9a1813953e2a84c55c1199adfac51b9556890a30e3f017e54&amp;scene=0&amp;xtrack=1#rd" target="_blank">阿里云把“养虾”门槛打下来了，JVSClaw真香！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-18 08:15:00">发布日期：2026-03-18 08:15:00</time></div><p class="article-description">当所有人都在讨论OpenClaw生态有多火时，我关心的是另一件事：这东西真的能在生产环境用吗？凌晨两点的那些糟心事先说几个我亲身经历过的场景。上周二凌晨2点17分，监控报警响了。我迷迷糊糊爬起来看，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587968&amp;idx=1&amp;sn=91ad6974aaf4c7b84db4ad3cbfd44ee0&amp;chksm=819d69c08bea6fa8763772e0a0a9a1813953e2a84c55c1199adfac51b9556890a30e3f017e54&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587969&amp;idx=1&amp;sn=daa14332d9d9cf59f9c52bbf1b76db3a&amp;chksm=81bb846b96288212057bde3b8ec8ad73440b37552720d9df1fb54b3f66d6c66a0bb50228b7f5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2n6KpeibGHyr1Wkyu66iauUZrU3ohbzUoGia5Ur4b3XaZ3MzXNYsGVIv2OGPLMHHLibYwc8ic7DrtGz4eeBQicuHauXcqWXLlvRb8QYk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587969&amp;idx=1&amp;sn=daa14332d9d9cf59f9c52bbf1b76db3a&amp;chksm=81bb846b96288212057bde3b8ec8ad73440b37552720d9df1fb54b3f66d6c66a0bb50228b7f5&amp;scene=0&amp;xtrack=1#rd" target="_blank">GLM-5-Turbo实测：教你降低60%养虾成本</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-17 16:13:56">发布日期：2026-03-17 16:13:56</time></div><p class="article-description">上周我遇到一件挺崩溃的事。我让AI帮我搭建一个自动化工作流：每小时抓取AI行业资讯 → 筛选关键信息 → 生成摘要 → 自动发到飞书群。这个任务看起来挺简单的，对吧？结果跑了三次，三次都在第三步崩了</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587969&amp;idx=1&amp;sn=daa14332d9d9cf59f9c52bbf1b76db3a&amp;chksm=81bb846b96288212057bde3b8ec8ad73440b37552720d9df1fb54b3f66d6c66a0bb50228b7f5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587932&amp;idx=1&amp;sn=e6e0cba8c03bb99bb31f795d830c6ae5&amp;chksm=81fc70cdd3a3b97ac36f8ada428d96a1b8d263a7ad6487fa366cf13de26b9386ae81afb882f8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2lVzwLDI22rX9OibicCBQicBEWbXXPtbIfl31ibntcg3yxTJsfgMGRByqUSzdlEFibHsgGsCuOKRiaopZvoiajVrg4fgfBRpcwDPC6ZFQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587932&amp;idx=1&amp;sn=e6e0cba8c03bb99bb31f795d830c6ae5&amp;chksm=81fc70cdd3a3b97ac36f8ada428d96a1b8d263a7ad6487fa366cf13de26b9386ae81afb882f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">从OpenClaw到MuleRun：为什么我同时养了&quot;龙虾&quot;和&quot;骡子&quot;?</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-16 12:00:00">发布日期：2026-03-16 12:00:00</time></div><p class="article-description">最近圈子里有个有趣的段子: &quot;养龙虾不如养骡子。&quot;作为一个OpenClaw的狂热粉丝，我第一反应是——又是什么新梗?直到我真正上手体验了MuleRun(骡子快跑)，才发现这个比喻真的太精准了。今天不</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587932&amp;idx=1&amp;sn=e6e0cba8c03bb99bb31f795d830c6ae5&amp;chksm=81fc70cdd3a3b97ac36f8ada428d96a1b8d263a7ad6487fa366cf13de26b9386ae81afb882f8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587912&amp;idx=1&amp;sn=8933b004cc0122b8427cbbdab5ba920c&amp;chksm=819a5ba56d658cc9049be128599f1d7bfe9531f0fa3503c36269179887aebd0ee1f0c856a1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2k7KRImbVzicv6Vp5sDaq3SSfVbEibicCic3kzKibIrpiaS6JpOCS2VyqicLzmNUurytCLmUCFmTv9MScw82qW55lphljfxcib97Jbicp1k/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587912&amp;idx=1&amp;sn=8933b004cc0122b8427cbbdab5ba920c&amp;chksm=819a5ba56d658cc9049be128599f1d7bfe9531f0fa3503c36269179887aebd0ee1f0c856a1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw养虾经验：10个效率翻倍的技巧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-12 08:08:00">发布日期：2026-03-12 08:08:00</time></div><p class="article-description">大家好，我是橙哥！刚开始用OpenClaw的时候，我只会设置提醒和查天气。后来加了 Perplexity 搜索，它就变成了我的第二个搜索引擎。但这样还是不够。我需要实时数据，不只是搜索结果。于是我把</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587912&amp;idx=1&amp;sn=8933b004cc0122b8427cbbdab5ba920c&amp;chksm=819a5ba56d658cc9049be128599f1d7bfe9531f0fa3503c36269179887aebd0ee1f0c856a1c9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587890&amp;idx=1&amp;sn=30488e537fb7928bd3af9a3637babec6&amp;chksm=81eb796fd25e24caabb0b87823c2e0283c8666246e72104e4dfc174d19c2bf1859ac84e18bdd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2kpdYVQDfdabmmxQTMp3laGMcA90Qro4WPPnbOKRgnFbNrOP6gMVnsV6MJ6NxDHRZTWyGPLprxBl5feQkByvnWGiclsgiaxibu8l0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587890&amp;idx=1&amp;sn=30488e537fb7928bd3af9a3637babec6&amp;chksm=81eb796fd25e24caabb0b87823c2e0283c8666246e72104e4dfc174d19c2bf1859ac84e18bdd&amp;scene=0&amp;xtrack=1#rd" target="_blank">28w+Star背后：OpenClaw用户必须知道的4个安全坑</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-10 08:30:00">发布日期：2026-03-10 08:30:00</time></div><p class="article-description">最近科技圈没人能躲过OpenClaw吧?GitHub 28万+星星,开发者见面打招呼变成&quot;你养的龙虾在干嘛&quot;。它确实能帮你省事——自动写代码、整理邮件、跑流程,24小时不打烊的实习生既视感。但上周三</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587890&amp;idx=1&amp;sn=30488e537fb7928bd3af9a3637babec6&amp;chksm=81eb796fd25e24caabb0b87823c2e0283c8666246e72104e4dfc174d19c2bf1859ac84e18bdd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587880&amp;idx=1&amp;sn=4b54daea1b1bf3fbd182879f62ccdb36&amp;chksm=81fe291602f8a35cff441ac09c1fd6265f73f9c6dfd4762b933d1b8496ca24afb6a157a980c1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2mibM4HZpgRIjUL25qUPGDGkup66Kia9lTuH32TKdkkRgaRIxCiaXKvHwOc4xmMCK1djoPkEKxoXVSJ6g57CwtABbhnhVRHy8Bc74/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587880&amp;idx=1&amp;sn=4b54daea1b1bf3fbd182879f62ccdb36&amp;chksm=81fe291602f8a35cff441ac09c1fd6265f73f9c6dfd4762b933d1b8496ca24afb6a157a980c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw避坑指南：先装这10个Skills，再谈生产力</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-05 08:05:00">发布日期：2026-03-05 08:05:00</time></div><p class="article-description">大家好，我是橙哥！最近经常有朋友问我：OpenClaw到底值不值得All In ？我的回答是：如果你只是想找个AI聊天，那ChatGPT、Claude都够用。但如果你想拥有一个能真正执行任务的AI助</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587880&amp;idx=1&amp;sn=4b54daea1b1bf3fbd182879f62ccdb36&amp;chksm=81fe291602f8a35cff441ac09c1fd6265f73f9c6dfd4762b933d1b8496ca24afb6a157a980c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587872&amp;idx=1&amp;sn=2a5c379e4014e9f74a790a0d034afc25&amp;chksm=81b1cc56b41182d4158e14cc88716e9c034bdaca5a0262f2318040f2664ef7dec39430cc8807&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2mXRFxoFClqyiboth9waY1QJicRb6KzqAIFfGcTibXE7EhGBh0leN4nBsT6xxsNoI08l4885brTjRVlFtPpLM4EcCvstN8UiccE2zs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587872&amp;idx=1&amp;sn=2a5c379e4014e9f74a790a0d034afc25&amp;chksm=81b1cc56b41182d4158e14cc88716e9c034bdaca5a0262f2318040f2664ef7dec39430cc8807&amp;scene=0&amp;xtrack=1#rd" target="_blank">除了OpenClaw，这6只&quot;小龙虾&quot;也值得你关注</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-03-03 08:05:00">发布日期：2026-03-03 08:05:00</time></div><p class="article-description">大家好，我是橙哥！很多朋友已经用OpenClaw一段时间了，对主框架应该挺熟悉。但你可能不知道，在这个生态系统里还有6个轻量级框架，每个都有自己的专长。今天聊聊这些&quot;小兄弟&quot;。它们不是要取代Open</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587872&amp;idx=1&amp;sn=2a5c379e4014e9f74a790a0d034afc25&amp;chksm=81b1cc56b41182d4158e14cc88716e9c034bdaca5a0262f2318040f2664ef7dec39430cc8807&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587857&amp;idx=1&amp;sn=020c68f6f6f1a3f8e269f4916a5b7b3e&amp;chksm=8122df6dc9914f9f6af7be0ec82b25ea559a5a365903f0128a4983ce2455c07209775b5df56d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2mSy1NIGRgqic5wMLgsrB6KkSk5DMLOtX2BPn1DXZvcpwbb0HNCrCdqaPrsDX8Q8ELCzviaDZnIWPx9aOqvtOafmlcjia2NVBBLZM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587857&amp;idx=1&amp;sn=020c68f6f6f1a3f8e269f4916a5b7b3e&amp;chksm=8122df6dc9914f9f6af7be0ec82b25ea559a5a365903f0128a4983ce2455c07209775b5df56d&amp;scene=0&amp;xtrack=1#rd" target="_blank">7 个方向，让你的 OpenClaw 效率提升 10 倍</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-26 08:05:00">发布日期：2026-02-26 08:05:00</time></div><p class="article-description">当你装好了 OpenClaw，配好了 API Key，连上了飞书或 Telegram。助手能回消息、能写代码、能查天气。感觉不错。但用几周你就会发现：这只是皮毛。OpenClaw 不是 ChatGP</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587857&amp;idx=1&amp;sn=020c68f6f6f1a3f8e269f4916a5b7b3e&amp;chksm=8122df6dc9914f9f6af7be0ec82b25ea559a5a365903f0128a4983ce2455c07209775b5df56d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587849&amp;idx=1&amp;sn=fc5f200869b37e48c7c3011285134c0b&amp;chksm=81f49e6570e9419fa90b1a1ccf58358e2a54556273a8c79bc62f2c568e6f468b7c956694335f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2n0h7BkoCIVssZA6ibUFcZuPNW1yk426Zrpt8nLezEMy7mTB7oAvMj10lwWnqPTzL612Gqib1o316hN3WpeQCr9h711DzQtlic2nU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587849&amp;idx=1&amp;sn=fc5f200869b37e48c7c3011285134c0b&amp;chksm=81f49e6570e9419fa90b1a1ccf58358e2a54556273a8c79bc62f2c568e6f468b7c956694335f&amp;scene=0&amp;xtrack=1#rd" target="_blank">用OpenClaw克隆一家公司，我的16个AI员工是怎样高效协作的？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-24 08:05:00">发布日期：2026-02-24 08:05:00</time></div><p class="article-description">最近OpenClaw大火，成为2026年开年王炸！你有没有想过：如果用OpenClaw打造16个数字员工，并且能像一个完整的互联网初创公司那样运转，将会发生什么？其实关键的问题是：如何让这16个A</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587849&amp;idx=1&amp;sn=fc5f200869b37e48c7c3011285134c0b&amp;chksm=81f49e6570e9419fa90b1a1ccf58358e2a54556273a8c79bc62f2c568e6f468b7c956694335f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587826&amp;idx=1&amp;sn=ea0e40aebc82266853f14be2b898e354&amp;chksm=8195f5ba3eba552736f45bef9e1bb03d8e92d5903ac99d0857fc89d4db46e581601627194440&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2nia1iaxP2xUCBTuBUicU3Q6bib1bkEFibtaCxhlPro83XUNoQCZXxy94XdEsnauQbQyXS995nu6uHcTic3SACgjr6ia1xb8lEZ7YbLTY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587826&amp;idx=1&amp;sn=ea0e40aebc82266853f14be2b898e354&amp;chksm=8195f5ba3eba552736f45bef9e1bb03d8e92d5903ac99d0857fc89d4db46e581601627194440&amp;scene=0&amp;xtrack=1#rd" target="_blank">我用 OpenClaw 搞了家16人的公司：全员AI，24小时无休！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-22 08:45:00">发布日期：2026-02-22 08:45:00</time></div><p class="article-description">我用OpenClaw搞了一家16人的公司。不是开玩笑，不是比喻，是真的16个AI数字员工，每天24/7干活。产品、技术、营销，AI全包了。以前我每天干8小时，现在每天1小时。16个员工都是谁产品增长</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587826&amp;idx=1&amp;sn=ea0e40aebc82266853f14be2b898e354&amp;chksm=8195f5ba3eba552736f45bef9e1bb03d8e92d5903ac99d0857fc89d4db46e581601627194440&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587806&amp;idx=1&amp;sn=472f60278415373c9d7b9db8cebbaf06&amp;chksm=81702fd50215fe22802dabf20450b66738e7a85bc76c55171aeee88962ae6cc3e70f821197a3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2nsGotgVdianlmooZg43eNbbf17hMO2CqyDsIGwaLT71nPRczjkg8HQ1W6dGVTGl9qWNiaDmn3ib73jfzDjROfPOdLnK64UlYmMA0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587806&amp;idx=1&amp;sn=472f60278415373c9d7b9db8cebbaf06&amp;chksm=81702fd50215fe22802dabf20450b66738e7a85bc76c55171aeee88962ae6cc3e70f821197a3&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw云桌面5分钟一键部署！飞书实测</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-20 09:05:00">发布日期：2026-02-20 09:05:00</time></div><p class="article-description">一、先看成果配置完成后，你将拥有一个在云端24小时运行的AI助手，通过飞书即可随时调用：最后登录云桌面，我检查了一下，看到AI已经帮我安装好Obsidian了：现在不用花费3千多买个Mac Mini</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587806&amp;idx=1&amp;sn=472f60278415373c9d7b9db8cebbaf06&amp;chksm=81702fd50215fe22802dabf20450b66738e7a85bc76c55171aeee88962ae6cc3e70f821197a3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587734&amp;idx=1&amp;sn=d505c2380c5859fd9e6e22a0d467cc73&amp;chksm=81d7390403b2159751082c36777ddbed1d88af64a852943a5f7d378a32d875bb3824e0a477a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587734&amp;idx=1&amp;sn=d505c2380c5859fd9e6e22a0d467cc73&amp;chksm=81d7390403b2159751082c36777ddbed1d88af64a852943a5f7d378a32d875bb3824e0a477a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026年极具颠覆性！下面是OpenClaw创始人Peter对未来格局的7个最新洞察：
+
+1、80%的APP将被淘汰：单点功能应用在Agent时代没有生存空间，健身App、笔记App——这些是功能封装，它们的功能会被Agent吞噬，成为Agent的Skill包，而不是独立产品。
+
+2、本地AI的护城河是物理访问权限：云端AI摸不到Tesla、控不了温度、搜不了硬盘。架构选择才是壁垒，而不是算法能力。
+
+3、Bot经济模型已开启：软件的交互方式从人机交互转向机机交互，API的下一代是Agent对Agent。人类从操作者降级为监督者。
+
+4、模型正在商品化：大模型公司没有护城河，模型能力正在经历CPU的商品化历程。开源正在追平差距，这是Intel vs AMD的历史重演。
+
+5、从&quot;上帝AI&quot;到&quot;群体智能&quot;：每个人都是专才，社会通过专业化而繁荣，AI也应该专业化，不只是通用智能。
+
+6、反向开发哲学：工具链的复杂度会扼杀创造力，工具应该可以无限开、随时用，复杂度全在脑子里，工具必须零摩擦，让想法到代码的路径最短。
+
+7、以人为本：这不是口号，是产品哲学。产品成功的关键是降低人类的使用门槛，这是为什么OpenClaw能成功。这无关伦理，是人本原则的胜利。
+
+OpenClaw不是应用，是让Agent使用人类工具（CLI、git、文件、API）的中间层。
+
+不是AI取代人类，而是AI将成为人类使用工具的中间层。
+
+但知道≠会用。你需要：安全配置、Skill设计、个性注入、开发实战。
+
+时间不等人，机会稍纵即逝。
+
+2026年，让自己拥有一个团队的能力。
+
+👇 欢迎加入我发起的OpenClaw创业实战营</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-17 09:33:00">发布日期：2026-02-17 09:33:00</time></div><p class="article-description">2026年极具颠覆性！下面是OpenClaw创始人Peter对未来格局的7个最新洞察：
+
+1、80%的APP将被淘汰：单点功能应用在Agent时代没有生存空间，健身App、笔记App——这些是功能封装</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587734&amp;idx=1&amp;sn=d505c2380c5859fd9e6e22a0d467cc73&amp;chksm=81d7390403b2159751082c36777ddbed1d88af64a852943a5f7d378a32d875bb3824e0a477a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587732&amp;idx=1&amp;sn=01f227dc17e8da6f1039c75bd58e56d9&amp;chksm=81f40501efc27df9b0c550807854afe9c8e49821268dfe41d61fc7aa4e9ce8fb7f96e4ae5744&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2kxCLicQH6l9ReemaMYXbICaSMbGeFXzicE2icUcRWUHZbPibibQpuibWu9fSnnw1MaU2KecJocqBZ2XpvGz9jvwicpibUqXqtr9fQA2ic8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587732&amp;idx=1&amp;sn=01f227dc17e8da6f1039c75bd58e56d9&amp;chksm=81f40501efc27df9b0c550807854afe9c8e49821268dfe41d61fc7aa4e9ce8fb7f96e4ae5744&amp;scene=0&amp;xtrack=1#rd" target="_blank">上车OpenClaw！这是2026年最大的破局机会</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-16 08:45:00">发布日期：2026-02-16 08:45:00</time></div><p class="article-description">这是2026年最重要的一个判断：今年，每个开发者都不得不面临一次历史性的人生选择。要么继续做AI的奴隶，要么成为AI的主人。听起来很夸张？让我告诉你为什么。2025年发生了什么去年，Claude C</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587732&amp;idx=1&amp;sn=01f227dc17e8da6f1039c75bd58e56d9&amp;chksm=81f40501efc27df9b0c550807854afe9c8e49821268dfe41d61fc7aa4e9ce8fb7f96e4ae5744&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587721&amp;idx=1&amp;sn=044aad4a84077a8dad161e472309950e&amp;chksm=81ecc82ee32450a34ccc1c7a27ffdaf0c15185149fe9b4de9d4b8d95f5a5deebba3d7ab46c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2kVzE4t2Tpf7ibZROUMkdGyt3fKBJ2JsuQSyyR51yiaak4icRvNUia6ZWwAvmCx3hcJOxaAfNT7KVTtJJkRscZyU7AbtfY4gmHzMI4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587721&amp;idx=1&amp;sn=044aad4a84077a8dad161e472309950e&amp;chksm=81ecc82ee32450a34ccc1c7a27ffdaf0c15185149fe9b4de9d4b8d95f5a5deebba3d7ab46c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何安全地调教OpenClaw？25个Tools和53个Skills配置全攻略</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-15 08:35:00">发布日期：2026-02-15 08:35:00</time></div><p class="article-description">OpenClaw装好了，但你可能跟我一样懵：Tools散在不同文件，Skills默认自动加载——你甚至不知道有些东西已经开了。全开怕出事，全关等于白装。但从文件和代码里拼出全貌，得花点时间。这篇是我装</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587721&amp;idx=1&amp;sn=044aad4a84077a8dad161e472309950e&amp;chksm=81ecc82ee32450a34ccc1c7a27ffdaf0c15185149fe9b4de9d4b8d95f5a5deebba3d7ab46c9b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587705&amp;idx=1&amp;sn=773896c2ad6d5e7c2da707f205237139&amp;chksm=812d60062beac3bc22a77430c12cc6111c49f8ea26d5c1e3499ce9197dfee2dc71955580ab8f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2mHEB8FhIPo9DbILicuD3qk1icr0nTniaFicjP102vibng0n2fUST5VibkKXFUxuOIia82Iwtjl6ySLkWeNQ2EqicMZRHia6OUoCJfCFaQk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587705&amp;idx=1&amp;sn=773896c2ad6d5e7c2da707f205237139&amp;chksm=812d60062beac3bc22a77430c12cc6111c49f8ea26d5c1e3499ce9197dfee2dc71955580ab8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">15秒黑客帝国、好莱坞级运镜：我是怎么一键生成 Seedance 2.0 专业提示词的？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-14 09:30:54">发布日期：2026-02-14 09:30:54</time></div><p class="article-description">特斯拉CEO埃隆·马斯克（Elon Musk）近日在社交平台X上转发了一条推文，评论只有短短五个单词——&quot;It's happening fast.&quot;（发展速度惊人）让他发出这样感慨的，正是字节跳动旗</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587705&amp;idx=1&amp;sn=773896c2ad6d5e7c2da707f205237139&amp;chksm=812d60062beac3bc22a77430c12cc6111c49f8ea26d5c1e3499ce9197dfee2dc71955580ab8f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587684&amp;idx=1&amp;sn=3e6b784968afc8338b7ba5591385ca41&amp;chksm=811fb7c382724019a4ad273d383e37911ca36f6a8a599b91fb7a1d258765a92ae9bf8a101713&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2kLnC3rbibVIuHHjccUaKDtskaK7icr606KKzjajwamlDia4oXs7mjBVDm2bA2rlleZxc4B9Q96YQPVdCOSkgHVWEfwI9DRkuKAVU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587684&amp;idx=1&amp;sn=3e6b784968afc8338b7ba5591385ca41&amp;chksm=811fb7c382724019a4ad273d383e37911ca36f6a8a599b91fb7a1d258765a92ae9bf8a101713&amp;scene=0&amp;xtrack=1#rd" target="_blank">100个程序员副业AI变现项目的完整复盘</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-13 08:32:00">发布日期：2026-02-13 08:32:00</time></div><p class="article-description">失业潮才刚刚开始，而且即将愈演愈烈。这不是危言耸听，而是正在发生的现实。AI的能力，在于塑造销售闭环，从而颠覆行业。说到底，就是AI如何在无人看守的情况下自己赚钱。这个快速迭代的引擎，已经被 Cla</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587684&amp;idx=1&amp;sn=3e6b784968afc8338b7ba5591385ca41&amp;chksm=811fb7c382724019a4ad273d383e37911ca36f6a8a599b91fb7a1d258765a92ae9bf8a101713&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587673&amp;idx=1&amp;sn=ae4fd9589b09251a56e439c33381e2d9&amp;chksm=8109bf905ee03523d9a57c3556d26ea9d45c7ee99333a5587eb30eadbcbcfe2accb86cd8875e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2lb37fGReQ509kpgWJgZy46T1SibicYuH784VG7y8t8bAhichauE0Md8zLOxSPSqiakQOnOswDNLgqEmpfZZ7G84j24ibh6gV1qCrAY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587673&amp;idx=1&amp;sn=ae4fd9589b09251a56e439c33381e2d9&amp;chksm=8109bf905ee03523d9a57c3556d26ea9d45c7ee99333a5587eb30eadbcbcfe2accb86cd8875e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude + Seedance：抖音带货新玩法拆解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-12 21:20:51">发布日期：2026-02-12 21:20:51</time></div><p class="article-description">2026年了，如果你还在用传统方式做抖音，大概率已经错过了第一波红利。但有两个AI工具正在改变游戏规则：• Claude：最强的文本AI，帮你选品、写脚本、优化直播• Seedance：字节跳动最新</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587673&amp;idx=1&amp;sn=ae4fd9589b09251a56e439c33381e2d9&amp;chksm=8109bf905ee03523d9a57c3556d26ea9d45c7ee99333a5587eb30eadbcbcfe2accb86cd8875e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587668&amp;idx=1&amp;sn=b7a45954e52fd28545bdd212a646b9c6&amp;chksm=8108aacdcd330e64f04be08824581c3fcb7e5f6262877a19a07105cf7eb285db2f6798ba572e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2ntSduibe4s2pmSZXxEwAgdLPQKCyZmvkicvj55sOOPdeibYpiaHZHGVS0xJoUqjUUYU9eFnhfPlvodV4msVAbhgcgz6laeNgWzchI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587668&amp;idx=1&amp;sn=b7a45954e52fd28545bdd212a646b9c6&amp;chksm=8108aacdcd330e64f04be08824581c3fcb7e5f6262877a19a07105cf7eb285db2f6798ba572e&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenClaw的10个变现方向：程序员如何抓住风口</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-11 08:32:00">发布日期：2026-02-11 08:32:00</time></div><p class="article-description">每个现象级产品的诞生，都会带来一波&quot;淘金热&quot;。OpenClaw正在成为这样的平台。前几天有位星球会员问我：最近爆火的OpenClaw使用场景是什么？我可以用它来赚钱吗？今天我们就来梳理一下OpenC</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587668&amp;idx=1&amp;sn=b7a45954e52fd28545bdd212a646b9c6&amp;chksm=8108aacdcd330e64f04be08824581c3fcb7e5f6262877a19a07105cf7eb285db2f6798ba572e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587658&amp;idx=1&amp;sn=268be6bb86ad920e355677119007436a&amp;chksm=8182d150ff17d2efa0cd9ce61c63c9ec1bdfdc1aabdc57971c9e763bab41ae583b1a97ab2dff&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2l1juBILgbPibh7hVZ2lic8K9uq0ibxMAmeJm4Urp0cOHExXYWTIdbqmtDicTawtxd87dmfVsibPoOh7rE7N8tuTPBMSbticlbs29tRo/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587658&amp;idx=1&amp;sn=268be6bb86ad920e355677119007436a&amp;chksm=8182d150ff17d2efa0cd9ce61c63c9ec1bdfdc1aabdc57971c9e763bab41ae583b1a97ab2dff&amp;scene=0&amp;xtrack=1#rd" target="_blank">用 Claude Skill 把一本书打磨成精读播客</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-10 08:30:00">发布日期：2026-02-10 08:30:00</time></div><p class="article-description">我买了很多书，也认真读了，但过几个月就忘得差不多了。有些书我觉得特别有价值，想分享给大家，但又不知道怎么高效地传达核心内容。后来我尝试了一种方法：把书拆解成精读内容，做成播客，详细教程我放到了星球里</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587658&amp;idx=1&amp;sn=268be6bb86ad920e355677119007436a&amp;chksm=8182d150ff17d2efa0cd9ce61c63c9ec1bdfdc1aabdc57971c9e763bab41ae583b1a97ab2dff&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587641&amp;idx=1&amp;sn=1bc16462a5daffff4dc9e2279acf4481&amp;chksm=8146dc328651ee9e91cdd22354337a4609cbc7207cb55aec6e3705faf917b22db4ba7e057284&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587641&amp;idx=1&amp;sn=1bc16462a5daffff4dc9e2279acf4481&amp;chksm=8146dc328651ee9e91cdd22354337a4609cbc7207cb55aec6e3705faf917b22db4ba7e057284&amp;scene=0&amp;xtrack=1#rd" target="_blank">程序员财富自由的10个第一性原理：</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-09 08:05:00">发布日期：2026-02-09 08:05:00</time></div><p class="article-description">1. 财富自由的第一性原理是拥有“可繁殖的资本”，而不是消费劳动所得。
+2. 拥有资本的第一性原理是建立持续的“现金盈余”，而不是追逐更高薪水。
+3. 建立盈余的第一性原理是投资“自己确信的认知”，而</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587641&amp;idx=1&amp;sn=1bc16462a5daffff4dc9e2279acf4481&amp;chksm=8146dc328651ee9e91cdd22354337a4609cbc7207cb55aec6e3705faf917b22db4ba7e057284&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587640&amp;idx=1&amp;sn=72eda02088aa67b51da0d279cea7ff44&amp;chksm=81c96618710ea2f19001b050c440bbde81e82155e1499ee35223a8f366bf6cbea6ddb82a62f4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/hBIict2nry2lhINHZEmYd36Z18sGH4RoHUaEdvRofdjXg6S4SurA3weUw1R58TsU5cLU9qe9U0EicIO5O8kwrWtIPmLg8sTQc2aDCPFMvoEV0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587640&amp;idx=1&amp;sn=72eda02088aa67b51da0d279cea7ff44&amp;chksm=81c96618710ea2f19001b050c440bbde81e82155e1499ee35223a8f366bf6cbea6ddb82a62f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">29k Star！程序员不会设计的尴尬，被这个Skill永久解决了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-08 09:05:00">发布日期：2026-02-08 09:05:00</time></div><p class="article-description">之前我的知识星球里面有个会员朋友，后端写得很溜，数据库优化、并发处理样样精通。但每次要做前端界面，他就在和我发愁。&quot;按钮用什么颜色？&quot;&quot;这个间距要调多少？&quot;最后的结果往往是——打开 Bootstra</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587640&amp;idx=1&amp;sn=72eda02088aa67b51da0d279cea7ff44&amp;chksm=81c96618710ea2f19001b050c440bbde81e82155e1499ee35223a8f366bf6cbea6ddb82a62f4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587629&amp;idx=1&amp;sn=1d35f790aaa670730749daa4aa405e8b&amp;chksm=812a1cca33a8676b6c7acb5dc4224a66627a16c75e76c9b9b3616e51bce0162f0d28b30537f3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2lhE8UpMX5ZnJXocJRUVQyZkT2Jic4hGzDn9W8swV5oJD1GQg7qoW14pVFfPYgtcojeYSxgFv7Y4fuo9CJrQEPwCOMibZibhojT7U/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587629&amp;idx=1&amp;sn=1d35f790aaa670730749daa4aa405e8b&amp;chksm=812a1cca33a8676b6c7acb5dc4224a66627a16c75e76c9b9b3616e51bce0162f0d28b30537f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">小红书虚拟资料赛道变天！用 Claude Skill快速搭建自动售卖网站</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-07 19:25:57">发布日期：2026-02-07 19:25:57</time></div><p class="article-description">刷小红书的时候，你见过那些卖虚拟资料的店铺吧？Excel模版、设计素材、考研资料、PPT模板...一单卖19-99元。有个雅思老师在上面卖口语资料包，79元一份，卖了2.1万+份，成交额超过166万</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587629&amp;idx=1&amp;sn=1d35f790aaa670730749daa4aa405e8b&amp;chksm=812a1cca33a8676b6c7acb5dc4224a66627a16c75e76c9b9b3616e51bce0162f0d28b30537f3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587619&amp;idx=1&amp;sn=7ca4d109563c31a2dba64417ba16b811&amp;chksm=8137dcfe222305ff314a0cfd5e9f1c19856984241fd52e2aa85ded7fbe163d3ba599f38305e9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/hBIict2nry2nGLKNKjFXhDC83fynEMwfyRIvAMWHiaCvyCLnGuy1IwnibRoFQfVxO0q5m4sRz0AJpnt5t1XUngnW3PHanGZAXnZCDvVTFavuYY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587619&amp;idx=1&amp;sn=7ca4d109563c31a2dba64417ba16b811&amp;chksm=8137dcfe222305ff314a0cfd5e9f1c19856984241fd52e2aa85ded7fbe163d3ba599f38305e9&amp;scene=0&amp;xtrack=1#rd" target="_blank">用 Claude Skill 写出麦肯锡级的市场调研报告</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-06 08:06:00">发布日期：2026-02-06 08:06:00</time></div><p class="article-description">最近在星球里分享了一个Claude skill，能生成媲美麦肯锡、埃森哲级别的专业市场研究报告。不少同学问：这个skill到底怎么用？要准备什么？完整的流程是什么？今天我写了一份硬核教程，把整个工作</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587619&amp;idx=1&amp;sn=7ca4d109563c31a2dba64417ba16b811&amp;chksm=8137dcfe222305ff314a0cfd5e9f1c19856984241fd52e2aa85ded7fbe163d3ba599f38305e9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587605&amp;idx=1&amp;sn=d795df237a1a475d42444e3209f5d212&amp;chksm=81c1b4fbcc68aaeeebd618b9c6b52194a98c5e872b031ff2682f4188c0e9b04ba54581de2c37&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587605&amp;idx=1&amp;sn=d795df237a1a475d42444e3209f5d212&amp;chksm=81c1b4fbcc68aaeeebd618b9c6b52194a98c5e872b031ff2682f4188c0e9b04ba54581de2c37&amp;scene=0&amp;xtrack=1#rd" target="_blank">分享10个GitHub变现神项目，赶紧收藏！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-05 08:05:00">发布日期：2026-02-05 08:05:00</time></div><p class="article-description">研究了GitHub上100+个可自部署的开源项目，精选10个可以直接部署成SaaS服务赚钱的：
+
+1. TurboReel - AI短视频生成器，部署后提供按次付费服务
+
+2. ChatGPT Nex</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587605&amp;idx=1&amp;sn=d795df237a1a475d42444e3209f5d212&amp;chksm=81c1b4fbcc68aaeeebd618b9c6b52194a98c5e872b031ff2682f4188c0e9b04ba54581de2c37&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587597&amp;idx=1&amp;sn=51373664d9cecbb4a2ab91e237d27fb3&amp;chksm=8103e4bad5a13272a4006136b7524d39ea704afde140e5f06b0d6919653f9f90ae056fe8836d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS2AnbcFjktpgATsr2XOcNT0BJxvPia9c6o8Libv1dwgE5FTgQ0vZb1cJsNU7mxzL12FeibscWpoB0vkQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587597&amp;idx=1&amp;sn=51373664d9cecbb4a2ab91e237d27fb3&amp;chksm=8103e4bad5a13272a4006136b7524d39ea704afde140e5f06b0d6919653f9f90ae056fe8836d&amp;scene=0&amp;xtrack=1#rd" target="_blank">永久激活密钥：SFK7U-90YH2-KL61I-NMA2P-8KVO6</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-04 09:00:00">发布日期：2026-02-04 09:00:00</time></div><p class="article-description">家人们，大家好！今天我不跟大家绕弯子，直接把压箱底的“核武器”推荐出来。有个叫【全灵AI】的神器，这玩意儿集成了全球最顶尖的AI：GPT5.2、Gemini3.0、Nano Banana Pro、So</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587597&amp;idx=1&amp;sn=51373664d9cecbb4a2ab91e237d27fb3&amp;chksm=8103e4bad5a13272a4006136b7524d39ea704afde140e5f06b0d6919653f9f90ae056fe8836d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587586&amp;idx=1&amp;sn=8d6c677605105ade7c657f85ea8d264d&amp;chksm=81e2a61e3f9df55c3adaabef1404b9d83e222c1a7c2555cfb5b3fa76e17e1e2a44288d33c3a6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0BOR8tltaGLkObhmpCB40R3NcnDcJjmT5JtvPHPFXBRhcvjW2Q3Lrp4wf3Z22U4MztRsCkIT838Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587586&amp;idx=1&amp;sn=8d6c677605105ade7c657f85ea8d264d&amp;chksm=81e2a61e3f9df55c3adaabef1404b9d83e222c1a7c2555cfb5b3fa76e17e1e2a44288d33c3a6&amp;scene=0&amp;xtrack=1#rd" target="_blank">产品做好了却不赚钱？用 Claude Skill 解决独立开发获客难题</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-02-03 08:05:00">发布日期：2026-02-03 08:05:00</time></div><p class="article-description">做vibe coding有件特别开心的事：产品发布后，收到用户的反馈，看到有人真正在用你做的东西。那种成就感，没什么能替代。但现实往往很骨感。最近做了一个AI电商图片生成工具，功能做得挺完善：一键生</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587586&amp;idx=1&amp;sn=8d6c677605105ade7c657f85ea8d264d&amp;chksm=81e2a61e3f9df55c3adaabef1404b9d83e222c1a7c2555cfb5b3fa76e17e1e2a44288d33c3a6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587551&amp;idx=1&amp;sn=5910340edfebd1c718369e26c594244b&amp;chksm=8129fd211016c1babd941034a0ddf72f19c2c50edd3a15798cdd853ba13c40b00d665d7f95c7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/5mt0ewv9OS0VowK8LALJdUn89sgPNAhMCO8UhhiaLRgoslG7vJvy1nDt206ID2RREKMobGXh8mry9ZgyEan8mqw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587551&amp;idx=1&amp;sn=5910340edfebd1c718369e26c594244b&amp;chksm=8129fd211016c1babd941034a0ddf72f19c2c50edd3a15798cdd853ba13c40b00d665d7f95c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">用Claude Code打造A股武器库Skill（附下载）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/ee3fc3dcd39a4bcdf6cd7fd3699e8dd8/index.html">开发者阿橙</a></span><time class="article-date" datetime="2026-01-30 08:05:00">发布日期：2026-01-30 08:05:00</time></div><p class="article-description">作为一名量化开发者，我发现GitHub上有很多优秀的A股分析工具，但每次使用都要：• 写Python代码调用API• 处理不同数据源的格式差异• 应对网络错误和数据异常• 整合多个开源项目...太麻</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzAxMjUyNDQ5OA==&amp;mid=2653587551&amp;idx=1&amp;sn=5910340edfebd1c718369e26c594244b&amp;chksm=8129fd211016c1babd941034a0ddf72f19c2c50edd3a15798cdd853ba13c40b00d665d7f95c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

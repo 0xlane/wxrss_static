@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659038522&amp;idx=2&amp;sn=601c29ce4656aa49db64a5499cb2a5d1&amp;chksm=bc3cd2de6454a2164684ced116338734163ac54bdb7bab522ee66cd01c732d4687ecdc169cd7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/XvpojIRrhdtAYpjicofwNEnLotguES45JQshDPOibx0g4Ldicbib0ZTRxOKP0UIpzPicIGfkARbjdx0LBibXTh9Q0egbohxqe0Rznyc2cr33OgUBg/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659038522&amp;idx=2&amp;sn=601c29ce4656aa49db64a5499cb2a5d1&amp;chksm=bc3cd2de6454a2164684ced116338734163ac54bdb7bab522ee66cd01c732d4687ecdc169cd7&amp;scene=0&amp;xtrack=1#rd" target="_blank">“温室里长不成参天大树。我要磨砺自己，曾益其所不能。”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a4483a3a370be3d57137d9f5253ccd99/index.html">人民网</a></span><time class="article-date" datetime="2026-04-03 16:29:54">发布日期：2026-04-03 16:29:54</time></div><p class="article-description">又是一年清明将至，宁夏固原，一场连续31年的青春接力再度启程。每年清明前一天凌晨，固原二中与弘文中学的师生们，都会徒步前往位于固原市彭阳县古城镇的任山河烈士陵园，祭奠长眠于此的396位烈士。往返108</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NzI3NDg4MA==&amp;mid=2659038522&amp;idx=2&amp;sn=601c29ce4656aa49db64a5499cb2a5d1&amp;chksm=bc3cd2de6454a2164684ced116338734163ac54bdb7bab522ee66cd01c732d4687ecdc169cd7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyNzU3MDI3Nw==&amp;mid=2247513187&amp;idx=1&amp;sn=aa4f0b8131ceeb3ff5162600a68c3b70&amp;chksm=c3054af4aa27f69ca64cd4f0f8bb8b1960fc5348b4bc83fbf2ee869d01f9bc13f3293f0c1b3b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/eBO8JTBC4Dib381pF9J35ekE4TCUMtS4wIVGzrWNRzvP8D2LPSP2lZuctbu1e5US8epI5o8bUOR5XnDaxnQfAPNDsianL5eiaKPQHJUCyclrEE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyNzU3MDI3Nw==&amp;mid=2247513187&amp;idx=1&amp;sn=aa4f0b8131ceeb3ff5162600a68c3b70&amp;chksm=c3054af4aa27f69ca64cd4f0f8bb8b1960fc5348b4bc83fbf2ee869d01f9bc13f3293f0c1b3b&amp;scene=0&amp;xtrack=1#rd" target="_blank">【拆车直播深度解读1】从分散到集中：新一代SU7的电子电气架构升级</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/1cb5b213db3c1e0601f50389c1b84329/index.html">小米汽车</a></span><time class="article-date" datetime="2026-04-03 16:29:12">发布日期：2026-04-03 16:29:12</time></div><p class="article-description">昨天的拆车直播，我们把新一代SU7整车拆到零部件级，带大家从内到外了解新一代SU7、同时科普汽车安全知识。直播中，我们还深度拆解了新一代SU7全新升级的智能底座——EEA电子电气架构。它的构成有哪些？</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyNzU3MDI3Nw==&amp;mid=2247513187&amp;idx=1&amp;sn=aa4f0b8131ceeb3ff5162600a68c3b70&amp;chksm=c3054af4aa27f69ca64cd4f0f8bb8b1960fc5348b4bc83fbf2ee869d01f9bc13f3293f0c1b3b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODI2NDk2Mw==&amp;mid=2658943722&amp;idx=1&amp;sn=206a8ccf259487f65807542db6107be1&amp;chksm=bc33b4d6a3f89c8e180bad9b857549e01ed82878750198e3052249cce841e3e0fca65231740c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/dsK0UiacEv1wjZz3EzzEIWWdh8am1hJEZKOVeac1Hf3y7k1FzicR4FGSWNLdPYaDCGgDIBPWnsqry0J0iaLDAcyJlBKkQiaicfv0QcIlqv3ND4Y4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODI2NDk2Mw==&amp;mid=2658943722&amp;idx=1&amp;sn=206a8ccf259487f65807542db6107be1&amp;chksm=bc33b4d6a3f89c8e180bad9b857549e01ed82878750198e3052249cce841e3e0fca65231740c&amp;scene=0&amp;xtrack=1#rd" target="_blank">世界遗产焕发新生，华为光网络助力帕杜拉修道院“数字复兴”</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d63e7ea059dc68e97e2ef16531e47e6c/index.html">华为</a></span><time class="article-date" datetime="2026-04-03 16:25:24">发布日期：2026-04-03 16:25:24</time></div><p class="article-description">在意大利南部的奇伦托地区，有一座跨越数百年历史的修道院——帕杜拉修道院（Padula Charterhouse）。它不仅是意大利规模最大的修道院建筑群之一，更是联合国教科文组织认定的世界文化遗产。在漫</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5ODI2NDk2Mw==&amp;mid=2658943722&amp;idx=1&amp;sn=206a8ccf259487f65807542db6107be1&amp;chksm=bc33b4d6a3f89c8e180bad9b857549e01ed82878750198e3052249cce841e3e0fca65231740c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=1&amp;sn=c12ab20647ba7236b18456a6b7f77cc2&amp;chksm=faf2c87ad9aa56f053437d9b39577acb7f603cde8bb25870270f0dd5ad70ffc99f9364b0b6cb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lYDricib2fsm7qUWgCQib29eO2386ibC0GXRgCc6Rq5fCoqBMh0MU60PQ2NCkVd0cTeQWGgPpKBbT6abAAmcziaibmXqicB3qsWibrlWVVJBEy2s2cg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=1&amp;sn=c12ab20647ba7236b18456a6b7f77cc2&amp;chksm=faf2c87ad9aa56f053437d9b39577acb7f603cde8bb25870270f0dd5ad70ffc99f9364b0b6cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026龙虾饲养手册：21套“养虾”方案横评，从个人到企业怎么选</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9e819167edcbe340ea81ad30bdd9f222/index.html">AI前线</a></span><time class="article-date" datetime="2026-04-03 16:23:12">发布日期：2026-04-03 16:23:12</time></div><p class="article-description">作者 | 四月	“这么多版本的龙虾，我到底该用哪个？”这是 InfoQ 在落地的近 20 场“龙虾”（OpenClaw) 主题线下活动中，从数千名开发者口中听到的最多困惑。OpenClaw 的 Git</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=1&amp;sn=c12ab20647ba7236b18456a6b7f77cc2&amp;chksm=faf2c87ad9aa56f053437d9b39577acb7f603cde8bb25870270f0dd5ad70ffc99f9364b0b6cb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=2&amp;sn=b295b5677bcbf9bb45bdceeeaa0559c8&amp;chksm=fa59924296f48f0ab609c3e28ce5a572071bce654b32249512f9f70cb53513c38b75a644222e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/lYDricib2fsm5U8BMibibvAUAw1xrk6N2QOFiaAq8mdUpTjiapeswOtnicPMrDY9PcDRRdLtG6icdedbMp3TBNxZsY1EpcicwoFibrEXLWAxoA8DJXASA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=2&amp;sn=b295b5677bcbf9bb45bdceeeaa0559c8&amp;chksm=fa59924296f48f0ab609c3e28ce5a572071bce654b32249512f9f70cb53513c38b75a644222e&amp;scene=0&amp;xtrack=1#rd" target="_blank">Stripe 工程师部署了自主智能体 Minions，每周生成数千个拉取请求</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9e819167edcbe340ea81ad30bdd9f222/index.html">AI前线</a></span><time class="article-date" datetime="2026-04-03 16:23:12">发布日期：2026-04-03 16:23:12</time></div><p class="article-description">作者 | Leela Kumili译者 | 张卫滨Stripe 的工程师开发了 Minions，这是一个自主编程的智能体，能够根据单条指令端到端地完成软件开发任务。该系统实现了大语言模型（LLM）与内</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU1NDA4NjU2MA==&amp;mid=2247660366&amp;idx=2&amp;sn=b295b5677bcbf9bb45bdceeeaa0559c8&amp;chksm=fa59924296f48f0ab609c3e28ce5a572071bce654b32249512f9f70cb53513c38b75a644222e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248714340&amp;idx=1&amp;sn=bb4b52315b66ae4c18c5f0fedee4c514&amp;chksm=95e6caee0b4a3753cdcd75775b0689b941abac5335e9b2b7bb1f433e93c701ae0218ddf61fea&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/CGbEAqZmgicFMjicOjeC4768AONSBoank76YXyHf9gN2B5NeaHtWvtTlhkQCqt9IxruX5dGrAD0AHLtP19vBx77UibhYfCrqMbPBotlGWZgnCw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248714340&amp;idx=1&amp;sn=bb4b52315b66ae4c18c5f0fedee4c514&amp;chksm=95e6caee0b4a3753cdcd75775b0689b941abac5335e9b2b7bb1f433e93c701ae0218ddf61fea&amp;scene=0&amp;xtrack=1#rd" target="_blank">大嘴萌禽惊现通州！“鸟类中的大熊猫”也来啦～</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/7ad3c39bf618a17d507ad48455542179/index.html">北京通州发布</a></span><time class="article-date" datetime="2026-04-03 16:21:53">发布日期：2026-04-03 16:21:53</time></div><p class="article-description">北京通州发布（bjtzfb）北京城市副中心官方微信副中心生态环境真是越来越好啦！近日，有市民惊喜发现国家一级保护动物卷羽鹈鹕也来到了大运河畔！快点开看视频👇👇👇近日，一只体态优雅的大型水鸟，在大运河文</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIxMDIwNjY2Mg==&amp;mid=2248714340&amp;idx=1&amp;sn=bb4b52315b66ae4c18c5f0fedee4c514&amp;chksm=95e6caee0b4a3753cdcd75775b0689b941abac5335e9b2b7bb1f433e93c701ae0218ddf61fea&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=1&amp;sn=0a7302366062fd010098ce03c624a817&amp;chksm=bc032c21f1967057b224b1ac9e15d6181a574c18c928d5180b9ab73043c2deff7d0c748fe179&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/oGLk9FLlibHfGDF13XiawGzTXeuNpxs0WsadxlFcDauWI8qkIpNicicp9fd3zArOrpLZboG0ueNapocQzVlj1Alk8ehiaQ2ZsxTDw3Lha6PXP8Fs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=1&amp;sn=0a7302366062fd010098ce03c624a817&amp;chksm=bc032c21f1967057b224b1ac9e15d6181a574c18c928d5180b9ab73043c2deff7d0c748fe179&amp;scene=0&amp;xtrack=1#rd" target="_blank">张雪要捐款，李亚鹏回应</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2026-04-03 16:20:33">发布日期：2026-04-03 16:20:33</time></div><p class="article-description">随着张雪机车在WSBK（世界超级摩托车锦标赛）葡萄牙站勇夺“双冠”创造历史，张雪机车创始人张雪也持续受到关注。4月3日，张雪在其社交账号上发布视频称，他要拍卖赛车的复刻版，所得款项将全部捐给嫣然天使基</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=1&amp;sn=0a7302366062fd010098ce03c624a817&amp;chksm=bc032c21f1967057b224b1ac9e15d6181a574c18c928d5180b9ab73043c2deff7d0c748fe179&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=2&amp;sn=836f9b28345500eb6838490a85b16c9f&amp;chksm=bc7cdb1ab16f4cd5ef0f879463f88e10e09e60586c0ca9f42518f2b42ac1ed9c5adf95b65489&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/oGLk9FLlibHcXwleWicgXIqBFcBIxPzsW8RNsKNPoIJ0c7gllF9R61KCHO9dMcd1VibIwBt1XiaIibBkLa7tibSueYhlFDX6ibdWnRRjaibstOlwIMc/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=2&amp;sn=836f9b28345500eb6838490a85b16c9f&amp;chksm=bc7cdb1ab16f4cd5ef0f879463f88e10e09e60586c0ca9f42518f2b42ac1ed9c5adf95b65489&amp;scene=0&amp;xtrack=1#rd" target="_blank">水果界的“灌汤包”，一口爆汁，比梨还水润！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2026-04-03 16:20:33">发布日期：2026-04-03 16:20:33</time></div><p class="article-description">提起人参果，许多人的脑海中便会立刻浮现出《西游记》里那来自万寿山的神奇灵果。在《西游记》中，人参果被形容为历经三千年开花，三千年结果，又三千年成熟，如此漫长的生长周期，让它充满了神秘的色彩。就连神通广</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651720695&amp;idx=2&amp;sn=836f9b28345500eb6838490a85b16c9f&amp;chksm=bc7cdb1ab16f4cd5ef0f879463f88e10e09e60586c0ca9f42518f2b42ac1ed9c5adf95b65489&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDkwOTU0MQ==&amp;mid=2657647464&amp;idx=1&amp;sn=cfc9a0e7372c467519f79c056f661692&amp;chksm=bc96a33075acf13046457d6582920d4806441ccb4a298c0b4db1880bbf20cbade0a3f3d55b03&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/v9iaETX4yvwT7ugN2FpNQJT94Ie6uz0hv3yor9gLV8QjzvwweQKiacMic4Eqic2JmQ57ILw1yQCkciaHiblb9Vjic0K39PpBKTXHS0KkocZqibBCaSs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDkwOTU0MQ==&amp;mid=2657647464&amp;idx=1&amp;sn=cfc9a0e7372c467519f79c056f661692&amp;chksm=bc96a33075acf13046457d6582920d4806441ccb4a298c0b4db1880bbf20cbade0a3f3d55b03&amp;scene=0&amp;xtrack=1#rd" target="_blank">一战封神！中国机车含金量还在上升！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/89a6327453bc41715dd966b5223ad355/index.html">中国电信</a></span><time class="article-date" datetime="2026-04-03 16:00:00">发布日期：2026-04-03 16:00:00</time></div><p class="article-description">引擎声震得耳膜发麻五星红旗飘扬得格外耀眼这次，波尔蒂芒赛道直接被中国制造“炸场”了3月28日至29日中国摩托车品牌张雪机车自主研发的820RR-RS在世界超级摩托车锦标赛（WSBK）葡萄牙站连夺两回合</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5NDkwOTU0MQ==&amp;mid=2657647464&amp;idx=1&amp;sn=cfc9a0e7372c467519f79c056f661692&amp;chksm=bc96a33075acf13046457d6582920d4806441ccb4a298c0b4db1880bbf20cbade0a3f3d55b03&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjU4MDYwOA==&amp;mid=2247491575&amp;idx=1&amp;sn=6854ea216962f8b8d92b26645995fc06&amp;chksm=eb4338b67c0841a7c91048bf8898167869ebff635d22e18207450636e68c9acfb2f099222dc7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BdwSyGJqvPqZdfElF98pgz2XMI2geS4CtrF8Xxicric1XYT5sftY4LYYRYCC6XAxXHF37MHa8Rb7rjxibj4P6tDZD5Zsfdt1JhpN1gKGUeP2w8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjU4MDYwOA==&amp;mid=2247491575&amp;idx=1&amp;sn=6854ea216962f8b8d92b26645995fc06&amp;chksm=eb4338b67c0841a7c91048bf8898167869ebff635d22e18207450636e68c9acfb2f099222dc7&amp;scene=0&amp;xtrack=1#rd" target="_blank">普林斯顿、剑桥、MSRA学者 Nature 发文：当前 AI 评测打榜刷 SOTA 不科学，需要一种可解释、可预测的新范式</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/a40e6355678d81a8532f5214700fd84f/index.html">清熙</a></span><time class="article-date" datetime="2026-04-03 16:16:00">发布日期：2026-04-03 16:16:00</time></div><p class="article-description">前天这篇 Nature 论文《通用量表解锁了具有可解释和预测性的人工智能评估》【文献1】，回答了一个关键问题：我们到底在测量什么样的 AI 能力，这些测量是不是能够外推。过去AI的发展进步几乎完全依赖</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjU4MDYwOA==&amp;mid=2247491575&amp;idx=1&amp;sn=6854ea216962f8b8d92b26645995fc06&amp;chksm=eb4338b67c0841a7c91048bf8898167869ebff635d22e18207450636e68c9acfb2f099222dc7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>漏洞推送</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485845&amp;idx=1&amp;sn=8df1edd9db05d80cba1ddf9b24f63396&amp;chksm=ffa17c4afd33a17fdec299cd3b7e12d05f8dfb6d78034baf53b071141efffceb1a6978377cee&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1dnNWRVcLywO4CuicDOlLIwxpicrEMKCtQpu9dmHyrsf9abK2eiaCFl4oA1SdxzO7KftIobJFbTgyNrg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485845&amp;idx=1&amp;sn=8df1edd9db05d80cba1ddf9b24f63396&amp;chksm=ffa17c4afd33a17fdec299cd3b7e12d05f8dfb6d78034baf53b071141efffceb1a6978377cee&amp;scene=0&amp;xtrack=1#rd" target="_blank">基于JS_HOOK的web流量加解密方案</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2026-01-12 17:13:39">发布日期：2026-01-12 17:13:39</time></div><p class="article-description">最近遇到一个web网站，流量是通过js的加密的，于是设计了一套较为通用的流量js hook配置burp的流量加解密方案。方案分为以下几个部分:•加密函数的参数和返回值记录•解密函数的的参数和返回值记录</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485845&amp;idx=1&amp;sn=8df1edd9db05d80cba1ddf9b24f63396&amp;chksm=ffa17c4afd33a17fdec299cd3b7e12d05f8dfb6d78034baf53b071141efffceb1a6978377cee&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=1&amp;sn=0186fe4cc07face59ea9e7baca4f2a0a&amp;chksm=ffc1c974a6ad551537f608aab1b25cf76025a401a1b77006ab7d77b489ad292756c316f3eae0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1ciclcpkWfaDI5YyxIQQukXbYp61QBN3uDrFUNCMusoBiboKuQWn3W0ATpqmaXhPNnHkTLbbhgp9bgQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=1&amp;sn=0186fe4cc07face59ea9e7baca4f2a0a&amp;chksm=ffc1c974a6ad551537f608aab1b25cf76025a401a1b77006ab7d77b489ad292756c316f3eae0&amp;scene=0&amp;xtrack=1#rd" target="_blank">基于JS_HOOK的web流量加解密方案</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2026-01-09 11:18:47">发布日期：2026-01-09 11:18:47</time></div><p class="article-description">最近遇到一个某金融的web网站，流量是通过js的加密的，于是设计了一套较为通用的流量js hook配置burp的流量加解密方案。方案分为以下几个部分:•加密函数的参数和返回值记录•解密函数的的参数和返</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=1&amp;sn=0186fe4cc07face59ea9e7baca4f2a0a&amp;chksm=ffc1c974a6ad551537f608aab1b25cf76025a401a1b77006ab7d77b489ad292756c316f3eae0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=2&amp;sn=69e5a319635ba48a18e03512709af800&amp;chksm=ff021777cecfebcb11d483ac38ef544bfa44fb8d527821a958521c29eca16f5da6a3d144dba8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1ciclcpkWfaDI5YyxIQQukXbnTgNrzDwLcfGvt2j39AfHfDCwRh6yK2TAT9eIurqBuKRooiazCM5HMQ/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=2&amp;sn=69e5a319635ba48a18e03512709af800&amp;chksm=ff021777cecfebcb11d483ac38ef544bfa44fb8d527821a958521c29eca16f5da6a3d144dba8&amp;scene=0&amp;xtrack=1#rd" target="_blank">Mac burp高版本UI显示文字缺失问题解决</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2026-01-09 11:18:47">发布日期：2026-01-09 11:18:47</time></div><p class="article-description">最近在使用Burp高版本的时候，遇到需要JDK21。但是在我的mac上安装JDK21的话，很多java软件都会遇到UI显示异常的问题。如图:解决办法:官网下载burp的mac的app包，不是jar包。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485811&amp;idx=2&amp;sn=69e5a319635ba48a18e03512709af800&amp;chksm=ff021777cecfebcb11d483ac38ef544bfa44fb8d527821a958521c29eca16f5da6a3d144dba8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485786&amp;idx=1&amp;sn=473504c49c301f74aa2c229027ac91ad&amp;chksm=ff1eadbbea523d2f661aedcdd763c544aeecbc43678c9594b41539ec0ea32b93ae6db182c947&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1ep9QcfibM1v3ibz57fEj13RnwE9nqjYy3Hp6YE0EicNyxgSbA3kqgzRuqyFsc4nXGobPmHvBGOpSx6Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485786&amp;idx=1&amp;sn=473504c49c301f74aa2c229027ac91ad&amp;chksm=ff1eadbbea523d2f661aedcdd763c544aeecbc43678c9594b41539ec0ea32b93ae6db182c947&amp;scene=0&amp;xtrack=1#rd" target="_blank">国产大模型ClaudeCode编程能力测试！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-12-24 14:03:17">发布日期：2025-12-24 14:03:17</time></div><p class="article-description">测试环境claude code版本: v2.0.37，为规避历史记录影响,每次执行完以后删除掉.claude目录，重新创建。为保证结果不受其他因素干扰，均只设置最基本的环境变量提示词: @index.</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485786&amp;idx=1&amp;sn=473504c49c301f74aa2c229027ac91ad&amp;chksm=ff1eadbbea523d2f661aedcdd763c544aeecbc43678c9594b41539ec0ea32b93ae6db182c947&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485744&amp;idx=1&amp;sn=c37f988923d265ad36e3b3aac11ccf9a&amp;chksm=ff0b648ca68ada51cb99d09fb732210eb09e4ba673769a230b32ea9f6d3b69d3df3dd06d5be6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1dMaiauuEOtib8CSqiaiaDicaTUiaGq6LeG4dYrjibyxxIZGvOY81wiaAv0TZfvCgibDmmrMb9sWvgHvib5AfHA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485744&amp;idx=1&amp;sn=c37f988923d265ad36e3b3aac11ccf9a&amp;chksm=ff0b648ca68ada51cb99d09fb732210eb09e4ba673769a230b32ea9f6d3b69d3df3dd06d5be6&amp;scene=0&amp;xtrack=1#rd" target="_blank">QuickSearch-chrome右键快速搜索插件</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-11-24 11:29:27">发布日期：2025-11-24 11:29:27</time></div><p class="article-description">QuickSearch是我开发的一款chrome插件，用于在chrome浏览器中使用右键快速进行资产搜索1.右键选中文本后，可右键打开对应的测绘引擎的搜索界面，可快速进行title和body搜索1.快</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485744&amp;idx=1&amp;sn=c37f988923d265ad36e3b3aac11ccf9a&amp;chksm=ff0b648ca68ada51cb99d09fb732210eb09e4ba673769a230b32ea9f6d3b69d3df3dd06d5be6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485736&amp;idx=1&amp;sn=f27d430ad6b2b0865ec24fcaec9987c0&amp;chksm=ff0b48b6684a3d18b23fa9cd70cac5c9be32cc47001affc8d85c22a674349f00e74c3abfd6d0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1etuC07DFtZQzJKqtpnOhqPzGeZG4OLzeiasZ0KtBw1lboOYqgBtcskZ6HUQxXC4k3ckibgSkORGiaFg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485736&amp;idx=1&amp;sn=f27d430ad6b2b0865ec24fcaec9987c0&amp;chksm=ff0b48b6684a3d18b23fa9cd70cac5c9be32cc47001affc8d85c22a674349f00e74c3abfd6d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">急聘渗透测试工程师（郑州绿盟）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-10-30 10:35:24">发布日期：2025-10-30 10:35:24</time></div><p class="article-description">薪资待遇10-15k职位详情工作职责1.负责各类渗透测试、代码漏洞挖掘和分析、红蓝对抗、安全培训等工作。2.在发生网络攻击或安全事件时，提供紧急响应服务，协助客户恢复系统并进行调查取证。3.能够独立完</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485736&amp;idx=1&amp;sn=f27d430ad6b2b0865ec24fcaec9987c0&amp;chksm=ff0b48b6684a3d18b23fa9cd70cac5c9be32cc47001affc8d85c22a674349f00e74c3abfd6d0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485732&amp;idx=1&amp;sn=b692f7c90b39c0fe59121ccd738267c6&amp;chksm=fffe0f90f7a380ff0bf98180a6a419851753285506d4dfb414be97d893b7ac968dc21b423adc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1fibpsNqhEfDPxOSmiccUPvPGMalTxia0mET18u3GFoKwZmDMvPu72ibGg43n3hzUmx8jHlDaDOkBTv0w/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485732&amp;idx=1&amp;sn=b692f7c90b39c0fe59121ccd738267c6&amp;chksm=fffe0f90f7a380ff0bf98180a6a419851753285506d4dfb414be97d893b7ac968dc21b423adc&amp;scene=0&amp;xtrack=1#rd" target="_blank">如何利用vps远程pull镜像</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-09-10 19:34:02">发布日期：2025-09-10 19:34:02</time></div><p class="article-description">因为某些原因，现在docker image是无法直接pull。但是在很多时候，比如在某些国内的测试开发服务器上还是需要pull镜像的。我希望有一种：不需要额外安装软件，毕竟安装起来也很浪费时间不许要承</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485732&amp;idx=1&amp;sn=b692f7c90b39c0fe59121ccd738267c6&amp;chksm=fffe0f90f7a380ff0bf98180a6a419851753285506d4dfb414be97d893b7ac968dc21b423adc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485727&amp;idx=1&amp;sn=723dfa85723a820f673343d1d587c622&amp;chksm=ffff87e01f617adbdc6c8bf35ea0f5a2a427af05a1eb29d0681b3deadd39a4a96e9887fee218&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1eZ8wGfDnusYibiaQ2dea1ASPSKtcfdcrOsX5DjPhY61QSW4UhYgWpk7xkNScnGyBhmu5IbuEO8H6icg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485727&amp;idx=1&amp;sn=723dfa85723a820f673343d1d587c622&amp;chksm=ffff87e01f617adbdc6c8bf35ea0f5a2a427af05a1eb29d0681b3deadd39a4a96e9887fee218&amp;scene=0&amp;xtrack=1#rd" target="_blank">BlackHat_USA_2025 PPT分享</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-08-19 11:29:23">发布日期：2025-08-19 11:29:23</time></div><p class="article-description">英文原名中文翻译Adam Zabrocki&amp;Marko Mitic_How to Secure Unique Ecosystem Shipping 1 Billion+ Cores.pdf如何保护出货</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485727&amp;idx=1&amp;sn=723dfa85723a820f673343d1d587c622&amp;chksm=ffff87e01f617adbdc6c8bf35ea0f5a2a427af05a1eb29d0681b3deadd39a4a96e9887fee218&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=1&amp;sn=987afcdabc2fcc0709a428b95cc8beaa&amp;chksm=ff4995c7fb239f109b7e20cab52b7ad691e9824cdc7e7afc106e16aa586e35ecf09edc7d143d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1cp8ugwvkwffzwcSmRcVkk3nWyp7lTantiaEFogpRBtNNNvibaN4mh2VC1TA2ib8zXT8k1M5E4LJhACg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=1&amp;sn=987afcdabc2fcc0709a428b95cc8beaa&amp;chksm=ff4995c7fb239f109b7e20cab52b7ad691e9824cdc7e7afc106e16aa586e35ecf09edc7d143d&amp;scene=0&amp;xtrack=1#rd" target="_blank">云环境下的PostgreSQL渗透</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-07-26 09:08:59">发布日期：2025-07-26 09:08:59</time></div><p class="article-description">前段时间因为有个项目涉及到云环境下的渗透，于是学习了Wiz Research关于pg渗透的文章目前在云环境下给用户的pg账号，都是经过降权的账号，非真正的超管用户，是无法执行命令的。信息搜集命令执行如</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=1&amp;sn=987afcdabc2fcc0709a428b95cc8beaa&amp;chksm=ff4995c7fb239f109b7e20cab52b7ad691e9824cdc7e7afc106e16aa586e35ecf09edc7d143d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=2&amp;sn=0172efd16cda28f974bb7a289b284358&amp;chksm=ff2daa9cfcaf0ae36cedac64ccb811f2456902d3559de546f8e98897329fb9f8034f193c9619&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/noZJ3Kqbu1cp8ugwvkwffzwcSmRcVkk3ysylr05qF3mj293PcUD0Vcia5F87q1lVDtzTfMianGU0FDrgibDoflniaw/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=2&amp;sn=0172efd16cda28f974bb7a289b284358&amp;chksm=ff2daa9cfcaf0ae36cedac64ccb811f2456902d3559de546f8e98897329fb9f8034f193c9619&amp;scene=0&amp;xtrack=1#rd" target="_blank">招聘-安全服务工程师（郑州）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/b0fe2010a9f081a082c795bc54d591ce/index.html">漏洞推送</a></span><time class="article-date" datetime="2025-07-26 09:08:59">发布日期：2025-07-26 09:08:59</time></div><p class="article-description">安全服务工程师（郑州）薪资待遇10-15k职位详情工作职责1.负责各类渗透测试、代码漏洞挖掘和分析、红蓝对抗、安全培训等工作。2.在发生网络攻击或安全事件时，提供紧急响应服务，协助客户恢复系统并进行调</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU5MTExMjYwMA==&amp;mid=2247485722&amp;idx=2&amp;sn=0172efd16cda28f974bb7a289b284358&amp;chksm=ff2daa9cfcaf0ae36cedac64ccb811f2456902d3559de546f8e98897329fb9f8034f193c9619&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

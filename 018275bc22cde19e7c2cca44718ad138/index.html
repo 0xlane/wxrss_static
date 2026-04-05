@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>红队工坊</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485546&amp;idx=1&amp;sn=1b96f8b0e4f12ea6975b1f397feeea19&amp;chksm=c56dcd6a309fe119f38c8fb03a313329eb2123ca7a70172c771c3e8882f20da840421ee16fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iauzMfibvvF2cI1qgd3uicse5mkhDGd6Un1k7O4vu1kz4AC6x9lpEhhAsG4Xu6hpsfnL1bibfrOyia0b1pyibncADjib2QXtdsgicqt7SdkWCKVCd10/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485546&amp;idx=1&amp;sn=1b96f8b0e4f12ea6975b1f397feeea19&amp;chksm=c56dcd6a309fe119f38c8fb03a313329eb2123ca7a70172c771c3e8882f20da840421ee16fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank">GachiLoader：通过 API 跟踪击败 Node.js 恶意软件</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-03-05 10:32:07">发布日期：2026-03-05 10:32:07</time></div><p class="article-description">翻译自 GachiLoader: Defeating Node.js Malware with API Tracing引言在 [此前的研究] https://research.checkpoint.c</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485546&amp;idx=1&amp;sn=1b96f8b0e4f12ea6975b1f397feeea19&amp;chksm=c56dcd6a309fe119f38c8fb03a313329eb2123ca7a70172c771c3e8882f20da840421ee16fd1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485542&amp;idx=1&amp;sn=309bd5ec74af87205341550ec93d4481&amp;chksm=c57b4eeb94bafcb37c9c3bbcb7c2ed268d89b7f3164f5aaf79d03f480671a82b9a9cbfc3ce45&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iauzMfibvvF2crmu5Qapgjic1EU7GErA8wPhwoNvE6A6Wn1kQF6naco4Hia9xMjLqKaJxMl6iclsDWvBiandEyuI9mOfPx8pGs8untzVt4Og5zA00/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485542&amp;idx=1&amp;sn=309bd5ec74af87205341550ec93d4481&amp;chksm=c57b4eeb94bafcb37c9c3bbcb7c2ed268d89b7f3164f5aaf79d03f480671a82b9a9cbfc3ce45&amp;scene=0&amp;xtrack=1#rd" target="_blank">绕过杀软EDR内存扫描</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-02-12 16:15:45">发布日期：2026-02-12 16:15:45</time></div><p class="article-description">翻译自 https://www.blackhillsinfosec.com/avoiding-memory-scanners/引言本文是我在 DEF CON 30 上所做 [演讲] https://f</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485542&amp;idx=1&amp;sn=309bd5ec74af87205341550ec93d4481&amp;chksm=c57b4eeb94bafcb37c9c3bbcb7c2ed268d89b7f3164f5aaf79d03f480671a82b9a9cbfc3ce45&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485538&amp;idx=1&amp;sn=4335ff12710c0faef017211525398f3a&amp;chksm=c58c6ae6849128652a936d62c99685bfce260169cb6fe6fc6e02b79aac684a6c5d1c7db00a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iauzMfibvvF2ep7V2ZGLT4BoBeiavE8SMgfV5WacaknHHADkkoZ6c4aFTibzIGsqiaXVibLcxRppibVAmENIjiaWosEU84OHugNWibh5GhRfXHWhKJia4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485538&amp;idx=1&amp;sn=4335ff12710c0faef017211525398f3a&amp;chksm=c58c6ae6849128652a936d62c99685bfce260169cb6fe6fc6e02b79aac684a6c5d1c7db00a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">NimShellCodeLoader：基于Nim的Windows Shellcode免杀加载器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-02-11 12:09:15">发布日期：2026-02-11 12:09:15</time></div><p class="article-description">入选2022年KCon兵器谱⚠️ 仅限用于技术研究和获得正式授权的测试活动📖 项目简介在网络安全攻防演练和渗透测试中，如何绕过杀毒软件的检测一直是一个技术难题。传统的shellcode加载器往往容易</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485538&amp;idx=1&amp;sn=4335ff12710c0faef017211525398f3a&amp;chksm=c58c6ae6849128652a936d62c99685bfce260169cb6fe6fc6e02b79aac684a6c5d1c7db00a8e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485533&amp;idx=1&amp;sn=b907b51ef718f21e031b8c5b35a2abfd&amp;chksm=c5a64def5b5f2efd167347607ba44d9206ef1096ad704a00cc340ce33fc9b6f53baf382f76d7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iauzMfibvvF2fZoUd0GNvwWWGGEtQASCmrmChjjaJhJxAzFEvo4m3Fw1tIyzpZkl6GfkplYdjuJYVczGrCzY8mibdicleH86wQVMIqNiayiaOmjtw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485533&amp;idx=1&amp;sn=b907b51ef718f21e031b8c5b35a2abfd&amp;chksm=c5a64def5b5f2efd167347607ba44d9206ef1096ad704a00cc340ce33fc9b6f53baf382f76d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 驱动的免杀：利用AI生成 PowerShell 混淆 Shell，Python一键搞定</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-02-09 11:15:29">发布日期：2026-02-09 11:15:29</time></div><p class="article-description">0x01 项目简介介绍一款基于 Python 编写的自动化 Payload 生成工具。与传统生成工具不同，它集成了 DeepSeek API（深度求索大模型），利用 LLM 的代码理解与生成能力，通</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485533&amp;idx=1&amp;sn=b907b51ef718f21e031b8c5b35a2abfd&amp;chksm=c5a64def5b5f2efd167347607ba44d9206ef1096ad704a00cc340ce33fc9b6f53baf382f76d7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485527&amp;idx=1&amp;sn=bd6930d4663eeb213e283d9eb8a0cd44&amp;chksm=c52f9c2588a76278962b00a720b241590ed6e3b0b6f6199e4d906d1d4ec03872fff34d35b99e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iauzMfibvvF2fBuXo2iab4IiaMq9r2GXFYRvZlyQIS6sAyKx7sCOIZ9oGJvo6Z5FkGAVIZmhcZgu3ibPZFwM1gT5v5CLjljrJr5DZiafkOGba4rWM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485527&amp;idx=1&amp;sn=bd6930d4663eeb213e283d9eb8a0cd44&amp;chksm=c52f9c2588a76278962b00a720b241590ed6e3b0b6f6199e4d906d1d4ec03872fff34d35b99e&amp;scene=0&amp;xtrack=1#rd" target="_blank">次世代免杀shellocde加载器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-02-05 08:32:35">发布日期：2026-02-05 08:32:35</time></div><p class="article-description">前言在红队行动和渗透测试中，如何让恶意载荷绕过安全防护软件的检测一直是一个关键挑战。今天给大家介绍一款名为 Founding 的开源工具，它能够对 shellcode 进行高级混淆和加密处理，生成具有</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485527&amp;idx=1&amp;sn=bd6930d4663eeb213e283d9eb8a0cd44&amp;chksm=c52f9c2588a76278962b00a720b241590ed6e3b0b6f6199e4d906d1d4ec03872fff34d35b99e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485522&amp;idx=1&amp;sn=a5ecba74cc9ae3d10ac372eaed8f6ac3&amp;chksm=c5c810653c4c401690841306807ed251d7749c45784c2cb0b3c62ff65f1f537326df7ae009a3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9QEM1M4pZoB6ewWKk8gj84RmCtCu45bpSemxNk0K0wdxOiawftUhwVK7ub88gXfF4StuSrYHpRxVOXxhjDouN0g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485522&amp;idx=1&amp;sn=a5ecba74cc9ae3d10ac372eaed8f6ac3&amp;chksm=c5c810653c4c401690841306807ed251d7749c45784c2cb0b3c62ff65f1f537326df7ae009a3&amp;scene=0&amp;xtrack=1#rd" target="_blank">深度预警 | AI Agent 门户 Clawdbot 安全风险：数百名用户服务暴露，敏感凭证面临清空风险</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-01-28 06:00:00">发布日期：2026-01-28 06:00:00</time></div><p class="article-description">概要近期，安全研究人员针对新兴 AI Agent 网关 Clawdbot 的实际部署现状进行了调查。报告显示，由于默认安全配置缺陷及反向代理误区，数以百计的用户在部署 Clawdbot 控制端（Con</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485522&amp;idx=1&amp;sn=a5ecba74cc9ae3d10ac372eaed8f6ac3&amp;chksm=c5c810653c4c401690841306807ed251d7749c45784c2cb0b3c62ff65f1f537326df7ae009a3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485516&amp;idx=1&amp;sn=eab3cc710ba6a8ef82f266b6a1b207f4&amp;chksm=c5b374884540b1a817451babbb41ad7091d54766fbc56db221736e1dcdf13fed61f5204e14af&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9QEM1M4pZoCflibUiaSTyVb1ODTINhKicoibZ2aVZQF5bOFZLxknA0j9B8ag1vXJdQLib6Heb7pGuw8ZYLic8fhOia4UA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485516&amp;idx=1&amp;sn=eab3cc710ba6a8ef82f266b6a1b207f4&amp;chksm=c5b374884540b1a817451babbb41ad7091d54766fbc56db221736e1dcdf13fed61f5204e14af&amp;scene=0&amp;xtrack=1#rd" target="_blank">PPL 滥用新路径</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-01-27 06:00:00">发布日期：2026-01-27 06:00:00</time></div><p class="article-description">翻译自 RONINGLOADER: DragonBreath’s New Path to PPL Abuse引言Elastic 安全实验室近期发现了一场正在进行的攻击活动。该活动通过伪装成谷歌浏览器、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485516&amp;idx=1&amp;sn=eab3cc710ba6a8ef82f266b6a1b207f4&amp;chksm=c5b374884540b1a817451babbb41ad7091d54766fbc56db221736e1dcdf13fed61f5204e14af&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485510&amp;idx=1&amp;sn=70cb540436afc867bdeadfdfcbe99641&amp;chksm=c542ee25083da08d64f0ebda761ba589064cfa3062fd7f9f5eb308f0f6bc129d6249743f46c2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/9QEM1M4pZoDNmbj7Cbia5R3hrQcaGEldiaKUibFIHcT5GkI4170C0eb5gGt4BkpOJNXj0F4tZibFEmnoByVUNcSfsQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485510&amp;idx=1&amp;sn=70cb540436afc867bdeadfdfcbe99641&amp;chksm=c542ee25083da08d64f0ebda761ba589064cfa3062fd7f9f5eb308f0f6bc129d6249743f46c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">谢邀</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/018275bc22cde19e7c2cca44718ad138/index.html">红队工坊</a></span><time class="article-date" datetime="2026-01-05 10:15:28">发布日期：2026-01-05 10:15:28</time></div><p class="article-description">谢邀，人在纽约，昨天刚下飞机#执法现场纪实 #警察与嫌疑人互动 #警民合作典范 #委内瑞拉 #警局里的瞬间</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg3NTc1Mg==&amp;mid=2247485510&amp;idx=1&amp;sn=70cb540436afc867bdeadfdfcbe99641&amp;chksm=c542ee25083da08d64f0ebda761ba589064cfa3062fd7f9f5eb308f0f6bc129d6249743f46c2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>
