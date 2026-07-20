@@ -1,0 +1,480 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>字节笔记本</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519118&amp;idx=1&amp;sn=747e3b55c1101d256f9f8be55ee078bc&amp;chksm=e9ae66ac5869832df8b03aa9d36484e6a62d6de76a245a5ff1ee704be9ee6a2df1a7644d4623&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1whronSBkOc7EkcUicCVmY4ib4RHdicskK1YANliatphDNaIc0ibib5rKPacwFUvAKnw3RyMmwVbmdj7kcMKNPdclJIwyOQbsGOB1C3g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519118&amp;idx=1&amp;sn=747e3b55c1101d256f9f8be55ee078bc&amp;chksm=e9ae66ac5869832df8b03aa9d36484e6a62d6de76a245a5ff1ee704be9ee6a2df1a7644d4623&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude 账号又被封了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-20 11:56:05">发布日期：2026-07-20 11:56:05</time></div><p class="article-description">一个用了两年的Claude 账号被封了。现在不管是免费的还是付费的用账号都难以幸免，封号才是常态，不封才是奇怪。现在封号也封出经验来了，来说说我封号之后都做了哪些事情。第一步，在 Claude 官方</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519118&amp;idx=1&amp;sn=747e3b55c1101d256f9f8be55ee078bc&amp;chksm=e9ae66ac5869832df8b03aa9d36484e6a62d6de76a245a5ff1ee704be9ee6a2df1a7644d4623&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519059&amp;idx=1&amp;sn=e9fd4bc37a9fb1e36ca738f8fabc96df&amp;chksm=e91529301e3a5d2685388ee5d74f007799b0b9a60fc9617a1a32a2ec180cf6cb13915ad26409&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1yLvdGnF1MauOuHZQic8iaUANxlice9M9Bp56qw0Zc2baVEDMksiaoRfEa6ibrfic1GchT5Pp1IafcyGsZic4MBxibuBWl0ph2WO6suib7c/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519059&amp;idx=1&amp;sn=e9fd4bc37a9fb1e36ca738f8fabc96df&amp;chksm=e91529301e3a5d2685388ee5d74f007799b0b9a60fc9617a1a32a2ec180cf6cb13915ad26409&amp;scene=0&amp;xtrack=1#rd" target="_blank">Grok Build 的游戏资产生成技能套件</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-19 11:22:43">发布日期：2026-07-19 11:22:43</time></div><p class="article-description">Grok Build 刚刚发布了一个完整的游戏资产生成技能套件，它使用了 Grok Imagine。套件包含五个技能: game-asset-core、game-animation-frames、g</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247519059&amp;idx=1&amp;sn=e9fd4bc37a9fb1e36ca738f8fabc96df&amp;chksm=e91529301e3a5d2685388ee5d74f007799b0b9a60fc9617a1a32a2ec180cf6cb13915ad26409&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518992&amp;idx=1&amp;sn=b73304c16ba89e1c822cefeb0ba05366&amp;chksm=e9be0db0a0c0db8975522c8ae56b716d7390e8f4e6ba3ee64c46cefeff0cbff3711a58e08c08&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1yxXksergPicJEIBhpq0fkGRsyudBw9Csz9RbDRaOJG8x06XOPT1hORoKL4nuGlwxskTXtw6ELuFOjkriaUibtdduGibLzDIzRVibF0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518992&amp;idx=1&amp;sn=b73304c16ba89e1c822cefeb0ba05366&amp;chksm=e9be0db0a0c0db8975522c8ae56b716d7390e8f4e6ba3ee64c46cefeff0cbff3711a58e08c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Fable 5 迎来新调整</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-18 11:10:01">发布日期：2026-07-18 11:10:01</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518992&amp;idx=1&amp;sn=b73304c16ba89e1c822cefeb0ba05366&amp;chksm=e9be0db0a0c0db8975522c8ae56b716d7390e8f4e6ba3ee64c46cefeff0cbff3711a58e08c08&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518984&amp;idx=1&amp;sn=b8d828f77581495353150232d6301dff&amp;chksm=e9cd48accea12dfa3d60d65ddec825eb66e7205cb204f7a7e6b587517e57c5550ff724bc1782&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1xB2ULADxZWicmDLqN5RTic0Cj3au6TgO2IsMfk0afIib4GXiaPp4mGqXpuOeaGOznIUgtFmE6oYTFC5edfGIVicibWHyq2TPgibBWToY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518984&amp;idx=1&amp;sn=b8d828f77581495353150232d6301dff&amp;chksm=e9cd48accea12dfa3d60d65ddec825eb66e7205cb204f7a7e6b587517e57c5550ff724bc1782&amp;scene=0&amp;xtrack=1#rd" target="_blank">用Codex 接上 Grok 做了几条视频后，我彻底不想碰剪辑软件了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-17 20:58:07">发布日期：2026-07-17 20:58:07</time></div><p class="article-description">最近 Codex 和Grok实在太火了。但如果只是拿它们写代码、改项目、做网站就有点暴殄天物了。这几天我一直在折腾让 Codex 接上 Grok 4.5，直接做图片、视频、配音、字幕，最后再自动剪成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518984&amp;idx=1&amp;sn=b8d828f77581495353150232d6301dff&amp;chksm=e9cd48accea12dfa3d60d65ddec825eb66e7205cb204f7a7e6b587517e57c5550ff724bc1782&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518896&amp;idx=1&amp;sn=43865619accbd9f47efa358f8c8a6523&amp;chksm=e97ee8d55511130a5241f73851c96448805b072fe3d3c8dc076e59603adbf12a733b46443d13&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518896&amp;idx=1&amp;sn=43865619accbd9f47efa358f8c8a6523&amp;chksm=e97ee8d55511130a5241f73851c96448805b072fe3d3c8dc076e59603adbf12a733b46443d13&amp;scene=0&amp;xtrack=1#rd" target="_blank">Grok Build 正式开源
+
+SpaceXAI 宣布将旗下终端编程工具 Grok Build 完整开源，代码托管在 xai-org/grok-build 。
+
+项目用 Rust 编写，支持完全本地优先运行，用户可以自行编译、接入自己的本地推理，通过配置文件掌控运行方式，理论上代码和数据可以完全不经过 xAI 的服务器。
+
+官方同步重置了所有用户的使用限额，取消了此前的服务端配额限制。
+
+源码公开后，任何人都可以查看上下文组装、工具调用分发等核心逻辑的具体实现，也方便开发者基于 skills、插件、hooks、MCP server、subagent 等能力做二次开发和扩展。
+
+X 平台也计划跟进开源
+
+在宣布 Grok Build 开源之后，马斯克进一步表态，X 平台的整个代码库未来也将&quot;无一例外&quot;地全部公开，作为在软件基础设施层面持续推进透明度的延伸动作。
+
+目前这仍停留在承诺阶段，具体时间表和范围还未公布。
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518889&amp;idx=1&amp;sn=bf66ad2bf46339084eb7102ba5a2438d&amp;scene=21#wechat_redirect&quot;&gt;Grok Build 开放免费试用！我的 Grok Build 工作流&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518855&amp;idx=1&amp;sn=4d4c0a9f0e30ae25d5ae09713613b2be&amp;payreadticket=HJ0zcemhA1pvWKv-8wenaT8dQ-Q7Nq-Z0nFuIAKIuRSEwhUrO5x7G036drE3600SUdOKVJA&amp;scene=21#wechat_redirect&quot;&gt;Codex App的超绝黄金搭档！GPT 5.6 + Grok build&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-16 08:28:24">发布日期：2026-07-16 08:28:24</time></div><p class="article-description">Grok Build 正式开源
+
+SpaceXAI 宣布将旗下终端编程工具 Grok Build 完整开源，代码托管在 xai-org/grok-build 。
+
+项目用 Rust 编写，支持完全本地</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518896&amp;idx=1&amp;sn=43865619accbd9f47efa358f8c8a6523&amp;chksm=e97ee8d55511130a5241f73851c96448805b072fe3d3c8dc076e59603adbf12a733b46443d13&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518882&amp;idx=1&amp;sn=3eb76659615e127b16b3eda56291e045&amp;chksm=e97c7f45e78362e540683f845aef826b4373915a7b26a12386f7cec5faef842080d802cb332d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1zUyzCbbwDsZ9xIZwU0Ch8646ibKJOYCj9GC0ansg34Ru7XIHhwp6ribJibTmort0AXVZjbeWOPicdC7jzbDWF42Vhe6y7cD7zYGP4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518882&amp;idx=1&amp;sn=3eb76659615e127b16b3eda56291e045&amp;chksm=e97c7f45e78362e540683f845aef826b4373915a7b26a12386f7cec5faef842080d802cb332d&amp;scene=0&amp;xtrack=1#rd" target="_blank">OpenAI 今天又又重置了额度！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-15 08:47:08">发布日期：2026-07-15 08:47:08</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518882&amp;idx=1&amp;sn=3eb76659615e127b16b3eda56291e045&amp;chksm=e97c7f45e78362e540683f845aef826b4373915a7b26a12386f7cec5faef842080d802cb332d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518875&amp;idx=1&amp;sn=b47d7f59b69ff9912e654a2425d3dadd&amp;chksm=e93ea30762de86b93dd29a7565470d83ebc068d596ee6206497f54ce56e5327dc22ee19b6b1d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518875&amp;idx=1&amp;sn=b47d7f59b69ff9912e654a2425d3dadd&amp;chksm=e93ea30762de86b93dd29a7565470d83ebc068d596ee6206497f54ce56e5327dc22ee19b6b1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">今天在 OpenAI 社区刷到一组 Codex 配置，可以彻底摆脱彻底摆脱 Codex 的废话连篇，试用了一下后回答清爽很多。
+
+
+又去官方文档核实了一圈，确定可以放心抄作业。
+
+修改 `~/.codex/config.toml`
+
+配置就这三行：
+
+```toml
+model_reasoning_summary = &quot;concise&quot;  # 简短摘要
+model_verbosity = &quot;low&quot;              # 输出极简
+personality = &quot;pragmatic&quot;            # 务实风格
+```
+
+具体每一项管什么，其实文档里面都有详细的介绍。
+
+model_verbosity输出详细程度
+官方取值只有三档：`low | medium | high`。
+
+设成 `low` 之后，Codex 会尽量只给代码和结论，砍掉铺垫、总结、鼓励式话术这些&quot;废话&quot;。
+
+默认值其实是 `medium`，很多人嫌它啰嗦就是没改这项。
+
+model_reasoning_summary推理摘要详略
+
+这里要澄清一个常见误解：不管这项怎么设，Codex 展示给你的从来都只是&quot;推理过程的摘要&quot;，完整的思维链本来就不会输出。
+
+这个参数控制的只是摘要本身写多长。
+
+取值有 `auto | concise | detailed | none` 四档，`concise` 就是把摘要压到最短，`none` 则直接不显示推理过程。
+
+personality人格风格
+
+官方样例配置里明确写着可选 `&quot;pragmatic&quot;`、`&quot;friendly&quot;`、`&quot;none&quot;` 三种。
+
+选 `pragmatic` 就是让 Codex 少寒暄、直接干活，风格偏向工程师之间的沟通方式，而不是助手式的客套。
+
+三项组合起来，效果基本就是网上说的那样：
+
+Codex 变得直给，代码和命令为主，不再有大段解释和重复总结。
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518855&amp;idx=1&amp;sn=4d4c0a9f0e30ae25d5ae09713613b2be&amp;payreadticket=HG4FIkO_SV_fRyCXTIy4tEo4Xx975XVjEgx81m34rzLklymTxxLDvOT3puyoZtTepdjpPOQ&amp;scene=21#wechat_redirect&quot;&gt;Codex App的超绝黄金搭档！GPT 5.6 + Grok build&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518870&amp;idx=1&amp;sn=783b1d073f21690bdaeaa1342721b08a&amp;scene=21#wechat_redirect&quot;&gt;您的Codex重置卡已到账，请注意查收！&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518874&amp;idx=1&amp;sn=6c7d3ae5c3878d4161eaedac37ffcf23&amp;scene=21#wechat_redirect&quot;&gt;我都用 AI 了，你还跟我谈隐私？&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-14 18:09:31">发布日期：2026-07-14 18:09:31</time></div><p class="article-description">今天在 OpenAI 社区刷到一组 Codex 配置，可以彻底摆脱彻底摆脱 Codex 的废话连篇，试用了一下后回答清爽很多。
+
+
+又去官方文档核实了一圈，确定可以放心抄作业。
+
+修改 `~/.cod</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518875&amp;idx=1&amp;sn=b47d7f59b69ff9912e654a2425d3dadd&amp;chksm=e93ea30762de86b93dd29a7565470d83ebc068d596ee6206497f54ce56e5327dc22ee19b6b1d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518834&amp;idx=1&amp;sn=fdabbbc93c2c1d941122a68492bdf767&amp;chksm=e9b0f5490c83c1ebcde9f520a43359cddf7b215be37288b3f3003ee382c9ca65f70d51011abb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518834&amp;idx=1&amp;sn=fdabbbc93c2c1d941122a68492bdf767&amp;chksm=e9b0f5490c83c1ebcde9f520a43359cddf7b215be37288b3f3003ee382c9ca65f70d51011abb&amp;scene=0&amp;xtrack=1#rd" target="_blank">&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518833&amp;idx=1&amp;sn=b2ca89dc79ae5f8ab28dd3d62fee4c29&amp;scene=21#wechat_redirect&quot;&gt;喜大普奔！Codex 取消 5 小时限制&lt;/a&gt;
+
+消息发布之后，A\ 终于是坐不住了，Fable 5 又续到 19 号了。
+
+Claude 刚宣布，Fable 5 在付费计划里的使用权限继续延长到 7 月 19 日，Claude Code 每周额度也临时增加 50%。
+
+算下来已经是第二次延期了。原本 6 月 23 日就该退出订阅，后来拖到 7 月 12 日，现在又续一周。
+
+Claude 大小王都已经打出去一遍了，哪想到 OpenAI 手上还有 8 个 2。
+
+A\是真急了，感觉19 日到了大概率还会再延期。
+
+总之，神仙打架，我们欢天喜地捡装备吧！
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518833&amp;idx=1&amp;sn=b2ca89dc79ae5f8ab28dd3d62fee4c29&amp;scene=21#wechat_redirect&quot;&gt;喜大普奔！Codex 取消 5 小时限制&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518822&amp;idx=1&amp;sn=5733e0b3fc14071ffdd90f88dc15f3ae&amp;scene=21#wechat_redirect&quot;&gt;局长买10亿 Token手搓防汛APP&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518816&amp;idx=1&amp;sn=dfe58814ca9788ff6f7ac8fc2ab84319&amp;scene=21#wechat_redirect&quot;&gt;蹬蹬蹬！又用 GPT 5.6 做了 100 款休闲小游戏&lt;/a&gt;
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518800&amp;idx=1&amp;sn=4504f3c9c3e4681364b0804a5e8d09b3&amp;scene=21#wechat_redirect&quot;&gt;使劲蹬！一口气让 GPT 5.6 生成 200 +工具应用&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-13 08:27:45">发布日期：2026-07-13 08:27:45</time></div><p class="article-description">喜大普奔！Codex 取消 5 小时限制
+
+消息发布之后，A\ 终于是坐不住了，Fable 5 又续到 19 号了。
+
+Claude 刚宣布，Fable 5 在付费计划里的使用权限继续延长到 7 月</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518834&amp;idx=1&amp;sn=fdabbbc93c2c1d941122a68492bdf767&amp;chksm=e9b0f5490c83c1ebcde9f520a43359cddf7b215be37288b3f3003ee382c9ca65f70d51011abb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518822&amp;idx=1&amp;sn=5733e0b3fc14071ffdd90f88dc15f3ae&amp;chksm=e986e00f8e5e0053840062f8c53795faef0a32484aea80de8d3de7a2ec0279550ae55d075a33&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1wn2iczj3c079ANibENBBGzEvmyVMaz5dQ9EEyFicphk0tB6TImaCgia6cZicbV046ialraogkUFrmZsvR3GDR6frOYFj1QYgoR7uXPk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518822&amp;idx=1&amp;sn=5733e0b3fc14071ffdd90f88dc15f3ae&amp;chksm=e986e00f8e5e0053840062f8c53795faef0a32484aea80de8d3de7a2ec0279550ae55d075a33&amp;scene=0&amp;xtrack=1#rd" target="_blank">局长买10亿 Token手搓防汛APP</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-12 17:09:26">发布日期：2026-07-12 17:09:26</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518822&amp;idx=1&amp;sn=5733e0b3fc14071ffdd90f88dc15f3ae&amp;chksm=e986e00f8e5e0053840062f8c53795faef0a32484aea80de8d3de7a2ec0279550ae55d075a33&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518786&amp;idx=1&amp;sn=64dd6ddcae2bee8064acf7dc63b71ce9&amp;chksm=e9c58b6ace616b34dc7c2b53e07d8595b3af3d05a319a1bd6c0078be32f106b175598d441c94&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1zNTwic4O12UQQe3Wp7tQIeMibbdYeeiaL2jaK4dPnibfZup2BM2O4eo75IialgFzLYsFgrp2dV0Mq1yial8WfBKNrn6iaWjanFiaS5F3c/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518786&amp;idx=1&amp;sn=64dd6ddcae2bee8064acf7dc63b71ce9&amp;chksm=e9c58b6ace616b34dc7c2b53e07d8595b3af3d05a319a1bd6c0078be32f106b175598d441c94&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex又重置，再拆分！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-11 09:59:46">发布日期：2026-07-11 09:59:46</time></div><p class="article-description">要不说还是得骂，Codex 今天更新的最新版本已经将原有的合并又给拆分了。正应了我昨天的骂我对 Codex 的合并反感极了。但是就算是拆分了，我感觉依然还不够，最好的形态是 Work 一个终端，Cha</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518786&amp;idx=1&amp;sn=64dd6ddcae2bee8064acf7dc63b71ce9&amp;chksm=e9c58b6ace616b34dc7c2b53e07d8595b3af3d05a319a1bd6c0078be32f106b175598d441c94&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518764&amp;idx=1&amp;sn=571376ffa4154d81e104801f907bf808&amp;chksm=e9d69ce44884a489b7036b949d86c2511de647d2c06a7f31f275c55d86ddddbccf5c0038d53b&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518764&amp;idx=1&amp;sn=571376ffa4154d81e104801f907bf808&amp;chksm=e9d69ce44884a489b7036b949d86c2511de647d2c06a7f31f275c55d86ddddbccf5c0038d53b&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT-5.6 最大的意义可能就是作为  Fable 5 订阅退役后的平替。
+
+但它目前也跟 Fable 5 一样，有一个非常大的问题
+
+就是：贵。
+
+我上午拿它重构了一下之前一个前后端微服务的项目，项目就跑了大概 20 分钟，5 小时额度直接干掉了近 50%。
+
+用的还是是 20x 订阅，按理说额度不该这么紧张，这消耗速度只能是离谱的。
+20 分钟干掉一半额度，一个正常工作日根本撑不住，这还只是重构，不是从零写。
+
+测试使用的是Sol 的最高模式，一开这个模式，它会自动开启多智能体并行，而且这是默认选项，没得选。
+
+
+子智能体一起上工，效率是上去了，token 也是几个一起烧，额度肉眼可见的狂掉。
+
+
+整体用下来的感觉是，Sol日常编码这块倒是没啥可挑的，基本能力已经跟 Fable 5 齐平了，感觉不到什么差距。
+
+
+Sol 更像一辆保时捷，快、好开、听指挥，但代价就是一天之内得烧一张重置卡。
+
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518761&amp;idx=1&amp;sn=f829f441ae40d6980a57394a7e3f5923&amp;scene=21#wechat_redirect&quot;&gt;不只是 GPT 5.6&lt;/a&gt;，至于说其他两档模型，我完全犯了困难选择症，从极速，高，中高，超高再到Pro，又回到了 ChatGPT 早期命名混乱的中杯、大杯、超大杯时代，突然理解了罗老师扇自己嘴巴时的心情。
+
+
+
+再是 Codex 和 ChatGPT 合并这事，我真的太反感了。
+
+
+Codex App 本身就是基于 Electron 搭的，之前就已经很卡了，还有占磁盘等等乱七八糟一堆问题，现在两个 App 合并到一起，后面只会更臃肿。
+
+
+完全不知道他们为什么要把 Claude Code Desktop 的一坨缺点全抄了一遍。
+
+
+嘴上说的是要把 Codex 放进 ChatGPT，说到底是想让 ChatGPT 变成唯一的工作调度入口，Codex 变成执行引擎，但目前做出来的还只是简单的入口层面拼接，真正的工作流融合很低很低。
+
+
+我一直觉得克制比堆功能更重要。
+
+
+想做统一入口，不应该简单把两个 App 的菜单和入口拼一块就完事了，得先把执行引擎和对话层解耦干净，更进一步，要将网页端和 Codex 或者 Work 的数据进行打通。
+
+
+当然最好的方式是拆分，可以根据不同的人群来划分不同的客户端，或者干脆将 OpenClaw 扶正做美国版的 WorkBuddy。
+
+
+不过，总归有 GPT 5.6比没有好，算是缓解了一部分 Fable 5 没法用之后的戒断效应。
+
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247517707&amp;idx=1&amp;sn=ee7ebe78be5e5a738412666547d078a4&amp;payreadticket=HGVOi4caJ6mWjq6hzEpKyblrZw3y-bS-Ga7wwrArFqP9zpo36GoET0NTjKSdVdjexALBI8M&amp;scene=21#wechat_redirect&quot;&gt;拿什么拯救你，我的 Codex 额度！&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-10 11:13:35">发布日期：2026-07-10 11:13:35</time></div><p class="article-description">GPT-5.6 最大的意义可能就是作为  Fable 5 订阅退役后的平替。
+
+但它目前也跟 Fable 5 一样，有一个非常大的问题
+
+就是：贵。
+
+我上午拿它重构了一下之前一个前后端微服务的项目，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518764&amp;idx=1&amp;sn=571376ffa4154d81e104801f907bf808&amp;chksm=e9d69ce44884a489b7036b949d86c2511de647d2c06a7f31f275c55d86ddddbccf5c0038d53b&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518753&amp;idx=1&amp;sn=7060ac57e2d071b63d66d81289c2271e&amp;chksm=e9cd847ecd8ffc0b9f558bb4ece5e4c5de0228f11c9c9f7dfc37e89dff362d85534eff9144cc&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1x2lMiajH0sPn9qdK7Svjy1ntc3mic5C9a82wZKpyEQCxfzU8wicalr5qlPjDWHlxJysYkGQichbpLTXWxtTnlm6RyiauWNibFKWrdUs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518753&amp;idx=1&amp;sn=7060ac57e2d071b63d66d81289c2271e&amp;chksm=e9cd847ecd8ffc0b9f558bb4ece5e4c5de0228f11c9c9f7dfc37e89dff362d85534eff9144cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">别让 /checkup 替你对抗熵增！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-09 17:04:17">发布日期：2026-07-09 17:04:17</time></div><p class="article-description">Claude Code 最近上线了 /checkup 命令，可以一键清理。就跟电脑安装360 卫士一样，点一下就能来清理掉没用的 skills、MCP、plugins。给臃肿的 CLAUDE.md 去</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518753&amp;idx=1&amp;sn=7060ac57e2d071b63d66d81289c2271e&amp;chksm=e9cd847ecd8ffc0b9f558bb4ece5e4c5de0228f11c9c9f7dfc37e89dff362d85534eff9144cc&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518711&amp;idx=1&amp;sn=edf88eddc040bbb09328be31a23fcb4c&amp;chksm=e9685b6fd2e9313c3e4d4f4d62b1497bdf839f76fdf1789bcb9029b652d53d6795c33fc582fb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1xVY4HYBibpxfQQyAMw1ic7w4lCSztdnsouQBHojcjz4CaGJFtfllEapz5j1Dp1lsgjPM85OTMgeYjjDbjxIzFwJLGjQXFUVQibCg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518711&amp;idx=1&amp;sn=edf88eddc040bbb09328be31a23fcb4c&amp;chksm=e9685b6fd2e9313c3e4d4f4d62b1497bdf839f76fdf1789bcb9029b652d53d6795c33fc582fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">工信部发布关于防范Claude Code安全后门隐患的风险提示</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-08 16:21:25">发布日期：2026-07-08 16:21:25</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518711&amp;idx=1&amp;sn=edf88eddc040bbb09328be31a23fcb4c&amp;chksm=e9685b6fd2e9313c3e4d4f4d62b1497bdf839f76fdf1789bcb9029b652d53d6795c33fc582fb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=1&amp;sn=03f1a21c3a8f15cba3b78fc75bbba9e4&amp;chksm=e91b51f6bca535c6e9c61e827f16579530c6f49c81f997291daab6ca901ced2f7ca7d0d13f16&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1zkW0Sk4xmUnIcd0t8vgWLOWNoaqmcnDjiaD7OmgZiaUY58e0j5ts4X5s2qabjOmhRg686aicfPZ890MAZUGecDSfSb5ZSubAby7E/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=1&amp;sn=03f1a21c3a8f15cba3b78fc75bbba9e4&amp;chksm=e91b51f6bca535c6e9c61e827f16579530c6f49c81f997291daab6ca901ced2f7ca7d0d13f16&amp;scene=0&amp;xtrack=1#rd" target="_blank">全国首部“企业AI智能体ROI评估”标准，公开征集起草单位及起草人</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-07 08:16:20">发布日期：2026-07-07 08:16:20</time></div><p class="article-description">来源 | 智合标准化建设作者 | 智合标准中心2026年，AI 产业的核心命题已从“谁的模型最强”变为“谁的Agent落地最有效”。Gartner预测，到2026年底，全球40%的企业应用将嵌入具备任</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=1&amp;sn=03f1a21c3a8f15cba3b78fc75bbba9e4&amp;chksm=e91b51f6bca535c6e9c61e827f16579530c6f49c81f997291daab6ca901ced2f7ca7d0d13f16&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=2&amp;sn=1620fac7407d774651714644279f2996&amp;chksm=e96434cef3a9596a278e4be4f50629686686c7ceb94cf39c189ff20b8924bda23829db2f46b3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1xyT1J4BYj0z7CT2UhwO0TR9aSfZibfdkJgS3nxMhmCfRePFdyqQxB9R5n80yszjIvxRS9wFlomjmsqsZQMCLeEHOBpMCFdYA3g/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=2&amp;sn=1620fac7407d774651714644279f2996&amp;chksm=e96434cef3a9596a278e4be4f50629686686c7ceb94cf39c189ff20b8924bda23829db2f46b3&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 编程万星三剑客</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-07 08:16:20">发布日期：2026-07-07 08:16:20</time></div><p class="article-description">三月，gstack 的 Claude Code 配置开源出来，几周内冲到六万六千星。去年十月就上线的 obra/superpowers，涨到了十四万七千星。Token腰斩，性能狂飙！神级插件Supe</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518670&amp;idx=2&amp;sn=1620fac7407d774651714644279f2996&amp;chksm=e96434cef3a9596a278e4be4f50629686686c7ceb94cf39c189ff20b8924bda23829db2f46b3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518652&amp;idx=1&amp;sn=3a24f856bdc2f1cc6d795b48260adbae&amp;chksm=e9c08be9eb6a3684bf64d0e32ee24c17c0689c2e8ae749b76e1a0b56c4e3b0a5d857d93255be&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1w8Ac8rK9JH6y2RzEILhSJPUnFuScaFwdxDwFDjic3icA0bg2Irv7ciadAVkg1Ty5ibyXLuoCREQSqRPgaticKY32ZUJ5oUic9ziccwsQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518652&amp;idx=1&amp;sn=3a24f856bdc2f1cc6d795b48260adbae&amp;chksm=e9c08be9eb6a3684bf64d0e32ee24c17c0689c2e8ae749b76e1a0b56c4e3b0a5d857d93255be&amp;scene=0&amp;xtrack=1#rd" target="_blank">手机就是麦克风！自制 Vibe Coding 的语音输入神器</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-06 21:45:09">发布日期：2026-07-06 21:45:09</time></div><p class="article-description">AI编程高效开发指南目前六十篇已经更新完毕，这是后续增加的番外篇第二篇。专栏的这一期，我会分享上周写好的一个手机 Vibe Coding 语音输入工具。实际效果演示如下：将手机作为麦克风，直接串流到电</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518652&amp;idx=1&amp;sn=3a24f856bdc2f1cc6d795b48260adbae&amp;chksm=e9c08be9eb6a3684bf64d0e32ee24c17c0689c2e8ae749b76e1a0b56c4e3b0a5d857d93255be&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518631&amp;idx=1&amp;sn=69fcba6dafcf4533fab18b706aa6e315&amp;chksm=e9a28b17a9e7d4ca342aef93e8cdd55832c615d65e3739671866cee2c7408922daaa43731609&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518631&amp;idx=1&amp;sn=69fcba6dafcf4533fab18b706aa6e315&amp;chksm=e9a28b17a9e7d4ca342aef93e8cdd55832c615d65e3739671866cee2c7408922daaa43731609&amp;scene=0&amp;xtrack=1#rd" target="_blank">一个 UU 远程的邪修用法，把闲置电脑变成竖屏手机。
+
+用网易UU远程控制自带一个冷门玩法把它改造成“伪手机屏”。三步搞定：
+
+第一步：找电脑
+
+任何一台能开机的旧电脑都行，哪怕没有显示器也无所谓，反正你不用看它的屏幕。
+
+第二步：调系统设置
+
+- 显示方向改成竖屏
+- 分辨率拉满
+- 文本缩放调到300%
+
+这一步是关键，直接决定了最终的这台&quot;手机”的质感。
+
+第三步：调网易UU参数
+
+- 操作模式选&quot;屏幕触控&quot;
+- 显示设置调到90fps、高清画质
+
+设置完成后，手机端打开网易UU，点全屏，就是一块专属的竖屏触控显示器。
+
+能用来干嘛？
+
+这套是把远程桌面的操作从&quot;鼠标键盘&quot;切换成了&quot;手指触屏&quot;，同时把画面适配成手机比例，非常类似于我们在一些政务厅里面看到的电子操作屏。
+
+调整成这种比例之后，就不需要每次进入重新放大缩小，所见即所得。
+
+关于远程 Vibe  Coding 和UU 的详细使用请参见&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518611&amp;idx=1&amp;sn=08857091b5996c8e27bc516e7920d85e&amp;scene=21#wechat_redirect&quot;&gt;我目前使用的两套远程Vibe Coding的方案&lt;/a&gt;</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-05 16:29:11">发布日期：2026-07-05 16:29:11</time></div><p class="article-description">一个 UU 远程的邪修用法，把闲置电脑变成竖屏手机。
+
+用网易UU远程控制自带一个冷门玩法把它改造成“伪手机屏”。三步搞定：
+
+第一步：找电脑
+
+任何一台能开机的旧电脑都行，哪怕没有显示器也无所谓，反</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518631&amp;idx=1&amp;sn=69fcba6dafcf4533fab18b706aa6e315&amp;chksm=e9a28b17a9e7d4ca342aef93e8cdd55832c615d65e3739671866cee2c7408922daaa43731609&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518622&amp;idx=1&amp;sn=63bd46bdef09e973055f3e8cc09def1d&amp;chksm=e97d75c39b99614fbdd4229a6a8c1acc1d510437de43ad699a93e210094a222126d5ddc64bf6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1y7CAkk1ey3B6PyMuGaBLp2eVwFFicGLQFJBooKA585ymYASdbB6PEDWVHo4tmmsUdOjf97Vtm6wYgbLUjoKYdicVEcLA8WAnvcY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518622&amp;idx=1&amp;sn=63bd46bdef09e973055f3e8cc09def1d&amp;chksm=e97d75c39b99614fbdd4229a6a8c1acc1d510437de43ad699a93e210094a222126d5ddc64bf6&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code团队工程师的 Fable 5 的实战指南</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-04 14:30:46">发布日期：2026-07-04 14:30:46</time></div><p class="article-description">Claude Code 团队工程师 Thariq 发表了一篇Find You Unknows 的Fable 5实战文章。虽然是讲 Fable 5 的，但是我觉得它对于我们目前所有的 AI 编程都有非</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518622&amp;idx=1&amp;sn=63bd46bdef09e973055f3e8cc09def1d&amp;chksm=e97d75c39b99614fbdd4229a6a8c1acc1d510437de43ad699a93e210094a222126d5ddc64bf6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518595&amp;idx=1&amp;sn=ffea922adc17dc1a2af053c8b04ee842&amp;chksm=e9235ebd3adb17bbe463d50debf45d1d86f50bef8a1ed4153108f4bebe213b935e0a155d2bb6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518595&amp;idx=1&amp;sn=ffea922adc17dc1a2af053c8b04ee842&amp;chksm=e9235ebd3adb17bbe463d50debf45d1d86f50bef8a1ed4153108f4bebe213b935e0a155d2bb6&amp;scene=0&amp;xtrack=1#rd" target="_blank">GPT-5.6 预计将在 7 月 7 号正式发布</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-03 18:18:42">发布日期：2026-07-03 18:18:42</time></div><p class="article-description">根据多方爆料，OpenAI 将会在7 月 7 号正式发布 GPT-5.6 系列模型 。
+
+为啥是 7 月是 7 号？
+
+因为正好卡点Fable 5 的免费窗口期关闭，大概率会流量截胡。白嫖使用 Fab</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518595&amp;idx=1&amp;sn=ffea922adc17dc1a2af053c8b04ee842&amp;chksm=e9235ebd3adb17bbe463d50debf45d1d86f50bef8a1ed4153108f4bebe213b935e0a155d2bb6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=1&amp;sn=874aaac6488a090331563fd5cd3a50a5&amp;chksm=e9a64cab0d05cbf48235d1c5942281bfebb66a92a032e661d233db997d149f278a78b9ee73ac&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1wojW8UrXAv7AtSEesNbCmW7aspXLrUMFyrMTgCNHliaqBBZZngplSlWxO9VbGyNAR4X2n1iceaiaUjXB1KBz8ia1f66TDleXW3SBc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=1&amp;sn=874aaac6488a090331563fd5cd3a50a5&amp;chksm=e9a64cab0d05cbf48235d1c5942281bfebb66a92a032e661d233db997d149f278a78b9ee73ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">6月工具模型使用排行！我的主力现在是这几个</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-02 10:33:19">发布日期：2026-07-02 10:33:19</time></div><p class="article-description">基本上每个月我都会迭代一下自己的工具以及模型的，整个六月份下来，我高频使用了哪些模型？又在哪些地方使用？做一下盘点和回顾。第一名：Grok + Composer 2.5这个月我开了两个Grok账号，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=1&amp;sn=874aaac6488a090331563fd5cd3a50a5&amp;chksm=e9a64cab0d05cbf48235d1c5942281bfebb66a92a032e661d233db997d149f278a78b9ee73ac&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=2&amp;sn=bfc7e4f0301b30e204d8e540c6cde4a2&amp;chksm=e98a70f5b2f8d8fb9298da9d53d5775509743bf2ddc334715bd6bafe1fb776614c91818de878&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1xLAjXNxIYPgueWjbry8sjv1OwzA6EITJjqI9Pcw0CfopOObPWApzhoQbiaZPJwwyybibh6FOtibV9u7ABHsKgnsrLOD01ZWe4Sh8/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=2&amp;sn=bfc7e4f0301b30e204d8e540c6cde4a2&amp;chksm=e98a70f5b2f8d8fb9298da9d53d5775509743bf2ddc334715bd6bafe1fb776614c91818de878&amp;scene=0&amp;xtrack=1#rd" target="_blank">（一）从0写Agent：Agent很简单，就是一个大循环</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-02 10:33:19">发布日期：2026-07-02 10:33:19</time></div><p class="article-description">Agent 其实很简单，就是一个大循环。如果只能记住这本系列的一句话，记住这句：Agent 就是一个 while 循环。它的原理极其简单，就是在这层大循环里面调大模型、调工具、把工具结果塞回大模型，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518548&amp;idx=2&amp;sn=bfc7e4f0301b30e204d8e540c6cde4a2&amp;chksm=e98a70f5b2f8d8fb9298da9d53d5775509743bf2ddc334715bd6bafe1fb776614c91818de878&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518511&amp;idx=1&amp;sn=841f5d5d2847e1ba2cdcf9285e3ea02b&amp;chksm=e90c8b055e84347613648501438f2b5c03c4bc6e8a0709015c46376d5e7ada9c47feb50d9d48&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518511&amp;idx=1&amp;sn=841f5d5d2847e1ba2cdcf9285e3ea02b&amp;chksm=e90c8b055e84347613648501438f2b5c03c4bc6e8a0709015c46376d5e7ada9c47feb50d9d48&amp;scene=0&amp;xtrack=1#rd" target="_blank">Fable 5 已于 7 月 1 日起恢复上线，向 全球用户开放。
+
+新实施的使用量政策如下：
+
+订阅用户可以获得每周额度的 50%的使用。 
+
+具体来说，在 7 月 7 日前可将每周使用限额的最多 50% 用于 Fable 5，超出部分及 7 月 7 日之后一律按使用积分计费。
+
+标准 Enterprise 席位从一开始就没有免费额度，全部按使用积分计费，未启用积分则无法使用。
+
+AWS、Google Cloud 与 Microsoft Foundry 上的接入仍在恢复中。
+
+Mythos 5 目前仅限经美国政府批准的一批美国机构使用，Anthropic 正与政府协调，逐步扩大至 Glasswing 项目下更多国内外合作伙伴。
+
+不过&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518132&amp;idx=1&amp;sn=a13d91a140e47a264f56067538273fef&amp;scene=21#wechat_redirect&quot;&gt;Anthropic 将强制执行身份验证！7 月生效&lt;/a&gt;，目前隐私政策已经陆续的通过邮件发送到订阅用户，这次政策修改之后，可能会在任意场景内触发身份验证。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-07-01 13:58:32">发布日期：2026-07-01 13:58:32</time></div><p class="article-description">Fable 5 已于 7 月 1 日起恢复上线，向 全球用户开放。
+
+新实施的使用量政策如下：
+
+订阅用户可以获得每周额度的 50%的使用。 
+
+具体来说，在 7 月 7 日前可将每周使用限额的最多</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518511&amp;idx=1&amp;sn=841f5d5d2847e1ba2cdcf9285e3ea02b&amp;chksm=e90c8b055e84347613648501438f2b5c03c4bc6e8a0709015c46376d5e7ada9c47feb50d9d48&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518485&amp;idx=1&amp;sn=129c17df1b59f3bc3f5b9bce4bf85d41&amp;chksm=e9ee1a7f4347ca19451a50072f5f93c0781726b34efb146e11626d4af624d51bd08b1b5e7156&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518485&amp;idx=1&amp;sn=129c17df1b59f3bc3f5b9bce4bf85d41&amp;chksm=e9ee1a7f4347ca19451a50072f5f93c0781726b34efb146e11626d4af624d51bd08b1b5e7156&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex 最近偶有变笨的情况，回答质量严重下降，社区大佬发现，只需要注入一句话，降智问题可以得到有效缓解。
+
+他们发现：
+
+Codex 的推理 token 被精确截断在 516，造成这种现象的原因很可能在Codex 系统提示词。
+
+它里面有这样一段要求：
+
+模型每隔 30 秒向 commentary 通道输出一段中间过程给用户看，类似&quot;我现在在做 X，接下来做 Y&quot;这种话。
+
+猜测这个 commentary 输出的设计干扰了模型的推理流程，与 516 截断高度相关。
+
+因为刚好模型推理是按 512 token 一页切割的，每页带特殊标签 token，是否继续下一页由某个独立机制决定，而commentary 中间干扰了翻下一页的过程。
+
+L 站的 haowang 给出了一个简化方案，在 AGENTS.md 里加一行：
+
+DO NOT send optional commentary
+
+测试结果从 80% 降智率降到约 20-40%，效果显著。帖子当中还有很多详细的测评数据报告，有兴趣的可以搜索一下。
+
+当然了，方案只是缓解，不能根除，降智问题本身也有多重的变量。</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-30 07:33:45">发布日期：2026-06-30 07:33:45</time></div><p class="article-description">Codex 最近偶有变笨的情况，回答质量严重下降，社区大佬发现，只需要注入一句话，降智问题可以得到有效缓解。
+
+他们发现：
+
+Codex 的推理 token 被精确截断在 516，造成这种现象的原因很</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518485&amp;idx=1&amp;sn=129c17df1b59f3bc3f5b9bce4bf85d41&amp;chksm=e9ee1a7f4347ca19451a50072f5f93c0781726b34efb146e11626d4af624d51bd08b1b5e7156&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518476&amp;idx=1&amp;sn=86b67e4466b0edc123657a02400bb53b&amp;chksm=e97c90c1f5deff0e77a3484d4d7fb129ea30fea7fe8ed6ba51037265f00dc4c18a79d45ea6d5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518476&amp;idx=1&amp;sn=86b67e4466b0edc123657a02400bb53b&amp;chksm=e97c90c1f5deff0e77a3484d4d7fb129ea30fea7fe8ed6ba51037265f00dc4c18a79d45ea6d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">我可能提前用上了 GPT-5.6-Sol</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-29 12:24:58">发布日期：2026-06-29 12:24:58</time></div><p class="article-description">早上 OpenAI 重置了所有订阅用户的 Codex 额度，紧接着社区流传一个测试：
+
+Codex 选 gpt-5.5、推理设成 xhigh，跑一段特殊的 XML prompt，返回 128 说明你在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518476&amp;idx=1&amp;sn=86b67e4466b0edc123657a02400bb53b&amp;chksm=e97c90c1f5deff0e77a3484d4d7fb129ea30fea7fe8ed6ba51037265f00dc4c18a79d45ea6d5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518462&amp;idx=1&amp;sn=c205704c5a2526e1f4e0c3d37ea1c17c&amp;chksm=e9d8263a4bfabdbeff30da62eb822e8d04239f274847b0ace7edace59d435ccd8111476b8c77&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/iacaCWlP1x1yF5FBAbvH32icadz1GYNkEjjRaLV5r1E5Xvn00LUJJxTFV8NN5kMhj9IxdicfnanNr0SxliatgWU14Q0SoAc1tR1KLVlibnyWOy4g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518462&amp;idx=1&amp;sn=c205704c5a2526e1f4e0c3d37ea1c17c&amp;chksm=e9d8263a4bfabdbeff30da62eb822e8d04239f274847b0ace7edace59d435ccd8111476b8c77&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex App 官方白皮书！10 个你今天就能抄的小技巧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-26 16:56:28">发布日期：2026-06-26 16:56:28</time></div><p class="article-description">OpenAI 发了一份 Codex 白皮书，标题叫&quot;Codex-maxxing&quot;。（下载见文尾）这份白皮书的主要内容关于如何让桌面版 Codex真正替你干活的操作手册。它在开篇就提出了一个判断：大多数</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518462&amp;idx=1&amp;sn=c205704c5a2526e1f4e0c3d37ea1c17c&amp;chksm=e9d8263a4bfabdbeff30da62eb822e8d04239f274847b0ace7edace59d435ccd8111476b8c77&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518407&amp;idx=1&amp;sn=1c1e40456b7dce8c309d444712869c57&amp;chksm=e9eaa8379d6da82142b768fb3e2c4b0bc1d2310845034d41f0a590cca3c41392861e1193c2b2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1zSPbtiafPyLONW1Ghal3d8icBzJibu3XJc6sGZUiaRRNeb04icLPUH0JvOKPGibTYBg5C9eQwK8Sd9GoECMSQWLg2fAicsqH2z7A532o/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518407&amp;idx=1&amp;sn=1c1e40456b7dce8c309d444712869c57&amp;chksm=e9eaa8379d6da82142b768fb3e2c4b0bc1d2310845034d41f0a590cca3c41392861e1193c2b2&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent的终点是@聊天</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-25 11:32:16">发布日期：2026-06-25 11:32:16</time></div><p class="article-description">我们花了三十年把工作流软件做得越来越复杂。就拿我永远都玩不转的飞书来说，各种看板、工单、审批流程、权限系统、通知服，每一层都似乎为了让协作更清晰，结果是每天要在七八个工具之间来回切换，真正干活的时间</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518407&amp;idx=1&amp;sn=1c1e40456b7dce8c309d444712869c57&amp;chksm=e9eaa8379d6da82142b768fb3e2c4b0bc1d2310845034d41f0a590cca3c41392861e1193c2b2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518381&amp;idx=1&amp;sn=e03b36de6831583686aff999bf69a3ca&amp;chksm=e984326d7217e3acc5db02f540022ce3b0732ed1f107750f072931d00ac21ce87dfc7a67a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518381&amp;idx=1&amp;sn=e03b36de6831583686aff999bf69a3ca&amp;chksm=e984326d7217e3acc5db02f540022ce3b0732ed1f107750f072931d00ac21ce87dfc7a67a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank">今天最后一天！Codex 重置卡你还没拿吗？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-24 07:49:13">发布日期：2026-06-24 07:49:13</time></div><p class="article-description">OpenAI 的 Codex 重置卡活动，6 月 11 日到 6 月 24 日，今天正式截止。
+
+这张重置卡能做什么？
+
+在 30 天内把你的 Codex 5 小时使用额度和周限额重置归零，重新跑满。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518381&amp;idx=1&amp;sn=e03b36de6831583686aff999bf69a3ca&amp;chksm=e984326d7217e3acc5db02f540022ce3b0732ed1f107750f072931d00ac21ce87dfc7a67a4e5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518380&amp;idx=1&amp;sn=dee547a75887e8f9efc2bfc447118017&amp;chksm=e9110eb78437bd4a00b1405c91d8c57021e5cbb2fa5c23218c2cc2ffe4ca5d1c4a1e89acc5d3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1xpuSY88WKUz08pIQmM5nufhxKjSBZ87zghHP1rmcicEhxWOYVDicbREtpkcNt9fI2InA7t1vRpcCI2MOb7Ficf4F2qJ4nZSiaYtlo/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518380&amp;idx=1&amp;sn=dee547a75887e8f9efc2bfc447118017&amp;chksm=e9110eb78437bd4a00b1405c91d8c57021e5cbb2fa5c23218c2cc2ffe4ca5d1c4a1e89acc5d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">原来造 Agent 可以和搭积木一样简单！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-23 11:23:43">发布日期：2026-06-23 11:23:43</time></div><p class="article-description">Vercel 在 6 月 17 日伦敦 Ship 大会上发布的 Agent 框架，Apache 2.0 开源。他们给它的定位是 Next.js 之于 Web，就像 eve 之于 Agent。因为他们的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518380&amp;idx=1&amp;sn=dee547a75887e8f9efc2bfc447118017&amp;chksm=e9110eb78437bd4a00b1405c91d8c57021e5cbb2fa5c23218c2cc2ffe4ca5d1c4a1e89acc5d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518334&amp;idx=1&amp;sn=f6ee965bcb2baec310819ce7dc8165d4&amp;chksm=e9deffd192d4c4850db11364ff805b34fbea185d9dff9c80b45e838d8b3871ea8e63ae6b1001&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1zADHOFHUEKbrv8L85fWlvoWxQiagvtS0ianV6C6lricWsTWN9PicyicibnBIcMxgIrqduwic8Y7mRV7X0fJPV1Bgb6cTgcogB5tywdpw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518334&amp;idx=1&amp;sn=f6ee965bcb2baec310819ce7dc8165d4&amp;chksm=e9deffd192d4c4850db11364ff805b34fbea185d9dff9c80b45e838d8b3871ea8e63ae6b1001&amp;scene=0&amp;xtrack=1#rd" target="_blank">Claude Code 多窗口并行人都切麻了？ 一个着板, 掌控全局！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-22 13:10:11">发布日期：2026-06-22 13:10:11</time></div><p class="article-description">我现在几乎所有的项目同时开四个以上Claude Code 窗口。看似效率很高吧，但人已经切麻了。每隔几分钟切一次窗口，看一眼进度，想起来这个在做什么，再切回去，再想起来那个在做什么。但人脑天生不适合</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518334&amp;idx=1&amp;sn=f6ee965bcb2baec310819ce7dc8165d4&amp;chksm=e9deffd192d4c4850db11364ff805b34fbea185d9dff9c80b45e838d8b3871ea8e63ae6b1001&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518318&amp;idx=1&amp;sn=57a3876ffc42004d9c8d330103ccdd34&amp;chksm=e99df7802de2c81d2ba612f340cde9176a1fa21b6c9f6bc6ab86e31b375c1fe7bf53ddb14690&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/iacaCWlP1x1zIzkpCh007Lb1QbUAM4sPrhqbxZInun6wPbk2tzaibibGuwcicb0JibPsjWegMQQJdOQ5icG6MSgiaGhjYo6icm6tokGc3P6OtT5TzU4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518318&amp;idx=1&amp;sn=57a3876ffc42004d9c8d330103ccdd34&amp;chksm=e99df7802de2c81d2ba612f340cde9176a1fa21b6c9f6bc6ab86e31b375c1fe7bf53ddb14690&amp;scene=0&amp;xtrack=1#rd" target="_blank">又牛夫人了！ Typora 团队做了一款刚刚好的轻量终端</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c5622be015e25ee10a2d77e1d1cfadcb/index.html">字节笔记本</a></span><time class="article-date" datetime="2026-06-21 21:49:08">发布日期：2026-06-21 21:49:08</time></div><p class="article-description">这几个月我大概试了不下十几款的 Agent 的 CLI 工具。开源的、闭源的都有，不过用下来还是回到 iTerm2， 像 Warp、Superset、Orca 等等这些功能都很强，跑Codex、看日</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzIzMzQyMzUzNw==&amp;mid=2247518318&amp;idx=1&amp;sn=57a3876ffc42004d9c8d330103ccdd34&amp;chksm=e99df7802de2c81d2ba612f340cde9176a1fa21b6c9f6bc6ab86e31b375c1fe7bf53ddb14690&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">下一页</a></div></body></html>

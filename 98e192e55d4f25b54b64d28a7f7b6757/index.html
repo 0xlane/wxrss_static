@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>安全架构</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488619&amp;idx=1&amp;sn=66badc20432d512d8d4071897c915195&amp;chksm=c17039c0024cd2573504b0602ffce6417ea67b6a6e294dccab44e0d531be0c514c1652203850&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxOVutianz9bSe5rPrBq38DHzprkX0S3KKvbnmDNicPibkzFbHW28yCjXNTXJLU3oHlp0Bsb0GlbEbTA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488619&amp;idx=1&amp;sn=66badc20432d512d8d4071897c915195&amp;chksm=c17039c0024cd2573504b0602ffce6417ea67b6a6e294dccab44e0d531be0c514c1652203850&amp;scene=0&amp;xtrack=1#rd" target="_blank">我国IPv6活跃情况的运营商级分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-12-25 08:30:00">发布日期：2025-12-25 08:30:00</time></div><p class="article-description">中国IPv6生态中三个鲜为人知的结构性特征：机构间“有资源不等于有流量”的巨大反差、省域间“资源均衡但激活失衡”的空间分化，以及网络安全威胁“极度集中却高度异质”的分布。这些发现不仅关乎对IPv6部署</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488619&amp;idx=1&amp;sn=66badc20432d512d8d4071897c915195&amp;chksm=c17039c0024cd2573504b0602ffce6417ea67b6a6e294dccab44e0d531be0c514c1652203850&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488615&amp;idx=1&amp;sn=c49deef750e04ed1ee1344b0932f7468&amp;chksm=c1906b11857fea1bd8284a9ead788cb41980f3a7bad76ba0726c0fae3f0dc447d384b6a9bf24&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxosicJFEE5OBYRKgiaCKVUDdm7QOjuhoxjxJoRk4h6N0ia0GguDnEmaqBfsI1smTUmtjgEdMsZhjxxg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488615&amp;idx=1&amp;sn=c49deef750e04ed1ee1344b0932f7468&amp;chksm=c1906b11857fea1bd8284a9ead788cb41980f3a7bad76ba0726c0fae3f0dc447d384b6a9bf24&amp;scene=0&amp;xtrack=1#rd" target="_blank">使用加密技术验证机器人和代理流量</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-11-24 08:30:00">发布日期：2025-11-24 08:30:00</time></div><p class="article-description">随着人工智能代理带来的流量激增，机器人的定义不再那么明确。有些机器人显然是恶意机器人，例如会攻击网站或进行撞库攻击的机器人；而有些机器人则是大多数网站所有者希望与之互动的，例如为搜索引擎索引网站或抓取</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488615&amp;idx=1&amp;sn=c49deef750e04ed1ee1344b0932f7468&amp;chksm=c1906b11857fea1bd8284a9ead788cb41980f3a7bad76ba0726c0fae3f0dc447d384b6a9bf24&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488595&amp;idx=1&amp;sn=9bad117f2ce5e475ec20d375eeb4470d&amp;chksm=c1e7f9f0144ad4953235be4d584acf51f9694e93375a769044365893beeee1218ab340c5f132&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxxcd063AIF8eXpEbfByJI4XLlVyFr2fKKv59RhaLXvRL2H6VILIlt6erD2kRq7ibEE5SMLao79Xdw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488595&amp;idx=1&amp;sn=9bad117f2ce5e475ec20d375eeb4470d&amp;chksm=c1e7f9f0144ad4953235be4d584acf51f9694e93375a769044365893beeee1218ab340c5f132&amp;scene=0&amp;xtrack=1#rd" target="_blank">威胁网站分析方案AI和DNS数据</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-11-21 08:30:00">发布日期：2025-11-21 08:30:00</time></div><p class="article-description">01架构方案 在构建一套基于DNS日志分析的恶意域名识别检测系统，系统通过分析DNS日志信息，提取待检测的域名数据，并利用爬虫技术对相关域名对应的网页内容进行抓取，并对原始页面数据进行清洗、去噪和标</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488595&amp;idx=1&amp;sn=9bad117f2ce5e475ec20d375eeb4470d&amp;chksm=c1e7f9f0144ad4953235be4d584acf51f9694e93375a769044365893beeee1218ab340c5f132&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488538&amp;idx=1&amp;sn=6afaeefc8f5a94a9c43a9cebf5b77b91&amp;chksm=c1067688d5152a012cebea6f11d79fb06f1bf0d906541c45b3045d10f80ac8da1f5793459c59&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxD6YFrD0aVlNssV2Pp8XLSiae0uCicNicZnHcetuwiad1tUEOVibnCiaGjO4J4ib8P4cL8w4NTrKUbl1DKg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488538&amp;idx=1&amp;sn=6afaeefc8f5a94a9c43a9cebf5b77b91&amp;chksm=c1067688d5152a012cebea6f11d79fb06f1bf0d906541c45b3045d10f80ac8da1f5793459c59&amp;scene=0&amp;xtrack=1#rd" target="_blank">安全方向培训的方向清单</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-11-18 08:30:00">发布日期：2025-11-18 08:30:00</time></div><p class="article-description">在企业中，构建一道坚固的安全防线，单靠个别部门是远远不够的，它需要全员、产品、研发人员和运维人员这些关键群体各司其职、协同作战。系统的安全培训正是凝聚这些力量的核心环节。针对这些问题，整理出下面可在培</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488538&amp;idx=1&amp;sn=6afaeefc8f5a94a9c43a9cebf5b77b91&amp;chksm=c1067688d5152a012cebea6f11d79fb06f1bf0d906541c45b3045d10f80ac8da1f5793459c59&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488528&amp;idx=1&amp;sn=a5f5345a7a695233f68ca0a95ed4d5ed&amp;chksm=c194a5ee9baebe046a444b632062e235573764fa3ecfc34f3eb1f8bb8bd6a7b69ec2f289dd84&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxe6jqiaIiaO4oxYqNf6nvibsuwMibQ5EwGicc3GsdfuEebI0xNLKOic9uqiccPBeJmJHaHIHORE2Sz7UuPg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488528&amp;idx=1&amp;sn=a5f5345a7a695233f68ca0a95ed4d5ed&amp;chksm=c194a5ee9baebe046a444b632062e235573764fa3ecfc34f3eb1f8bb8bd6a7b69ec2f289dd84&amp;scene=0&amp;xtrack=1#rd" target="_blank">苹果手机已知被利用并被用于黑客/间谍软件攻击漏洞列表</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-10-20 08:30:00">发布日期：2025-10-20 08:30:00</time></div><p class="article-description">CVE-2025-55177：此为WhatsApp iOS客户端中的0day漏洞，允许远程攻击者通过图像处理执行任意代码，已被确认在野外利用，可能由间谍软件供应商针对高价值目标，Apple在2025年</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488528&amp;idx=1&amp;sn=a5f5345a7a695233f68ca0a95ed4d5ed&amp;chksm=c194a5ee9baebe046a444b632062e235573764fa3ecfc34f3eb1f8bb8bd6a7b69ec2f289dd84&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488523&amp;idx=1&amp;sn=6aaa97c4a50ea84d5bd09b17e726eb5f&amp;chksm=c166b91c77c22e1c00e8d9ad6fd8c50c9c17c7f2685a9fceb24e487d715776dc293c0b3c40d1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGwicicwRwFu1micrHcPGokqLMrUsiaYQEnXb74aEfZ6vVvRB90oLGS5x80jTmqCHHoPS5G48yCuMwBIKg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488523&amp;idx=1&amp;sn=6aaa97c4a50ea84d5bd09b17e726eb5f&amp;chksm=c166b91c77c22e1c00e8d9ad6fd8c50c9c17c7f2685a9fceb24e487d715776dc293c0b3c40d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">新能源智能汽车车载网络通信安全架构详解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-10-10 08:30:00">发布日期：2025-10-10 08:30:00</time></div><p class="article-description">目前，智能化、网联化、电动化是汽车发展的大趋势，各大汽车企业与互联网公司积极开展合作，共同开启云端新时代。与此同时，针对智能网联汽车的攻击事件却频繁发生，使得汽车网络信息安全问题日益凸显。上述研究均是</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488523&amp;idx=1&amp;sn=6aaa97c4a50ea84d5bd09b17e726eb5f&amp;chksm=c166b91c77c22e1c00e8d9ad6fd8c50c9c17c7f2685a9fceb24e487d715776dc293c0b3c40d1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488519&amp;idx=1&amp;sn=b99ffd299f0d081d7cd046e7c3875c1b&amp;chksm=c11b6015d9e356d9bed583c65b1468e5771a8e2d83e2f3c72c8719e0e182a27cf6d6d8cd5d05&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGzc7rvtcVNVMWDGonwkhuN1hMcvk5kK47lgiapIKMFR00EZOpvqrFBr3VOwNiafpJGvjQbco2NxEdYw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488519&amp;idx=1&amp;sn=b99ffd299f0d081d7cd046e7c3875c1b&amp;chksm=c11b6015d9e356d9bed583c65b1468e5771a8e2d83e2f3c72c8719e0e182a27cf6d6d8cd5d05&amp;scene=0&amp;xtrack=1#rd" target="_blank">运维故障的排查及修复技巧</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-09-17 08:30:00">发布日期：2025-09-17 08:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488519&amp;idx=1&amp;sn=b99ffd299f0d081d7cd046e7c3875c1b&amp;chksm=c11b6015d9e356d9bed583c65b1468e5771a8e2d83e2f3c72c8719e0e182a27cf6d6d8cd5d05&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488508&amp;idx=1&amp;sn=62ad06e5575a346bd1c012b5b3074bbb&amp;chksm=c1dc4260771c2f7180a64fe5c90bb718484fa962c883fa28b3caae14ee4646f7ad0735c5fdc5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxqPIxRVrYFVY6sJoMzwa0Z9cuYXyKxSWpcmkle9cuD9dNkNPmAFhy9PFwAC0bX6A5rc2lsqvajzA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488508&amp;idx=1&amp;sn=62ad06e5575a346bd1c012b5b3074bbb&amp;chksm=c1dc4260771c2f7180a64fe5c90bb718484fa962c883fa28b3caae14ee4646f7ad0735c5fdc5&amp;scene=0&amp;xtrack=1#rd" target="_blank">网络空间测绘技术体系</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-08-26 08:30:00">发布日期：2025-08-26 08:30:00</time></div><p class="article-description">网络空间测绘技术体系主要包括三个大的方面，即探测技术、数据分析技术 和可视化技术等，如图 3.1 所示。 探测技术在网络空间测绘领域，探测技术是基础性的关键环节，它如同网络空间里的 “雷达”，能够主动</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488508&amp;idx=1&amp;sn=62ad06e5575a346bd1c012b5b3074bbb&amp;chksm=c1dc4260771c2f7180a64fe5c90bb718484fa962c883fa28b3caae14ee4646f7ad0735c5fdc5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488494&amp;idx=1&amp;sn=2a4210b07843d178ebe549ef4fc5026e&amp;chksm=c187596bb232ef5304e39854c6f3df57a00c040fea37f3216715c2ff4b4f3852b1aa02b0aab6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGwOom2ZzfV2zQSW9lTfdSaQgicMl9B7AZ9VWSnguy40aP9pLibfmpmaic3G5MTh5xxVgZTUmBGMstcpw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488494&amp;idx=1&amp;sn=2a4210b07843d178ebe549ef4fc5026e&amp;chksm=c187596bb232ef5304e39854c6f3df57a00c040fea37f3216715c2ff4b4f3852b1aa02b0aab6&amp;scene=0&amp;xtrack=1#rd" target="_blank">数据安全风险评估报告参考模版</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-08-21 08:30:00">发布日期：2025-08-21 08:30:00</time></div><p class="article-description">数据风险评估报告封面数据风险报告基本信息表样式 风险报告主要内容样式 风险评估报告声明模版</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488494&amp;idx=1&amp;sn=2a4210b07843d178ebe549ef4fc5026e&amp;chksm=c187596bb232ef5304e39854c6f3df57a00c040fea37f3216715c2ff4b4f3852b1aa02b0aab6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488471&amp;idx=1&amp;sn=41a13c17e805cf79ec96337bff2ebc73&amp;chksm=c1ad5ee67ba58f334846e5aa40090d81992620647815c5e197322042f407c27e9227b5ed6bb8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGwOom2ZzfV2zQSW9lTfdSaQ1D4AVd0VHwuiaLmb7sACNian484sbFes6BLYT1A0AgOPFOrF0SGSVGNg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488471&amp;idx=1&amp;sn=41a13c17e805cf79ec96337bff2ebc73&amp;chksm=c1ad5ee67ba58f334846e5aa40090d81992620647815c5e197322042f407c27e9227b5ed6bb8&amp;scene=0&amp;xtrack=1#rd" target="_blank">数据安全风险分析及典型数据安全风险类型</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-08-19 08:30:00">发布日期：2025-08-19 08:30:00</time></div><p class="article-description">数据安全风险危害程度等级参考 数据安全风险可能性分析参考 典型数据安全风险类型</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488471&amp;idx=1&amp;sn=41a13c17e805cf79ec96337bff2ebc73&amp;chksm=c1ad5ee67ba58f334846e5aa40090d81992620647815c5e197322042f407c27e9227b5ed6bb8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488458&amp;idx=1&amp;sn=90666105f1217b02b149b85658e2f054&amp;chksm=c19e8bea8db922f7b5e97230353f8e818afc0e96224acf445ba587d09feb097954764bb1cce1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGwza6fpwZkHd1ticEou4GtibJp10Cx6WwpcW1r5icibAibzW7Zb2BUd9ibsibiaJt6WfTTEw2Xy5msicl7hHrA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488458&amp;idx=1&amp;sn=90666105f1217b02b149b85658e2f054&amp;chksm=c19e8bea8db922f7b5e97230353f8e818afc0e96224acf445ba587d09feb097954764bb1cce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">防火墙和9中架构模式</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-07-28 08:30:00">发布日期：2025-07-28 08:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488458&amp;idx=1&amp;sn=90666105f1217b02b149b85658e2f054&amp;chksm=c19e8bea8db922f7b5e97230353f8e818afc0e96224acf445ba587d09feb097954764bb1cce1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488446&amp;idx=1&amp;sn=148f15a277a986fdbd265e2697c258f5&amp;chksm=c108b1982cca5e392f480251f4da6f6857f3ba184cb06d8094fb073086ad9248becd95cb98aa&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGwsguPl9FRC6PvicXx3lT2Prqr7yWQw7xY4Kic2W32Xc4sOnomkFiaicIEkW222LekxTyBScRZtBtzLdw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488446&amp;idx=1&amp;sn=148f15a277a986fdbd265e2697c258f5&amp;chksm=c108b1982cca5e392f480251f4da6f6857f3ba184cb06d8094fb073086ad9248becd95cb98aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">数据安全技术和数据安全风险评估方法</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-07-09 08:30:00">发布日期：2025-07-09 08:30:00</time></div><p class="article-description">01通则 02第一阶段：评估准备03第二阶段：信息调研 04第三阶段：风险识别 05第四阶段：风险分析与评价 06第五阶段：评估总结文章来源：合规社</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488446&amp;idx=1&amp;sn=148f15a277a986fdbd265e2697c258f5&amp;chksm=c108b1982cca5e392f480251f4da6f6857f3ba184cb06d8094fb073086ad9248becd95cb98aa&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488348&amp;idx=1&amp;sn=ef56cf50359280873f61b59d2092413c&amp;chksm=c12e515a8902aeeac699f78ef13ef8c72aa4f34e65444c5b40162d84b7b28bc231aabbde83d3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxmSDLVx1RF4mwlFvdMpb4PZjicvHV1X4oYFh6JrkZHia9x9yKIh7XctlT5kedke4kicAQLicjY3h7L8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488348&amp;idx=1&amp;sn=ef56cf50359280873f61b59d2092413c&amp;chksm=c12e515a8902aeeac699f78ef13ef8c72aa4f34e65444c5b40162d84b7b28bc231aabbde83d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">赢麻了！全体程网安人彻底狂欢吧！这个好消息来得太及时！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-06-19 09:00:00">发布日期：2025-06-19 09:00:00</time></div><p class="article-description">2025开年，AI技术打得火热，正在改变程序员的职业命运：阿里云核心业务全部接入Agent体系；字节跳动30%后端岗位要求大模型开发能力；腾讯、京东、百度开放招聘技术岗，80%与AI相关……大模型正在</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488348&amp;idx=1&amp;sn=ef56cf50359280873f61b59d2092413c&amp;chksm=c12e515a8902aeeac699f78ef13ef8c72aa4f34e65444c5b40162d84b7b28bc231aabbde83d3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488337&amp;idx=1&amp;sn=5db71361fd2e4da938f507c914565835&amp;chksm=c195d9bb3cf37cf7f84902a5feb7e7d8c3f5b4cba9cb0b74b8e1927c1bd9f1c1bc05b5a5a08d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxW1FR9jX8glCQGaxN28NJvOm9qekDS0lae1vaEq5aKdjGuhkN40ria3HAmtI9HFRC5QIUxTLkib7uA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488337&amp;idx=1&amp;sn=5db71361fd2e4da938f507c914565835&amp;chksm=c195d9bb3cf37cf7f84902a5feb7e7d8c3f5b4cba9cb0b74b8e1927c1bd9f1c1bc05b5a5a08d&amp;scene=0&amp;xtrack=1#rd" target="_blank">通用型漏洞在企业中的应急响应</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-06-16 08:30:00">发布日期：2025-06-16 08:30:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488337&amp;idx=1&amp;sn=5db71361fd2e4da938f507c914565835&amp;chksm=c195d9bb3cf37cf7f84902a5feb7e7d8c3f5b4cba9cb0b74b8e1927c1bd9f1c1bc05b5a5a08d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488323&amp;idx=1&amp;sn=3a48c96d475f793c5a48da2edd39b4b2&amp;chksm=c1397dd15878972f89efd419a78d8fb18ae9ff383d3a9e79ead16efbdaf476197d7c1b52a8c5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGyENP4AnnSjyFS6dhUbI9VvB0kxpwcMYTjuICtzBB67U7BibnRv4JEOyOEFqzRN5Gn2Zs2Qmr5OBkA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488323&amp;idx=1&amp;sn=3a48c96d475f793c5a48da2edd39b4b2&amp;chksm=c1397dd15878972f89efd419a78d8fb18ae9ff383d3a9e79ead16efbdaf476197d7c1b52a8c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">常见网络安全威胁和防御措施</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-06-06 08:30:00">发布日期：2025-06-06 08:30:00</time></div><p class="article-description">网络安全威胁是一种技术风险，会削弱企业网络的防御能力，危及专有数据、关键应用程序和整个 IT 基础设施。由于企业面临广泛的威胁，因此他们应该仔细监控和缓解最关键的威胁和漏洞。网络安全问题有七大类，它们</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488323&amp;idx=1&amp;sn=3a48c96d475f793c5a48da2edd39b4b2&amp;chksm=c1397dd15878972f89efd419a78d8fb18ae9ff383d3a9e79ead16efbdaf476197d7c1b52a8c5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488288&amp;idx=1&amp;sn=f97a1db65318f00d74690d920b685a7e&amp;chksm=c1dab08355a543c6f61befc463f81d0b0f8f4767f3bc5d312cc2c351bb41a4b58a144fa9aa92&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxVAIt46qnufYtxP8q7TNjwysYa82epcbepWNoYU8gE1rtzKL09n4LCxsQke20PCia1JJZgfpedVsQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488288&amp;idx=1&amp;sn=f97a1db65318f00d74690d920b685a7e&amp;chksm=c1dab08355a543c6f61befc463f81d0b0f8f4767f3bc5d312cc2c351bb41a4b58a144fa9aa92&amp;scene=0&amp;xtrack=1#rd" target="_blank">网安行业年中618免费送课</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-05-23 08:30:00">发布日期：2025-05-23 08:30:00</time></div><p class="article-description">没错！你没看错！！！今年618年中大促，玩大的！无套路！真优惠！福利一：大额返现！5月20日起前200个报名活动课程在优惠价格基础上还有返现最高返现800元！福利1返现福利数量有限，课程通用，先到先得</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488288&amp;idx=1&amp;sn=f97a1db65318f00d74690d920b685a7e&amp;chksm=c1dab08355a543c6f61befc463f81d0b0f8f4767f3bc5d312cc2c351bb41a4b58a144fa9aa92&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488275&amp;idx=1&amp;sn=261b698782c0da23e2ae05091cffdab5&amp;chksm=c195527cba2f5a646dc87644a96a0835adc03322c3ca090e5a77e96f8c3fe24c5af47685cea9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxUib6bnDINbK1icAPNB4LlRiavTKSqUc47ZPzda1UwyQ3pAQg2BBvn7cZ0tYcPGGh3MFHlqrfbdsia4Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488275&amp;idx=1&amp;sn=261b698782c0da23e2ae05091cffdab5&amp;chksm=c195527cba2f5a646dc87644a96a0835adc03322c3ca090e5a77e96f8c3fe24c5af47685cea9&amp;scene=0&amp;xtrack=1#rd" target="_blank">钓鱼邮件的朔源</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-05-22 08:30:00">发布日期：2025-05-22 08:30:00</time></div><p class="article-description">01钓鱼邮件辨别1.1接收到钓鱼邮件如图1所示，收到一份“备案通知”这类邮件一般都会有一些指引性提示，让你进行下一步操作。在本例中是催促收件人对域名进行备案，在邮件中有一个立即备案的链接地址。图1</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488275&amp;idx=1&amp;sn=261b698782c0da23e2ae05091cffdab5&amp;chksm=c195527cba2f5a646dc87644a96a0835adc03322c3ca090e5a77e96f8c3fe24c5af47685cea9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488255&amp;idx=1&amp;sn=76f74415f1ef92354ba2c9783eb82568&amp;chksm=c1004aa01fe486836ff2a35648de2e4134258852e47c85fa3101eccc69aef345e42d28da03b9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxiaZBWGhmjVh5uq7atCibAic8MokKjCJRUYIfpFr5VT5YoMcOmalmQicmPcRf568oN3eibRCkIeLAia4Jw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488255&amp;idx=1&amp;sn=76f74415f1ef92354ba2c9783eb82568&amp;chksm=c1004aa01fe486836ff2a35648de2e4134258852e47c85fa3101eccc69aef345e42d28da03b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">L4级别！「无相」Agentic AI，多智能体溯源分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-05-20 08:30:00">发布日期：2025-05-20 08:30:00</time></div><p class="article-description">2025年离不开的话题：AI。无论是C端还是B端，对于AI的关注度已经达到了前所未有的高峰。你可能听说过Agentic AI或者Manus。Manus是通用大模型，更多是静态规划，设定好每一步，按步</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488255&amp;idx=1&amp;sn=76f74415f1ef92354ba2c9783eb82568&amp;chksm=c1004aa01fe486836ff2a35648de2e4134258852e47c85fa3101eccc69aef345e42d28da03b9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488242&amp;idx=1&amp;sn=6aaf7a725daac7235a260b0aad2c6ae4&amp;chksm=c18204b65afc097c164073e34aa8fc4096dec2a2b4edad36b56cc80d8cb4c7be10e590fde235&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGyqVo3zicN9IqbygCpXpYgQdgEQCQG10cKsffWicF6NjbUU1sx5DHMxVnqvPkG39PFyctkLHM8POrfQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488242&amp;idx=1&amp;sn=6aaf7a725daac7235a260b0aad2c6ae4&amp;chksm=c18204b65afc097c164073e34aa8fc4096dec2a2b4edad36b56cc80d8cb4c7be10e590fde235&amp;scene=0&amp;xtrack=1#rd" target="_blank">网络攻防必刷的靶场</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-05-12 08:30:00">发布日期：2025-05-12 08:30:00</time></div><p class="article-description">01基础类靶场 sql-libs靶场1.专注于SQL注入漏洞的学习和测试，提供多种注入场景，适合新手练习SQL注入攻击。2.下载地址：[sql-libs GitHub： https://github</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488242&amp;idx=1&amp;sn=6aaf7a725daac7235a260b0aad2c6ae4&amp;chksm=c18204b65afc097c164073e34aa8fc4096dec2a2b4edad36b56cc80d8cb4c7be10e590fde235&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488237&amp;idx=1&amp;sn=fe19e984c1b135f91b3b02eb655974e2&amp;chksm=c13410604d4f633d6ba44d1b996a7d50c8c2bc6f706723b40280181d70332df42a1c814efe07&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxG1cywaQWZibW5l7DE97mJyzg9uYxkQbibyJbglQP1EIibShnhU6l1XFrhAur1rJicLHjfvicBAZsROjg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488237&amp;idx=1&amp;sn=fe19e984c1b135f91b3b02eb655974e2&amp;chksm=c13410604d4f633d6ba44d1b996a7d50c8c2bc6f706723b40280181d70332df42a1c814efe07&amp;scene=0&amp;xtrack=1#rd" target="_blank">华为的AI系统网络安全治理梳理</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-04-21 08:30:00">发布日期：2025-04-21 08:30:00</time></div><p class="article-description">2024年发布基于全栈自研技术开发的盘古系列大模型盘古5.0，构建三个层次的系列大模型： 1. L0层：基础大模型，包括盘古语言大模型、盘古多模态大模型、盘古视觉大模型、盘古预测 大模型、盘古科学计算</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488237&amp;idx=1&amp;sn=fe19e984c1b135f91b3b02eb655974e2&amp;chksm=c13410604d4f633d6ba44d1b996a7d50c8c2bc6f706723b40280181d70332df42a1c814efe07&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488229&amp;idx=1&amp;sn=89b091e5ef0a4a28951bdaa38b8fb377&amp;chksm=c141491f56b82b87f40b39f798aeccab16966af08c66bc51f7ecd187a8ce008eb32fd46f4c6e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGzXspMMDdPkh0wGoszib0F4jl6Nw6swOsb3dn76HibZpib5RUZQRElL72bH2DGqCbziaTpZVhwibH83EPw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488229&amp;idx=1&amp;sn=89b091e5ef0a4a28951bdaa38b8fb377&amp;chksm=c141491f56b82b87f40b39f798aeccab16966af08c66bc51f7ecd187a8ce008eb32fd46f4c6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">大模型组件的漏洞与风险</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-03-31 08:30:00">发布日期：2025-03-31 08:30:00</time></div><p class="article-description">大模型是指参数量庞大、计算资源需求高的机器学习模型，涵盖自然语言处理、计算机视觉、语音识别等多个领域。大模型安全是人工智能发展的核心议题，其重要性体现在三个方面：1、大模型若被恶意操控可能生成虚假信息</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488229&amp;idx=1&amp;sn=89b091e5ef0a4a28951bdaa38b8fb377&amp;chksm=c141491f56b82b87f40b39f798aeccab16966af08c66bc51f7ecd187a8ce008eb32fd46f4c6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488222&amp;idx=1&amp;sn=3de6a66fe128d14efe8b6851a92696e2&amp;chksm=c17f685f6f12de542a2a1d58d050bff337ebb352808d7a71ee38fd8e21674e91713d0c66d159&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGz7K7Y6DaRLugxzr6YwsIlDUo0GjHv2cpjZr07ykZrk3r2RkwibickxZwekbGB8tEhIHkOMHukczuDQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488222&amp;idx=1&amp;sn=3de6a66fe128d14efe8b6851a92696e2&amp;chksm=c17f685f6f12de542a2a1d58d050bff337ebb352808d7a71ee38fd8e21674e91713d0c66d159&amp;scene=0&amp;xtrack=1#rd" target="_blank">大模型系统安全保护的要求</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-03-17 08:30:00">发布日期：2025-03-17 08:30:00</time></div><p class="article-description">01大模型系统保护对象基础设施层为大模型系统提供算力支持，可直接提供灵活调取的智能算力服务，降低模型落地的算力门槛，一般包括 AI 芯片、基础网络、存储等资源。 平台层为模型定制</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488222&amp;idx=1&amp;sn=3de6a66fe128d14efe8b6851a92696e2&amp;chksm=c17f685f6f12de542a2a1d58d050bff337ebb352808d7a71ee38fd8e21674e91713d0c66d159&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488215&amp;idx=1&amp;sn=238c05ce128350f38ea3b5902111749a&amp;chksm=c1d442ac841cf85af229a2415b9e92f15f3582ea0f05948e12fb9a5bf4496d9aeb4c161ce3dd&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxnFEgV41ttXhtre3L9h6uROYibDha6krtjE0lETS37iazKvAMHJ8IZxiaKMtSR9TFYBVhSuQJ7DvxXA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488215&amp;idx=1&amp;sn=238c05ce128350f38ea3b5902111749a&amp;chksm=c1d442ac841cf85af229a2415b9e92f15f3582ea0f05948e12fb9a5bf4496d9aeb4c161ce3dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">网络攻击和安全现状及预测分析</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-03-09 09:30:00">发布日期：2025-03-09 09:30:00</time></div><p class="article-description">01攻击分析     02事件响应     03漏洞分析  04网络安全未来预测</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488215&amp;idx=1&amp;sn=238c05ce128350f38ea3b5902111749a&amp;chksm=c1d442ac841cf85af229a2415b9e92f15f3582ea0f05948e12fb9a5bf4496d9aeb4c161ce3dd&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488204&amp;idx=1&amp;sn=6590ae5dbd950fab54ef1e7926c03a15&amp;chksm=c134ed78278eada804cefd3486c5b244af2269c4ca9f8312a6bb4c08422b6428d657a0303403&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGyRz3nYT8P42tIyFd35TfYKeibYLR5EbC9DwUyic7AibN1kibkGJic38xMvYfQO5KgibHkFZCz6rJDQgY8g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488204&amp;idx=1&amp;sn=6590ae5dbd950fab54ef1e7926c03a15&amp;chksm=c134ed78278eada804cefd3486c5b244af2269c4ca9f8312a6bb4c08422b6428d657a0303403&amp;scene=0&amp;xtrack=1#rd" target="_blank">震撼出击：DeepSeekR1破解恶意流量的绝杀秘诀！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-03-05 08:30:00">发布日期：2025-03-05 08:30:00</time></div><p class="article-description">01引言随着网络技术的迅猛发展，恶意流量愈发隐蔽且多变，传统的流量分析手段在面对日益复杂的网络攻击时显得力不从心。近年来，深度学习技术尤其是大规模预训练模型在各个领域的应用不断突破边界，安全行业也迎来</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488204&amp;idx=1&amp;sn=6590ae5dbd950fab54ef1e7926c03a15&amp;chksm=c134ed78278eada804cefd3486c5b244af2269c4ca9f8312a6bb4c08422b6428d657a0303403&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488191&amp;idx=1&amp;sn=9cb51111a9e142cfa6b0316f80c23a1a&amp;chksm=c189916415fcccb4bdb6b93dc7797975ab830ea8a127f67e93e3960f721cedc2b6011a468dd6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGyk2o3D5fFXSZsXCcmba2JPSyyrTySkW6e2ibbZNcUTxdKiadgVrdfVRC000dg6cS2WmFPhdiaYoB9icA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488191&amp;idx=1&amp;sn=9cb51111a9e142cfa6b0316f80c23a1a&amp;chksm=c189916415fcccb4bdb6b93dc7797975ab830ea8a127f67e93e3960f721cedc2b6011a468dd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI大模型安全存在的安全风险</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-03-04 08:30:00">发布日期：2025-03-04 08:30:00</time></div><p class="article-description">据清华大学网络空间测绘联合研究中心分析，开源跨平台大模型工具Ollama默认配置存在未授权访问与模型窃取等安全隐患。鉴于目前DeepSeek等大模型的研究部署和应用非常广泛，多数用户使用Ollama私</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488191&amp;idx=1&amp;sn=9cb51111a9e142cfa6b0316f80c23a1a&amp;chksm=c189916415fcccb4bdb6b93dc7797975ab830ea8a127f67e93e3960f721cedc2b6011a468dd6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488186&amp;idx=1&amp;sn=2bf682f8daac41eeaf22940315de6b2b&amp;chksm=c180789c20be44d6cd9f21ed2eaa81981b15cae8fb4c405229ccf7a408955dcf82bbd27f5418&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/lwEekEbzmGxISapOgxFEMpFRicKXPocpK537DJ6BlqUooq8cm6BcdRt633YSOoJkxA5BObdw3KJXOhc8QQ4ojnw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488186&amp;idx=1&amp;sn=2bf682f8daac41eeaf22940315de6b2b&amp;chksm=c180789c20be44d6cd9f21ed2eaa81981b15cae8fb4c405229ccf7a408955dcf82bbd27f5418&amp;scene=0&amp;xtrack=1#rd" target="_blank">办公安全的实践分享</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/98e192e55d4f25b54b64d28a7f7b6757/index.html">安全架构</a></span><time class="article-date" datetime="2025-02-24 08:30:00">发布日期：2025-02-24 08:30:00</time></div><p class="article-description">办公安全             VPN问题</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=Mzg5MjgxNTQ1MA==&amp;mid=2247488186&amp;idx=1&amp;sn=2bf682f8daac41eeaf22940315de6b2b&amp;chksm=c180789c20be44d6cd9f21ed2eaa81981b15cae8fb4c405229ccf7a408955dcf82bbd27f5418&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

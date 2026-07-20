@@ -1,0 +1,390 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>云雀坊间</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485527&amp;idx=1&amp;sn=f03e4636f894580e61b5db4b71959cf2&amp;chksm=c1acdd505527744865f71d59f6eedfe359e71da28603f809382a973399878f662a8aa20de146&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qePc0NsNiaMuaiapaPXvOtZTvN292AIxticIGb4zI2Xib30oxDVstvliaJ6ibfNaM8McICibiaMiaZm4WZ7gH67WUDq1E4y6LgOnOVx5laiac/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485527&amp;idx=1&amp;sn=f03e4636f894580e61b5db4b71959cf2&amp;chksm=c1acdd505527744865f71d59f6eedfe359e71da28603f809382a973399878f662a8aa20de146&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-08 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-08 19:49:56">发布日期：2026-05-08 19:49:56</time></div><p class="article-description">2026-05-08 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. dirtyfrag（热度: 2077）
+  Dirty Frag是一种Linux漏洞，通过链式利用两个Pag</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485527&amp;idx=1&amp;sn=f03e4636f894580e61b5db4b71959cf2&amp;chksm=c1acdd505527744865f71d59f6eedfe359e71da28603f809382a973399878f662a8aa20de146&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485523&amp;idx=1&amp;sn=f9fa7c0d2e89ff9af50dcf07008fc2c2&amp;chksm=c129d3ff347769761309da29d935c12f8604ac96d8fd065fbc83dea6d6601b1eabef9aaf524f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeM2BM2tNoU1QeCflwO7SdW57ZA4ZbjUnUlooj3qTSXT0rr1cOA4SC1F6CvUZD2aKUc3RZ0Y4z2Ne6Pvs4tbRaNvshOSBVsPF6s/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485523&amp;idx=1&amp;sn=f9fa7c0d2e89ff9af50dcf07008fc2c2&amp;chksm=c129d3ff347769761309da29d935c12f8604ac96d8fd065fbc83dea6d6601b1eabef9aaf524f&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-07 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-07 19:35:47">发布日期：2026-05-07 19:35:47</time></div><p class="article-description">2026-05-07 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. yao-open-prompts（热度: 795）
+  姚金刚开源提示词库，提供54个覆盖工作、学习、内容、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485523&amp;idx=1&amp;sn=f9fa7c0d2e89ff9af50dcf07008fc2c2&amp;chksm=c129d3ff347769761309da29d935c12f8604ac96d8fd065fbc83dea6d6601b1eabef9aaf524f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485519&amp;idx=1&amp;sn=a94a40a0ebb0a853aa8652f4d00e74a6&amp;chksm=c161f07239fe74326797ebf18fc99bdb07e1e1493e17620e5806ac3285d79db3b65836b3f4e6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeOo0fCAcUcpLzNx4oLZw4Gs24saGxWx1X9pRhnplBk5fZq6H6bwOhxoqkIem79y092TMibUhsMiak3ToB2kuZIleYq3TbNbG6Dlw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485519&amp;idx=1&amp;sn=a94a40a0ebb0a853aa8652f4d00e74a6&amp;chksm=c161f07239fe74326797ebf18fc99bdb07e1e1493e17620e5806ac3285d79db3b65836b3f4e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-06 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-06 20:25:54">发布日期：2026-05-06 20:25:54</time></div><p class="article-description">2026-05-06 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. cheat-on-content（热度: 620）
+  Cheat on Content 是一个内容创作系统</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485519&amp;idx=1&amp;sn=a94a40a0ebb0a853aa8652f4d00e74a6&amp;chksm=c161f07239fe74326797ebf18fc99bdb07e1e1493e17620e5806ac3285d79db3b65836b3f4e6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485515&amp;idx=1&amp;sn=9bfd17b09b27acbca542321c6ae5c494&amp;chksm=c1d2917f9744bb54918b046659bd3a8aedf7f14c24c0ac37f3d50381b4699193215f6704ca86&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeOg9icFiboRdOAyPwLBdibCLTXvInmZ4KRKkgClDA8tSh9O4Rwwe2PibE1X6ME4ydHzPSJZWyEP80m98lpFK7uSxHuXEkSDVrm05o0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485515&amp;idx=1&amp;sn=9bfd17b09b27acbca542321c6ae5c494&amp;chksm=c1d2917f9744bb54918b046659bd3a8aedf7f14c24c0ac37f3d50381b4699193215f6704ca86&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-05 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-05 20:36:17">发布日期：2026-05-05 20:36:17</time></div><p class="article-description">2026-05-05 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. FL-STUDIO-PATCHER（热度: 460）
+  FL Studio 2026破解补丁，提供安装说明</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485515&amp;idx=1&amp;sn=9bfd17b09b27acbca542321c6ae5c494&amp;chksm=c1d2917f9744bb54918b046659bd3a8aedf7f14c24c0ac37f3d50381b4699193215f6704ca86&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485507&amp;idx=1&amp;sn=0cfa26ca925cab75ad55c38d6d8da02d&amp;chksm=c1805a151f654bbc0e0acd652baaf86a88b8a13fe35d4c91328c3dc27eb911e64a311a064964&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOoarqicQRMdeNkIyPgdTuaxFxNEStWkT9viaaJ6bdlxtCxNsDghwDlOSYgx5onvR03AhSgQics5AEQCrVJwdet8HLryx2CRD3OyM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485507&amp;idx=1&amp;sn=0cfa26ca925cab75ad55c38d6d8da02d&amp;chksm=c1805a151f654bbc0e0acd652baaf86a88b8a13fe35d4c91328c3dc27eb911e64a311a064964&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-03 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-04 05:47:16">发布日期：2026-05-04 05:47:16</time></div><p class="article-description">2026-05-03 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. keep-codex-fast（热度: 382）
+  本工具用于清理慢速的Codex本地状态，通过先创建交接</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485507&amp;idx=1&amp;sn=0cfa26ca925cab75ad55c38d6d8da02d&amp;chksm=c1805a151f654bbc0e0acd652baaf86a88b8a13fe35d4c91328c3dc27eb911e64a311a064964&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485503&amp;idx=1&amp;sn=d94cfc822daef0ca7b866ba705ecefaa&amp;chksm=c1f695f348c14d8bd704d0f370be5ca5c4ae23fd8cdc0265587baf992a39d772f844980fae28&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeNuBrN7euzQUPPknticyR9KdjxCTWCfiab6cWXQeb7MOWTE4cAT31JtKY3TSE8xSkJmoOdibaqN9vP5yb7icAkQ0XsS3crlc2f3Xt8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485503&amp;idx=1&amp;sn=d94cfc822daef0ca7b866ba705ecefaa&amp;chksm=c1f695f348c14d8bd704d0f370be5ca5c4ae23fd8cdc0265587baf992a39d772f844980fae28&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-02 GitHub周Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-02 19:57:06">发布日期：2026-05-02 19:57:06</time></div><p class="article-description">2026-05-02 GitHub周Star榜
+每周精选最值得关注的开源项目
+
+
+  1. open-design（热度: 13537）
+  Open Design 是一个开源设计工具，通过19项技能</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485503&amp;idx=1&amp;sn=d94cfc822daef0ca7b866ba705ecefaa&amp;chksm=c1f695f348c14d8bd704d0f370be5ca5c4ae23fd8cdc0265587baf992a39d772f844980fae28&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485495&amp;idx=1&amp;sn=1f998f3aed9de98c1bc2a9e02ba14ecc&amp;chksm=c1cf87bafd2ceecef0d162fb8b135b379a2eafbaeb03424148bd394d39852ec8f694c7b5baca&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeMBrqTA7QibYcCBDZtuw1HY96S9UUvliaBIhcYoaFxjQdeyulj4nH10iczoHVl5N9XAmVIMC1qYcLHSxvT1R89cFmlxOicBZaa1y2M/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485495&amp;idx=1&amp;sn=1f998f3aed9de98c1bc2a9e02ba14ecc&amp;chksm=c1cf87bafd2ceecef0d162fb8b135b379a2eafbaeb03424148bd394d39852ec8f694c7b5baca&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-05-01 GitHub月Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-05-01 20:43:00">发布日期：2026-05-01 20:43:00</time></div><p class="article-description">2026-05-01 GitHub月Star榜
+每月精选最值得关注的开源项目
+
+
+  1. caveman（热度: 51624）
+  这是一段帮助Claude像原始人一样简洁表达的技能，能大幅减少to</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485495&amp;idx=1&amp;sn=1f998f3aed9de98c1bc2a9e02ba14ecc&amp;chksm=c1cf87bafd2ceecef0d162fb8b135b379a2eafbaeb03424148bd394d39852ec8f694c7b5baca&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485487&amp;idx=1&amp;sn=f9ad2b0d164a11204717d0b4d0bf8c44&amp;chksm=c15d00fcc6d3f4a915696697b406a3087c2ff89ecdbdd9d9241786815faf66bd97b2ff0fea95&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOnvCCI9HrlCWmZeBfxyic5S8gFvmpTFiaoqgpgxbR0bAA5y1DSuS9LEGuzgVeiaSb0t1wHJpL5ib2nrjyFb2sicza9Flv8ibDQuZX5Q/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485487&amp;idx=1&amp;sn=f9ad2b0d164a11204717d0b4d0bf8c44&amp;chksm=c15d00fcc6d3f4a915696697b406a3087c2ff89ecdbdd9d9241786815faf66bd97b2ff0fea95&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-30 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-30 20:39:12">发布日期：2026-04-30 20:39:12</time></div><p class="article-description">2026-04-30 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. copy-fail-CVE-2026-31431（热度: 1130）
+  Copy Fail漏洞CVE-20</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485487&amp;idx=1&amp;sn=f9ad2b0d164a11204717d0b4d0bf8c44&amp;chksm=c15d00fcc6d3f4a915696697b406a3087c2ff89ecdbdd9d9241786815faf66bd97b2ff0fea95&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485483&amp;idx=1&amp;sn=6473678c1658f82a7176be2b96d0188a&amp;chksm=c10b04ad6f834b2d86d3004e82b4bf146a03d5fb6b6a6e69284f9b3bf279bd21ece7f81e15db&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qePibpxVQXK5rYLTn4fjyOIhLRIBdpgUQMiboicXiaDVXaMFxZEr26FA5oWhic4MTQv2zicpzltBuNfyl9LdicImTwVFrHPD2onp83YGdE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485483&amp;idx=1&amp;sn=6473678c1658f82a7176be2b96d0188a&amp;chksm=c10b04ad6f834b2d86d3004e82b4bf146a03d5fb6b6a6e69284f9b3bf279bd21ece7f81e15db&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-29 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-29 20:56:08">发布日期：2026-04-29 20:56:08</time></div><p class="article-description">2026-04-29 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. open-design（热度: 2829）
+  Open Design 是一个开源设计工具，通过19项技能和</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485483&amp;idx=1&amp;sn=6473678c1658f82a7176be2b96d0188a&amp;chksm=c10b04ad6f834b2d86d3004e82b4bf146a03d5fb6b6a6e69284f9b3bf279bd21ece7f81e15db&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485479&amp;idx=1&amp;sn=9e88fea060d401bf8deef365e297df66&amp;chksm=c1dda4a02d2f730145d6576288badfd6756e0dc73436fb7b4fa14413dd6ea5f102fec7d2b999&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeNjgic6VI6RHruAafOmgyRSImm2PJicKEtZMWRT3Io7kiclv6ykoHRT6dVX8dBusnDdXM0ZtVGpU9atPtr1rpcrT39yibzxiaZOAWI8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485479&amp;idx=1&amp;sn=9e88fea060d401bf8deef365e297df66&amp;chksm=c1dda4a02d2f730145d6576288badfd6756e0dc73436fb7b4fa14413dd6ea5f102fec7d2b999&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-28 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-28 22:13:00">发布日期：2026-04-28 22:13:00</time></div><p class="article-description">2026-04-28 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. evanflow（热度: 302）
+  EvanFlow是一个带有严格检查点的TDD驱动开发反馈循环，通过1</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485479&amp;idx=1&amp;sn=9e88fea060d401bf8deef365e297df66&amp;chksm=c1dda4a02d2f730145d6576288badfd6756e0dc73436fb7b4fa14413dd6ea5f102fec7d2b999&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485475&amp;idx=1&amp;sn=fd45d6fd676300b6b50dc27c0486205b&amp;chksm=c105ed18a4b818b8d1d6e42d7ca4714b0a63f4ca2a5e2a695ea6ca7355b1c2ff02c3a772fb85&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeM7YVbqQmYJlQclpvw9mpech4scLlOia1J4MMlbJicwRnJtcO985qs5okiaSyh5ibUadWOU1mtIRwj9CxWykdVc0uZ9xkJDs6Y3920/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485475&amp;idx=1&amp;sn=fd45d6fd676300b6b50dc27c0486205b&amp;chksm=c105ed18a4b818b8d1d6e42d7ca4714b0a63f4ca2a5e2a695ea6ca7355b1c2ff02c3a772fb85&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-27 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-27 19:23:16">发布日期：2026-04-27 19:23:16</time></div><p class="article-description">2026-04-27 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. Vercel-XHTTP（热度: 322）
+  这项目提供了一个基于 Vercel Edge Functio</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485475&amp;idx=1&amp;sn=fd45d6fd676300b6b50dc27c0486205b&amp;chksm=c105ed18a4b818b8d1d6e42d7ca4714b0a63f4ca2a5e2a695ea6ca7355b1c2ff02c3a772fb85&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485455&amp;idx=1&amp;sn=2784b24fe22b12deda71aa53cdbd3a97&amp;chksm=c19929249e8df6112e47e219faca558937b23e3fd7939bac988efdd45c085ffc17d2aa9476e4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qePO44UaIHyQHIYBpDImEl9fF9DibAakohqicE3tCwm3OlDKzYvYLibGEz9YKcVibX21VLlZfe3vnl6BUI3xy3Vib5DNkVLUKicD3gmDI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485455&amp;idx=1&amp;sn=2784b24fe22b12deda71aa53cdbd3a97&amp;chksm=c19929249e8df6112e47e219faca558937b23e3fd7939bac988efdd45c085ffc17d2aa9476e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-26 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-26 19:41:14">发布日期：2026-04-26 19:41:14</time></div><p class="article-description">2026-04-26 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. awesome-gpt-image-2（热度: 290）
+  GPT-Image2 提示词引擎，提供结构化模</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485455&amp;idx=1&amp;sn=2784b24fe22b12deda71aa53cdbd3a97&amp;chksm=c19929249e8df6112e47e219faca558937b23e3fd7939bac988efdd45c085ffc17d2aa9476e4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485451&amp;idx=1&amp;sn=0a04b16870796eecefa555bc50635c5e&amp;chksm=c1954597f776720df51d96116cd161bf81f7be4743febd0e9fda05c12ca95d3be8b9685f9fa7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeNgZQLlMQ5CCvTOQ1WUNqicDrCIwcnryVspmVqBflFynTibxchEy3wSFOWEXzuop7xhmjERUic57luKicTwdibluNoFBngQxicEIsjdE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485451&amp;idx=1&amp;sn=0a04b16870796eecefa555bc50635c5e&amp;chksm=c1954597f776720df51d96116cd161bf81f7be4743febd0e9fda05c12ca95d3be8b9685f9fa7&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-25 GitHub周Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-25 23:12:57">发布日期：2026-04-25 23:12:57</time></div><p class="article-description">2026-04-25 GitHub周Star榜
+每周精选最值得关注的开源项目
+
+
+  1. OpenMythos（热度: 10211）
+  OpenMythos是循环深度Transformer，通过重</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485451&amp;idx=1&amp;sn=0a04b16870796eecefa555bc50635c5e&amp;chksm=c1954597f776720df51d96116cd161bf81f7be4743febd0e9fda05c12ca95d3be8b9685f9fa7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485443&amp;idx=1&amp;sn=e513f71ff84d57a44a63497e72f9ac3b&amp;chksm=c10b5cbf58570f87b0601e628a23540b216d8e6bf3341fa84002282ec049817e0954a4f5a262&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeO691Iy8e3Qs9GwoMIWJofTkLLcao48lZfJVGiciayo974pU6ibibYZHZMYNsqhzdlF5Z8zfxZMbFFrXhUGjwCaJgZcWibPVdITJWIw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485443&amp;idx=1&amp;sn=e513f71ff84d57a44a63497e72f9ac3b&amp;chksm=c10b5cbf58570f87b0601e628a23540b216d8e6bf3341fa84002282ec049817e0954a4f5a262&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-24 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-24 20:02:16">发布日期：2026-04-24 20:02:16</time></div><p class="article-description">2026-04-24 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. guizang-ppt-skill（热度: 1305）
+  电子杂志风网页PPT生成工具，单文件HTML，支</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485443&amp;idx=1&amp;sn=e513f71ff84d57a44a63497e72f9ac3b&amp;chksm=c10b5cbf58570f87b0601e628a23540b216d8e6bf3341fa84002282ec049817e0954a4f5a262&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485430&amp;idx=1&amp;sn=3aa8a7d867b195ee4dbcdb6faf80faf7&amp;chksm=c1cfe7787bb7f161de7177dc1d248146a7e3126ca0f894f1acb8629b0291cb22dd082922f325&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeNLPqgl27ibRvOR5AWNNdZhNOiadTfhHmJOrZljjILNl5TzdTkA6icC4oX5Q4kvHV0OnDibbA8ar7gpJeHB7o0FdNJdGx6W8yGveFg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485430&amp;idx=1&amp;sn=3aa8a7d867b195ee4dbcdb6faf80faf7&amp;chksm=c1cfe7787bb7f161de7177dc1d248146a7e3126ca0f894f1acb8629b0291cb22dd082922f325&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-23 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-23 19:32:15">发布日期：2026-04-23 19:32:15</time></div><p class="article-description">2026-04-23 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. PPT-Design-Prompt（热度: 301）
+  将品牌指南转换为面向演示图像的规范文档。
+  ht</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485430&amp;idx=1&amp;sn=3aa8a7d867b195ee4dbcdb6faf80faf7&amp;chksm=c1cfe7787bb7f161de7177dc1d248146a7e3126ca0f894f1acb8629b0291cb22dd082922f325&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485426&amp;idx=1&amp;sn=116478f241f26657c7cf30c0968393e5&amp;chksm=c1577b9d3c247f98e771c7f4e81ade59bf85886e802162a4662a4cfafaec908c86ea794aed6a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeNIfqZlauU3GgFxWzvNh6Md8TzsyjloWP2luGkqWtqmibv2icZttBkuqwbbg4LUwcShA1OuDoxBNSUQRA8w6t8fSVVL95kQHwyRc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485426&amp;idx=1&amp;sn=116478f241f26657c7cf30c0968393e5&amp;chksm=c1577b9d3c247f98e771c7f4e81ade59bf85886e802162a4662a4cfafaec908c86ea794aed6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-22 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-22 19:02:10">发布日期：2026-04-22 19:02:10</time></div><p class="article-description">2026-04-22 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. MasterHttpRelayVPN-RUST（热度: 161）
+  这是一系列通过 Google Apps</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485426&amp;idx=1&amp;sn=116478f241f26657c7cf30c0968393e5&amp;chksm=c1577b9d3c247f98e771c7f4e81ade59bf85886e802162a4662a4cfafaec908c86ea794aed6a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485414&amp;idx=1&amp;sn=1c9b61fd1a68b5a1cb0609358d9ffc23&amp;chksm=c1d40734e9992f09b9cfd95a855691a0d32d2a7d7fd42d38fafed04ca4c630350c8b7508af61&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qePvsMBjaoWjsZr5vXcjnsHibq6VjOG6eibiawplGbRefDxQrcliaysv1uCusoRIAanczIA8edmKEUeRuHzUjU5jDZKXjYyY98dItvs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485414&amp;idx=1&amp;sn=1c9b61fd1a68b5a1cb0609358d9ffc23&amp;chksm=c1d40734e9992f09b9cfd95a855691a0d32d2a7d7fd42d38fafed04ca4c630350c8b7508af61&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-21 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-21 20:05:28">发布日期：2026-04-21 20:05:28</time></div><p class="article-description">2026-04-21 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. Kami（热度: 461）
+  Kami是一个AI技能，用于文档自动排版，采用温暖纸浆色调、单一强调色和统一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485414&amp;idx=1&amp;sn=1c9b61fd1a68b5a1cb0609358d9ffc23&amp;chksm=c1d40734e9992f09b9cfd95a855691a0d32d2a7d7fd42d38fafed04ca4c630350c8b7508af61&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485410&amp;idx=1&amp;sn=3e9bd358760b8aeb6d54aa7c294a83e7&amp;chksm=c196f89409c63614006e164c7901cadf2e689bd633fd0ec8d83a831819229613ad4587a14631&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOksH49TEHN3YcI1EqAGT1nYD5uVZfv1xhuDOQGuIXnllkcYt3zvxybjiaGrdSbtichAtFdhJkPYQTFNrSlLicH4KVYhAcicU7MGR0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485410&amp;idx=1&amp;sn=3e9bd358760b8aeb6d54aa7c294a83e7&amp;chksm=c196f89409c63614006e164c7901cadf2e689bd633fd0ec8d83a831819229613ad4587a14631&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-20 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-20 23:37:29">发布日期：2026-04-20 23:37:29</time></div><p class="article-description">2026-04-20 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. cc-design（热度: 382）
+  这是一个用于Claude Code的高级设计技能，能生成HTML原</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485410&amp;idx=1&amp;sn=3e9bd358760b8aeb6d54aa7c294a83e7&amp;chksm=c196f89409c63614006e164c7901cadf2e689bd633fd0ec8d83a831819229613ad4587a14631&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485406&amp;idx=1&amp;sn=2957a0a7a897c9784da74fff4b9d24f9&amp;chksm=c1e4093d1d803219ad32a08f9c2d1907183ffa05b253a6e07eefdd825be8dfe26fd836903bc2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeOf6fgias2ptL6qxvQI54283m14bRXbNmPz9N99txYqTmsgJzZY3MKLHxS0QLKQ8lta7YEmVK4Y9HsmwRtUoDyzdsHeHBhxicQLw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485406&amp;idx=1&amp;sn=2957a0a7a897c9784da74fff4b9d24f9&amp;chksm=c1e4093d1d803219ad32a08f9c2d1907183ffa05b253a6e07eefdd825be8dfe26fd836903bc2&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-19 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-19 20:45:26">发布日期：2026-04-19 20:45:26</time></div><p class="article-description">2026-04-19 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. awesome-gpt-image-2-prompts（热度: 358）
+  收集 GPT-Image-2</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485406&amp;idx=1&amp;sn=2957a0a7a897c9784da74fff4b9d24f9&amp;chksm=c1e4093d1d803219ad32a08f9c2d1907183ffa05b253a6e07eefdd825be8dfe26fd836903bc2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485401&amp;idx=1&amp;sn=995caf75d295a07893840c7567916d3d&amp;chksm=c10f50121b68ec4caea8d1bd76d4531e5182773e763263541a4afed2cf91d78839a2218367b8&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qePAluibrHtrzc7hvAzdia4ECsscMY57ZINmuKtlXsqernCZBvEHHZjic1mc1gglTjrNicqzLMk5qkzD8ptWBbIQndsECsaMKJ2oLdY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485401&amp;idx=1&amp;sn=995caf75d295a07893840c7567916d3d&amp;chksm=c10f50121b68ec4caea8d1bd76d4531e5182773e763263541a4afed2cf91d78839a2218367b8&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-18 GitHub周Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-18 23:35:24">发布日期：2026-04-18 23:35:24</time></div><p class="article-description">2026-04-18 GitHub周Star榜
+每周精选最值得关注的开源项目
+
+
+  1. codeburn（热度: 2641）
+  CodeBurn 是一个终端可视化仪表板，用于分析 Claude</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485401&amp;idx=1&amp;sn=995caf75d295a07893840c7567916d3d&amp;chksm=c10f50121b68ec4caea8d1bd76d4531e5182773e763263541a4afed2cf91d78839a2218367b8&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485394&amp;idx=1&amp;sn=a999b83603644c9a576082934e3f78a2&amp;chksm=c1582195778bf62aaf47cefff90ccaedc9679a69d13f8c6f7b7cd6fc1b2d8b473f1ca9f0c5fe&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOY7HlJJak7LylicqrXzNqZReNZpuqZ11qxLH3ZgDqU8yq1xSxR08RxA01chqiaRhvdjiaQlrNZBeG7oxWl1gIlrxFLnUGjwoOH5g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485394&amp;idx=1&amp;sn=a999b83603644c9a576082934e3f78a2&amp;chksm=c1582195778bf62aaf47cefff90ccaedc9679a69d13f8c6f7b7cd6fc1b2d8b473f1ca9f0c5fe&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-17 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-17 23:00:14">发布日期：2026-04-17 23:00:14</time></div><p class="article-description">2026-04-17 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. UZI-Skill（热度: 621）
+  游资Skills是一个AI股票分析工具，输入股票代码，快速生成22</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485394&amp;idx=1&amp;sn=a999b83603644c9a576082934e3f78a2&amp;chksm=c1582195778bf62aaf47cefff90ccaedc9679a69d13f8c6f7b7cd6fc1b2d8b473f1ca9f0c5fe&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485390&amp;idx=1&amp;sn=2e8972d3a606c2c1211b584ebe6ad280&amp;chksm=c18334845574178198201ed5aefb428e398efa90996ee7cb0650ff726a64ee4ac15c7bd3a6f9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qeNJJDP7cLRY3MfN111q7SvkfFDRHNgicGn0JtuJ8Ov7hJzYruzL4tl8OW875s7y3E3X7JX4skxWWJgUAJsHprVQ1Xd9CMTPy95o/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485390&amp;idx=1&amp;sn=2e8972d3a606c2c1211b584ebe6ad280&amp;chksm=c18334845574178198201ed5aefb428e398efa90996ee7cb0650ff726a64ee4ac15c7bd3a6f9&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-16 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-16 20:17:01">发布日期：2026-04-16 20:17:01</time></div><p class="article-description">2026-04-16 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. design-extract（热度: 502）
+  这是一个能逆向任何网站设计系统的工具，通过爬取生成多种格</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485390&amp;idx=1&amp;sn=2e8972d3a606c2c1211b584ebe6ad280&amp;chksm=c18334845574178198201ed5aefb428e398efa90996ee7cb0650ff726a64ee4ac15c7bd3a6f9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485386&amp;idx=1&amp;sn=ce4f74a59a5d72456c3dbd370c4620be&amp;chksm=c153ae869fd15f6845ae2cd74de3e423d0c368e8cbd662275d1504a0660604fa69fbc9d38a5c&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeNOrnBmQQWk55j1Eoicqyib9ia6dapiaRbO3XiafAsk6Jkia6dGyjDoYLksTNzkKQ8NNezdk8O0aJP2iaYBwibvoORgoj7EJpVickdmpCdk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485386&amp;idx=1&amp;sn=ce4f74a59a5d72456c3dbd370c4620be&amp;chksm=c153ae869fd15f6845ae2cd74de3e423d0c368e8cbd662275d1504a0660604fa69fbc9d38a5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-15 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-15 20:48:13">发布日期：2026-04-15 20:48:13</time></div><p class="article-description">2026-04-15 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. openduck（热度: 352）
+  OpenDuck 是一个基于 DuckDB 的开源项目，实现分布存储</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485386&amp;idx=1&amp;sn=ce4f74a59a5d72456c3dbd370c4620be&amp;chksm=c153ae869fd15f6845ae2cd74de3e423d0c368e8cbd662275d1504a0660604fa69fbc9d38a5c&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485382&amp;idx=1&amp;sn=2969726fd8b5407745d812c1f34231d1&amp;chksm=c1fa2ee9e64a84b3d8b80e457cfd623fae79ffcd7b39de01be8af94628cf70246d6d8a557e7d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOmgwFYk3SswbA7iaax4AvzjouuXy5icRUV25bqwk2MKbyzYlibmDrKkSN53jZV4FxAWdqEXln2PSDKS81sicg3946xyk207LCImcE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485382&amp;idx=1&amp;sn=2969726fd8b5407745d812c1f34231d1&amp;chksm=c1fa2ee9e64a84b3d8b80e457cfd623fae79ffcd7b39de01be8af94628cf70246d6d8a557e7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-14 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-14 20:19:02">发布日期：2026-04-14 20:19:02</time></div><p class="article-description">2026-04-14 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. darwin-skill（热度: 372）
+  像训练模型一样优化Claude技能，自主实验只保留有效改进</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485382&amp;idx=1&amp;sn=2969726fd8b5407745d812c1f34231d1&amp;chksm=c1fa2ee9e64a84b3d8b80e457cfd623fae79ffcd7b39de01be8af94628cf70246d6d8a557e7d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485378&amp;idx=1&amp;sn=875e75b9dc68229af3bbcb74ef9a5194&amp;chksm=c107af8aca3d5169623619ca43ef9401539cea61fb8abe6d481acf80bbeed12885af2955d5c1&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOHepKsTvt7UebHuq90Xspj1AqIq6UZkUFOGxNxSOI6oThsiaPzos5IUHUbL1fu6TEZGqQxRccnKRSYHkPvXnjHhRlaUHZ9d9CM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485378&amp;idx=1&amp;sn=875e75b9dc68229af3bbcb74ef9a5194&amp;chksm=c107af8aca3d5169623619ca43ef9401539cea61fb8abe6d481acf80bbeed12885af2955d5c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-13 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-13 20:07:47">发布日期：2026-04-13 20:07:47</time></div><p class="article-description">2026-04-13 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. anything-analyzer（热度: 194）
+  一款基于 Chrome DevTools Prot</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485378&amp;idx=1&amp;sn=875e75b9dc68229af3bbcb74ef9a5194&amp;chksm=c107af8aca3d5169623619ca43ef9401539cea61fb8abe6d481acf80bbeed12885af2955d5c1&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485374&amp;idx=1&amp;sn=4060a003ed0b4e39eeeabff57e0f4387&amp;chksm=c1d61fdf91ca4f2376715dd3fa30df5ce86de57e3121388b0d057363801dbf258a213a14318a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qePaY9UFpN6wnKmGiaDeb6CyPvUJQaaTrt6WK56UdsnThgKScN6ibwzyLzhiaMJuxicVObLRmzOUhEp3kEuQdJucYZ168gsIj2g0JAg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485374&amp;idx=1&amp;sn=4060a003ed0b4e39eeeabff57e0f4387&amp;chksm=c1d61fdf91ca4f2376715dd3fa30df5ce86de57e3121388b0d057363801dbf258a213a14318a&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-12 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-12 20:09:17">发布日期：2026-04-12 20:09:17</time></div><p class="article-description">2026-04-12 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. obsidian-ai-orange-book（热度: 246）
+  这本书指导如何用Obsidian和Cl</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485374&amp;idx=1&amp;sn=4060a003ed0b4e39eeeabff57e0f4387&amp;chksm=c1d61fdf91ca4f2376715dd3fa30df5ce86de57e3121388b0d057363801dbf258a213a14318a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485369&amp;idx=1&amp;sn=2c3c0311f26c6aa653eb487f828bd87e&amp;chksm=c1847a1103fa9528dcfc7bbe4c6c18eef8df2bc8d78df88a853d5b2a094dfe19ee58d69cdb9e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qePFLmhfEhibOjqvANgv3jOia2V4FrA3PJSjc8qVWINbw49QG7gxGiaLWmUaXAiaLuzBxIAExcsSjgrHDXOvkkVrh4hcRJn65yGAzfM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485369&amp;idx=1&amp;sn=2c3c0311f26c6aa653eb487f828bd87e&amp;chksm=c1847a1103fa9528dcfc7bbe4c6c18eef8df2bc8d78df88a853d5b2a094dfe19ee58d69cdb9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-11 GitHub周Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-11 20:05:37">发布日期：2026-04-11 20:05:37</time></div><p class="article-description">2026-04-11 GitHub周Star榜
+每周精选最值得关注的开源项目
+
+
+  1. mempalace（热度: 40843）
+  结构化记忆宫殿，存储所有对话并构建索引，支持30倍压缩的AAA</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485369&amp;idx=1&amp;sn=2c3c0311f26c6aa653eb487f828bd87e&amp;chksm=c1847a1103fa9528dcfc7bbe4c6c18eef8df2bc8d78df88a853d5b2a094dfe19ee58d69cdb9e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485353&amp;idx=1&amp;sn=8819daa039f9e5ae09bf9dfd83867f3c&amp;chksm=c1f07d083912d421acdaa816212893df0d0741c92cb7382e400e4d7a70c36b6fe0e7e8b167ec&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeOL8Rmkiaqo8gj8qPw1ibGBZ7qowbHg85ibtUfCmBSFTuzJvxarUVj2Aox0iaVuYlpHicQHzPWJIdczMwATyS7LMGgFuLtSVFcbf3g0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485353&amp;idx=1&amp;sn=8819daa039f9e5ae09bf9dfd83867f3c&amp;chksm=c1f07d083912d421acdaa816212893df0d0741c92cb7382e400e4d7a70c36b6fe0e7e8b167ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-10 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-10 20:23:11">发布日期：2026-04-10 20:23:11</time></div><p class="article-description">2026-04-10 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. pyre-code（热度: 419）
+  Pyre Code 是一个通过编程实现现代AI系统核心组件的练习平</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485353&amp;idx=1&amp;sn=8819daa039f9e5ae09bf9dfd83867f3c&amp;chksm=c1f07d083912d421acdaa816212893df0d0741c92cb7382e400e4d7a70c36b6fe0e7e8b167ec&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485313&amp;idx=1&amp;sn=d37bdee99783f10f73219741da3861e6&amp;chksm=c1242d77530d64e30ec651e75d72d4503d0256edfccc9b4cb2c35cb06cd00459a78eb56512f6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ss5kSicG5qeNOwnnpVmok4kXNHFsmJwGq3eOhYawvCAoVEib3icovWiaRNUeN1Bnt82zjj0RDBkfbtzWj0bw8JViczjPiaCb8tibmSY97KB18mTXgs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485313&amp;idx=1&amp;sn=d37bdee99783f10f73219741da3861e6&amp;chksm=c1242d77530d64e30ec651e75d72d4503d0256edfccc9b4cb2c35cb06cd00459a78eb56512f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-09 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-09 20:36:18">发布日期：2026-04-09 20:36:18</time></div><p class="article-description">2026-04-09 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. hermes-agent-orange-book（热度: 597）
+  本书介绍Hermes Agent开源</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485313&amp;idx=1&amp;sn=d37bdee99783f10f73219741da3861e6&amp;chksm=c1242d77530d64e30ec651e75d72d4503d0256edfccc9b4cb2c35cb06cd00459a78eb56512f6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485309&amp;idx=1&amp;sn=5bea31fa2f016a0980b60c1dadfa70ab&amp;chksm=c1550f257f4e51db9b2e68998acbd0fcce1e13cf3a70ad1f3646d2e0a5b347c454ab63e77ad9&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ss5kSicG5qePOWOngx4umicSjRRrym6ibibVickiaJtMmHSyzpNuB8nafSvicvmwOBg1W3nQmo4ovjfhia5768S3kphcwEFgg1uia7vRS8ose5IpkLtQ/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485309&amp;idx=1&amp;sn=5bea31fa2f016a0980b60c1dadfa70ab&amp;chksm=c1550f257f4e51db9b2e68998acbd0fcce1e13cf3a70ad1f3646d2e0a5b347c454ab63e77ad9&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026-04-08 GitHub日Star榜</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/9ecd66b2d51f0d05fa46ffee7f3c66be/index.html">云雀坊间</a></span><time class="article-date" datetime="2026-04-08 20:22:51">发布日期：2026-04-08 20:22:51</time></div><p class="article-description">2026-04-08 GitHub日Star榜
+每日精选最值得关注的开源项目
+
+
+  1. clicky（热度: 1519）
+  开发者计划开源Clicky项目，争取获得5000个星标。
+  http</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkwNTc0NzE0Mw==&amp;mid=2247485309&amp;idx=1&amp;sn=5bea31fa2f016a0980b60c1dadfa70ab&amp;chksm=c1550f257f4e51db9b2e68998acbd0fcce1e13cf3a70ad1f3646d2e0a5b347c454ab63e77ad9&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

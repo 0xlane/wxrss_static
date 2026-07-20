@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>OSC开源模力</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621677&amp;idx=1&amp;sn=daf3ff0e8cc768d027d38205771ecb3b&amp;chksm=f511f6fdb0fc87ab2770c62606e9acee313ab9ccd440be03a1922d6436128c4a458870eff5b6&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/v0fVFGmuo332BL3NlIfxQGtxpZuGbSE6jwJKqzvUoriaxcsjrxL6LlmWOQ5XYHct4aIbjCUdyOEWFKzdcsBEny5UXsoibc6EhJoXZAPMQjzFU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621677&amp;idx=1&amp;sn=daf3ff0e8cc768d027d38205771ecb3b&amp;chksm=f511f6fdb0fc87ab2770c62606e9acee313ab9ccd440be03a1922d6436128c4a458870eff5b6&amp;scene=0&amp;xtrack=1#rd" target="_blank">Gitee AI 队友正式上线，免费领 500 Credits 体验额度</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-20 16:46:00">发布日期：2026-07-20 16:46:00</time></div><p class="article-description">提一个 Issue，AI 自动理解需求、编写代码并提交 Pull Request。创建一个项目，AI 持续跟踪任务进度，提前识别延期和交付风险。提交一段代码，AI 自动完成代码审查与安全扫描。现在，这</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621677&amp;idx=1&amp;sn=daf3ff0e8cc768d027d38205771ecb3b&amp;chksm=f511f6fdb0fc87ab2770c62606e9acee313ab9ccd440be03a1922d6436128c4a458870eff5b6&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621660&amp;idx=1&amp;sn=adb37b34a60b9b5649bd1341b92ee11d&amp;chksm=f55bb86719a815a99b110807b1c01c775636b04eb298036905472d90d005e5ec402fd4c6eb35&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBCCiaKRDbmlYct3uDvVnmZVnZN80CnA7D1xRicQxC8C6Etk03wdy5LaCIACo3f9DHKaWNkb0HIrfTxOBfadbkJgsEpxM7F07uJBw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621660&amp;idx=1&amp;sn=adb37b34a60b9b5649bd1341b92ee11d&amp;chksm=f55bb86719a815a99b110807b1c01c775636b04eb298036905472d90d005e5ec402fd4c6eb35&amp;scene=0&amp;xtrack=1#rd" target="_blank">Kimi K3全面解读：2.8万亿参数、48小时造芯片、以及一个正在被开源模型追上的AI竞争格局</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-17 19:55:00">发布日期：2026-07-17 19:55:00</time></div><p class="article-description">7 月 17 日凌晨，月之暗面发布了 Kimi K3 。数字可以快速过一遍： 2.8 万亿参数 ，MoE 架构，896 个 expert 每次激活 16 个，100 万 token 上下文窗口，原生多</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621660&amp;idx=1&amp;sn=adb37b34a60b9b5649bd1341b92ee11d&amp;chksm=f55bb86719a815a99b110807b1c01c775636b04eb298036905472d90d005e5ec402fd4c6eb35&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=1&amp;sn=92ac3d756b29d0162e994a4c9b7a1365&amp;chksm=f58f13a16e815553d869c7f4ae0aa0883f79430850d8798646e5b13062175ea4b78fbee12aeb&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBAEJYLqicdz65jXL2GLpibzcWh6Bg01znO0SCK5yhmRNPic9d4qu36w9pDkUXtkJy15ZwHSwoElmrOmaat5IoKn0aIAImcBwaXjDs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=1&amp;sn=92ac3d756b29d0162e994a4c9b7a1365&amp;chksm=f58f13a16e815553d869c7f4ae0aa0883f79430850d8798646e5b13062175ea4b78fbee12aeb&amp;scene=0&amp;xtrack=1#rd" target="_blank">你的Coding Agent早就修过这个bug了，只是你不记得</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-16 16:31:00">发布日期：2026-07-16 16:31:00</time></div><p class="article-description">AI 编程助手每天都在往你硬盘上写对话记录。Claude Code 的 JSONL、Codex 的 session 文件、opencode 的 SQLite 数据库——几个项目下来轻松破 GB，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=1&amp;sn=92ac3d756b29d0162e994a4c9b7a1365&amp;chksm=f58f13a16e815553d869c7f4ae0aa0883f79430850d8798646e5b13062175ea4b78fbee12aeb&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=2&amp;sn=176a6a3e5d6342ee7181d5d45d40a316&amp;chksm=f5ad99d0556056dc8fc88e4aa12e9e24f8268a40ddab1f150b2e50f6fe6ea878fd6f8d39d622&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBDZkCaFWXW5NYIjfqzu8Yx8oibo6pBoEATyPWYVmjibPNLkrlIW5eFwZ8ksw8pjnINoUL5nY5XXl7GCLbK4YXINjOFWtxlBzGL4c/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=2&amp;sn=176a6a3e5d6342ee7181d5d45d40a316&amp;chksm=f5ad99d0556056dc8fc88e4aa12e9e24f8268a40ddab1f150b2e50f6fe6ea878fd6f8d39d622&amp;scene=0&amp;xtrack=1#rd" target="_blank">当人人都有 AI，品味为什么更加重要？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-16 16:31:00">发布日期：2026-07-16 16:31:00</time></div><p class="article-description">6 月，我们在上海的源创会，大家分享了很多 AI 相关的创新。那场之后我们一直在想，代码正在变得越来越充裕，而品味依旧稀缺；工具正在变得越来越强大，而人与人之间真正的差异，似乎开始回到那些无法被复制的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621589&amp;idx=2&amp;sn=176a6a3e5d6342ee7181d5d45d40a316&amp;chksm=f5ad99d0556056dc8fc88e4aa12e9e24f8268a40ddab1f150b2e50f6fe6ea878fd6f8d39d622&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621524&amp;idx=1&amp;sn=4e0d0b19f501fefca626854a4fb9ca45&amp;chksm=f5018f1b33325c23c3f95528557c19c1ec3fa60bd9adaca16ae5af1af5d15735b1f6f03fe884&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBCMZdnRMzf1jwnVqYoQdgmHVPa4Aa3eXtOKcyYgmvUkwYXc4nNqwSOOvVKTGnOkX7A5SypX83ohAyGSo5icQrGtcLVh6liboEpYs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621524&amp;idx=1&amp;sn=4e0d0b19f501fefca626854a4fb9ca45&amp;chksm=f5018f1b33325c23c3f95528557c19c1ec3fa60bd9adaca16ae5af1af5d15735b1f6f03fe884&amp;scene=0&amp;xtrack=1#rd" target="_blank">“Linux赢了”，这次没人反对</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-15 15:46:00">发布日期：2026-07-15 15:46:00</time></div><p class="article-description">Reddit 上一条帖子最近火了——「Linux has officially won」，不到 24 小时拿下 1646 个赞和 375 条评论。发帖人没有提桌面份额，没有提服务器市场，而是扔了两个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621524&amp;idx=1&amp;sn=4e0d0b19f501fefca626854a4fb9ca45&amp;chksm=f5018f1b33325c23c3f95528557c19c1ec3fa60bd9adaca16ae5af1af5d15735b1f6f03fe884&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621502&amp;idx=1&amp;sn=7338d49980955f43b51ed837d4ed875f&amp;chksm=f56d38bf7a1db6734a6a32b59dce7754dc88549f8d923fe73faa5803883f3f93b7900a8da647&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BmOTVLPoiaBByliaAho6qwzFGRnR08lwNrERarWvcS5sSEheObibny7lfOFj6jqqpuPK59kicnvO9MXTjVGyG7Wp0Tw1viaJqzZqxDrKzIRSpYt4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621502&amp;idx=1&amp;sn=7338d49980955f43b51ed837d4ed875f&amp;chksm=f56d38bf7a1db6734a6a32b59dce7754dc88549f8d923fe73faa5803883f3f93b7900a8da647&amp;scene=0&amp;xtrack=1#rd" target="_blank">国产基模“面壁者”，两年前被斯坦福抄袭，如今怎么样了？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-14 14:38:00">发布日期：2026-07-14 14:38:00</time></div><p class="article-description">2024 年 5 月，一则来自斯坦福团队的道歉在全球社交媒体上引发哗然。该团队发布的 Llama3-V 被社区扒了个底朝天，代码、配置、参数，与国内大模型厂商面壁智能一个月前开源的 MiniCPM-</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621502&amp;idx=1&amp;sn=7338d49980955f43b51ed837d4ed875f&amp;chksm=f56d38bf7a1db6734a6a32b59dce7754dc88549f8d923fe73faa5803883f3f93b7900a8da647&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621485&amp;idx=1&amp;sn=867fdc8745108ee4069878a17bf08b14&amp;chksm=f5da8ceb71349c6218fd59bd3c2d546af118823bf5492c52c4294c64c123a83e746859440866&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBDZkCaFWXW5NYIjfqzu8Yx8oibo6pBoEATyPWYVmjibPNLkrlIW5eFwZ8ksw8pjnINoUL5nY5XXl7GCLbK4YXINjOFWtxlBzGL4c/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621485&amp;idx=1&amp;sn=867fdc8745108ee4069878a17bf08b14&amp;chksm=f5da8ceb71349c6218fd59bd3c2d546af118823bf5492c52c4294c64c123a83e746859440866&amp;scene=0&amp;xtrack=1#rd" target="_blank">当人人都有 AI，品味为什么更加重要？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-13 09:30:00">发布日期：2026-07-13 09:30:00</time></div><p class="article-description">6 月，我们在上海的源创会，大家分享了很多 AI 相关的创新。那场之后我们一直在想，代码正在变得越来越充裕，而品味依旧稀缺；工具正在变得越来越强大，而人与人之间真正的差异，似乎开始回到那些无法被复制的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621485&amp;idx=1&amp;sn=867fdc8745108ee4069878a17bf08b14&amp;chksm=f5da8ceb71349c6218fd59bd3c2d546af118823bf5492c52c4294c64c123a83e746859440866&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621478&amp;idx=1&amp;sn=a1972c2028f8909df9a01008782b7e35&amp;chksm=f51ce3045fed6c82ab536ad2da165635ba7a0f88501199e214eaef7f91107875976d43887e83&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BmOTVLPoiaBBZibt6f99Tvub3dF6quvwD4DFXKlvIwuBNJfoC8KSvibGppNiapxetyXBEtEEIXWBiaUXdg9utlibGkhFqwEarqF5jN1Vp00Cz7yo8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621478&amp;idx=1&amp;sn=a1972c2028f8909df9a01008782b7e35&amp;chksm=f51ce3045fed6c82ab536ad2da165635ba7a0f88501199e214eaef7f91107875976d43887e83&amp;scene=0&amp;xtrack=1#rd" target="_blank">手敲代码被学生当“非遗”，百万粉编程讲师李游谈AI冲击</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-12 15:36:00">发布日期：2026-07-12 15:36:00</time></div><p class="article-description">《OSChina的朋友们》系列故事教室灯光亮着，李游在讲台上手敲代码，声音清脆且自信。底下的学生望着他，眼神里有一种看“末代非遗”时的神情——惊奇，带点敬佩。“不是说，现在都 AI coding ？</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621478&amp;idx=1&amp;sn=a1972c2028f8909df9a01008782b7e35&amp;chksm=f51ce3045fed6c82ab536ad2da165635ba7a0f88501199e214eaef7f91107875976d43887e83&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=1&amp;sn=0c12e6400ac4688c06644268e7625628&amp;chksm=f5f631a09b9ceed862e5be81c0a80054431b8352e51d05cc92f55bbf5aabff99d3f9c95022c3&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BmOTVLPoiaBDV6bkvChYAaS5ZNqq3PjJnppmSQaf2XV269JFXOPTjJiaZLqIkib7ftvPVVhtV2CaJYxm4X0FKBibmoD01GzKWhicMsSyE7gNeVc4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=1&amp;sn=0c12e6400ac4688c06644268e7625628&amp;chksm=f5f631a09b9ceed862e5be81c0a80054431b8352e51d05cc92f55bbf5aabff99d3f9c95022c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">社区活动 I AI CodeBeat音域共创智能AGENT主题黑客松火热招募中！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-10 17:50:00">发布日期：2026-07-10 17:50:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=1&amp;sn=0c12e6400ac4688c06644268e7625628&amp;chksm=f5f631a09b9ceed862e5be81c0a80054431b8352e51d05cc92f55bbf5aabff99d3f9c95022c3&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=2&amp;sn=7933bf19790208c623ae7586bf184d3e&amp;chksm=f5a4cc95359e07ed0336163a2dbfd9e5879b1ae8ba1a276c2ae055854ab846ef3b3945328d70&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BmOTVLPoiaBD3SHJwumzF67wqzkViaAQYS7c6KaIZxRcOrib8NibnQibibP8odIASnW2Mghib4Ml78HBhAfk9KEsoHUbnCIvial994x6HHP9PWNicUIE/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=2&amp;sn=7933bf19790208c623ae7586bf184d3e&amp;chksm=f5a4cc95359e07ed0336163a2dbfd9e5879b1ae8ba1a276c2ae055854ab846ef3b3945328d70&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI造物大赏第2期重磅上线！用TuyaOpenIDE十分钟打造你的AI玄学硬件！千元现金奖品等你来拿！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-10 17:50:00">发布日期：2026-07-10 17:50:00</time></div><p class="article-description">各位电子爱好者们，期待已久的AI造物大赏第2期活动现已正式上线啦！本期我们联合涂鸦智能、华秋智联带来了十分钟极客造物——基于TuyaOpen lDE打造AI玄学硬件。本期硬件介绍涂鸦智能T5AI-Co</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=2&amp;sn=7933bf19790208c623ae7586bf184d3e&amp;chksm=f5a4cc95359e07ed0336163a2dbfd9e5879b1ae8ba1a276c2ae055854ab846ef3b3945328d70&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=3&amp;sn=42183dcb6db8c1b97ae59288e50e00e3&amp;chksm=f5aa24db0c184261c562ec1c824246d028a51ad9cd5d34b1873e6f93d2de449b3f8d50601d73&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/BmOTVLPoiaBBZiaLEuaTlgS3iaX91Y1yR1g6QxiaQIMht16vULibOSVAcsJeyBWXgggQwceo0OgWIXibPfjIJ01SorCJdgE0YT58cAibwZ2mOeeicEM/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=3&amp;sn=42183dcb6db8c1b97ae59288e50e00e3&amp;chksm=f5aa24db0c184261c562ec1c824246d028a51ad9cd5d34b1873e6f93d2de449b3f8d50601d73&amp;scene=0&amp;xtrack=1#rd" target="_blank">赛事招募｜Booster Champion 第一季：3v3 仿真足球锦标赛正式打响！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-10 17:50:00">发布日期：2026-07-10 17:50:00</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621471&amp;idx=3&amp;sn=42183dcb6db8c1b97ae59288e50e00e3&amp;chksm=f5aa24db0c184261c562ec1c824246d028a51ad9cd5d34b1873e6f93d2de449b3f8d50601d73&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621439&amp;idx=1&amp;sn=6a0e5840aba6a56eaf5e9caa4448d737&amp;chksm=f57de6bd30e8ba82d87321d8c97dc68b4569d8675e6797f6de17e8229913dac0a0cbc1808f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/BmOTVLPoiaBD3SHJwumzF67wqzkViaAQYS7c6KaIZxRcOrib8NibnQibibP8odIASnW2Mghib4Ml78HBhAfk9KEsoHUbnCIvial994x6HHP9PWNicUIE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621439&amp;idx=1&amp;sn=6a0e5840aba6a56eaf5e9caa4448d737&amp;chksm=f57de6bd30e8ba82d87321d8c97dc68b4569d8675e6797f6de17e8229913dac0a0cbc1808f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI造物大赏第2期重磅上线！用TuyaOpenIDE十分钟打造你的AI玄学硬件！千元现金奖品等你来拿！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/60309ee81624de7fb9a72b5d6d434e5d/index.html">OSC开源模力</a></span><time class="article-date" datetime="2026-07-09 15:08:00">发布日期：2026-07-09 15:08:00</time></div><p class="article-description">各位电子爱好者们，期待已久的AI造物大赏第2期活动现已正式上线啦！本期我们联合涂鸦智能、华秋智联带来了十分钟极客造物——基于TuyaOpen lDE打造AI玄学硬件。本期硬件介绍涂鸦智能T5AI-Co</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzY5OTM2NjA4Nw==&amp;mid=2247621439&amp;idx=1&amp;sn=6a0e5840aba6a56eaf5e9caa4448d737&amp;chksm=f57de6bd30e8ba82d87321d8c97dc68b4569d8675e6797f6de17e8229913dac0a0cbc1808f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul></body></html>

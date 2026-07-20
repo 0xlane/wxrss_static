@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wxrss</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651741857&amp;idx=1&amp;sn=fea89a5a82cc65734dba38fb95c22de1&amp;chksm=bcfe79c3f31d15927bc8c4e722fab5d15ae6f4e89c4d421c63b5e3d22e9df5c966e0a507dda2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/oGLk9FLlibHf6U7zL34SzmjTOAT0kTUwwfsoN23FUkpQFSelj7hZL4lSSLbIK5ibZvVOYju7blutpCMhj55vrrp4QFaYv6nhtfdOtldxLuO5Y/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651741857&amp;idx=1&amp;sn=fea89a5a82cc65734dba38fb95c22de1&amp;chksm=bcfe79c3f31d15927bc8c4e722fab5d15ae6f4e89c4d421c63b5e3d22e9df5c966e0a507dda2&amp;scene=0&amp;xtrack=1#rd" target="_blank">两名美军士兵，遭袭身亡</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/877a436b497aece2a683e2bb6513554a/index.html">中国新闻周刊</a></span><time class="article-date" datetime="2026-07-19 08:17:19">发布日期：2026-07-19 08:17:19</time></div><p class="article-description">美中央司令部：美军开始对伊朗发动新一轮空袭央视新闻消息，当地时间7月18日，美国中央司令部表示，美国东部时间当日下午6时，美军奉三军统帅之命，开始对伊朗发动新一轮空袭。美军称，此次行动旨在进一步削弱伊</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MDU1Mzg3Mw==&amp;mid=2651741857&amp;idx=1&amp;sn=fea89a5a82cc65734dba38fb95c22de1&amp;chksm=bcfe79c3f31d15927bc8c4e722fab5d15ae6f4e89c4d421c63b5e3d22e9df5c966e0a507dda2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=1&amp;sn=865685060fbb3e3ec723b0c7ab981713&amp;chksm=fd8ba71243308b6ed4b9ef4bda788e0527a0db8af9f1193679645279f5379f1bb969d3c8dfc2&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/doeCvHL6q2wWfUTNq95T2D45QxYWVkNxSqsvHN0ufGicxx6t6vQBXkpIK5rfR7na4kvZwbsT2ZVN6GT2XQ4vLSKxjqXJDZ2jWlljarFKy2j0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=1&amp;sn=865685060fbb3e3ec723b0c7ab981713&amp;chksm=fd8ba71243308b6ed4b9ef4bda788e0527a0db8af9f1193679645279f5379f1bb969d3c8dfc2&amp;scene=0&amp;xtrack=1#rd" target="_blank">摄影点评（姑娘真的没意见么）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c0ddd835cb9de7a95a44dda2a0243b7b/index.html">摄影笔记</a></span><time class="article-date" datetime="2026-07-19 08:14:38">发布日期：2026-07-19 08:14:38</time></div><p class="article-description">大家好~参与摄影点评栏目，不要在下面评论上传照片。点击文末阅读原文上传。我每天会在那里挑选。点评开始点评：姑娘是个好姑娘。首先这个取景很糟糕，不仅仅是乱的问题，更重要的是它就不好看。尤其是地面和背景里</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=1&amp;sn=865685060fbb3e3ec723b0c7ab981713&amp;chksm=fd8ba71243308b6ed4b9ef4bda788e0527a0db8af9f1193679645279f5379f1bb969d3c8dfc2&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=2&amp;sn=ce182686bc73c391acb4cd4bedd7284d&amp;chksm=fd88edf0a555f4df3b690ea7adafb4853285261c92b59675d4c2e691323ad9d16e7f3e226ea5&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/doeCvHL6q2xicxmjUptJBzFnWwicIlkJB83OtEk4B2KgVnPjIf0h5RaTZPUQsIeLacnmJUoiazy2dRbyl8V9ovIbibDVVmQqZcictNaHpZnXYYBE/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=2&amp;sn=ce182686bc73c391acb4cd4bedd7284d&amp;chksm=fd88edf0a555f4df3b690ea7adafb4853285261c92b59675d4c2e691323ad9d16e7f3e226ea5&amp;scene=0&amp;xtrack=1#rd" target="_blank">无刻意构图、失焦朦胧、曝光随性、人物神情木讷，却仍是无可替代的佳作</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c0ddd835cb9de7a95a44dda2a0243b7b/index.html">摄影笔记</a></span><time class="article-date" datetime="2026-07-19 08:14:38">发布日期：2026-07-19 08:14:38</time></div><p class="article-description"></p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=2&amp;sn=ce182686bc73c391acb4cd4bedd7284d&amp;chksm=fd88edf0a555f4df3b690ea7adafb4853285261c92b59675d4c2e691323ad9d16e7f3e226ea5&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=3&amp;sn=d4ee25f2d548579270513774242d1ac8&amp;chksm=fdec09982faf61ddb6147be607a422c6f17d767c6b86d0e3838ecc1dead41a2941ab5fb7c281&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/doeCvHL6q2wUmUNj69Dc399Knve4l2Ct8c5kvzZMmcZgRREteHGfRcuOibAicGvZy6TrhLpJ2IuoOT1eXlsbQj2E9jQHP7PetMPwicYhibiczEkI/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=3&amp;sn=d4ee25f2d548579270513774242d1ac8&amp;chksm=fdec09982faf61ddb6147be607a422c6f17d767c6b86d0e3838ecc1dead41a2941ab5fb7c281&amp;scene=0&amp;xtrack=1#rd" target="_blank">荣耀与影石达成合作，旗舰产品入驻荣耀门店</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c0ddd835cb9de7a95a44dda2a0243b7b/index.html">摄影笔记</a></span><time class="article-date" datetime="2026-07-19 08:14:38">发布日期：2026-07-19 08:14:38</time></div><p class="article-description">7 月 17 日，荣耀宣布与影石（Insta360）达成合作。影石旗舰系列产品将陆续入驻荣耀门店，首批覆盖全国 44 家门店。荣耀表示，此次合作是其智能影像生态布局的重要一步，也是 2026 年荣耀阿</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=3&amp;sn=d4ee25f2d548579270513774242d1ac8&amp;chksm=fdec09982faf61ddb6147be607a422c6f17d767c6b86d0e3838ecc1dead41a2941ab5fb7c281&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=4&amp;sn=aeffe3c093fe45665c058cd32955d51c&amp;chksm=fd96a18805295d2753d370b38146560b25826c453e752b6f1818bd3cf12dbcb7484e30fd0d6e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/doeCvHL6q2y1Lt0iaZzclbF67cO33bwl22P0PGNW1J7mrVCbF5FDTGbaiaBh7bzct5avskNMjzicP62iartcCKdxJ1g6gSt6P4x30fzcenIOZLI/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=4&amp;sn=aeffe3c093fe45665c058cd32955d51c&amp;chksm=fd96a18805295d2753d370b38146560b25826c453e752b6f1818bd3cf12dbcb7484e30fd0d6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">柯达推出 EC35 胶片相机，经典滑盖设计回归</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/c0ddd835cb9de7a95a44dda2a0243b7b/index.html">摄影笔记</a></span><time class="article-date" datetime="2026-07-19 08:14:38">发布日期：2026-07-19 08:14:38</time></div><p class="article-description">柯达发布全新 EC35 35mm 胶片相机，最大亮点是回归了经典的滑盖镜头保护设计，滑开即可拍摄，兼顾复古外观与日常携带。EC35 定位入门用户，采用 25mm F10 定焦镜头、固定对焦、固定快门、</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzU2NDkxMzU3Mg==&amp;mid=2247577364&amp;idx=4&amp;sn=aeffe3c093fe45665c058cd32955d51c&amp;chksm=fd96a18805295d2753d370b38146560b25826c453e752b6f1818bd3cf12dbcb7484e30fd0d6e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDA0NDA4NA==&amp;mid=2651523359&amp;idx=1&amp;sn=f1e14bebc1120f98297f82b3afcd53c8&amp;chksm=8aa0fb377b6500ae094661f834a204106bc92d939c547bd2b0bdb6925239679134bd04766f47&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/GBEWlxJpicyy9sGfKxP3uHg5uUk4GYYzOe7QV0RWViasIpVwn8OWCV1CPXhz5IYFk9T5xnNQRFcHOEORFoCPHIOnlvw6WOemWUfy1kmEQic6Uw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA5MDA0NDA4NA==&amp;mid=2651523359&amp;idx=1&amp;sn=f1e14bebc1120f98297f82b3afcd53c8&amp;chksm=8aa0fb377b6500ae094661f834a204106bc92d939c547bd2b0bdb6925239679134bd04766f47&amp;scene=0&amp;xtrack=1#rd" target="_blank">杭州媒体：“黄总邀请你去包厢”系误会，双方已和解</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/40846d8c5dc197981662604ac4ed4ade/index.html">长安街知事</a></span><time class="article-date" datetime="2026-07-19 08:12:44">发布日期：2026-07-19 08:12:44</time></div><p class="article-description">据《杭州日报》旗下@橙柿新闻 消息，近日，杭州女子就餐遭陌生男子托服务员邀约去包厢事件，经查是误会，双方已和解。据该女子在直播中描述，当晚她正在餐厅大堂用餐，一名服务员上前转达，称有位“黄总”请她移步</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA5MDA0NDA4NA==&amp;mid=2651523359&amp;idx=1&amp;sn=f1e14bebc1120f98297f82b3afcd53c8&amp;chksm=8aa0fb377b6500ae094661f834a204106bc92d939c547bd2b0bdb6925239679134bd04766f47&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247494788&amp;idx=1&amp;sn=eeb2bc715d4b7066964073778f2d3845&amp;chksm=c085664414fb1afa84fd7d684e6c22ba8172bdd765b6613f4f219bad3a2ff2e6af63e92e3102&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/fXjeyV4JTVzTyia91n72j6jhUicW9dmF04uwb9YfichibYpue1YNSsPW6x5GZR437YPes8z3xIoxDY2Y1B9ciag69Rha4pWicamWf6rIVgprKKZgc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247494788&amp;idx=1&amp;sn=eeb2bc715d4b7066964073778f2d3845&amp;chksm=c085664414fb1afa84fd7d684e6c22ba8172bdd765b6613f4f219bad3a2ff2e6af63e92e3102&amp;scene=0&amp;xtrack=1#rd" target="_blank">Rust 编译器正在把新一代 trait solver 默认打开</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/eb805035657334107a0620e58aeacd9f/index.html">Rust开发笔记</a></span><time class="article-date" datetime="2026-07-19 08:13:02">发布日期：2026-07-19 08:13:02</time></div><p class="article-description">Rust 的类型系统一直以&quot;严格但可靠&quot;著称，但如果你写过复杂的泛型代码，多半遇到过 trait 解析失败时编译器给出一段让人摸不着头脑的错误信息，或者明明语义上应该能通过的代码，编译器却拒绝接受。这</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzkyMzYxNTUwMw==&amp;mid=2247494788&amp;idx=1&amp;sn=eeb2bc715d4b7066964073778f2d3845&amp;chksm=c085664414fb1afa84fd7d684e6c22ba8172bdd765b6613f4f219bad3a2ff2e6af63e92e3102&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=1&amp;sn=fa9a5fd9c1decded6ce31a31e4a912d2&amp;chksm=bcb57adfd1e9f3147dbfc2d00e94a18ac7fe9e7183b810619e8af47463a2f1ae612498b4663e&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/ibIciaJ2dfKYfyB8EHvib5hnFIluxzdDSnZt9B9O49G4qtkicwokF7SV6rp4LHnb7VPAQkicfoxw29N0OqtHl6J89I3XCvBdgXCl49sXClwcuAtc/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=1&amp;sn=fa9a5fd9c1decded6ce31a31e4a912d2&amp;chksm=bcb57adfd1e9f3147dbfc2d00e94a18ac7fe9e7183b810619e8af47463a2f1ae612498b4663e&amp;scene=0&amp;xtrack=1#rd" target="_blank">“黄总请你去包厢”，最新进展</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2026-07-19 08:09:18">发布日期：2026-07-19 08:09:18</time></div><p class="article-description">谢春晖/潮新闻客户端近日，杭州一女子称就餐期间遭到服务员传话，称包厢“黄总”邀约，引发争议。据了解，该女子在一家杭州餐厅就餐过程中，被服务员传话，称有一位“黄总”邀请她去包厢。该女子拒绝后离开餐饮店。</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=1&amp;sn=fa9a5fd9c1decded6ce31a31e4a912d2&amp;chksm=bcb57adfd1e9f3147dbfc2d00e94a18ac7fe9e7183b810619e8af47463a2f1ae612498b4663e&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=2&amp;sn=1fac40d7adbecea5de2a2efd1501ce33&amp;chksm=bcf187e024a705f0142bd73ff80276fc9848313dc5a23140aa7b085d76f33e47c347fc02d233&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/ibIciaJ2dfKYcDjVATpcZDVnNm5Z66iaBibribt8KZyPXsPmBiaTl2pwFhMqQdkuDJOrATRnHeP7yortaJqKWFCmzbdP0wFezrgnJVAggha8icnPWA/300?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=2&amp;sn=1fac40d7adbecea5de2a2efd1501ce33&amp;chksm=bcf187e024a705f0142bd73ff80276fc9848313dc5a23140aa7b085d76f33e47c347fc02d233&amp;scene=0&amp;xtrack=1#rd" target="_blank">一名青年学者选择了“AI+生命科学”，更大的梦想还在路上</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/0c789f5ba167f0c0a4b46798aa29b5c5/index.html">澎湃新闻</a></span><time class="article-date" datetime="2026-07-19 08:09:18">发布日期：2026-07-19 08:09:18</time></div><p class="article-description">澎湃新闻记者 邹佳雯下午3点，上海交通大学工业技术创新研究院的一间会议室，澎湃新闻记者的采访刚结束，谢伟迪看了眼手机，没有离开的意思——下一个会议已经排在日程表上。这个场景几乎是他日常的缩影：时间被精</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MjM5MzI5NTU3MQ==&amp;mid=2652552054&amp;idx=2&amp;sn=1fac40d7adbecea5de2a2efd1501ce33&amp;chksm=bcf187e024a705f0142bd73ff80276fc9848313dc5a23140aa7b085d76f33e47c347fc02d233&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247486181&amp;idx=1&amp;sn=fdca8d2e98aedd8c2923cc627bf31b14&amp;chksm=eb191a7ed916a86d55b7e007a0d0bec02d178c4a6985021a1aa56a7f5b0a3a1d083bd751ea05&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/60Iian1EayG3Pv3sjULq9BFCjRE5fJ92acEz6L6HLgiagQfONkich3QnImgspRV9ic7kcft7EXtzGPWA6AWDBMV6roVPJiaS7aCdq80VObWia5gVg/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247486181&amp;idx=1&amp;sn=fdca8d2e98aedd8c2923cc627bf31b14&amp;chksm=eb191a7ed916a86d55b7e007a0d0bec02d178c4a6985021a1aa56a7f5b0a3a1d083bd751ea05&amp;scene=0&amp;xtrack=1#rd" target="_blank">用AI把高中数学装进知识库后，它开始提醒我哪里还没学懂</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/d0fd54dda93f20bb824d435c8c0b9501/index.html">AI训驼师</a></span><time class="article-date" datetime="2026-07-19 08:00:00">发布日期：2026-07-19 08:00:00</time></div><p class="article-description">首先提前剧透一下由NextClaw搭建出来的高中数学知识图谱。NextClaw搭建的高中数学知识图谱教了几年数学的老师，都有一个观察：好学生和普通学生的区别，不是谁做的题多，而是谁脑子里的知识是成</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzI2MjE2MjU5NA==&amp;mid=2247486181&amp;idx=1&amp;sn=fdca8d2e98aedd8c2923cc627bf31b14&amp;chksm=eb191a7ed916a86d55b7e007a0d0bec02d178c4a6985021a1aa56a7f5b0a3a1d083bd751ea05&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_32.html" class="pagination-button pagination-prev">上一页</a></div></body></html>

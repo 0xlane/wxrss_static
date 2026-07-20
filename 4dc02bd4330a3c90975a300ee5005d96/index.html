@@ -1,0 +1,364 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>测试开发技术</title><style>
+            /* 导航栏样式 - 水平滑动 */
+            .navigation {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding: 20px 20px; /* 左右增加 padding，避免内容贴边 */
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+
+                overflow-x: auto; /* 关键：水平方向内容超出时显示滚动条 */
+                -webkit-overflow-scrolling: touch; /* 为了在iOS设备上滚动更顺畅 */
+                white-space: nowrap; /* 导航链接不换行，保持水平排列 */
+                flex-wrap: nowrap; /* 确保 flex items 不换行 */
+            }
+
+            /* 隐藏滚动条 (可选，但通常为了美观会隐藏) */
+            .navigation::-webkit-scrollbar {
+                display: none; /* 隐藏 Chrome, Safari, Edge 滚动条 */
+            }
+            .navigation {
+                -ms-overflow-style: none;  /* 隐藏 IE and Edge 滚动条 */
+                scrollbar-width: none;  /* 隐藏 Firefox 滚动条 */
+            }
+
+            .navigation-link {
+                text-decoration: none;
+                color: #333;
+                font-weight: bold;
+                transition: color 0.3s;
+                flex-shrink: 0; /* 确保导航链接不会被压缩 */
+            }
+
+            .navigation-link:hover {
+                color: #007bff;
+            }
+
+            .article-list {
+                list-style: none;
+                padding: 0;
+                max-width: 800px; /* 桌面端最大宽度保持不变 */
+                margin: 20px auto;
+            }
+    
+            .article-item {
+                border-bottom: 1px solid #eee;
+                padding: 20px;
+                transition: background 0.3s;
+                display: flex;
+                align-items: stretch;
+            }
+    
+            .article-item:hover {
+                background: #f9f9f9;
+            }
+    
+            .article-cover {
+                width: 40%;
+                max-width: 200px;
+                margin-right: 20px;
+                overflow: hidden;
+                flex-shrink: 0;
+                box-sizing: border-box;
+                max-height: 150px;
+            }
+    
+            .article-cover:hover img {
+                transform: scale3d(1.1,1.1,1.1);
+                -webkit-transition: all .5s ease-in-out;
+                -moz-transition: all .5s ease-in-out;
+                transition: all .5s ease-in-out;
+                filter: alpha(Opacity=85);
+                -moz-opacity: .85;
+                opacity: .85
+            }
+    
+            .article-cover img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform 0.3s ease-in-out;
+                -webkit-transition: transform 0.3s ease-in-out;
+                -moz-transition: transform 0.3s ease-in-out;
+            }
+    
+            .article-content {
+                flex: 1;
+                width: 60%;
+                box-sizing: border-box;
+            }
+    
+            .article-title {
+                font-size: 1.2em;
+                margin: 0 0 10px;
+            }
+            
+            .article-title a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s;
+                -webkit-transition: color 0.3s;
+                -moz-transition: color 0.3s;
+            }
+
+            .article-title a:hover {
+                color: #007bff;
+                text-decoration: none;
+            }
+    
+            .article-meta {
+                color: #666;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+    
+            .article-author {
+                margin-right: 15px;
+            }
+    
+            .article-date {
+                color: #999;
+            }
+    
+            .article-description {
+                color: #444;
+                line-height: 1.6;
+                margin: 10px 0;
+                height: 48px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+    
+            .article-link {
+                color: #007bff;
+                text-decoration: none;
+                font-size: 0.9em;
+            }
+    
+            /* 分页按钮样式 */
+            .pagination {
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+    
+            .pagination-button {
+                display: inline-block;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #333;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+            }
+    
+            .pagination-button:hover {
+                background-color: #f0f0f0;
+                border-color: #bbb;
+            }
+    
+            .pagination-button:disabled {
+                background-color: #eee;
+                color: #999;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+    
+            /*  Media Queries - 针对小屏幕设备优化  */
+            @media (max-width: 768px) {  /*  2. 使用 Media Query，针对屏幕宽度小于 768px 的设备应用以下样式  */
+                /* 手机端导航栏样式 (水平滑动) */
+                .navigation {
+                    justify-content: left;
+                    gap: 10px; /* 减小导航链接之间的间距 */
+                    padding: 10px 10px; /* 减小导航栏的左右和上下内边距 */
+                    margin-bottom: 15px; /* 减小导航栏下外边距 */
+                }
+
+                .navigation-link {
+                    font-size: 0.9rem; /* 可以适当减小导航链接字体大小 */
+                    padding: 5px 10px; /* 可以适当减小导航链接内边距 */
+                }
+
+                .article-list {
+                    max-width: 100%;  /*  手机上文章列表宽度撑满屏幕  */
+                    margin-left: 10px;   /*  左右留出少量边距，避免内容紧贴屏幕边缘  */
+                    margin-right: 10px;
+                }
+    
+                .article-item {
+                    flex-direction: column; /*  手机上文章条目垂直排列  */
+                    padding: 15px;       /*  略微减小 article-item 的内边距  */
+                }
+    
+                .article-cover {
+                    width: 100%;        /*  手机上封面宽度撑满容器  */
+                    max-width: none;      /*  移除最大宽度限制  */
+                    margin-right: 0;      /*  移除右侧外边距  */
+                    margin-bottom: 10px;   /*  底部增加外边距，与文字内容分隔  */
+                    max-height: none;      /*  移除最大高度限制，让图片根据自身比例显示，或者可以设置一个合适的 max-height */
+                }
+    
+                .article-content {
+                    width: 100%;        /*  手机上内容区域宽度撑满容器  */
+                }
+    
+                .article-title {
+                    font-size: 1.1em;   /*  略微减小标题字体大小  */
+                }
+    
+                .article-description {
+                    font-size: 0.95em;  /*  略微减小描述字体大小  */
+                    height: auto;        /*  手机上取消固定高度，让描述文字完整显示，或者根据需要调整行数限制 */
+                    -webkit-line-clamp: unset; /* 取消行数限制 */
+                }
+    
+                .article-meta {
+                    font-size: 0.85em;  /*  略微减小 meta 信息字体大小  */
+                }
+    
+                .pagination-button {
+                    padding: 8px 16px;   /*  略微减小分页按钮内边距，但保持可点击区域  */
+                    margin: 0 5px;      /*  略微减小按钮间距  */
+                }
+
+                /* 取消手机端 article-cover 的悬浮放大效果 */
+                .article-cover:hover img {
+                    transform: scale3d(1.0,1,0,1.0); /* 或者 transform: none;  都可以 */
+                }
+            }
+                    </style></head><body><nav class="navigation"><a class="navigation-link" href="/">全部</a><a class="navigation-link" href="/sec/">安全</a><a class="navigation-link" href="/dev/">开发</a><a class="navigation-link" href="/new/">新闻</a><a class="navigation-link" href="/digital/">数码</a><a class="navigation-link" href="/photography/">摄影</a><a class="navigation-link" href="/car/">汽车</a><a class="navigation-link" href="/beijing/">北京</a><a class="navigation-link" href="/ai/">AI</a><a class="navigation-link" href="/it/">IT</a><a class="navigation-link" href="/other/">其他</a></nav><ul class="article-list"><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509265&amp;idx=1&amp;sn=bd8253024c8db9476b3b3af434c12fc8&amp;chksm=9e80a1c0834ab2f43c98913ab0a964a086e52ec773beba621dcf7d8d4f6f33af8051d7b9b43f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvRICLaoa7knZ2ROnt9OCxz2tDJLMCueqJicUicoRxZDep2GNBK27FRGo2w9YTTx0YRuuIeDbFxMs5SLbkLDyicibKhlJzull5mAmbs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509265&amp;idx=1&amp;sn=bd8253024c8db9476b3b3af434c12fc8&amp;chksm=9e80a1c0834ab2f43c98913ab0a964a086e52ec773beba621dcf7d8d4f6f33af8051d7b9b43f&amp;scene=0&amp;xtrack=1#rd" target="_blank">10万人都在用的 Top10 skills，我帮你试了！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-20 08:50:00">发布日期：2026-07-20 08:50:00</time></div><p class="article-description">导读：skills.sh（Vercel 出品的 Agent Skills 导航站）上线后，排行榜上的数字已经卷到离谱——第一名 240 万 热度，第二名 60 万+，连第十名都有 35 万+。这些排</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509265&amp;idx=1&amp;sn=bd8253024c8db9476b3b3af434c12fc8&amp;chksm=9e80a1c0834ab2f43c98913ab0a964a086e52ec773beba621dcf7d8d4f6f33af8051d7b9b43f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509257&amp;idx=1&amp;sn=2909eb4faa19d7efac0225c834894d21&amp;chksm=9ed25ffae6ec3fb84b91e2690f630d51e9d5d0573b5adb21acb5b27e0cb3564b356e31677ea0&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509257&amp;idx=1&amp;sn=2909eb4faa19d7efac0225c834894d21&amp;chksm=9ed25ffae6ec3fb84b91e2690f630d51e9d5d0573b5adb21acb5b27e0cb3564b356e31677ea0&amp;scene=0&amp;xtrack=1#rd" target="_blank">慢半拍的腾讯，靠 WorkBuddy 杀疯了</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-18 09:00:00">发布日期：2026-07-18 09:00:00</time></div><p class="article-description">腾讯做 AI，一直是那个&quot;慢半拍&quot;的角色。
+
+
+但 WorkBuddy 上线三个月，月活冲破 2000 万，把 Trae 和 QoderWork 都甩在身后。
+
+很多人在分析它凭什么赢。我说个不一样的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509257&amp;idx=1&amp;sn=2909eb4faa19d7efac0225c834894d21&amp;chksm=9ed25ffae6ec3fb84b91e2690f630d51e9d5d0573b5adb21acb5b27e0cb3564b356e31677ea0&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509255&amp;idx=1&amp;sn=0a59772c78065a642b84fdd9d9044639&amp;chksm=9e0b11d6a9539e722816052a14000acc5ab69390fbc4bc01ddb66f40b980ff6e415ca889efda&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvSBd0icPibzo2VTYmMibd2MDq2Ls4qJoGib95uR7gYHQhjZwxgmd0xbgAbdUMgq68lfWubtvViawCpCQbor8Lg1zicia3k4OzrqgzEyh0/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509255&amp;idx=1&amp;sn=0a59772c78065a642b84fdd9d9044639&amp;chksm=9e0b11d6a9539e722816052a14000acc5ab69390fbc4bc01ddb66f40b980ff6e415ca889efda&amp;scene=0&amp;xtrack=1#rd" target="_blank">Agent 工具到底怎么选？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-17 08:30:00">发布日期：2026-07-17 08:30:00</time></div><p class="article-description">市面上这么多的 Agent 工具，到底应该选哪一个作为主力工具呢？这个问题，是最近一段时间粉丝和学员最常问我的。也难怪大家困惑——从今年 3 月到现在，本地 Agent 逐渐走入大家视野。市面上涌现</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509255&amp;idx=1&amp;sn=0a59772c78065a642b84fdd9d9044639&amp;chksm=9e0b11d6a9539e722816052a14000acc5ab69390fbc4bc01ddb66f40b980ff6e415ca889efda&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509248&amp;idx=1&amp;sn=a3f16e34e7056a5a7d562ad9cc11a539&amp;chksm=9e35e911eaa99fb31e77089ac81cffbb66c305026a0f8020d6d862685d10f27c04c8f2144e0d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvTibMdofLu3yewIgHHujZEZrUjRZSnIju2uD2xSZhw80aE5mmgCHwUTBibe9Xm9icAic38OEGTAWVL8NETAzgFvGUOaf0QAptp9pYU/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509248&amp;idx=1&amp;sn=a3f16e34e7056a5a7d562ad9cc11a539&amp;chksm=9e35e911eaa99fb31e77089ac81cffbb66c305026a0f8020d6d862685d10f27c04c8f2144e0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">还在手写测试报告？推荐一款 AI 测试Skill：只需一句指令，自动生成专业定制化测试报告！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-16 08:30:00">发布日期：2026-07-16 08:30:00</time></div><p class="article-description">导读：前三篇我们搞定了&quot;跑测试、修脚本、清数据&quot;——但跑完之后，怎么把执行结果变成一份专业的测试报告呢？今天就给大家分享一款叫 api-report-generator 的 AI skill，只需一</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509248&amp;idx=1&amp;sn=a3f16e34e7056a5a7d562ad9cc11a539&amp;chksm=9e35e911eaa99fb31e77089ac81cffbb66c305026a0f8020d6d862685d10f27c04c8f2144e0d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509241&amp;idx=1&amp;sn=4d631348f669e253d37f3899184003d1&amp;chksm=9e3a9cb1af9d89b4d7c0d248808681ee0074ff04b508409ab94f9104e3502439ae522953fc0a&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvSNb6RflhyAcFyOC7P9gcX2xDFObQfjWrFqiaMepUeyKFDPZibaibxVRgk7qYo4QoHvxQ4YCsm9Qzk5sYJMqGSeuFbSyL6D48jyoA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509241&amp;idx=1&amp;sn=4d631348f669e253d37f3899184003d1&amp;chksm=9e3a9cb1af9d89b4d7c0d248808681ee0074ff04b508409ab94f9104e3502439ae522953fc0a&amp;scene=0&amp;xtrack=1#rd" target="_blank">测试人员必备：推荐一款智能测试数据清理AI Skill，支持db、redis、mq等</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-15 09:00:00">发布日期：2026-07-15 09:00:00</time></div><p class="article-description">导读：前两篇我们推荐了让测试&quot;跑起来&quot;的 api-test-executor、让失败脚本&quot;自己修好&quot;的 api-failure-diagnoser。但跑完、修完之后，环境里堆满了测试数据。今天给大家</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509241&amp;idx=1&amp;sn=4d631348f669e253d37f3899184003d1&amp;chksm=9e3a9cb1af9d89b4d7c0d248808681ee0074ff04b508409ab94f9104e3502439ae522953fc0a&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509228&amp;idx=1&amp;sn=6881db9a6f56c0517cf1966400f7f1ca&amp;chksm=9ea787d25c177c30e96a84f12fc7c8497442be55bd5c2a87098df0bef97a136cd7b9dd695169&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvShBUnUiaEm1GaiaLXNKUrVsxYAawFAQtTozKjUP2cCAvEOvOvBT8YOr1YuqlicoXQoCSbTiaVs062mWKG1mmdvxgaymZ76qbesocw/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509228&amp;idx=1&amp;sn=6881db9a6f56c0517cf1966400f7f1ca&amp;chksm=9ea787d25c177c30e96a84f12fc7c8497442be55bd5c2a87098df0bef97a136cd7b9dd695169&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 测试必备：推荐一款能让自动化失败脚本「自己修好」的 AI skill！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-14 09:00:00">发布日期：2026-07-14 09:00:00</time></div><p class="article-description">导读：上一篇我们推荐了让接口测试&quot;跑起来&quot;的 api-test-executor。但脚本跑起来只是第一步——跑完之后，几十条失败用例怎么排查？今天，给大家分享一款能让失败脚本自己修好的 AI skil</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509228&amp;idx=1&amp;sn=6881db9a6f56c0517cf1966400f7f1ca&amp;chksm=9ea787d25c177c30e96a84f12fc7c8497442be55bd5c2a87098df0bef97a136cd7b9dd695169&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509212&amp;idx=1&amp;sn=accecc8f19f253be86e6537e920992d5&amp;chksm=9e51a113a5ec972f2ab4590b0dc8c23f028ccdc328338fbe1f78598e28182080656bc28b5888&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvSjfaXC4azuUE1vkPYibcRspGjyDPicvt2UyutK4p7IejckfVBjZTY8oUBWssFicRhIucKA7d6r37j93OTkmibF8y0vm8h7rxF8oY4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509212&amp;idx=1&amp;sn=accecc8f19f253be86e6537e920992d5&amp;chksm=9e51a113a5ec972f2ab4590b0dc8c23f028ccdc328338fbe1f78598e28182080656bc28b5888&amp;scene=0&amp;xtrack=1#rd" target="_blank">端开发必装 Skill 清单：6 款 AI 技能，让你的开发效率原地起飞</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-13 09:00:00">发布日期：2026-07-13 09:00:00</time></div><p class="article-description">导读：AI 写代码这件事，大家都不新鲜了。但你有没有发现一个现象——同样是让 AI 干活，有人用得飞起，有人却总觉得&quot;AI 写出来的东西还得自己改半天&quot;？差距往往不在 AI 本身，而在于你有没有给它配</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509212&amp;idx=1&amp;sn=accecc8f19f253be86e6537e920992d5&amp;chksm=9e51a113a5ec972f2ab4590b0dc8c23f028ccdc328338fbe1f78598e28182080656bc28b5888&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509209&amp;idx=1&amp;sn=317eab9f6f6fb0a8f61d3ce67a819b59&amp;chksm=9ef1e6b11cb905b5d528b3a4db7b2a56d90750bc35c9772a76b61377f036dbb4ad76630f8c6f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509209&amp;idx=1&amp;sn=317eab9f6f6fb0a8f61d3ce67a819b59&amp;chksm=9ef1e6b11cb905b5d528b3a4db7b2a56d90750bc35c9772a76b61377f036dbb4ad76630f8c6f&amp;scene=0&amp;xtrack=1#rd" target="_blank">大白话讲清楚：Harness Engineering 和 Loop Engineering 是什么？
+
+
+AI 编程圈最近半年先后冒出俩新词：Harness Engineering 和 Loop Engineering。
+名字唬人，概念其实特别简单。
+
+Harness 原意是&quot;马具&quot;——套在马身上的缰绳和鞍具。
+在 AI 编程里，它指的是单次运行时你给 AI 搭的&quot;工作环境&quot;：
+- 能用什么工具？（搜索、读写文件、执行命令、开浏览器）
+- 能碰什么？（权限范围、文件目录）
+- 规矩是什么？（代码规范、项目约定）
+- 需要知道什么？（上下文、背景知识）
+
+Harness Engineering 就是把这个环境搭好。
+
+打个比方。你招了个厨师，Harness 就是给他配厨房——锅碗瓢盆、食材清单、菜谱手册、门禁卡。
+
+厨师再牛，你给把锈刀、口糊锅、不给菜谱，他也做不出好菜。
+AI 也一样。环境不行，Prompt 再花也白搭。
+
+
+Loop Engineering 是围绕 Agent Loop 展开的系统设计方法论——你如何发现工作、分配任务、验证结果、持久化状态，并在该交还时交还给人。
+
+如何让 AI 不是干一次就走，而是反复干、持续干、自动干，直到达成目标。
+
+但跑循环不是写个 while 就完了。你得设计：
+
+谁分配任务？上次做到哪了怎么记？改代码的和验代码的是同一个 AI 吗？（不应该）出问题什么时候叫人？token 烧得起吗？
+
+还是厨师那个比方。Harness 是配厨房，Loop 是设计整个餐厅的运营 SOP——几点备菜、谁切谁炒、谁来验出品、客诉怎么办、打烊谁锁门。
+
+一句话概括：
+Harness 管&quot;单次干活的环境&quot;。Loop 管&quot;持续干活的流水线&quot;。前者是工位设计师，后者是工厂厂长。
+
+你得先有 Harness（工位），才能排 Loop（产线）。但光有工位不够——你不告诉厨师每天做什么、谁验出品，他也只能等你每次临时吩咐。
+
+这就是为什么说：别再每次手动 prompt 了。把经验固化成 Harness，把流程固化成 Loop。
+
+AI 负责干，你负责设计&quot;它怎么干&quot;。
+
+📢 重大消息：&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;收徒了&lt;/a&gt;，目前已经有不少同学报名😊，享受终身一对一&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;个人私教级指导服务&lt;/a&gt;，为学员提供 1v1 定制化学习指导，涵盖提升技能、面试辅导、职业规划、副业变现、个人成长与团队赋能等多个维度。另外，VIP 私教学员还可免费学习我过往、现有及未来所有技能类培训课程、免费参与各类全栈测开和AI训练营！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-12 09:00:00">发布日期：2026-07-12 09:00:00</time></div><p class="article-description">大白话讲清楚：Harness Engineering 和 Loop Engineering 是什么？
+
+
+AI 编程圈最近半年先后冒出俩新词：Harness Engineering 和 Loop En</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509209&amp;idx=1&amp;sn=317eab9f6f6fb0a8f61d3ce67a819b59&amp;chksm=9ef1e6b11cb905b5d528b3a4db7b2a56d90750bc35c9772a76b61377f036dbb4ad76630f8c6f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509206&amp;idx=1&amp;sn=b7a055ea1b471aee45ece0326c850c25&amp;chksm=9ebb3e7472af545b439deafac173daeb3a3adaeef98657eb7af9262c6169fed91cd3cdb25e29&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509206&amp;idx=1&amp;sn=b7a055ea1b471aee45ece0326c850c25&amp;chksm=9ebb3e7472af545b439deafac173daeb3a3adaeef98657eb7af9262c6169fed91cd3cdb25e29&amp;scene=0&amp;xtrack=1#rd" target="_blank">Codex吞掉ChatGPT：一个时代的谢幕！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-11 09:00:00">发布日期：2026-07-11 09:00:00</time></div><p class="article-description">7 月 9 号凌晨，OpenAI 发了 GPT-5.6。
+
+但这不是重点。
+重点是——Codex 正式吞掉了 ChatGPT。
+
+你打开新版桌面应用，满屏都是 Codex 的界面。那个曾经定义了整个</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509206&amp;idx=1&amp;sn=b7a055ea1b471aee45ece0326c850c25&amp;chksm=9ebb3e7472af545b439deafac173daeb3a3adaeef98657eb7af9262c6169fed91cd3cdb25e29&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509203&amp;idx=1&amp;sn=5998b6856df077893cec4cfb92c00907&amp;chksm=9efd217b2f9754cd1596f03b98b11d058510e19ca4832d19142e355f3d4bf7a84d598d644854&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvQZpfVxNhJxsEEbicHQNN9SmUuqNaOskd8Sicyjls3zfwnHPK88ibZoHBct9uOWdg9jSmcd8oFezWcB7MULOSQhDjJt3oPRInaHB4/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509203&amp;idx=1&amp;sn=5998b6856df077893cec4cfb92c00907&amp;chksm=9efd217b2f9754cd1596f03b98b11d058510e19ca4832d19142e355f3d4bf7a84d598d644854&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 测试提效神器：推荐一款接口自动化测试提效skill！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-10 09:00:00">发布日期：2026-07-10 09:00:00</time></div><p class="article-description">导读：前面我们已经分享过了，如何用 AI + Agent Skill 把接口测试脚本自动&quot;造&quot;了出来。但脚本生成只是起点——真正让接口自动化测试产生价值的，是让脚本跑起来。今天就给大家推荐一款让能接</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509203&amp;idx=1&amp;sn=5998b6856df077893cec4cfb92c00907&amp;chksm=9efd217b2f9754cd1596f03b98b11d058510e19ca4832d19142e355f3d4bf7a84d598d644854&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509187&amp;idx=1&amp;sn=7ccbe82bfbfd43f49ab48f0879a1f65a&amp;chksm=9e0ae3610784528f47f71e95df2026484375b303cc25ed723ac88f67a9a44106b12f3f166504&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvRmZ7aFicq9TpUKIVqjuV4sAecsBEnqvyjhIjlAO92ff5yEaq7reo23mmup1MDO2PgwjIZ1aYGiaUbV9qAG67IZPvMhfPLuFQtiak/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509187&amp;idx=1&amp;sn=7ccbe82bfbfd43f49ab48f0879a1f65a&amp;chksm=9e0ae3610784528f47f71e95df2026484375b303cc25ed723ac88f67a9a44106b12f3f166504&amp;scene=0&amp;xtrack=1#rd" target="_blank">做一款企业真正敢用的 AI 测试应用，到底难在哪？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-09 09:00:00">发布日期：2026-07-09 09:00:00</time></div><p class="article-description">ANALYSIS · 深度观点2026.07AI 测试 = 丢文档给大模型就够了？Demo 能跑 ≠ 企业 敢用四道真正的难关系统 · 接入 · 安全 · 演进 · 企业级 AI 测试落地观察AI 测</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509187&amp;idx=1&amp;sn=7ccbe82bfbfd43f49ab48f0879a1f65a&amp;chksm=9e0ae3610784528f47f71e95df2026484375b303cc25ed723ac88f67a9a44106b12f3f166504&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509186&amp;idx=1&amp;sn=e6cc3a1b631ea2772bc46b877be19a40&amp;chksm=9efdac5d4267b4611c31f27327d9f6dcbf7a7951165abba8ba838d12613a11f51e1e9beda374&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvSibynKm0PQdRpnEOpoX23ic2DphxumgHhHaMYb0Tx2ngcdcs0OS8IuJKriaCnmqXOgRfNfgl1z7lrwMZLrvr0MGwGaA7mRyEcWWk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509186&amp;idx=1&amp;sn=e6cc3a1b631ea2772bc46b877be19a40&amp;chksm=9efdac5d4267b4611c31f27327d9f6dcbf7a7951165abba8ba838d12613a11f51e1e9beda374&amp;scene=0&amp;xtrack=1#rd" target="_blank">新手学 Skills：是什么、怎么找、如何开发？(最通俗易懂版)</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-08 09:00:00">发布日期：2026-07-08 09:00:00</time></div><p class="article-description">📦 6 Parts + Conclusion👉 滑动PART 01什么是 Skill概念本质 PART 02解决什么问题痛点剖析 PART 03Skill vs Prompt差别在哪 PART 04要</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509186&amp;idx=1&amp;sn=e6cc3a1b631ea2772bc46b877be19a40&amp;chksm=9efdac5d4267b4611c31f27327d9f6dcbf7a7951165abba8ba838d12613a11f51e1e9beda374&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509152&amp;idx=1&amp;sn=c4dd7c8cb5832998405d02b2c6979419&amp;chksm=9e82244b1ec0d99e41cabdd9ad46daa839a5ee148b005d193a9497e811eed1ffeb89f886d093&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvQXKS3NVcNan47RJNpWx8VPPfOQ1TvE0icyWK9BBEsDDh8PpdO8tB2dibYZ3icfQOdicu0VGc8RvGHVdlN9fYFrzdcgcKmVyexKkRo/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509152&amp;idx=1&amp;sn=c4dd7c8cb5832998405d02b2c6979419&amp;chksm=9e82244b1ec0d99e41cabdd9ad46daa839a5ee148b005d193a9497e811eed1ffeb89f886d093&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026 最新 AI 学习路线全景图：从零基础到 AI 全栈测试与开发实战（附一站式智能测试平台）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-07 09:00:00">发布日期：2026-07-07 09:00:00</time></div><p class="article-description">大家好，我是狂师。时间过得真快。一转眼，2026 年已经走过了一半，「狂师・AI 进化社」已正式成立了 4 个月。回头看一下，今年 2 月份我宣布要做这件事的时候，写了一篇近万字的官宣文，把&quot;AI</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509152&amp;idx=1&amp;sn=c4dd7c8cb5832998405d02b2c6979419&amp;chksm=9e82244b1ec0d99e41cabdd9ad46daa839a5ee148b005d193a9497e811eed1ffeb89f886d093&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509092&amp;idx=1&amp;sn=24b1eee46fb80024a45401aeb1842570&amp;chksm=9ea5716a7f7c218aa1c40d3976023c5d43f7c1edbccb6175a6e657d1183b0d14c3af284bf7a4&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvStXicTF5TCHIpSPibT1Wgiaicia1z7O8eh81woE3SPnH0N09LPfebh9scGJP8oyic2XXqUgnlL77mclcrYF7lqDWNk8oHRtGSibYX4QA/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509092&amp;idx=1&amp;sn=24b1eee46fb80024a45401aeb1842570&amp;chksm=9ea5716a7f7c218aa1c40d3976023c5d43f7c1edbccb6175a6e657d1183b0d14c3af284bf7a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">2026 最具幸福感的互联网大厂排名！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-06 09:00:00">发布日期：2026-07-06 09:00:00</time></div><p class="article-description">聊&quot;互联网大厂&quot;这四个字的时候，大家的态度这两年变化挺大。两年前，问一个程序员最想去哪儿，回答基本是清一色的&quot;BAT&quot;、&quot;字节&quot;、&quot;拼多多&quot;。如今再聊求职，所有人最先考虑的不再是平台名头，而是卷不卷</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509092&amp;idx=1&amp;sn=24b1eee46fb80024a45401aeb1842570&amp;chksm=9ea5716a7f7c218aa1c40d3976023c5d43f7c1edbccb6175a6e657d1183b0d14c3af284bf7a4&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509065&amp;idx=1&amp;sn=f6edc00b1fcf8baa48fb91209fff8024&amp;chksm=9e0f1d50156b220003d02996f72d97fa23de34cff756f4cce778274508a68c7453dea45df9ba&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvRaibtZAgLstUzKfFKoaA7oC65F2rDJhwqTU7lSU7LByY21y0sqIylOErvTvxmibHoicbPYsmAQZnnkVnMoJEtZVqStKnoraH4zDY/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509065&amp;idx=1&amp;sn=f6edc00b1fcf8baa48fb91209fff8024&amp;chksm=9e0f1d50156b220003d02996f72d97fa23de34cff756f4cce778274508a68c7453dea45df9ba&amp;scene=0&amp;xtrack=1#rd" target="_blank">聊一聊近年来互联网公司的裁员情况</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-03 09:00:00">发布日期：2026-07-03 09:00:00</time></div><p class="article-description">最近总有人在问，互联网是不是不行了。我一般不直接回答。因为&quot;行不行&quot;是个主观判断，而眼下大家真正想问的，其实是另一个问题：那些曾经被视为&quot;金饭碗&quot;的大厂岗位，怎么就突然不香了？这个问题，问得比&quot;互联</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509065&amp;idx=1&amp;sn=f6edc00b1fcf8baa48fb91209fff8024&amp;chksm=9e0f1d50156b220003d02996f72d97fa23de34cff756f4cce778274508a68c7453dea45df9ba&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509055&amp;idx=1&amp;sn=6de4368be9422b6e3567d0fa51b2c65d&amp;chksm=9eeaa0333c67f823e6ae028093b94fab1e18e4443ffdfbd8d877573565873ac62b9ef97d3d33&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvSGx1gvBnEXVCScEoBzjnFYOMujwhIdd0ERPcwS7a1wI8lQfZGbINAqYJ4tfRN8rJoIKeZSYh22qone9OlzvJHk5pXOFEKdH5E/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509055&amp;idx=1&amp;sn=6de4368be9422b6e3567d0fa51b2c65d&amp;chksm=9eeaa0333c67f823e6ae028093b94fab1e18e4443ffdfbd8d877573565873ac62b9ef97d3d33&amp;scene=0&amp;xtrack=1#rd" target="_blank">推荐一个开源AI Agent框架：Pentester，支持自动帮你做完渗透测试！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-02 09:00:00">发布日期：2026-07-02 09:00:00</time></div><p class="article-description">做渗透测试的兄弟们，是不是经常遇到这些场景：信息收集全靠手动敲命令，重复劳动多测试流程走一半忘了下一步该做什么报告写到手软，格式调了半天团队新人上手慢，老手的时间全花在带人上今天介绍一个开源项目 Pe</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509055&amp;idx=1&amp;sn=6de4368be9422b6e3567d0fa51b2c65d&amp;chksm=9eeaa0333c67f823e6ae028093b94fab1e18e4443ffdfbd8d877573565873ac62b9ef97d3d33&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509054&amp;idx=1&amp;sn=d5b2b80ce6784439a97da630f690aa8e&amp;chksm=9e4746baa26481d114a8da5a25dcb8956efdbb2529077cfda1dda4bf38371877ec2238d7e0b7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQjjN69symmYHdToxbc2c0wMKWz0gK622GiaVJrgaI1WyCAJVk6tzrTDKniak7adFtib1pkpXo2KuYPbaibWzJRWTt38tbYDwfH2J8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509054&amp;idx=1&amp;sn=d5b2b80ce6784439a97da630f690aa8e&amp;chksm=9e4746baa26481d114a8da5a25dcb8956efdbb2529077cfda1dda4bf38371877ec2238d7e0b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">比 Playwright 更给力，推荐一个AI Agent的浏览器自动化开源项目！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-07-01 09:00:00">发布日期：2026-07-01 09:00:00</time></div><p class="article-description">事情是这样的。最近这一两年，我日常的活基本都交给 Claude Code 了。让它帮我整理文件、写代码、查资料、做总结，凡是能交给它的我绝不动手。我自己一个很深的感受是，Agent 这种东西，你用得</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509054&amp;idx=1&amp;sn=d5b2b80ce6784439a97da630f690aa8e&amp;chksm=9e4746baa26481d114a8da5a25dcb8956efdbb2529077cfda1dda4bf38371877ec2238d7e0b7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509053&amp;idx=1&amp;sn=42b9c47e7a2239ed9c15dbe3549fc1e3&amp;chksm=9e121d49d6cc09acb7119607acffcf8cc044fcbc9b9434a95e68bea4120b90c28f988559ef88&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvQPxvictObdwMofQ63ibxuiaEBHyORQicmhWSeibBK7VVlyretl4mXszNQPkshoibz8wBuZbrYXadRibPQTIBuDl1JnFxeFeAOiaZaZaYI/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509053&amp;idx=1&amp;sn=42b9c47e7a2239ed9c15dbe3549fc1e3&amp;chksm=9e121d49d6cc09acb7119607acffcf8cc044fcbc9b9434a95e68bea4120b90c28f988559ef88&amp;scene=0&amp;xtrack=1#rd" target="_blank">测试工程师的AI 技能库：推荐5个让你效率翻倍的Skills</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-30 09:00:00">发布日期：2026-06-30 09:00:00</time></div><p class="article-description">在 AI 全面赋能测试的今天，测试工程师的竞争力，早已不再是&quot;会用多少工具&quot;，而是&quot;能否合理运用AI赋能提效到自己的工作中&quot;。作为测试工程师，日常工作中最耗时的不是分析问题、定位根因，而是那些重复的</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509053&amp;idx=1&amp;sn=42b9c47e7a2239ed9c15dbe3549fc1e3&amp;chksm=9e121d49d6cc09acb7119607acffcf8cc044fcbc9b9434a95e68bea4120b90c28f988559ef88&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509052&amp;idx=1&amp;sn=3e7ede3a4df2a82e59b203d46bed767b&amp;chksm=9e8d360739bd89d9a6cb5bfe2793696863071e768c6be0a762c288598d04e31be43fbdc74f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvQe77iazfH0DGicseFalawgExcGnuhdz4yeUrwF25uyX6RibVYJKyZl5mEPNtwia2iccDdf9QyNaPoIfFeZwO0ohcx8XRgV0bcGHbTk/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509052&amp;idx=1&amp;sn=3e7ede3a4df2a82e59b203d46bed767b&amp;chksm=9e8d360739bd89d9a6cb5bfe2793696863071e768c6be0a762c288598d04e31be43fbdc74f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">面试官突然问我Redis怎么测？！我当场懵了...</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-29 09:00:00">发布日期：2026-06-29 09:00:00</time></div><p class="article-description">有些测试朋友来问我，redis要怎么测试？首先我们需要知道，redis是什么？它能做什么？redis是一个key-value类型的高速存储数据库。redis常被用做：缓存、队列、发布订阅等。所以，“r</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509052&amp;idx=1&amp;sn=3e7ede3a4df2a82e59b203d46bed767b&amp;chksm=9e8d360739bd89d9a6cb5bfe2793696863071e768c6be0a762c288598d04e31be43fbdc74f6d&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509014&amp;idx=1&amp;sn=0ad9e0d2dcd931f4d7af73b22533f669&amp;chksm=9ef9d5226dfceb3e32561142ba5e5f3b52d3c50182b1c90d7ac9b8e2cc2e363bbd993ac6a139&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQkfZ5L3msOAia7gemKlosYlKhW6ua84sqic41BJiadCyjExqZnRQsoq2yg9Pxsmgo9Zv02oBmCK8lAlVEqaN9Nu2fAtkGlQ9q8Xs/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509014&amp;idx=1&amp;sn=0ad9e0d2dcd931f4d7af73b22533f669&amp;chksm=9ef9d5226dfceb3e32561142ba5e5f3b52d3c50182b1c90d7ac9b8e2cc2e363bbd993ac6a139&amp;scene=0&amp;xtrack=1#rd" target="_blank">面了11家公司、参加57场面试，毕业前拿到OpenAI Offer，求职复盘火爆全网！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-27 09:00:00">发布日期：2026-06-27 09:00:00</time></div><p class="article-description">编译 | 屠敏出品 | CSDN作为一名即将从华盛顿大学计算机科学系毕业的博士生，Alisa Liu 近日在 X 上透露，自己将在下周正式加入 OpenAI。消息一出，很快引发了社交媒体上不少人的关注</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247509014&amp;idx=1&amp;sn=0ad9e0d2dcd931f4d7af73b22533f669&amp;chksm=9ef9d5226dfceb3e32561142ba5e5f3b52d3c50182b1c90d7ac9b8e2cc2e363bbd993ac6a139&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508997&amp;idx=1&amp;sn=c0afffb6883206d3259c38a703b09f53&amp;chksm=9e45ac358a7d90f7b46f0cdb2b5012cf184b51b7f19ef911fee1aade9fb016e5a32583e637c7&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQDu38gkrHwoYvlS5K3Nd0PWktG0zhLbAyvibTkSDBmspd2ajLuIbvW5SKWib7DPzWPBZkbVeIyIvgHWRMfRANGslvqOZib4a806g/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508997&amp;idx=1&amp;sn=c0afffb6883206d3259c38a703b09f53&amp;chksm=9e45ac358a7d90f7b46f0cdb2b5012cf184b51b7f19ef911fee1aade9fb016e5a32583e637c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI测试必学 ｜ AI 赋能接口自动化测试系列（四）：接口自动化脚本质量检查与优化Agent Skill</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-26 08:50:00">发布日期：2026-06-26 08:50:00</time></div><p class="article-description">系列导读：本系列围绕 AI 赋能接口自动化测试全流程，从接口解析、数据生成、脚本开发到质量检查，逐篇拆解核心 Agent Skill。前三篇分别介绍了 api-schema-parser（接口解析）</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508997&amp;idx=1&amp;sn=c0afffb6883206d3259c38a703b09f53&amp;chksm=9e45ac358a7d90f7b46f0cdb2b5012cf184b51b7f19ef911fee1aade9fb016e5a32583e637c7&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508996&amp;idx=1&amp;sn=f408ab36492db973f09b4ed4ca81d222&amp;chksm=9ec75fb6389887b8a08ab06217d5ffe1f541ea919c8d11731b747af027060352dc613bf62a52&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQup96TXqp4m5KqklHE5PXputMtDWeOHmN7M6TmQ6vdzLzOgvnJ970cD8oTnCqAcOL1QM8Dxkw4LjfDlYeaHfcPul1fyyBfRcM/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508996&amp;idx=1&amp;sn=f408ab36492db973f09b4ed4ca81d222&amp;chksm=9ec75fb6389887b8a08ab06217d5ffe1f541ea919c8d11731b747af027060352dc613bf62a52&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI 测试必学：我开发了一个Agent Skill 一键生成全套接口自动化脚本，全程零编码！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-25 09:00:00">发布日期：2026-06-25 09:00:00</time></div><p class="article-description">在接口自动化测试的全流程中，脚本开发曾是最耗时、最考验技术功底的环节。人工编写脚本不仅要至少掌握一门编程语言，而且还要面对版本迭代快、用例量大的压力，还极易出现语法错误、场景覆盖不全、规范不统一等问</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508996&amp;idx=1&amp;sn=f408ab36492db973f09b4ed4ca81d222&amp;chksm=9ec75fb6389887b8a08ab06217d5ffe1f541ea919c8d11731b747af027060352dc613bf62a52&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508927&amp;idx=1&amp;sn=ae08656d37bda80d5ff014687bfea74c&amp;chksm=9eb1cb07d42001c268d0063fc6018db25f34f980ae92654ac02cbe083b095d27e82a9f3aba98&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/UzsCVuwOnvSV2DpF6E6zFCRSaCfXfMu6gfIGcEiaGia59VzlPpBb84b5KjUBApkOT67AwtLuciaublD9GHWwcia5XYImEuhcv0bJ2iaooY1pq50I/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508927&amp;idx=1&amp;sn=ae08656d37bda80d5ff014687bfea74c&amp;chksm=9eb1cb07d42001c268d0063fc6018db25f34f980ae92654ac02cbe083b095d27e82a9f3aba98&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI测试必学 ｜ AI 赋能接口自动化测试系列（二）：全场景测试数据智能构造Agent Skill</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-24 08:30:00">发布日期：2026-06-24 08:30:00</time></div><p class="article-description">在上一篇中，我们介绍了 api-schema-parser —— 它是接口自动化测试的&quot;入口技能&quot;，它能将各种格式的接口文档统一解析为标准化的 api_definitions.json。但解析完接口</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508927&amp;idx=1&amp;sn=ae08656d37bda80d5ff014687bfea74c&amp;chksm=9eb1cb07d42001c268d0063fc6018db25f34f980ae92654ac02cbe083b095d27e82a9f3aba98&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508902&amp;idx=1&amp;sn=2edcdb7b8fccec631e25a0d06fff95ab&amp;chksm=9e19b8e13a737f3b8245b74e743df1426c307cf3c98cd59e26a2ec4217fc28f563d10bf3fe41&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQcNibydKbSPJz18HrjveERCDmzGrQxBuB1gOIJaqiaF7Lh5pHX2Ck9E8h9Oib1jCPVzeqE5xzgjIr8bCkgDrSNKW13E0hwiadRR3k/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508902&amp;idx=1&amp;sn=2edcdb7b8fccec631e25a0d06fff95ab&amp;chksm=9e19b8e13a737f3b8245b74e743df1426c307cf3c98cd59e26a2ec4217fc28f563d10bf3fe41&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI测试必学 ｜ AI 赋能接口自动化测试系列（一）：接口文档智能解析Agent Skill推荐</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-23 08:30:00">发布日期：2026-06-23 08:30:00</time></div><p class="article-description">在测试领域，接口自动化测试是企业落地范围最广、投入性价比最高的自动化测试类型。但传统开发模式下，需要人工梳理接口文档、请求参数、入参出参规则、异常参数、业务关联关系，构造测试数据、编写脚本、后续维护</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508902&amp;idx=1&amp;sn=2edcdb7b8fccec631e25a0d06fff95ab&amp;chksm=9e19b8e13a737f3b8245b74e743df1426c307cf3c98cd59e26a2ec4217fc28f563d10bf3fe41&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508880&amp;idx=1&amp;sn=1ec965557616df8bccdc37fff99d3262&amp;chksm=9e032bf46f0e8a6fdb39f0669a28993975117bcd456805b33b65e146359a2bc7f3ff4f887957&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508880&amp;idx=1&amp;sn=1ec965557616df8bccdc37fff99d3262&amp;chksm=9e032bf46f0e8a6fdb39f0669a28993975117bcd456805b33b65e146359a2bc7f3ff4f887957&amp;scene=0&amp;xtrack=1#rd" target="_blank">技术人副业三步走...
+
+
+
+你是不是也刷到过那种视频，说谁谁谁搞副业，写写文章拍拍短视频，就轻轻松松，实现“睡后收入”？
+
+今天跟你说句实话：这不可能，他们要么在骗你，要么想割你，要么方法根本复制不了。因为没有一条路，是不用动手，就能有所收获的。
+
+真正的副业，是我们要用产品经理的思维，打造一个最小化的 “个人商业闭环”​，跑通这个闭环，至少只需要三步：
+第一，解决“卖什么”问题；
+第二，解决“触达”问题；
+第三，解决“成交”问题；
+
+咱们一步一步来，看这个“个人商业闭环”怎么落地。
+
+第一步：解决“卖什么”问题。
+
+方法：把我们的知识，经验，技能，产品化，变成“标品”。
+
+想想我们每天工作中，有哪些重复性的、可以总结成方法论的东西？
+比如：搭建项目的标准脚手架的经验，能不能变成一个“图文教程”。
+比如：成功面试架构师的经验，能不能变成一个“视频课程”。
+这里的核心是：要让它像货架上的商品一样，清晰、标准、可复制。从“卖时间”转向“卖产品”。
+
+第二步：解决“触达”问题。
+
+方法：做内容，建立我们的流量产品，成为我们的“获客渠道”。
+
+怎么做？​ 就把我们产品化的那个知识/经验/技能，拆解成10个、20个具体的小问题、小技巧、小坑点。拍成1分钟的短视频，每次讲清楚一个知识点；或者写成一篇图文，解决一个具体困惑。
+
+各个内容平台就是我们的免费展示柜。持续地、专注地发布垂直内容，这些内容，通过平台的算法，会吸引那些有同样问题的人。这样，我们就有了触达目标客户的机会。
+
+第三步：解决“成交”问题。
+
+方法：用持续输出，完成“信任预售”。
+
+当别人通过内容找到我们，关注我们，未来他们购买的，就已经不是那个“产品”本身了。而是“我们”这个小品牌锁带来的确定性和信任感。
+
+
+简单总结，对我们技术人来说，真正的副业路径异常清晰，就三个步骤：
+1. 把知识，封装成产品；
+2. 做内容，去触达用户用户；
+3. 做品牌，建立信任，最终完成交付。
+
+这三步，说难吧，不难，关键在于执行力！共勉！
+
+📢 最近想快速提升项目实战能力，或者最近找工作的小伙伴，都可以看看下面👇🏻 
+&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;收徒了&lt;/a&gt;，目前已经有不少同学报名😊，享受终身一对一&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mqnl5oaa-te3b43&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;个人私教服务&lt;/a&gt;，为学员提供 1v1 定制化全周期学习指导，覆盖技能深耕、职业规划、副业变现、个人成长与团队赋能等多个维度。VIP 私教学员还可免费学习我过往、现有及未来所有技能类培训课程、训练营等！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-22 09:00:00">发布日期：2026-06-22 09:00:00</time></div><p class="article-description">技术人副业三步走...
+
+
+
+你是不是也刷到过那种视频，说谁谁谁搞副业，写写文章拍拍短视频，就轻轻松松，实现“睡后收入”？
+
+今天跟你说句实话：这不可能，他们要么在骗你，要么想割你，要么方法根本复制不</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508880&amp;idx=1&amp;sn=1ec965557616df8bccdc37fff99d3262&amp;chksm=9e032bf46f0e8a6fdb39f0669a28993975117bcd456805b33b65e146359a2bc7f3ff4f887957&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508879&amp;idx=1&amp;sn=b7c83dbdb91742f31368ac1c8f0f5b45&amp;chksm=9e3b615ea3ef782a76a8df53bc75790823fd6e289bb088c4c47709bdf1601648601d9e924227&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508879&amp;idx=1&amp;sn=b7c83dbdb91742f31368ac1c8f0f5b45&amp;chksm=9e3b615ea3ef782a76a8df53bc75790823fd6e289bb088c4c47709bdf1601648601d9e924227&amp;scene=0&amp;xtrack=1#rd" target="_blank">泛955不加班公司名单（深圳） 
+
+
+1、XMind：支持全员远程办公(每周三天可在家办公) 
+2、联想-idg：9-5.5-5，午休一个小时，基本不加班 
+3、英伟达-Tegra-MODS：不打卡，可远程，假期多，全员持股 
+4、ASML-BRION：中文名睿初科技有限公司，在深圳和武汉都有分部，日常965，中午休息两小时，每年15天年假30天病假。 
+5、深圳证券通信有限公司：深圳证券交易所下属单位，东莞和香港也有分部，上班时间早上8:30-17:30。氛围比较好，招的人少，主要是校招。 
+6、小鹅通：弹性上下班不用打卡，午休两小时，早930到晚630，比较少加班
+7、世强先进科技股份有限公司：不卷，弹性上班，发展快 
+8、深圳市链融科技有限公司：965，遇上发版的话就7点半下班，周末加班有调休。 
+9、珍爱网：早10晚7，实际工作7.5小时，周未不加班
+
+最近想快速提升项目实战能力，或者最近找工作的小伙伴，都可以看看下面👇🏻的这个链接（或许真的能帮到你）:
+
+📢 重大好消息：&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mqlomkgx-vg4aet&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;收徒了&lt;/a&gt;，目前已经有不少同学报名😊，享受终身一对一&lt;a class=&quot;normal_text_link mp_article_text_link&quot; data-itemshowtype=&quot;0&quot; data-unique-id=&quot;mqlonilp-2q0tpv&quot; target=&quot;_blank&quot; href=&quot;https://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508622&amp;idx=1&amp;sn=5228a345caf072daffeadbe359ab3c91&amp;scene=21#wechat_redirect&quot;&gt;个人私教级指导服务&lt;/a&gt;，为学员提供 1v1 定制化全周期学习指导，覆盖技能深耕、职业规划、副业变现、个人成长与团队赋能等多个维度。更为重要的是，VIP 私教学员还可免费学习我过往、现有及未来所有技能类培训课程、训练营等！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-20 09:34:54">发布日期：2026-06-20 09:34:54</time></div><p class="article-description">泛955不加班公司名单（深圳） 
+
+
+1、XMind：支持全员远程办公(每周三天可在家办公) 
+2、联想-idg：9-5.5-5，午休一个小时，基本不加班 
+3、英伟达-Tegra-MODS：不打卡，</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508879&amp;idx=1&amp;sn=b7c83dbdb91742f31368ac1c8f0f5b45&amp;chksm=9e3b615ea3ef782a76a8df53bc75790823fd6e289bb088c4c47709bdf1601648601d9e924227&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508878&amp;idx=1&amp;sn=cca0c3da9c8d5fe4f07588bf253f94e4&amp;chksm=9eb8ac85219444eb6b2e00d380da9f50c641ef42c77a1cd56f57b6f339fba80628054951cc4f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/mmbiz_jpg/KVER9adz906M72615UyOLbfb785d2hXpOFcnev0icMXfSoDsyhNeYh8JkYQNrZLY4nRTQalEf0JzL2e1CRJMy5NtC2q35xYZPnDP58Svp4J8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508878&amp;idx=1&amp;sn=cca0c3da9c8d5fe4f07588bf253f94e4&amp;chksm=9eb8ac85219444eb6b2e00d380da9f50c641ef42c77a1cd56f57b6f339fba80628054951cc4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">AI Agent &amp; Skill 测评方案及落地实践</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-18 09:00:00">发布日期：2026-06-18 09:00:00</time></div><p class="article-description">作者：martinskxu导语：当 AI Agent 从&quot;Demo 可用&quot;走向&quot;生产可靠&quot;，测评就是那道必须跨过的门槛。本文介绍了 TEG云架构平台部 网关测试团队 在 AI Agent 测评领域的体</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508878&amp;idx=1&amp;sn=cca0c3da9c8d5fe4f07588bf253f94e4&amp;chksm=9eb8ac85219444eb6b2e00d380da9f50c641ef42c77a1cd56f57b6f339fba80628054951cc4f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508876&amp;idx=1&amp;sn=76fb44a031f5b5ab8401d95cb7645681&amp;chksm=9eb19165845030705ee40a73385f86b0e2f8ef7cf5637016349be2495b09f20fefe6d288c094&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvRnPAzeBUwjQwoicArDVxWk9C3I8zQ50tMHokk4sr7Kqh3nbSvbVtGSvjictDwbbXRNqemIpcVXkaLSDiakntfsqJpFdfvyVSVYa8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508876&amp;idx=1&amp;sn=76fb44a031f5b5ab8401d95cb7645681&amp;chksm=9eb19165845030705ee40a73385f86b0e2f8ef7cf5637016349be2495b09f20fefe6d288c094&amp;scene=0&amp;xtrack=1#rd" target="_blank">测试必学：推荐4个测试用例设计最值得掌握的Agent Skill，几乎覆盖所有用例设计场景！</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-17 08:30:00">发布日期：2026-06-17 08:30:00</time></div><p class="article-description">做软件测试的朋友都清楚，测试用例设计有多么重要。它直接决定了测试覆盖是否全面，也直接影响了后续整体测试流程的质量。传统模式下，大家手动一条一条编写用例，不仅耗时费力，还经常因为考虑不周，漏掉异常场景</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508876&amp;idx=1&amp;sn=76fb44a031f5b5ab8401d95cb7645681&amp;chksm=9eb19165845030705ee40a73385f86b0e2f8ef7cf5637016349be2495b09f20fefe6d288c094&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508828&amp;idx=1&amp;sn=ce8976721e946be99b724f9403e54f0a&amp;chksm=9ec619b03430bac9a4116b124584e8039532d7859d78d3566655c57d983b7dcbfc57ab980a20&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvQwtvUUb2EMyBFyr5nhLCj9NXoicnDvMaDEvZ46zRcPw3Sjhm97lTHqaYnAnYmGAJic7RCrzPRbT7TDCzyic5ib2iatdQvssakicTOuE/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508828&amp;idx=1&amp;sn=ce8976721e946be99b724f9403e54f0a&amp;chksm=9ec619b03430bac9a4116b124584e8039532d7859d78d3566655c57d983b7dcbfc57ab980a20&amp;scene=0&amp;xtrack=1#rd" target="_blank">置身钉内（完整版）</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-16 08:30:00">发布日期：2026-06-16 08:30:00</time></div><p class="article-description">这篇复盘确实写得很深——“产品最大的浪费不是偷懒，是全力以赴地做错事”这句话送给所有在做产品的从业者，都值得裱起来。总结一下这篇文章的核心结论与启示：产品层面发心必须纯粹：当产品同时背负用户价值、组织</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508828&amp;idx=1&amp;sn=ce8976721e946be99b724f9403e54f0a&amp;chksm=9ec619b03430bac9a4116b124584e8039532d7859d78d3566655c57d983b7dcbfc57ab980a20&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li><li class="article-item"><div class="article-cover"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508823&amp;idx=1&amp;sn=92beea403f970dfef21a9b6f612276a7&amp;chksm=9e8968d43cb6c0c98446b1294e9e8ec8f2ec6df8dc2036e8509b8ec7ddd2f538602136d6479f&amp;scene=0&amp;xtrack=1#rd" target="_blank"><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/UzsCVuwOnvR8jSCTelnnrXicATbflOkUz38tFkgKmdcpibs26Mbq6vIyk41iccd4QxG22VkmVOazrvYU2OJkWbSq8cbEzSJ3THuDia4g6xaW8Z8/640?wxtype=jpeg&amp;wxfrom=0" alt="文章封面"></a></div><div class="article-content"><h3 class="article-title"><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508823&amp;idx=1&amp;sn=92beea403f970dfef21a9b6f612276a7&amp;chksm=9e8968d43cb6c0c98446b1294e9e8ec8f2ec6df8dc2036e8509b8ec7ddd2f538602136d6479f&amp;scene=0&amp;xtrack=1#rd" target="_blank">面试官问：你用 AI 编程半年了，那怎么保证 Claude Code 写出来的代码是对的？</a></h3><div class="article-meta"><span class="article-author">作者：<a class="article-link" href="/4dc02bd4330a3c90975a300ee5005d96/index.html">测试开发技术</a></span><time class="article-date" datetime="2026-06-15 08:50:00">发布日期：2026-06-15 08:50:00</time></div><p class="article-description">前两天刷知乎的时候，看到一个很有意思的帖子，标题叫：《面试官问：你用 AI 编程半年了，那怎么保证 Claude Code 写出来的代码是对的？》翻完评论区，我没有找到特别满意的答案，反而越发有感触</p><a class="article-link" href="http://mp.weixin.qq.com/s?__biz=MzA4NDUyNzA0Ng==&amp;mid=2247508823&amp;idx=1&amp;sn=92beea403f970dfef21a9b6f612276a7&amp;chksm=9e8968d43cb6c0c98446b1294e9e8ec8f2ec6df8dc2036e8509b8ec7ddd2f538602136d6479f&amp;scene=0&amp;xtrack=1#rd" target="_blank">阅读全文</a></div></li></ul><div class="pagination"><a href="index_1.html" class="pagination-button pagination-prev">下一页</a></div></body></html>
